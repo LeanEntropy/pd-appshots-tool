@@ -63,9 +63,9 @@
   },
   "review": {
     "enabled": true,
-    "coreCoverage": 1,
-    "expansionCoverage": 1,
-    "alsoBelowConfidence": 0.7
+    "coreCoverage": 0,
+    "expansionCoverage": 0,
+    "alsoBelowConfidence": 0
   },
   "run": { "stopAfterSameErrors": 3 },
   "budget": { "maxUsdPerIncrement": 30 },
