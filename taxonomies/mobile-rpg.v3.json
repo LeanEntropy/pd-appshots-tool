@@ -1,12 +1,12 @@
 {
   "id": "mobile-rpg",
-  "version": "3.0.0-draft",
+  "version": "3.1.0-draft",
   "status": "draft: frozen after the core pilot rating",
   "screenTypes": [
     {
       "id": "title_image",
       "label": "Title image",
-      "subtypes": ["logo_with_art", "logo_only"]
+      "subtypes": ["title_screen", "logo_with_art", "logo_only"]
     },
     {
       "id": "feature_image",
@@ -104,7 +104,7 @@
     "metagame.evolution_upgrade": "Upgrading, evolving, merging or ascending a hero, pet or item, outside of play.",
     "metagame.player_profile": "The player's own profile, account level, stats overview or avatar page.",
     "metagame.inventory": "Bag, item or equipment inventory lists (not a single item detail in gear).",
-    "title_image": "PREFERRED for art that is not an in-game screen and features the game's logo or title (e.g. key art with the logo). logo_only: little besides the logo; logo_with_art: logo over painted art or characters.",
+    "title_image": "The game's title: usually the IN-GAME TITLE SCREEN shown when the game opens (logo over the game's own art), which counts as an in-game screen: composition single_full_capture with one capture of type title_image, subtype title_screen. Only clearly standalone promotional art with the logo (not a screen of the game) is pure_art, with logo_with_art or logo_only.",
     "feature_image": "PREFERRED for promotional art or a callout that highlights a feature (a character, a reward, a mode, a rating, a collaboration) with no gameplay capture. If the logo is the main subject, use title_image.",
     "key_art": "Only for non-gameplay art that is neither a title image nor a feature image.",
     "promo": "Only when promotional content sits on or beside an in-game capture; without a capture use feature_image."

@@ -6,9 +6,9 @@ import { sha256 } from "../util/hash.ts";
 
 /** Prompt files in prompts/analysis/. Changing a file requires a new version name. */
 export const PROMPT_VERSIONS = {
-  fullAnalysis: "full-analysis.v3",
+  fullAnalysis: "full-analysis.v4",
   adjudicate: "adjudicate.v3",
-  patterns: "patterns.v1",
+  patterns: "patterns.v2",
   recommend: "recommend.v1",
   recommendReview: "recommend-review.v1",
 } as const;

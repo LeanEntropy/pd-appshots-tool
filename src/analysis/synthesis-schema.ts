@@ -15,6 +15,10 @@ export const interpretationSchema = z.strictObject({
   oursSummary: z
     .string()
     .describe("3-5 sentences: how our deck compares, using the computed verdicts"),
+  verdictText: z.string().describe("2-3 sentences stating the computed overall verdict and why"),
+  keyPoints: z
+    .array(z.string())
+    .describe("one actionable sentence per computed key point, same order and count"),
 });
 export type Interpretation = z.infer<typeof interpretationSchema>;
 

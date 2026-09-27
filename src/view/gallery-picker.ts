@@ -41,7 +41,7 @@ function setSelection(next) {
 function scheduleSave() {
   if (!canSave) return;
   saveState = "Saving...";
-  renderStatus();
+  renderSaveState();
   clearTimeout(saveTimer);
   // Saves run one after another in order, so an older save can never overwrite a newer one.
   saveTimer = setTimeout(() => { const rev = ++revision; const snapshot = selection.slice(); saveChain = saveChain.then(() => save(snapshot, rev)); }, 300);
@@ -55,22 +55,22 @@ async function save(snapshot, rev) {
   } catch {
     saveState = "Not saved: the gallery server is not running. Start it with: npm run gallery";
   }
-  renderStatus();
+  renderSaveState();
 }
 
 async function loadSaved() {
   const box = document.getElementById("analysisBox");
   if (box && !canSave) box.innerHTML = '<h2>Analysis</h2><p class="meta">Analysis starts from this page only when it is opened with: npm run gallery</p>';
-  if (!canSave) { renderStatus(); return; }
+  if (!canSave) { renderSaveState(); return; }
   try {
     const res = await fetch("/api/selection");
     if (res.ok && !touched) { const body = await res.json(); selection = body.coreCompetitors; render(); saveState = "Loaded your saved pick. " + body.summary; }
   } catch {}
-  renderStatus();
+  renderSaveState();
 }
 
-function renderStatus() {
-  const el = document.getElementById("status");
+function renderSaveState() {
+  const el = document.getElementById("saveStatus");
   if (el) el.textContent = saveState;
 }
 
@@ -93,8 +93,8 @@ function renderPanel() {
   const status = f.ok ? "Ready" : "Needs at least " + DATA.core.min + " whole competitor decks";
   const whole = f.kept.reduce((n, id) => n + (named.get(id) ? named.get(id).baselineLength : 0), ourWhole);
   const wholeNote = whole !== f.total ? " Whole decks including tablet-shaped: " + whole + "." : "";
-  document.getElementById("panel").innerHTML = "<h2>Core check</h2><p>Our deck " + ourLen + " + " + f.kept.length + " competitor decks = <strong>" + f.total + "</strong> images analysed (target about " + DATA.core.target + ", hard stop " + DATA.core.cap + "). " + status + "." + wholeNote + '</p><p class="meta">Drag to reorder, or focus a name and press Alt+Up / Alt+Down. Changes save automatically.</p><ol id="order">' + rows + '</ol><p id="status" class="meta" role="status"></p>';
-  renderStatus();
+  document.getElementById("panel").innerHTML = "<h2>Core check</h2><p>Our deck " + ourLen + " + " + f.kept.length + " competitor decks = <strong>" + f.total + "</strong> images analysed (target about " + DATA.core.target + ", hard stop " + DATA.core.cap + "). " + status + "." + wholeNote + '</p><p class="meta">Drag to reorder, or focus a name and press Alt+Up / Alt+Down. Changes save automatically.</p><ol id="order">' + rows + '</ol><p id="saveStatus" class="meta" role="status"></p>';
+  renderSaveState();
 }
 
 document.addEventListener("click", (e) => {

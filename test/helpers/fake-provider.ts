@@ -123,6 +123,16 @@ function recommendations(n: number) {
   };
 }
 
+/** The computed key points sent with the pattern check (so the fake returns the same count). */
+function keyPointsIn(prompt: string): unknown[] {
+  const line = prompt.split("\n").find((l) => l.startsWith("{") && l.includes('"keyPoints"'));
+  try {
+    return (JSON.parse(line ?? "{}") as { keyPoints?: unknown[] }).keyPoints ?? [];
+  } catch {
+    return [];
+  }
+}
+
 /** A provider that answers from a lookup instead of calling a model. Records every call. */
 export function fakeProvider(o: FakeOptions): Provider & { calls: VisionCall[] } {
   const calls: VisionCall[] = [];
@@ -140,7 +150,13 @@ export function fakeProvider(o: FakeOptions): Provider & { calls: VisionCall[] }
     async call(c): Promise<VisionResult> {
       calls.push(c);
       if (c.prompt.startsWith("Interpret"))
-        return ok({ summary: "s", keyPatterns: [], oursSummary: "o" });
+        return ok({
+          summary: "s",
+          keyPatterns: [],
+          oursSummary: "o",
+          verdictText: "v",
+          keyPoints: keyPointsIn(c.prompt).map((_, i) => `point ${i + 1}`),
+        });
       if (c.prompt.startsWith("Write the recommendations") || c.prompt.startsWith("Revise")) {
         const m = /between (\d+) and/.exec(c.prompt);
         return ok(recommendations(Number(m?.[1] ?? 3)));

@@ -8,6 +8,7 @@ import { stableHash } from "../util/hash.ts";
 import { batchDataHash } from "./entries.ts";
 import { type Estimate, estimate } from "./estimate.ts";
 import { readLatest } from "./final-report.ts";
+import { PATTERN_FIT_VERSION } from "./pattern-fit.ts";
 import { PROMPT_VERSIONS } from "./prompts.ts";
 import { isUsable, readRecords } from "./records.ts";
 import { SCHEMA_VERSION } from "./schema.ts";
@@ -41,7 +42,7 @@ export interface AnalysisPlan {
   /** Patterns and recommendations must be (re)written: new images, or none for this data yet. */
   synthesisNeeded: boolean;
   models: Record<string, string>;
-  versions: { prompts: Record<string, string>; schema: string; taxonomy: string };
+  versions: { prompts: Record<string, string>; schema: string; taxonomy: string; fit: string };
   review: unknown;
   estimates: unknown;
   budget: unknown;
@@ -146,6 +147,7 @@ export function buildAnalysisPlan(
     prompts: PROMPT_VERSIONS,
     schema: SCHEMA_VERSION,
     taxonomy: loadTaxonomy(loaded).hash,
+    fit: PATTERN_FIT_VERSION,
   };
   const models = { ...config.models } as Record<string, string>;
   const latest = readLatest(paths, stage);

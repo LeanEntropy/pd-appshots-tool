@@ -8,18 +8,12 @@ import {
 } from "../config/load.ts";
 import type { ImageDb } from "../store/imagedb.ts";
 import { ensureDir, readJsonIfExists, writeJsonAtomic } from "../util/fsx.ts";
-import { captureLines, imageLine } from "./info-text.ts";
 import { labeler } from "./labels.ts";
 import { compareOrders, orderHistory } from "./orders.ts";
 import type { AnalysisPlan, Stage } from "./plan.ts";
-import { readRecords, screenLabel } from "./records.ts";
-import {
-  cell,
-  oursSection,
-  patternSection,
-  recommendationSection,
-  thumb,
-} from "./report-sections.ts";
+import { buildReportData } from "./report-data.ts";
+import { reportInputs } from "./report-inputs.ts";
+import { reportMarkdown } from "./report-md.ts";
 import type { RunOutcome } from "./run.ts";
 
 const usd = (n: number) => `$${n.toFixed(2)}`;
@@ -47,13 +41,12 @@ export function writeFinalReport(
   loaded: LoadedConfig,
   plan: AnalysisPlan,
   o: RunOutcome,
-  db: ImageDb,
+  _db: ImageDb,
   dataHash: string | null = null,
 ): string {
   const paths = projectPaths(loaded);
   const dir = join(paths.reports, o.runId);
   ensureDir(dir);
-  const all = readRecords(paths);
   const label = labeler(loadTaxonomy(loaded).taxonomy);
   const count = (s: string) => o.records.filter((r) => r.status === s).length;
   const s = o.synthesis;
@@ -80,40 +73,37 @@ export function writeFinalReport(
   }
   if (o.synthesisSkipped)
     lines.push(`Patterns and recommendations were not written: ${o.synthesisSkipped}`, "");
-  if (s?.recommendations)
-    lines.push(...recommendationSection(s.recommendations, s.review, !!s.draft, label));
-  if (o.oursVs) lines.push(...oursSection(o.oursVs, db, label));
-  if (o.patterns) lines.push(...patternSection(o.patterns, s?.interpretation ?? null, label));
-
-  lines.push("## Store order and screenshots", "");
-  for (const g of plan.games) {
-    const hist = orderHistory(paths, g.appId, plan.market.gl, plan.market.hl);
-    const last = hist.at(-1);
-    const prev = hist.at(-2);
-    lines.push(`### ${g.name}`, "");
-    if (last) lines.push(`Store order saved for ${last.date}.`);
-    if (last && prev) {
-      const ch = compareOrders(prev, last, label);
-      lines.push(`Changes since ${prev.date}: ${ch.length ? ch.join("; ") : "none"}.`);
-    }
-    lines.push(
-      "",
-      "| Position | Screenshot | Image | Screen type | In-game captures | Headline | Layer | Status | Differences between readings |",
-      "|---|---|---|---|---|---|---|---|---|",
-    );
-    for (const pos of g.positions) {
-      const item = plan.items.find((i) => i.appId === g.appId && i.position === pos);
-      const r = item ? all.get(item.imageId) : undefined;
-      const f = r?.final ?? null;
-      lines.push(
-        `| ${pos} | ${thumb(db, item?.imageId ?? null, `${g.name} ${pos}`)} | ${cell(imageLine(r?.identity?.image) ?? "")} | ${cell(f ? screenLabel(f, label) : "")} | ${cell(f ? `${label(f.screenshot.composition)}${f.screenshot.captures.length ? `: ${captureLines(f, r?.identity?.image, label).join("; ")}` : ""}` : "")} | ${cell(f?.headline ?? "")} | ${f ? (f.marketingLayer.present ? "yes" : "no") : ""} | ${r?.status ?? "not run"} | ${cell((r?.differences ?? []).join("; "))} |`,
-      );
-    }
-    lines.push("");
-  }
+  // The same report model as the gallery's Report page: deterministic content always, AI after.
+  const data = buildReportData(
+    reportInputs(loaded, plan.stage, {
+      plan,
+      skip: o.synthesisSkipped,
+      ai:
+        s && (s.recommendations || s.interpretation)
+          ? {
+              runId: o.runId,
+              dataHash,
+              interpretation: s.interpretation,
+              recommendations: s.recommendations,
+              review: s.review,
+              revised: !!s.draft,
+            }
+          : undefined,
+    }),
+  );
+  lines.push(...reportMarkdown(data, label));
+  const changes = plan.games.flatMap((g) => {
+    const h = orderHistory(paths, g.appId, plan.market.gl, plan.market.hl);
+    const [prev, last] = [h.at(-2), h.at(-1)];
+    if (!prev || !last) return [];
+    const ch = compareOrders(prev, last, label);
+    return [`- ${g.name}, since ${prev.date}: ${ch.length ? ch.join("; ") : "no change"}`];
+  });
+  if (changes.length) lines.push("## Store order changes", "", ...changes, "");
   const file = join(dir, "report.md");
   writeFileSync(file, `${lines.join("\n")}\n`);
-  const data: Record<string, unknown> = {
+  const files: Record<string, unknown> = {
+    "report-data.json": data,
     "patterns.json": o.patterns,
     "ours-vs.json": o.oursVs,
     "interpretation.json": s?.interpretation ?? null,
@@ -121,7 +111,7 @@ export function writeFinalReport(
     "recommendations-draft.json": s?.draft ?? null,
     "review.json": s?.review ?? null,
   };
-  for (const [name, value] of Object.entries(data))
+  for (const [name, value] of Object.entries(files))
     if (value) writeJsonAtomic(join(dir, name), value);
   const latest: LatestReport = {
     runId: o.runId,

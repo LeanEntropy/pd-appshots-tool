@@ -18,7 +18,7 @@ export interface BatchEntries {
 export function batchEntries(
   plan: AnalysisPlan,
   records: ReadonlyMap<string, AnalysisRecord>,
-  db: ImageDb,
+  db: Pick<ImageDb, "get">,
   ourAppId: string,
 ): BatchEntries {
   const out: BatchEntries = { ours: [], competitors: [], decks: [], ourDeckLength: 0, missing: [] };

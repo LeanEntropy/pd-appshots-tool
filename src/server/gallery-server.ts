@@ -11,13 +11,13 @@ import {
   getAnalyses,
   getAnalysisStatus,
   getOverview,
-  getReport,
   getSelection,
   postAnalysisPlan,
   postAnalysisRun,
   postOverview,
   postSelection,
 } from "./api.ts";
+import { getReportCurrent, getReportRun } from "./report-api.ts";
 
 const TYPES: Record<string, string> = {
   ".html": "text/html; charset=utf-8",
@@ -123,8 +123,13 @@ export function createGalleryServer(
         const r = getAnalyses(loaded);
         return send(res, r.status, r.body);
       }
-      if (url.pathname === "/api/report" && req.method === "GET") {
-        const r = getReport(loaded, url.searchParams.get("stage"));
+      if (url.pathname === "/api/report/current" && req.method === "GET") {
+        const r = getReportCurrent(loaded, url.searchParams.get("stage"));
+        return send(res, r.status, r.body);
+      }
+      if (url.pathname === "/api/report/run" && req.method === "GET") {
+        const q = url.searchParams;
+        const r = getReportRun(loaded, q.get("stage"), q.get("id"));
         return send(res, r.status, r.body);
       }
       const post = POSTS[url.pathname];

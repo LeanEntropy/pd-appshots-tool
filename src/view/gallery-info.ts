@@ -7,6 +7,8 @@ let INFO = DATA.info || {};
 let infoBtnOpen = null;
 let infoPinned = false;
 let infoHideTimer = null;
+let infoHover = false;
+const inPop = (el) => !!(el && el.closest && el.closest("#infoPop"));
 
 function infoBtn(id) {
   const v = id && INFO[id];
@@ -68,7 +70,7 @@ function placeInfo(btn, pop) {
   const r = btn.getBoundingClientRect();
   const vw = document.documentElement.clientWidth, vh = document.documentElement.clientHeight;
   pop.style.width = Math.max(0, Math.min(380, vw - 16)) + "px";
-  pop.style.maxHeight = Math.max(0, vh - 16) + "px";
+  pop.style.maxHeight = Math.max(0, Math.min(480, vh - 16)) + "px";
   const w = pop.offsetWidth, h = pop.offsetHeight;
   let left = r.left;
   if (left + w > vw - 8) left = r.right - w;
@@ -93,11 +95,18 @@ function showInfo(btn) {
   infoBtnOpen = btn;
 }
 
-window.addEventListener("scroll", () => { if (infoBtnOpen) { if (infoPinned) placeInfo(infoBtnOpen, document.getElementById("infoPop")); else hideInfo(false); } }, true);
+// Scrolling inside the popover never closes it; a page scroll keeps it open (and in place) while
+// it is pinned or the cursor is over it, and closes it otherwise.
+window.addEventListener("scroll", (e) => {
+  if (!infoBtnOpen || inPop(e.target)) return;
+  if (infoPinned || infoHover) placeInfo(infoBtnOpen, document.getElementById("infoPop"));
+  else hideInfo(false);
+}, true);
 window.addEventListener("resize", () => { if (infoBtnOpen) placeInfo(infoBtnOpen, document.getElementById("infoPop")); });
 
 function hideInfo(returnFocus) {
   const pop = document.getElementById("infoPop");
+  infoHover = false;
   pop.hidden = true;
   infoPinned = false;
   if (infoBtnOpen) { infoBtnOpen.setAttribute("aria-expanded", "false"); if (returnFocus) infoBtnOpen.focus(); }
@@ -107,14 +116,17 @@ function hideInfo(returnFocus) {
 const infoTarget = (e) => e.target.closest && e.target.closest("button.info");
 document.addEventListener("mouseover", (e) => {
   const b = infoTarget(e);
-  if (b && !infoPinned) showInfo(b);
-  else if (e.target.closest && e.target.closest("#infoPop")) clearTimeout(infoHideTimer);
+  if (b && !infoPinned) { if (b !== infoBtnOpen) showInfo(b); clearTimeout(infoHideTimer); }
+  else if (inPop(e.target)) { infoHover = true; clearTimeout(infoHideTimer); }
 });
+// Closes only when the cursor has left both the (i) button and the popover, after a short delay.
 document.addEventListener("mouseout", (e) => {
-  if (infoPinned || !(infoTarget(e) || (e.target.closest && e.target.closest("#infoPop")))) return;
-  infoHideTimer = setTimeout(() => hideInfo(false), 250);
+  if (!(infoTarget(e) || inPop(e.target))) return;
+  const to = e.relatedTarget;
+  if (inPop(to) || (to && infoBtnOpen && (to === infoBtnOpen || infoBtnOpen.contains(to)))) return;
+  infoHover = false;
+  if (!infoPinned) { clearTimeout(infoHideTimer); infoHideTimer = setTimeout(() => hideInfo(false), 300); }
 });
-const inPop = (el) => !!(el && el.closest && el.closest("#infoPop"));
 document.addEventListener("focusin", (e) => {
   if (inPop(e.target)) { clearTimeout(infoHideTimer); return; }
   const b = infoTarget(e);

@@ -20,6 +20,7 @@
     "fit": "tsx src/cli.ts fit",
     "refresh-records": "tsx src/cli.ts refresh-records",
     "overview": "tsx src/cli.ts overview",
+    "report": "tsx src/cli.ts report",
     "typecheck": "tsc --noEmit",
     "lint": "biome check .",
     "format": "biome format --write .",

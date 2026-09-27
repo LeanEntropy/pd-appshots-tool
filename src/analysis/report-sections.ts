@@ -1,6 +1,4 @@
-import type { ImageDb } from "../store/imagedb.ts";
 import type { Labeler } from "./labels.ts";
-import type { OursVsPatterns } from "./ours-vs.ts";
 import type { Count, Patterns } from "./patterns.ts";
 import type { Interpretation, Recommendations, Review } from "./synthesis-schema.ts";
 
@@ -14,16 +12,12 @@ const list = (cs: readonly Count[], n = 4, name: (k: string) => string = words) 
     .map((c) => `${name(c.key)} ${pct(c.share)}`)
     .join(", ") || "none";
 
-export function thumb(db: ImageDb, imageId: string | null, alt: string): string {
-  const rec = imageId ? db.get(imageId) : undefined;
-  return rec ? `[![${alt}](${IMG}${rec.thumb})](${IMG}${rec.file})` : "";
-}
-
 export function recommendationSection(
   r: Recommendations,
   review: Review | null,
   revised: boolean,
   label: Labeler,
+  examples: (position: number) => string = () => "",
 ): string[] {
   const out = ["## Recommendations", "", r.rationale, ""];
   for (const p of [...r.positions].sort((a, b) => a.position - b.position)) {
@@ -55,7 +49,9 @@ export function recommendationSection(
         ),
       );
     }
-    out.push(`- **Why:** ${p.why}`, "");
+    out.push(`- **Why:** ${p.why}`);
+    const ex = examples(p.position);
+    out.push(...(ex ? [`- **Competitor examples:** ${ex}`] : []), "");
   }
   if (review) {
     out.push(
@@ -71,24 +67,6 @@ export function recommendationSection(
     );
   }
   return out;
-}
-
-export function oursSection(o: OursVsPatterns, db: ImageDb, label: Labeler): string[] {
-  return [
-    "## Our game vs the patterns",
-    "",
-    `Overall: **${o.overall.verdict}**.`,
-    "",
-    ...o.overall.reasons.map((r) => `- ${r}`),
-    "",
-    "| Position | Our screenshot | Screen type | Verdict | Reasons |",
-    "|---|---|---|---|---|",
-    ...o.positions.map(
-      (p) =>
-        `| ${p.position} | ${thumb(db, p.imageId, `ours ${p.position}`)} | ${label(p.ours.type)} | ${p.verdict} | ${cell(p.reasons.join("; "))} |`,
-    ),
-    "",
-  ];
 }
 
 export function patternSection(

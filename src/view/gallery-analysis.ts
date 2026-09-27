@@ -100,16 +100,6 @@ async function refreshAnalyses() {
   } catch { return null; }
 }
 
-async function loadReport() {
-  const box = document.getElementById("report");
-  try {
-    const stage = document.getElementById("stage").value;
-    const r = await (await fetch("/api/report?stage=" + encodeURIComponent(stage))).json();
-    if (!r.report) { box.innerHTML = ""; return; }
-    box.innerHTML = '<details open><summary><strong>Final report</strong> (' + (stage === "pilot" ? "core pilot" : "core check") + ", run " + esc(r.report.runId) + ')</summary><p class="meta">Saved as ' + esc(r.report.file) + "</p>" + r.report.html + "</details>";
-  } catch {}
-}
-
 async function loadOverview(rebuild) {
   const box = document.getElementById("overview");
   const button = '<p><button id="rebuildOverview">' + (rebuild ? "Building..." : "Rebuild the overview") + '</button> <span class="meta">Free: computed from the downloaded images, no AI.</span></p>';
@@ -119,8 +109,8 @@ async function loadOverview(rebuild) {
     if (!r.ok) { box.innerHTML = '<p class="warn">' + esc((r.body.problems || ["The overview could not be built."]).join(" ")) + "</p>" + button; return; }
     const o = r.body.overview;
     box.innerHTML = o
-      ? "<details" + (rebuild ? " open" : "") + '><summary><strong>Store overview (free, no AI)</strong> <span class="meta">(click to show or hide)</span></summary><p class="meta">Saved as ' + esc(o.file) + "</p>" + o.html + button.replace("Building...", "Rebuild the overview") + "</details>"
-      : '<details><summary><strong>Store overview (free, no AI)</strong> <span class="meta">(click to show or hide)</span></summary><p>Not built yet.</p>' + button.replace("Rebuild the overview", "Build the overview") + "</details>";
+      ? '<details class="sec" open><summary><span class="sec-t">Store overview (free, no AI)</span></summary><div class="sec-b"><p class="meta">Saved as ' + esc(o.file) + "</p>" + o.html + button.replace("Building...", "Rebuild the overview") + "</div></details>"
+      : '<details class="sec" open><summary><span class="sec-t">Store overview (free, no AI)</span></summary><div class="sec-b"><p>Not built yet.</p>' + button.replace("Rebuild the overview", "Build the overview") + "</div></details>";
   } catch {}
 }
 
@@ -131,7 +121,7 @@ document.addEventListener("click", (e) => {
   if (e.target.id === "cancelApproval") closeApproval();
 });
 document.addEventListener("change", (e) => { if (e.target.id === "stage") loadReport(); });
-document.getElementById("approvalDlg").addEventListener("close", () => { shownPlan = null; runInDialog = false; });
-if (location.protocol.startsWith("http")) { pollStatus(); loadReport(); loadOverview(false); }
+document.getElementById("approvalDlg").addEventListener("close", () => { shownPlan = null; if (runInDialog) goTo("analysis"); runInDialog = false; });
+if (location.protocol.startsWith("http")) { pollStatus(); loadOverview(false); }
 else document.getElementById("status").innerHTML = '<h2>Analysis status</h2><p class="meta">Open this page with npm run gallery to run and follow the analysis.</p>';
 `;

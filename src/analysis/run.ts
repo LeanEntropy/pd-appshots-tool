@@ -10,6 +10,7 @@ import { writeFinalReport } from "./final-report.ts";
 import { labeler } from "./labels.ts";
 import { enrichOrder, type OrderSnapshot, snapshotOrder } from "./orders.ts";
 import { compareOurs, type OursVsPatterns } from "./ours-vs.ts";
+import { patternFit } from "./pattern-fit.ts";
 import { findPatterns, type Patterns } from "./patterns.ts";
 import type { AnalysisPlan, PlanItem } from "./plan.ts";
 import { renderPrompt } from "./prompts.ts";
@@ -226,6 +227,13 @@ export async function runAnalysis(
         {
           patterns,
           oursVs,
+          fit: patternFit(
+            entries.competitors,
+            entries.ours,
+            patterns,
+            entries.ourDeckLength,
+            labeler(taxonomy),
+          ),
           ours: entries.ours,
           competitors: entries.competitors,
           ourDeckLength: entries.ourDeckLength,

@@ -1,6 +1,7 @@
 import { writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { refreshAllRecords } from "./analysis/record-refresh.ts";
+import { writeCurrentReport } from "./analysis/report-inputs.ts";
 import { type LoadedConfig, loadConfig, projectPaths } from "./config/load.ts";
 import { asiaVsUs, writeOverview } from "./overview/overview-report.ts";
 import { openBrowser, startGalleryServer } from "./server/gallery-server.ts";
@@ -32,6 +33,7 @@ const HELP = `Store Screenshot Recipe: setup commands (no AI analysis)
   npm run select      Save the pick from the terminal: -- --pick "Name, Name, ..." (fallback to the page)
   npm run fit         Show which whole decks fit in the core check with the current pick
   npm run overview    Free store overview per country (orientation, ratios, deck length, reuse, colours). No AI
+  npm run report      Write the report from the saved analyses, no AI (-- --stage core for the core check)
   npm run refresh-records  Rebuild each analysis record's identity block and taxonomy mapping (no AI)
 
 Options: --config <file> (default configs/rogue-legend.json)`;
@@ -147,6 +149,11 @@ Your pick saves automatically. Keep this window open while you use the page; pre
     case "core": {
       const opts = { yes: args.yes, dryRun: args.flags.has("dry-run") };
       return (await runAnalyzeStep(loaded, args.command, opts, log)) ? 0 : 1;
+    }
+    case "report": {
+      const stage = args.flags.get("stage") === "core" ? "core" : "pilot";
+      log(`Report from the saved analyses (no AI): ${writeCurrentReport(loaded, stage)}`);
+      return 0;
     }
     case "overview": {
       const { file, overview } = await writeOverview(loaded);

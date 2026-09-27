@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync, readFileSync, rmSync } from "node:fs";
 import { join } from "node:path";
 import { test } from "node:test";
 import { readLatest } from "../src/analysis/final-report.ts";
@@ -10,7 +10,7 @@ import { isUsable, readRecords } from "../src/analysis/records.ts";
 import { runAnalysis } from "../src/analysis/run.ts";
 import { projectPaths } from "../src/config/load.ts";
 import { savePick } from "../src/core/selection.ts";
-import { getReport } from "../src/server/api.ts";
+import { getReportCurrent, getReportRun } from "../src/server/report-api.ts";
 import { fakeProvider } from "./helpers/fake-provider.ts";
 import { tempProject } from "./helpers/project.ts";
 
@@ -115,14 +115,24 @@ test("patterns, ours vs patterns, recommendations, review and the final report",
   assert.equal(writer.calls.length, 2, "pattern summary + recommendations");
   const md = readFileSync(out.report, "utf8");
   for (const h of [
-    "## Recommendations",
-    "## Our game vs the patterns",
-    "## Patterns across competitors",
-    "## Store order",
+    "## Contents",
+    "## 1. Overview",
+    "## 2. Patterns across competitors",
+    "## 3. Position by position",
+    "## 4. Recommendations",
+    "## 5. Detailed statistics",
   ])
     assert.ok(md.includes(h), h);
+  assert.match(md, /\*\*Verdict: our deck is /);
+  assert.ok(md.indexOf("## 3. Position by position") < md.indexOf("## 4. Recommendations"));
   const dir = join(paths.reports, out.runId);
-  for (const f of ["patterns.json", "ours-vs.json", "recommendations.json", "review.json"])
+  for (const f of [
+    "patterns.json",
+    "ours-vs.json",
+    "recommendations.json",
+    "review.json",
+    "report-data.json",
+  ])
     assert.ok(existsSync(join(dir, f)), f);
   const rec = readRecords(paths).get(out.records[0]?.imageId ?? "");
   assert.equal(rec?.identity?.game, "Rogue Legend");
@@ -147,10 +157,25 @@ test("patterns, ours vs patterns, recommendations, review and the final report",
   assert.equal(again.synthesisNeeded, false);
   assert.match(approvalProblem(again, again, again.planHash) ?? "", /already/);
 
-  const html = (getReport(loaded, "pilot").body as { report: { html: string } }).report.html;
-  assert.match(html, /<h3>Recommendations<\/h3>/);
-  assert.match(html, /class="info" data-info="[0-9a-f]{64}"/);
-  assert.doesNotMatch(html, /\.\.\/\.\.\/images/);
+  const cur = getReportCurrent(loaded, "pilot").body as {
+    data: { synthesis: { state: string }; games: { rows: unknown[] }[]; ai: { current: boolean } };
+    runs: { runId: string; hasData: boolean }[];
+  };
+  assert.equal(cur.data.synthesis.state, "current");
+  assert.equal(cur.data.ai.current, true);
+  assert.deepEqual(
+    cur.data.games.map((g) => g.rows.length),
+    [3, 3, 2],
+  );
+  assert.equal(cur.runs[0]?.runId, out.runId);
+  assert.equal(cur.runs[0]?.hasData, true);
+  assert.equal(getReportRun(loaded, "pilot", "../../etc").status, 404);
+  // An older run without saved data is shown from its markdown.
+  rmSync(join(dir, "report-data.json"));
+  const old = getReportRun(loaded, "pilot", out.runId).body as { html: string };
+  assert.match(old.html, /<h3>4\. Recommendations<\/h3>/);
+  assert.match(old.html, /class="info" data-info="[0-9a-f]{64}"/);
+  assert.doesNotMatch(old.html, /\.\.\/\.\.\/images/);
 });
 
 test("a major finding in the recommendation check leads to one revision", async () => {

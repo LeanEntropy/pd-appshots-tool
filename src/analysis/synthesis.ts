@@ -1,6 +1,7 @@
 import type { Taxonomy } from "../config/load.ts";
 import { type CallContext, validatedCall } from "./call.ts";
 import type { OursVsPatterns } from "./ours-vs.ts";
+import type { FitSummary } from "./pattern-fit.ts";
 import { type DeckEntry, type Patterns, proportion } from "./patterns.ts";
 import type { RenderedPrompt } from "./prompts.ts";
 import type { Provider } from "./providers.ts";
@@ -63,6 +64,7 @@ export async function synthesise(
   input: {
     patterns: Patterns;
     oursVs: OursVsPatterns;
+    fit: FitSummary;
     ours: readonly DeckEntry[];
     competitors: readonly DeckEntry[];
     ourDeckLength: number;
@@ -80,6 +82,7 @@ export async function synthesise(
   const facts = [
     `Computed patterns (JSON):\n${JSON.stringify(input.patterns)}`,
     `Our deck vs the patterns, computed (JSON):\n${JSON.stringify(input.oursVs)}`,
+    `Pattern check, computed (JSON): verdict, key points in priority order, and every pattern with whether we fit:\n${JSON.stringify(input.fit)}`,
   ].join("\n\n");
   report("patterns", "Finding patterns…");
   const interp = await validatedCall(
@@ -89,7 +92,12 @@ export async function synthesise(
     `Interpret these computed patterns.\n\n${facts}`,
     [],
     interpretationSchema,
-    () => [],
+    (v) =>
+      v.keyPoints.length === input.fit.keyPoints.length
+        ? []
+        : [
+            `keyPoints must have exactly ${input.fit.keyPoints.length} items, one per computed key point`,
+          ],
     ctx,
   );
   out.interpretation = interp.value;

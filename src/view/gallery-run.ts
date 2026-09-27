@@ -159,7 +159,7 @@ async function pollStatus() {
 
 setInterval(tick, 1000);
 document.addEventListener("click", (e) => {
-  if (e.target.id === "runbarDetails") { const st = document.getElementById("status"); st.scrollIntoView({ block: "center" }); st.focus(); }
+  if (e.target.id === "runbarDetails") { goTo("analysis"); const st = document.getElementById("status"); st.focus(); }
   if (e.target.id === "runbarClose") { runbarClosed = true; renderRunbar(lastStatus); }
   if (e.target.classList && e.target.classList.contains("toreport") && runInDialog) closeApproval();
 });

@@ -1,0 +1,131 @@
+import { existsSync, readdirSync, writeFileSync } from "node:fs";
+import { join } from "node:path";
+import { type LoadedConfig, loadTaxonomy, projectPaths } from "../config/load.ts";
+import { coreDeck } from "../core/selection.ts";
+import { ImageDb } from "../store/imagedb.ts";
+import { ensureDir, readJsonIfExists } from "../util/fsx.ts";
+import { batchDataHash } from "./entries.ts";
+import { readLatest } from "./final-report.ts";
+import type { ImageIdentity } from "./identity.ts";
+import { labeler } from "./labels.ts";
+import { orderHistory } from "./orders.ts";
+import { type AnalysisPlan, buildAnalysisPlan, readSavedPlan, type Stage } from "./plan.ts";
+import { refreshRecord, TAXONOMY_MAPPING } from "./record-refresh.ts";
+import { readRecords } from "./records.ts";
+import { buildReportData, type ReportInputs } from "./report-data.ts";
+import { reportMarkdown } from "./report-md.ts";
+import type { Interpretation, Recommendations, Review } from "./synthesis-schema.ts";
+
+/** One saved report run of a stage. */
+export interface ReportRun {
+  runId: string;
+  createdAt: string;
+  hasData: boolean;
+}
+
+/** Saved runs of a stage, newest first (folders reports/<run id>/ with a report.md). */
+export function listRuns(loaded: LoadedConfig, stage: Stage): ReportRun[] {
+  const dir = projectPaths(loaded).reports;
+  if (!existsSync(dir)) return [];
+  return readdirSync(dir)
+    .filter(
+      (d) => /^\d{4}-/.test(d) && d.endsWith(`-${stage}`) && existsSync(join(dir, d, "report.md")),
+    )
+    .sort()
+    .reverse()
+    .map((runId) => ({
+      runId,
+      createdAt: runId.slice(0, 10),
+      hasData: existsSync(join(dir, runId, "report-data.json")),
+    }));
+}
+
+/** Everything the pure report builder needs, read from disk (no AI). */
+export function reportInputs(
+  loaded: LoadedConfig,
+  stage: Stage,
+  override: { plan?: AnalysisPlan; ai?: ReportInputs["latestAi"]; skip?: string | null } = {},
+): ReportInputs {
+  const paths = projectPaths(loaded);
+  const saved = override.plan ?? readSavedPlan(loaded, stage);
+  // The cost of the next approval is the batch as it would be proposed now (no AI, not saved).
+  const proposed = buildAnalysisPlan(loaded, stage);
+  const plan = saved ?? proposed;
+  // Records saved under an older taxonomy mapping are shown with the current one (in memory,
+  // no AI; `npm run refresh-records` or the next run writes it to disk).
+  const records = new Map(
+    [...readRecords(paths)].map(([id, r]) => [
+      id,
+      r.final && r.identity && r.mapping !== TAXONOMY_MAPPING
+        ? refreshRecord(r, () => r.identity as ImageIdentity, r.taxonomy ?? "")
+        : r,
+    ]),
+  );
+  const db = ImageDb.open(paths.imageDb, paths.imagesOrig, paths.imagesThumb);
+  const m = plan.market;
+  const decks = new Map(plan.games.map((g) => [g.appId, coreDeck(loaded, g.appId)]));
+  const orderDates = new Map(
+    plan.games.map((g) => [g.appId, orderHistory(paths, g.appId, m.gl, m.hl).at(-1)?.date ?? null]),
+  );
+  let latestAi: ReportInputs["latestAi"] = override.ai ?? null;
+  if (override.ai === undefined) {
+    const latest = readLatest(paths, stage);
+    const dir = latest ? join(paths.reports, latest.runId) : null;
+    const read = <T>(name: string) =>
+      dir ? ((readJsonIfExists(join(dir, name)) as T | undefined) ?? null) : null;
+    const recommendations = read<Recommendations>("recommendations.json");
+    const interpretation = read<Interpretation>("interpretation.json");
+    if (latest && (recommendations || interpretation))
+      latestAi = {
+        runId: latest.runId,
+        dataHash: latest.dataHash,
+        interpretation,
+        recommendations,
+        review: read<Review>("review.json"),
+        revised: !!read<Recommendations>("recommendations-draft.json"),
+      };
+  }
+  const status = readJsonIfExists(join(paths.pending, "analysis-status.json")) as
+    | { stage?: string; synthesisSkipped?: string | null; error?: string | null }
+    | undefined;
+  const skip =
+    override.skip !== undefined
+      ? override.skip
+      : status?.stage === stage
+        ? (status.error ?? status.synthesisSkipped ?? null)
+        : null;
+  return {
+    plan,
+    approved: !!saved,
+    ourAppId: loaded.config.ourApp.id,
+    records,
+    decks,
+    db,
+    orderDates,
+    label: labeler(loadTaxonomy(loaded).taxonomy),
+    dataHash: batchDataHash(plan, records),
+    latestAi,
+    lastSkip: skip,
+    estimateUsd: proposed.estimate.usd,
+  };
+}
+
+/**
+ * Writes the report as it stands now (no AI) to reports/current-<stage>/report.md. The folder
+ * depth matches the run folders, so the relative image links work the same way.
+ */
+export function writeCurrentReport(loaded: LoadedConfig, stage: Stage): string {
+  const inputs = reportInputs(loaded, stage);
+  const data = buildReportData(inputs);
+  const dir = join(projectPaths(loaded).reports, `current-${stage}`);
+  ensureDir(dir);
+  const file = join(dir, "report.md");
+  const head = [
+    `# ${stage === "pilot" ? "Core pilot" : "Core check"}: report from the saved analyses`,
+    "",
+    `Market: ${data.market}. Written ${new Date().toISOString().slice(0, 16).replace("T", " ")} from the analyses on disk, with no AI call.`,
+    "",
+  ];
+  writeFileSync(file, `${[...head, ...reportMarkdown(data, inputs.label)].join("\n")}\n`);
+  return file;
+}

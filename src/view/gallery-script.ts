@@ -1,7 +1,10 @@
 import { ANALYSIS_SCRIPT } from "./gallery-analysis.ts";
 import { GRID_SCRIPT } from "./gallery-grid.ts";
 import { INFO_SCRIPT } from "./gallery-info.ts";
+import { NAV_SCRIPT } from "./gallery-nav.ts";
 import { PICKER_SCRIPT } from "./gallery-picker.ts";
+import { REPORT_SCRIPT } from "./gallery-report.ts";
+import { REPORT_PARTS_SCRIPT } from "./gallery-report-parts.ts";
 import { RUN_SCRIPT } from "./gallery-run.ts";
 
 /** Client-side script for the raw deck gallery. Plain JS, no external libraries. */
@@ -55,4 +58,4 @@ document.addEventListener("change", (e) => {
 document.getElementById("locale").innerHTML = '<option value="all">All countries</option>' + DATA.markets.map((m) => '<option value="' + esc(m.gl) + '">' + esc(m.label) + "</option>").join("");
 `;
 
-export const GALLERY_SCRIPT = `${RENDER_SCRIPT}\n${INFO_SCRIPT}\n${PICKER_SCRIPT}\n${GRID_SCRIPT}\n${RUN_SCRIPT}\n${ANALYSIS_SCRIPT}\nrender();\nloadSaved();\n`;
+export const GALLERY_SCRIPT = `${RENDER_SCRIPT}\n${INFO_SCRIPT}\n${PICKER_SCRIPT}\n${GRID_SCRIPT}\n${NAV_SCRIPT}\n${REPORT_SCRIPT}\n${REPORT_PARTS_SCRIPT}\n${RUN_SCRIPT}\n${ANALYSIS_SCRIPT}\nrender();\nloadSaved();\nshowPage(false);\n`;

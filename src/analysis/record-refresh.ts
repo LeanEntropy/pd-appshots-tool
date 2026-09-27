@@ -8,15 +8,18 @@ import type { ImageAnalysis } from "./schema.ts";
 
 /**
  * Deterministic taxonomy mapping, versioned apart from the analysis schema: old "key art"
- * readings become the user's terms when the evidence is clear, without any model call.
+ * readings become the user's terms when the evidence is clear, and a title image counts as the
+ * in-game title screen (user, 2026-09-28), without any model call.
  */
-export const TAXONOMY_MAPPING = "key-art-to-title-or-feature.v2";
+export const TAXONOMY_MAPPING = "key-art-title-screen.v3";
 
 export interface MappedFrom {
   /** The model's original classification, kept so a newer mapping can start from it. */
   screenType: string;
   subtype: string;
   rule: string;
+  /** The model's own composition and captures, when a mapping changed them. */
+  original?: Pick<ImageAnalysis["screenshot"], "composition" | "captures" | "captureAreaPercent">;
 }
 
 /** key_art with no in-game capture: logo or game title → title image; other callout text → feature image. */
@@ -62,6 +65,58 @@ export function mapKeyArt(
   return { final: a, mappedFrom: null };
 }
 
+/**
+ * A title image is usually the in-game title screen shown when the game opens: it becomes one
+ * full in-game capture of type title_image (subtype title_screen) instead of pure art.
+ */
+export function mapTitleScreen(
+  a: ImageAnalysis,
+  orientation: "portrait" | "landscape" | "square",
+): { final: ImageAnalysis; mappedFrom: MappedFrom | null } {
+  const s = a.screenshot;
+  if (s.screenType !== "title_image" || s.subtype === "title_screen")
+    return { final: a, mappedFrom: null };
+  const own = s.captures.length === 1 && s.captures[0]?.screenType === "title_image";
+  if (s.composition !== "pure_art" && !own) return { final: a, mappedFrom: null };
+  // A title capture the model already saw keeps its own framing, area and composition.
+  const screenshot = own
+    ? {
+        ...s,
+        subtype: "title_screen",
+        captures: [{ ...(s.captures[0] as (typeof s.captures)[number]), subtype: "title_screen" }],
+      }
+    : {
+        ...s,
+        subtype: "title_screen",
+        composition: "single_full_capture" as const,
+        captureAreaPercent: 100,
+        captures: [
+          {
+            orientation,
+            screenType: "title_image",
+            subtype: "title_screen",
+            region: { x: 0, y: 0, w: 100, h: 100 },
+            areaPercent: 100,
+            framing: "full_bleed" as const,
+            description: "the in-game title screen (a title image counts as an in-game screen)",
+          },
+        ],
+      };
+  return {
+    final: { ...a, screenshot },
+    mappedFrom: {
+      screenType: s.screenType,
+      subtype: s.subtype,
+      rule: `${TAXONOMY_MAPPING}: a title image counts as the in-game title screen`,
+      original: {
+        composition: s.composition,
+        captures: s.captures,
+        captureAreaPercent: s.captureAreaPercent,
+      },
+    },
+  };
+}
+
 /** Adds the identity block and the taxonomy mapping. Idempotent; called on every write. */
 export function refreshRecord(
   r: AnalysisRecord,
@@ -78,13 +133,27 @@ export function refreshRecord(
         ...r.final,
         screenshot: {
           ...r.final.screenshot,
+          ...(r.mappedFrom.original ?? {}),
           screenType: r.mappedFrom.screenType,
           subtype: r.mappedFrom.subtype,
         },
       }
     : r.final;
   const m = mapKeyArt(base, identity.game);
-  return { ...out, final: m.final, mappedFrom: m.mappedFrom };
+  const t = mapTitleScreen(
+    m.final,
+    identity.image?.orientation ?? facts?.orientation ?? "portrait",
+  );
+  const mappedFrom = m.mappedFrom
+    ? t.mappedFrom
+      ? {
+          ...m.mappedFrom,
+          rule: `${m.mappedFrom.rule}; ${t.mappedFrom.rule}`,
+          original: t.mappedFrom.original,
+        }
+      : m.mappedFrom
+    : t.mappedFrom;
+  return { ...out, final: t.final, mappedFrom };
 }
 
 /** Record writer that refreshes identity and mapping first (shared lookups for a whole run). */
