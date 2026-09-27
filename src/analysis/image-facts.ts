@@ -1,9 +1,8 @@
-import { existsSync } from "node:fs";
-import { join } from "node:path";
 import { getPalette } from "colorthief";
 import type { ProjectPaths } from "../config/load.ts";
+import { imageKey, pixelsKey } from "../library/layout.ts";
+import { workspaceStorage } from "../storage/index.ts";
 import type { ImageDb } from "../store/imagedb.ts";
-import { readJsonIfExists, writeJsonAtomic } from "../util/fsx.ts";
 import { hexFamily } from "./colours.ts";
 
 export type ImageOrientation = "portrait" | "landscape" | "square";
@@ -60,20 +59,26 @@ export function ratioLabel(width: number, height: number): string {
   return `${width / g}:${height / g}`;
 }
 
-/** Computed once per image and cached in images/facts/<id>.json. */
+/**
+ * Computed once per image and cached: images/facts/<id>.json in a project that has not moved
+ * to the shared library yet, library images/pixels/<id>.<version>.json afterwards.
+ */
 export async function imageFacts(
   paths: ProjectPaths,
   db: ImageDb,
   imageId: string,
 ): Promise<ImageFacts | null> {
-  const cache = join(paths.base, "images", "facts", `${imageId}.json`);
-  const cached = readJsonIfExists(cache) as ImageFacts | undefined;
+  const storage = workspaceStorage(paths.workspace);
+  const cache = pixelsKey(paths, imageId, IMAGE_FACTS_VERSION);
+  const cached = storage.getJson(cache) as ImageFacts | undefined;
   if (cached?.version === IMAGE_FACTS_VERSION) return cached;
   const rec = db.get(imageId);
   if (!rec) return null;
   // Colours are measured on the 240 px thumbnail (same palette, about 20 times faster).
-  const src = existsSync(db.abs(rec.thumb)) ? db.abs(rec.thumb) : db.abs(rec.file);
-  const palette = (await getPalette(src, { colorCount: 6 }).catch(() => null)) ?? [];
+  // Read as bytes, so no file handle stays open (Windows cannot move or remove open files).
+  const src =
+    storage.getBytes(imageKey(paths, rec.thumb)) ?? storage.getBytes(imageKey(paths, rec.file));
+  const palette = src ? ((await getPalette(src, { colorCount: 6 }).catch(() => null)) ?? []) : [];
   const total = palette.reduce((n, c) => n + c.population, 0) || 1;
   const facts: ImageFacts = {
     version: IMAGE_FACTS_VERSION,
@@ -93,6 +98,6 @@ export async function imageFacts(
       .filter((c) => c.share >= 0.01)
       .sort((a, b) => b.share - a.share),
   };
-  writeJsonAtomic(cache, facts);
+  storage.putJson(cache, facts);
   return facts;
 }

@@ -2,6 +2,10 @@ import { createRequire } from "node:module";
 import sharp from "sharp";
 import { sha256 } from "../util/hash.ts";
 
+// No open-file cache: on Windows a cached handle blocks moving or removing the image later
+// (the library import moves folders and can roll back). colorthief uses this same sharp.
+sharp.cache(false);
+
 // sharp-phash is CommonJS (module.exports = fn) while its typings declare an ES default export.
 const require = createRequire(import.meta.url);
 const phash = require("sharp-phash") as (image: Buffer) => Promise<string>;

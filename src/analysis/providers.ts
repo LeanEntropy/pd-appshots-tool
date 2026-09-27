@@ -6,12 +6,31 @@ import { sha256, stableStringify } from "../util/hash.ts";
 import { run } from "../util/proc.ts";
 import type { RenderedPrompt } from "./prompts.ts";
 
+/**
+ * A provider-neutral image (plan 12B, B1): providers never know about storage. Command-line
+ * providers use the local file (or a temporary copy of the bytes); an API provider sends bytes.
+ */
+export interface ModelImage {
+  mimeType: string;
+  localPath?: string;
+  bytes: () => Buffer;
+}
+
+/** A local file for a command-line tool; `done` removes a temporary copy. */
+export function localFile(image: ModelImage): { path: string; done: () => void } {
+  if (image.localPath) return { path: image.localPath, done: () => {} };
+  const ext = image.mimeType === "image/png" ? "png" : "jpg";
+  const path = join(tmpdir(), `ssr-img-${process.pid}-${sha256(image.bytes())}.${ext}`);
+  writeFileSync(path, image.bytes());
+  return { path, done: () => rmSync(path, { force: true }) };
+}
+
 export interface VisionCall {
   model: string;
   system: RenderedPrompt;
   /** Task text; the images are listed by reference label. */
   prompt: string;
-  images: { ref: string; path: string }[];
+  images: { ref: string; image: ModelImage }[];
   schema: Record<string, unknown>;
   maxBudgetUsd: number;
   timeoutMs: number;
@@ -40,7 +59,8 @@ export function claudeProvider(model: string): Provider {
     family: "anthropic",
     model,
     async call(c) {
-      const list = c.images.map((i) => `${i.ref}: ${i.path}`).join("\n");
+      const files = c.images.map((i) => ({ ref: i.ref, ...localFile(i.image) }));
+      const list = files.map((i) => `${i.ref}: ${i.path}`).join("\n");
       const input = c.images.length
         ? `${c.prompt}\n\nRead each image file with the Read tool, then answer.\n${list}`
         : c.prompt;
@@ -65,7 +85,9 @@ export function claudeProvider(model: string): Provider {
         "--max-budget-usd",
         c.maxBudgetUsd.toFixed(2),
       ];
-      const r = await run("claude", args, { input, timeoutMs: c.timeoutMs });
+      const r = await run("claude", args, { input, timeoutMs: c.timeoutMs }).finally(() => {
+        for (const f of files) f.done();
+      });
       try {
         const out = JSON.parse(r.stdout) as {
           is_error?: boolean;
@@ -111,9 +133,12 @@ export function codexProvider(model: string, schemaDir: string): Provider {
         ? `${c.system.text}\n\n${c.prompt}\n\nThe attached images are, in order: ${refs}.`
         : `${c.system.text}\n\n${c.prompt}`;
       const args = ["exec", "-m", model, "-s", "read-only", "--skip-git-repo-check", "--ephemeral"];
-      for (const i of c.images) args.push("-i", i.path);
+      const files = c.images.map((i) => localFile(i.image));
+      for (const f of files) args.push("-i", f.path);
       args.push("--output-schema", schemaFile, "-o", out, "-");
-      const r = await run("codex", args, { input, timeoutMs: c.timeoutMs });
+      const r = await run("codex", args, { input, timeoutMs: c.timeoutMs }).finally(() => {
+        for (const f of files) f.done();
+      });
       try {
         const text = readFileSync(out, "utf8");
         if (r.code !== 0)

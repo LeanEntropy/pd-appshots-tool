@@ -90,18 +90,21 @@ export async function buildPlan(
   const client = newClient(loaded, paths);
   const base = baselineMarket(config);
 
+  const chartsOn = config.charts.enabled !== false;
   let category = config.category;
-  if (category === "auto") {
+  if (chartsOn && category === "auto") {
     const ours = await client.listing(config.ourApp.id, base.gl, base.hl);
     if (ours.status !== "ok" || !ours.genreId)
       throw new Error('Could not read our game\'s store category. Set "category" in the config.');
     category = ours.genreId;
   }
-  log(
-    `Store category: ${humanCategory(category)}. Reading the top ${config.charts.depth} ${config.charts.collection.toLowerCase()} chart in ${config.markets.length} countries...`,
-  );
+  if (chartsOn)
+    log(
+      `Store category: ${humanCategory(category)}. Reading the top ${config.charts.depth} ${config.charts.collection.toLowerCase()} chart in ${config.markets.length} countries...`,
+    );
+  else log("Top-grossing charts are switched off for this project.");
   const charts: ChartResult[] = [];
-  for (const m of config.markets) {
+  for (const m of chartsOn ? config.markets : []) {
     charts.push(
       await client.chart(config.charts.collection, category, m.gl, m.hl, config.charts.depth),
     );

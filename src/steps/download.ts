@@ -2,7 +2,7 @@ import { type LoadedConfig, loadTaxonomy, projectPaths } from "../config/load.ts
 import { computeStats, type RunStats } from "../core/stats.ts";
 import { baselineMarket, deckKey } from "../core/targets.ts";
 import { fullResUrl, googleImageId, withDeckDeviceClasses } from "../play/screenshots.ts";
-import { ImageDb } from "../store/imagedb.ts";
+import { openImageDb } from "../store/imagedb.ts";
 import {
   type DeckManifest,
   type DeckSlot,
@@ -45,7 +45,7 @@ export async function runDownload(
   const paths = projectPaths(loaded);
   // Validate the taxonomy before writing anything, so a bad file cannot leave a partial run.
   const taxonomyHash = loadTaxonomy(loaded).hash;
-  const db = ImageDb.open(paths.imageDb, paths.imagesOrig, paths.imagesThumb);
+  const db = openImageDb(paths);
 
   // Unique Google images still missing from the database, in plan order, with where each is first seen.
   const wanted = new Map<string, string>();

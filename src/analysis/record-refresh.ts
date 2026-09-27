@@ -1,5 +1,5 @@
 import { type LoadedConfig, loadTaxonomy, projectPaths } from "../config/load.ts";
-import { ImageDb } from "../store/imagedb.ts";
+import { type ImageDb, openImageDb } from "../store/imagedb.ts";
 import { normaliseText } from "./compare.ts";
 import { type ImageIdentity, identityBuilder } from "./identity.ts";
 import { type ImageFacts, imageFacts } from "./image-facts.ts";
@@ -91,7 +91,7 @@ export function refreshRecord(
 export function recordWriter(loaded: LoadedConfig, db?: ImageDb) {
   const paths = projectPaths(loaded);
   const t = loadTaxonomy(loaded).taxonomy;
-  const store = db ?? ImageDb.open(paths.imageDb, paths.imagesOrig, paths.imagesThumb);
+  const store = db ?? openImageDb(paths);
   const identityOf = identityBuilder(paths, store, loaded.config);
   return async (r: AnalysisRecord): Promise<AnalysisRecord> => {
     const facts = await imageFacts(paths, store, r.imageId);

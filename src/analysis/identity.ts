@@ -1,14 +1,16 @@
-import { existsSync, readdirSync } from "node:fs";
-import { join, relative } from "node:path";
 import type { ProjectPaths } from "../config/load.ts";
 import type { Config } from "../config/schema.ts";
+import { imageKey, modelFile } from "../library/layout.ts";
+import { projectKey, workspaceStorage } from "../storage/index.ts";
 import type { ImageDb, ImageSource } from "../store/imagedb.ts";
 import { type DeckManifest, readDeck } from "../store/manifest.ts";
-import { readJson } from "../util/fsx.ts";
 import type { ImageFacts } from "./image-facts.ts";
 
 export interface FilePath {
-  /** Relative to the project workspace folder (workspace/<project>/), forward slashes. */
+  /**
+   * As served under the project (workspace/<project>/images/...), forward slashes. For a project
+   * in the shared library this is the path the gallery serves, not a folder on disk.
+   */
   relative: string;
   absolute: string;
   exists: boolean;
@@ -61,21 +63,22 @@ export function identityBuilder(paths: ProjectPaths, db: ImageDb, config: Config
     return titles.get(k) as string;
   };
   // Every current deck manifest, indexed by image id (appearances = deck slots + database sources).
+  const storage = workspaceStorage(paths.workspace);
   let deckIndex: Map<string, ImageSource[]> | null = null;
   const fromDecks = (imageId: string): ImageSource[] => {
     if (!deckIndex) {
       deckIndex = new Map();
-      if (existsSync(paths.decks))
-        for (const app of readdirSync(paths.decks))
-          for (const f of readdirSync(join(paths.decks, app)).filter((n) => n.endsWith(".json"))) {
-            const d = readJson(join(paths.decks, app, f)) as DeckManifest;
-            for (const sl of d.slots ?? []) {
-              if (!sl.imageId) continue;
-              const list = deckIndex.get(sl.imageId) ?? [];
-              list.push({ appId: d.appId, gl: d.gl, hl: d.hl, position: sl.position });
-              deckIndex.set(sl.imageId, list);
-            }
-          }
+      for (const k of storage.list(projectKey(paths, "decks"))) {
+        // decks/<app>/<gl>-<hl>.json only
+        if (!k.endsWith(".json") || k.split("/").length !== 5) continue;
+        const d = storage.getJson(k) as DeckManifest;
+        for (const sl of d.slots ?? []) {
+          if (!sl.imageId) continue;
+          const list = deckIndex.get(sl.imageId) ?? [];
+          list.push({ appId: d.appId, gl: d.gl, hl: d.hl, position: sl.position });
+          deckIndex.set(sl.imageId, list);
+        }
+      }
     }
     return deckIndex.get(imageId) ?? [];
   };
@@ -89,11 +92,10 @@ export function identityBuilder(paths: ProjectPaths, db: ImageDb, config: Config
     }
     return googleIds.get(k) || null;
   };
-  const file = (abs: string): FilePath => ({
-    relative: relative(paths.base, abs).split("\\").join("/"),
-    absolute: abs,
-    exists: existsSync(abs),
-  });
+  const file = (rel: string): FilePath => {
+    const k = imageKey(paths, rel);
+    return { relative: `images/${rel}`, absolute: storage.localPath(k), exists: storage.exists(k) };
+  };
   return (
     r: { imageId: string; appId: string; gl: string; hl: string; position: number },
     facts: ImageFacts | null,
@@ -121,9 +123,9 @@ export function identityBuilder(paths: ProjectPaths, db: ImageDb, config: Config
       analysedAs: { gl: r.gl, hl: r.hl, position: r.position },
       image: facts,
       files: {
-        original: rec ? file(db.abs(rec.file)) : null,
-        model: file(join(paths.imagesModel, `${r.imageId}.jpg`)),
-        thumb: rec ? file(db.abs(rec.thumb)) : null,
+        original: rec ? file(rec.file) : null,
+        model: file(modelFile(!!paths.library, r.imageId)),
+        thumb: rec ? file(rec.thumb) : null,
       },
       sourceUrl: gid ? `https://play-lh.googleusercontent.com/${gid}=s0` : null,
       storePage: storePage(r.appId, r.gl, r.hl),

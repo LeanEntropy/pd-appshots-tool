@@ -50,18 +50,28 @@ after `--`, e.g. `npm run download -- --yes`.
 | Store overview (free) | `npm run overview` | Per country, from the downloaded images only: orientation mix, aspect ratios, deck lengths, reuse of US images, measured colours. Also shown and rebuildable in the gallery. No AI |
 | Refresh analysis records | `npm run refresh-records` | Rebuilds each record's identity block (game, files, source URL, every appearance) and the taxonomy mapping. No AI call |
 | Check the core size | `npm run fit` | Applies the whole-deck rule to your pick: our deck first, whole competitor decks only, within the cap |
+| Projects | `npm run projects` | Lists the projects (most recently opened first) |
+| Import into the shared library | `npm run migrate` | Dry run (reads only): settings check, files to hardlink, content-hash check of every original, which analyses other projects may reuse, and the approval numbers before. `npm run migrate -- --yes` imports: nothing is downloaded or analysed, and the project only switches over when its images, approval numbers, report freshness and views are proven unchanged (otherwise everything it created is removed) |
+
+Every command works on the most recently opened project; `-- --project <id>` picks another.
+Before a project is imported, it is read from `configs/<project>.json` (`-- --config <file>`).
 
 Development: `npm test`, `npm run typecheck`, `npm run lint`.
 
 ## Where things are
 
 ```
-configs/<project>.json          game config (competitors, countries, charts, caps, models)
+configs/defaults.json           tool defaults (models, caps, estimates, download pacing, taxonomy)
+configs/<project>.json          game config before its import (competitors, countries, charts)
 taxonomies/mobile-rpg.v1.json   screen types and marketing-layer vocabulary (draft)
 tools/psd/                      optional Python helper for the PSD (psd-tools)
 src/                            TypeScript tool
+workspace/projects.json         project registry (an index, rebuilt from the project folders)
+workspace/_library/             shared by all projects once imported: images/, analysis/<sha>/<key>.json,
+                                objects/ (per-image model answers), google/ (image id -> hashes)
 workspace/<project>/            run data (gitignored)
-  images/orig/<sha256>.<ext>    every image stored once, named by its content hash
+  project.json, refs.json       settings and the library images this project uses (after the import)
+  images/orig/<sha256>.<ext>    every image stored once, named by its content hash (before the import)
   images/thumb/<sha256>.webp    240 px thumbnails
   images/db.json                image database: hashes, perceptual hash, size, device guess, where seen
   decks/<app>/<country>-<lang>.json   store order per game and country, pointing to image ids

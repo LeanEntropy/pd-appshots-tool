@@ -1,6 +1,7 @@
 import { existsSync, readFileSync } from "node:fs";
 import { dirname, isAbsolute, join, resolve } from "node:path";
 import { z } from "zod";
+import { type LayoutOverride, libraryLayout } from "../library/layout.ts";
 import { readJson, writeJsonAtomic } from "../util/fsx.ts";
 import { stableHash } from "../util/hash.ts";
 import { type Config, ConfigSchema, type RunConfig, RunConfigSchema } from "./schema.ts";
@@ -12,6 +13,10 @@ export interface LoadedConfig {
   /** Repo root (parent of the configs folder). */
   root: string;
   hash: string;
+  /** Set when loaded from workspace/<id>/project.json (loadProject). */
+  projectId?: string;
+  /** Forces the old or the library layout (the import's before/after comparison only). */
+  layout?: LayoutOverride;
 }
 
 const TaxonomySchema = z.object({
@@ -50,13 +55,21 @@ export function loadTaxonomy(loaded: LoadedConfig): { taxonomy: Taxonomy; hash: 
 
 /** Folder layout of one game project's local workspace (gitignored). */
 export function projectPaths(loaded: LoadedConfig) {
-  const base = join(fromRoot(loaded, loaded.config.workspace), loaded.config.project);
+  const workspace = fromRoot(loaded, loaded.config.workspace);
+  const base = join(workspace, loaded.config.project);
+  // Once imported, images, pixel facts, analysis records and per-image answers are shared.
+  const library = libraryLayout(loaded.config, workspace, loaded.layout);
+  const images = library ? join(library.dir, "images") : join(base, "images");
   return {
+    workspace,
+    projectId: loaded.config.project,
     base,
+    library,
     cache: join(base, "cache"),
-    imagesOrig: join(base, "images", "orig"),
-    imagesThumb: join(base, "images", "thumb"),
-    imagesModel: join(base, "images", "model"),
+    imagesOrig: join(images, "orig"),
+    imagesThumb: join(images, "thumb"),
+    imagesModel: join(images, "model"),
+    /** Prompts, JSON schemas and synthesis answers (always the project's own). */
     objects: join(base, "objects"),
     analysis: join(base, "analysis"),
     orders: join(base, "orders"),

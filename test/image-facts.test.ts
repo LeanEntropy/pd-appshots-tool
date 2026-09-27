@@ -12,7 +12,7 @@ import { type AnalysisRecord, infoViews, writeRecord } from "../src/analysis/rec
 import { compositionProblems } from "../src/analysis/schema.ts";
 import { projectPaths } from "../src/config/load.ts";
 import { renderGalleryHtml } from "../src/steps/deck-view.ts";
-import { ImageDb } from "../src/store/imagedb.ts";
+import { openImageDb } from "../src/store/imagedb.ts";
 import { reading } from "./helpers/fake-provider.ts";
 import { tempProject } from "./helpers/project.ts";
 
@@ -28,7 +28,7 @@ test("orientation and aspect ratio come from the pixel size, never 'not applicab
 test("image facts are computed from the file (size, orientation, colorthief palette) and cached", async () => {
   const loaded = await tempProject({});
   const paths = projectPaths(loaded);
-  const db = ImageDb.open(paths.imageDb, paths.imagesOrig, paths.imagesThumb);
+  const db = openImageDb(paths);
   const id = (db.all()[0] as { id: string }).id;
   const f = await imageFacts(paths, db, id);
   assert.equal(f?.orientation, "portrait");
@@ -97,7 +97,7 @@ test("composition must match the captures (schema v3)", () => {
 test("failed records show a plain pending message, the error only as details", async () => {
   const loaded = await tempProject({});
   const paths = projectPaths(loaded);
-  const db = ImageDb.open(paths.imageDb, paths.imagesOrig, paths.imagesThumb);
+  const db = openImageDb(paths);
   const id = (db.all()[0] as { id: string }).id;
   const rec: AnalysisRecord = {
     imageId: id,

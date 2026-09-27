@@ -1,0 +1,83 @@
+import type { ProjectPaths } from "../config/load.ts";
+import { LIB } from "../library/layout.ts";
+import { readRefs } from "../library/refs.ts";
+import { projectKey, workspaceStorage } from "../storage/index.ts";
+import { unprovenKey } from "./pipeline.ts";
+import type { AnalysisRecord } from "./records.ts";
+
+/**
+ * Where a project's analysis records live. Before the import: one file per image in the
+ * project's analysis folder. Afterwards: the shared library, one file per image and analysis
+ * key. A project sees, per image:
+ *   1. the record made with its current settings (shared by every project with those settings);
+ *   2. otherwise its own earlier record (unproven import, or its own run with older settings),
+ *      exactly as it saw it before the library existed.
+ * Other projects' records under other settings are never used.
+ */
+export function readStoredRecord(paths: ProjectPaths, imageId: string): AnalysisRecord | undefined {
+  const storage = workspaceStorage(paths.workspace);
+  const lib = paths.library;
+  if (!lib) {
+    return storage.getJson(projectKey(paths, "analysis", `${imageId}.json`)) as
+      | AnalysisRecord
+      | undefined;
+  }
+  const current = storage.getJson(LIB.record(imageId, lib.analysisKey)) as
+    | AnalysisRecord
+    | undefined;
+  if (current) return current;
+  let best: AnalysisRecord | undefined;
+  const own = unprovenKey(paths.projectId);
+  for (const k of storage.list(LIB.analysisDir(imageId))) {
+    if (!k.endsWith(".json")) continue;
+    const r = storage.getJson(k) as AnalysisRecord | undefined;
+    if (!r || (r.key !== own && r.writtenBy !== paths.projectId)) continue;
+    if (!best || r.updatedAt > best.updatedAt) best = r;
+  }
+  return best;
+}
+
+export function readStoredRecords(paths: ProjectPaths): Map<string, AnalysisRecord> {
+  const storage = workspaceStorage(paths.workspace);
+  const out = new Map<string, AnalysisRecord>();
+  const lib = paths.library;
+  if (!lib) {
+    for (const k of storage.list(projectKey(paths, "analysis"))) {
+      if (!k.endsWith(".json") || k.split("/").length !== 4) continue;
+      const r = storage.getJson(k) as AnalysisRecord;
+      out.set(r.imageId, r);
+    }
+    return out;
+  }
+  for (const id of Object.keys(readRefs(storage, lib.refsKey, paths.projectId).images)) {
+    const r = readStoredRecord(paths, id);
+    if (r) out.set(id, r);
+  }
+  return out;
+}
+
+/**
+ * Saves a record where it was read from (its key), or under the current analysis key when it is
+ * new. The first usable result records which project and run paid for it; that is never changed.
+ */
+export function writeStoredRecord(paths: ProjectPaths, r: AnalysisRecord): void {
+  const storage = workspaceStorage(paths.workspace);
+  const lib = paths.library;
+  if (!lib) {
+    storage.putJson(projectKey(paths, "analysis", `${r.imageId}.json`), r);
+    return;
+  }
+  const key = r.key ?? lib.analysisKey;
+  const usable = r.status !== "failed" && !!r.final;
+  const out: AnalysisRecord = {
+    ...r,
+    key,
+    provenance: r.provenance ?? (key === lib.analysisKey ? "proven" : "unproven"),
+    ...(key === lib.analysisKey && !r.pipeline ? { pipeline: lib.pipeline } : {}),
+    writtenBy: paths.projectId,
+    paidBy:
+      r.paidBy ??
+      (usable ? { projectId: paths.projectId, runId: r.runId, usd: null, at: r.updatedAt } : null),
+  };
+  storage.putJson(LIB.record(r.imageId, key), out);
+}

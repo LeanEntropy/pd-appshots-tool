@@ -4,7 +4,8 @@ import { createReadStream, existsSync, statSync } from "node:fs";
 import { createServer, type IncomingMessage, type Server, type ServerResponse } from "node:http";
 import type { AddressInfo } from "node:net";
 import { extname, join, normalize, sep } from "node:path";
-import { type LoadedConfig, projectPaths } from "../config/load.ts";
+import { type LoadedConfig, type ProjectPaths, projectPaths } from "../config/load.ts";
+import { libraryImagePath } from "../library/serve.ts";
 import { renderGalleryHtml } from "../steps/deck-view.ts";
 import {
   type ApiResponse,
@@ -63,13 +64,18 @@ function localHost(req: IncomingMessage): boolean {
   return host === "127.0.0.1" || host === "localhost";
 }
 
-/** Resolves a URL path to a file under the project's image, view or own-asset folders. */
-export function staticFile(base: string, urlPath: string): string | null {
+/**
+ * Resolves a URL path to a file under the project's image, view or own-asset folders. For a
+ * project in the shared library, images/... resolve to library files the project references.
+ */
+export function staticFile(base: string, urlPath: string, paths?: ProjectPaths): string | null {
   const rel = normalize(decodeURIComponent(urlPath)).replace(/^[\\/]+/, "");
   const top = rel.split(/[\\/]/)[0] ?? "";
   if (!STATIC_ROOTS.includes(top) || rel.split(/[\\/]/).includes("..")) return null;
   // Only the generated gallery page is served as a page; no other file may run script here.
   if ([".html", ".htm", ".svg", ".js", ".mjs"].includes(extname(rel).toLowerCase())) return null;
+  if (top === "images" && paths?.library)
+    return libraryImagePath(paths, rel.split(/[\\/]/).join("/"));
   const file = join(base, rel);
   if (!file.startsWith(base + sep) || !existsSync(file) || !statSync(file).isFile()) return null;
   return file;
@@ -144,7 +150,8 @@ export function createGalleryServer(
         const r = await post(loaded, body);
         return send(res, r.status, r.body);
       }
-      const file = req.method === "GET" ? staticFile(base, url.pathname) : null;
+      const file =
+        req.method === "GET" ? staticFile(base, url.pathname, projectPaths(loaded)) : null;
       if (!file) return send(res, 404, { problems: ["Not found."] });
       res.writeHead(200, {
         "Content-Type": TYPES[extname(file).toLowerCase()] ?? "application/octet-stream",

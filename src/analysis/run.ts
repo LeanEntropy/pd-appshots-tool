@@ -1,9 +1,11 @@
 import { join } from "node:path";
 import { type LoadedConfig, loadTaxonomy, projectPaths } from "../config/load.ts";
 import { coreDeck } from "../core/selection.ts";
-import { ImageDb } from "../store/imagedb.ts";
+import { answerKey } from "../library/layout.ts";
+import { workspaceStorage } from "../storage/index.ts";
+import { openImageDb } from "../store/imagedb.ts";
 import { newRunId } from "../store/manifest.ts";
-import { ensureDir, writeJsonOnce } from "../util/fsx.ts";
+import { writeJsonOnce } from "../util/fsx.ts";
 import type { CallContext, ChunkImage } from "./call.ts";
 import { batchDataHash, batchEntries } from "./entries.ts";
 import { writeFinalReport } from "./final-report.ts";
@@ -77,8 +79,7 @@ export async function runAnalysis(
   const { config } = loaded;
   const paths = projectPaths(loaded);
   const { taxonomy, hash: taxonomyHash } = loadTaxonomy(loaded);
-  const db = ImageDb.open(paths.imageDb, paths.imagesOrig, paths.imagesThumb);
-  ensureDir(paths.imagesModel);
+  const db = openImageDb(paths);
   const writeRec = recordWriter(loaded, db);
   const runId = newRunId(plan.stage);
   const budget = Math.min(
@@ -87,7 +88,8 @@ export async function runAnalysis(
   );
   let spent = 0;
   const ctx: CallContext = {
-    objectsDir: paths.objects,
+    storage: workspaceStorage(paths.workspace),
+    answerKey: (step, key) => answerKey(paths, step, key),
     taxonomy,
     taxonomyHash,
     maxBudgetUsd: 3,
@@ -151,7 +153,7 @@ export async function runAnalysis(
       for (const it of part)
         chunk.push({
           imageId: it.imageId,
-          path: await modelCopy(db, paths.imagesModel, it.imageId),
+          image: await modelCopy(paths, db, it.imageId),
         });
       const recs = await analyseChunk(chunk, part, label, {
         producer: deps.producer,
