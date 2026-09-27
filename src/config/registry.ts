@@ -1,6 +1,6 @@
 import { z } from "zod";
 import type { Storage } from "../storage/index.ts";
-import { readSettings } from "./project.ts";
+import { readSettings, settingsKey } from "./project.ts";
 
 /** workspace/projects.json: an index of the projects, rebuildable from their project.json files. */
 export const REGISTRY_KEY = "registry/projects.json";
@@ -61,7 +61,9 @@ export function readRegistry(storage: Storage): Registry {
     if (bytes) storage.putBlob(`${REGISTRY_KEY}.bad-${stamp}`, bytes);
   }
   const current = parsed?.success ? parsed.data : undefined;
-  const ids = storage.listProjectIds();
+  const ids = storage
+    .listProjectIds()
+    .filter((id) => storage.exists(settingsKey({ projectId: id })));
   const inStep =
     current &&
     current.projects.length === ids.length &&

@@ -1,34 +1,19 @@
 import { resolve } from "node:path";
-import { PER_IMAGE_STEPS } from "../../analysis/pipeline.ts";
+import { reviewPolicy } from "../../analysis/pipeline.ts";
 import { type LoadedConfig, loadConfig, projectPaths } from "../../config/load.ts";
 import {
   configFromSettings,
   loadDefaults,
   readSettings,
   settingsFromConfig,
-  settingsKey,
   workspaceDir,
 } from "../../config/project.ts";
 import type { ProjectSettings } from "../../config/project-schema.ts";
-import { upsertEntry } from "../../config/registry.ts";
-import { moveKey } from "../../storage/import-ops.ts";
-import {
-  type ProjectContext,
-  projectKey,
-  type Storage,
-  workspaceStorage,
-} from "../../storage/index.ts";
+import { type ProjectContext, workspaceStorage } from "../../storage/index.ts";
 import { acquireAll, LOCKS } from "../../storage/leases.ts";
 import { stableStringify } from "../../util/hash.ts";
 import { refsKey } from "../layout.ts";
-import {
-  type Journal,
-  readJournal,
-  rollback,
-  saveJournal,
-  stagedRefsKey,
-  startJournal,
-} from "./journal.ts";
+import { readJournal, rollback, saveJournal, stagedRefsKey, startJournal } from "./journal.ts";
 import { compareSnapshots, type Snapshot, takeSnapshot } from "./snapshot.ts";
 import {
   type LinkCounts,
@@ -40,6 +25,7 @@ import {
   writeRecords,
 } from "./steps.ts";
 import { hasLegacyData, inventory, runningAnalysis, verifyOriginals } from "./survey.ts";
+import { finishSwitch, sameSettings } from "./switch.ts";
 
 export interface ImportOptions {
   root: string;
@@ -71,43 +57,6 @@ export interface ImportReport {
   after: Snapshot | null;
   gate: string[];
   linkCounts: LinkCounts | null;
-}
-
-const sameSettings = (a: ProjectSettings, b: ProjectSettings) =>
-  stableStringify({ ...a, createdAt: "", updatedAt: "" }) ===
-  stableStringify({ ...b, createdAt: "", updatedAt: "" });
-
-/** The old folders are kept (hardlinks, no extra space) until the user confirms deleting them. */
-function moveOldFolders(storage: Storage, ctx: ProjectContext): void {
-  const keep = (...p: string[]) => projectKey(ctx, "_before-library", ...p);
-  moveKey(storage, projectKey(ctx, "images"), keep("images"));
-  moveKey(storage, projectKey(ctx, "analysis"), keep("analysis"));
-  for (const step of PER_IMAGE_STEPS)
-    moveKey(storage, projectKey(ctx, "objects", step), keep("objects", step));
-}
-
-function finishSwitch(
-  storage: Storage,
-  ctx: ProjectContext,
-  settings: ProjectSettings,
-  j: Journal,
-): void {
-  j.phase = "switching";
-  saveJournal(storage, ctx, j);
-  const existing = readSettings(storage, ctx);
-  if (!existing) storage.putJsonOnce(settingsKey(ctx), settings);
-  if (!storage.exists(refsKey(ctx))) moveKey(storage, stagedRefsKey(ctx), refsKey(ctx));
-  moveOldFolders(storage, ctx);
-  const s = existing ?? settings;
-  upsertEntry(storage, {
-    id: ctx.projectId,
-    name: s.name,
-    ourAppId: s.ourApp.id,
-    createdAt: s.createdAt,
-    lastOpenedAt: new Date().toISOString(),
-    archived: s.archived ?? false,
-  });
-  saveJournal(storage, ctx, { ...j, phase: "done", finishedAt: new Date().toISOString() });
 }
 
 /**
@@ -151,13 +100,23 @@ export async function runImport(o: ImportOptions): Promise<ImportReport> {
   if (journal?.phase === "switching") {
     if (!o.apply)
       throw new Error("An import was interrupted while switching; run it again to finish.");
-    finishSwitch(storage, ctx, existing ?? settings, journal);
+    const held = acquireAll(storage, [LOCKS.library, LOCKS.ai, LOCKS.store], {
+      projectId: ctx.projectId,
+      kind: "import",
+    });
+    if ("heldBy" in held)
+      throw new Error("Another job is running. Finish the interrupted import when it has ended.");
+    try {
+      finishSwitch(storage, ctx, existing ?? settings, journal);
+    } finally {
+      held.release();
+    }
     log("Finished an interrupted import.");
     return alreadyImported(legacy, settings);
   }
 
   log("Reading the project's images, analyses and model answers…");
-  const inv = inventory(storage, ctx);
+  const inv = inventory(storage, ctx, reviewPolicy(legacy.config));
   const before = takeSnapshot(legacy);
   const blocked = runningAnalysis(storage, ctx);
   const files: Record<string, number> = {};
@@ -221,31 +180,38 @@ export async function runImport(o: ImportOptions): Promise<ImportReport> {
     if (o.failAfter === step) throw new Error(`test failure after ${step}`);
   };
   try {
+    // Taken again under the locks, so nothing can change between this and the check.
+    const blockedNow = runningAnalysis(storage, ctx);
+    if (blockedNow) throw new Error(`An analysis started meanwhile (${blockedNow}).`);
+    report.before = takeSnapshot(legacy);
     save();
     log(`Linking ${inv.links.length} files into the shared library…`);
     report.linkCounts = linkFiles(storage, inv, j, save, log);
     report.hashes = { checked: report.images, bad: [] };
     fail("link");
-    writeFacts(storage, inv, j, now);
+    locks.check();
+    writeFacts(storage, inv, j, save, now);
     const staged = stagedRefsKey(ctx);
     j.created.push(staged);
-    stageRefs(storage, ctx, inv, staged);
     save();
+    stageRefs(storage, ctx, inv, staged);
     fail("facts");
-    writeRecords(storage, ctx, inv, j);
+    locks.check();
+    writeRecords(storage, ctx, inv, j, save);
     j.phase = "staged";
     save();
     fail("records");
     const stagedLoaded: LoadedConfig = { ...legacy, layout: { mode: "library", refsKey: staged } };
-    await refreshIdentities(storage, stagedLoaded, j);
-    save();
+    await refreshIdentities(storage, stagedLoaded, j, save);
     fail("identity");
+    locks.check();
     log("Comparing the project before and after (images, approval numbers, reports, views)…");
     report.after = takeSnapshot(stagedLoaded);
-    report.gate = compareSnapshots(before, report.after);
+    report.gate = compareSnapshots(report.before, report.after);
     fail("gate");
     if (report.gate.length)
       throw new Error(`the check found differences: ${report.gate.join("; ")}`);
+    locks.check();
     j.created = j.created.filter((k) => k !== staged); // becomes refs.json
     finishSwitch(storage, ctx, settings, j);
     log("Imported. The project now uses the shared library.");

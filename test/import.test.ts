@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { existsSync, mkdirSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, readFileSync, renameSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { test } from "node:test";
 import { buildAnalysisPlan } from "../src/analysis/plan.ts";
@@ -131,3 +131,37 @@ test("an analysis still running in the old tool blocks the import", async () => 
   assert.match(r.blocked ?? "", /image 5 \/ 17/);
   assert.deepEqual(files(join(root, "workspace", "_library")), []);
 });
+
+test("an import interrupted while switching is finished by the next run, under the locks", async () => {
+  const { loaded, root } = await legacyProject();
+  await runImport(opts(root, loaded.path, true));
+  const base = projectPaths(loaded).base;
+  // As if it stopped after refs.json but before moving the old analysis folder.
+  renameSync(join(base, "_before-library", "analysis"), join(base, "analysis"));
+  const jf = join(base, "state", "import.json");
+  writeFileSync(
+    jf,
+    JSON.stringify({ ...JSON.parse(readFileSync(jf, "utf8")), phase: "switching" }),
+  );
+  const r = await runImport(opts(root, loaded.path, true));
+  assert.equal(r.status, "already-imported");
+  assert.ok(!existsSync(join(base, "analysis")));
+  assert.ok(existsSync(join(base, "_before-library", "analysis")));
+  assert.equal(JSON.parse(readFileSync(jf, "utf8")).phase, "done");
+  assert.ok(!existsSync(join(root, "workspace", ".locks", "library.lock")));
+});
+
+test("a rollback keeps library entries another project uses", async () => {
+  const { loaded, root } = await legacyProject();
+  const img = openImageDb(projectPaths(loaded)).all()[0];
+  assert.ok(img);
+  const storage = workspaceStorage(join(root, "workspace"));
+  storage.putJson("projects/other/refs.json", {
+    version: 1,
+    projectId: "other",
+    images: { [img.id]: { sources: [], googleIds: [] } },
+  });
+  await assert.rejects(runImport({ ...opts(root, loaded.path, true), failAfter: "gate" }));
+  const origs = files(join(root, "workspace", "_library", "images", "orig"));
+  assert.equal(origs.length, 1, "only the shared image stays");
+  assert.ok(origs[0]?.includes(img.id));});

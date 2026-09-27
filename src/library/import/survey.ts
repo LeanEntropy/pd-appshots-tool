@@ -1,6 +1,6 @@
 import { createHash } from "node:crypto";
 import type { StoredObject } from "../../analysis/call.ts";
-import { PER_IMAGE_STEPS } from "../../analysis/pipeline.ts";
+import { PER_IMAGE_STEPS, type ReviewPolicy } from "../../analysis/pipeline.ts";
 import type { AnalysisRecord } from "../../analysis/records.ts";
 import type { ProjectContext } from "../../storage/index.ts";
 import { projectKey, type Storage } from "../../storage/index.ts";
@@ -33,7 +33,11 @@ export function hasLegacyData(storage: Storage, ctx: ProjectContext): boolean {
 }
 
 /** Everything the import would link, write and classify. Reads only. */
-export function inventory(storage: Storage, ctx: ProjectContext): Inventory {
+export function inventory(
+  storage: Storage,
+  ctx: ProjectContext,
+  policy: ReviewPolicy | "none",
+): Inventory {
   const db = storage.getJson(DB(ctx)) as DbFile | undefined;
   if (!db?.images) throw new Error(`Project "${ctx.projectId}" has no image database to import.`);
   const links: LinkOp[] = [];
@@ -72,7 +76,7 @@ export function inventory(storage: Storage, ctx: ProjectContext): Inventory {
   for (const k of storage.list(projectKey(ctx, "analysis"))) {
     if (!k.endsWith(".json")) continue;
     const record = storage.getJson(k) as AnalysisRecord;
-    records.push({ record, proof: proveRecord(storage, ctx, record) });
+    records.push({ record, proof: proveRecord(storage, ctx, record, policy) });
   }
   records.sort((a, b) => a.record.imageId.localeCompare(b.record.imageId));
   return { db, links, pixels, records, bytes };

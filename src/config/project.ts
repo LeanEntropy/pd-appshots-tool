@@ -75,7 +75,9 @@ export function settingsToRawConfig(s: ProjectSettings, d: ToolDefaults): Record
     taxonomy: d.taxonomy,
   };
   const merged = deepMerge(tool, s.overrides ?? {}) as typeof tool;
+  // Tool values first: the project's own fields below always win.
   return {
+    ...merged,
     schemaVersion: 1,
     project: s.id,
     workspace: d.workspace,
@@ -90,7 +92,6 @@ export function settingsToRawConfig(s: ProjectSettings, d: ToolDefaults): Record
       analyse: d.charts.analyse,
       includeBaselineLocale: d.charts.includeBaselineLocale,
     },
-    ...merged,
     ...(s.ownAssets ? { ownAssets: s.ownAssets } : {}),
   };
 }
@@ -99,6 +100,8 @@ export function configFromSettings(s: ProjectSettings, d: ToolDefaults): Config 
   const parsed = ConfigSchema.safeParse(settingsToRawConfig(s, d));
   if (!parsed.success)
     throw new Error(`Project "${s.id}" cannot be run:\n${problems(parsed.error.issues)}`);
+  if (parsed.data.project !== s.id || parsed.data.ourApp.id !== s.ourApp.id)
+    throw new Error(`Project "${s.id}": its settings name another project.`);
   return parsed.data;
 }
 
@@ -167,5 +170,12 @@ export function settingsFromConfig(c: Config, d: ToolDefaults, now: string): Pro
     "ownAssets",
   ])
     if (k in overrides) throw new Error(`The imported settings do not round-trip (field "${k}").`);
-  return Object.keys(overrides).length ? { ...s, overrides } : s;
+  const out = ProjectSettingsSchema.safeParse(
+    Object.keys(overrides).length ? { ...s, overrides } : s,
+  );
+  if (!out.success)
+    throw new Error(
+      `Project "${c.project}" cannot be imported as it is:\n${problems(out.error.issues)}`,
+    );
+  return out.data;
 }

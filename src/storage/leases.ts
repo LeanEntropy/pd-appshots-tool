@@ -5,7 +5,8 @@ import {
   readFileSync,
   renameSync,
   rmSync,
-  unlinkSync,
+  statSync,
+  utimesSync,
   writeFileSync,
 } from "node:fs";
 import { dirname } from "node:path";
@@ -48,15 +49,17 @@ export interface Lease {
   release(): void;
 }
 
-function readLock(path: string): LockInfo | null {
+/** The lock's content and its heartbeat time (the later of the recorded beat and the file time). */
+function readLock(path: string): { info: LockInfo | null; beat: number } | null {
   try {
     const p = LockSchema.safeParse(JSON.parse(readFileSync(path, "utf8")));
-    return p.success ? p.data : null;
+    const info = p.success ? p.data : null;
+    const beat = Math.max(info ? Date.parse(info.heartbeatAt) : 0, statSync(path).mtimeMs);
+    return { info, beat };
   } catch {
     return null;
   }
 }
-
 function alive(pid: number): boolean {
   try {
     process.kill(pid, 0);
@@ -66,9 +69,10 @@ function alive(pid: number): boolean {
   }
 }
 
-export function isStale(l: LockInfo | null, now = Date.now()): boolean {
-  if (!l) return true;
-  if (now - Date.parse(l.heartbeatAt) > STALE_MS) return true;
+/** Stale = no heartbeat for 2 minutes, or its process is gone (or its pid was reused). */
+export function isStale(l: LockInfo | null, beat: number, now = Date.now()): boolean {
+  if (!l) return now - beat > STALE_MS; // unreadable: give a writer in progress time
+  if (now - beat > STALE_MS) return true;
   if (l.pid === process.pid) return l.processStartedAt !== PROCESS_STARTED;
   return !alive(l.pid);
 }
@@ -83,7 +87,11 @@ function create(path: string, info: LockInfo): boolean {
   }
 }
 
-/** Moves a stale lock aside. Restores it if what was moved turns out to be someone's live lock. */
+/**
+ * Moves a stale lock aside (only one contender's rename can succeed). If what was moved is not
+ * the stale lock that was judged (it was replaced meanwhile), it is put back without ever
+ * overwriting; should that fail, its owner sees the loss at its next heartbeat and stops.
+ */
 function takeOver(path: string, staleNonce: string | null): void {
   const aside = `${path}.stale-${randomBytes(8).toString("hex")}`;
   try {
@@ -92,9 +100,9 @@ function takeOver(path: string, staleNonce: string | null): void {
     return; // another contender moved it first
   }
   const moved = readLock(aside);
-  if (moved && moved.nonce !== staleNonce && !isStale(moved)) {
+  if (moved?.info && moved.info.nonce !== staleNonce && !isStale(moved.info, moved.beat)) {
     try {
-      linkSync(aside, path); // fails if a new lock exists meanwhile; never overwrites
+      linkSync(aside, path);
     } catch {}
   }
   rmSync(aside, { force: true });
@@ -118,32 +126,56 @@ export function tryAcquire(
     heartbeatAt: nowIso,
   };
   for (let attempt = 0; attempt < 2; attempt++) {
-    if (create(path, info)) return lease(path, key, info);
+    if (create(path, info)) return lease(path, key, info.nonce);
     const held = readLock(path);
-    if (!isStale(held)) return { heldBy: held };
-    takeOver(path, held?.nonce ?? null);
+    if (!held) continue; // released meanwhile
+    if (!isStale(held.info, held.beat)) return { heldBy: held.info };
+    takeOver(path, held.info?.nonce ?? null);
   }
-  return { heldBy: readLock(path) };
+  return { heldBy: readLock(path)?.info ?? null };
 }
 
-function lease(path: string, key: string, info: LockInfo): Lease {
+function lease(path: string, key: string, nonce: string): Lease {
+  const ours = () => readLock(path)?.info?.nonce === nonce;
   return {
     key,
-    nonce: info.nonce,
+    nonce,
+    // Renewal only touches the file time: it never replaces the file, so it cannot destroy a
+    // lock another process took over; the nonce is checked again afterwards.
     heartbeat() {
-      if (readLock(path)?.nonce !== info.nonce) return false;
-      const tmp = `${path}.${info.nonce}.tmp`;
-      writeFileSync(tmp, JSON.stringify({ ...info, heartbeatAt: new Date().toISOString() }));
-      renameSync(tmp, path);
-      return true;
-    },
-    release() {
-      if (readLock(path)?.nonce !== info.nonce) return;
+      if (!ours()) return false;
       try {
-        unlinkSync(path);
-      } catch {}
+        const now = new Date();
+        utimesSync(path, now, now);
+      } catch {
+        return false;
+      }
+      return ours();
+    },
+    // Moved aside first (atomic), then deleted only if it really is ours; otherwise put back.
+    release() {
+      if (!ours()) return;
+      const aside = `${path}.release-${nonce}`;
+      try {
+        renameSync(path, aside);
+      } catch {
+        return;
+      }
+      if (readLock(aside)?.info?.nonce !== nonce) {
+        try {
+          linkSync(aside, path);
+        } catch {}
+      }
+      rmSync(aside, { force: true });
     },
   };
+}
+
+export interface HeldLocks {
+  leases: Lease[];
+  /** Throws when any lock was lost (e.g. taken over after a long pause): stop before writing. */
+  check: () => void;
+  release: () => void;
 }
 
 /** Takes several locks in order; on any refusal releases what it took and says who holds it. */
@@ -151,7 +183,7 @@ export function acquireAll(
   storage: Storage,
   keys: readonly string[],
   who: { projectId: string | null; kind: string },
-): { leases: Lease[]; release: () => void } | { heldBy: LockInfo | null; key: string } {
+): HeldLocks | { heldBy: LockInfo | null; key: string } {
   const got: Lease[] = [];
   for (const k of keys) {
     const r = tryAcquire(storage, k, who);
@@ -161,12 +193,18 @@ export function acquireAll(
     }
     got.push(r);
   }
-  const timer = setInterval(() => {
-    for (const l of got) l.heartbeat();
-  }, HEARTBEAT_MS);
+  let lost: string | null = null;
+  const beat = () => {
+    for (const l of got) if (!l.heartbeat()) lost ??= l.key;
+  };
+  const timer = setInterval(beat, HEARTBEAT_MS);
   timer.unref();
   return {
     leases: got,
+    check: () => {
+      beat();
+      if (lost) throw new Error(`Stopped: the lock ${lost} was lost; nothing more was written.`);
+    },
     release: () => {
       clearInterval(timer);
       for (const l of [...got].reverse()) l.release();

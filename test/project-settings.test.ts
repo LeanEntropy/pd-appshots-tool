@@ -84,6 +84,9 @@ test("settings rules: duplicates, own game, US English first, drafts", () => {
   assert.ok(bad({ ...s, competitors: [{ ...first, id: s.ourApp.id }] }));
   assert.ok(bad({ ...s, markets: [...s.markets].reverse() }));
   assert.ok(bad({ ...s, overrides: { workspace: "elsewhere" } }));
+  assert.ok(bad({ ...s, overrides: { project: "other" } }), "overrides cannot change the project");
+  assert.ok(bad({ ...s, overrides: { ourApp: { id: "x.y" } } }));
+  assert.ok(!bad({ ...s, overrides: { core: { imageCap: 90 } } }));
   assert.ok(!bad({ ...s, competitors: [] }), "a draft is valid settings");
   const storage = workspaceStorage(join(root, "workspace"));
   storage.putJson(settingsKey({ projectId: s.id }), { ...s, competitors: [] });

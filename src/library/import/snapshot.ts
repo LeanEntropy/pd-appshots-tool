@@ -1,7 +1,13 @@
 import { batchDataHash } from "../../analysis/entries.ts";
 import { labeler } from "../../analysis/labels.ts";
 import { buildAnalysisPlan, type Stage } from "../../analysis/plan.ts";
-import { infoViews, isUsable, readRecords, summaries } from "../../analysis/records.ts";
+import {
+  type AnalysisRecord,
+  infoViews,
+  isUsable,
+  readRecords,
+  summaries,
+} from "../../analysis/records.ts";
 import { coreOrder, type LoadedConfig, loadTaxonomy, projectPaths } from "../../config/load.ts";
 import { openImageDb } from "../../store/imagedb.ts";
 import { stableHash } from "../../util/hash.ts";
@@ -42,6 +48,27 @@ function planFacts(loaded: LoadedConfig, stage: Stage): PlanFacts | { error: str
   }
 }
 
+const STORAGE_FIELDS = ["key", "provenance", "pipeline", "writtenBy", "paidBy"] as const;
+
+/**
+ * Everything a project sees of a record: its full content, minus the library's own bookkeeping
+ * and the on-disk location of files (which the import changes on purpose). Served paths stay.
+ */
+function visible(r: AnalysisRecord): unknown {
+  const out: Record<string, unknown> = { ...r };
+  for (const k of STORAGE_FIELDS) delete out[k];
+  const idn = r.identity;
+  if (idn)
+    out.identity = {
+      ...idn,
+      files: {
+        original: idn.files.original?.relative ?? null,
+        thumb: idn.files.thumb?.relative ?? null,
+      },
+    };
+  return out;
+}
+
 export function takeSnapshot(loaded: LoadedConfig): Snapshot {
   const paths = projectPaths(loaded);
   const db = openImageDb(paths);
@@ -54,8 +81,8 @@ export function takeSnapshot(loaded: LoadedConfig): Snapshot {
     }))
     .sort((a, b) => a.id.localeCompare(b.id));
   const records = [...readRecords(paths).values()]
-    .map((r) => [r.imageId, r.status, r.schema ?? null, r.updatedAt, isUsable(r)])
-    .sort((a, b) => String(a[0]).localeCompare(String(b[0])));
+    .map((r) => [r.imageId, visible(r), isUsable(r)] as const)
+    .sort((a, b) => a[0].localeCompare(b[0]));
   const run = latestRun(paths.runs);
   const label = labeler(loadTaxonomy(loaded).taxonomy);
   const view = run
@@ -74,7 +101,7 @@ export function takeSnapshot(loaded: LoadedConfig): Snapshot {
     imageCount: images.length,
     images: stableHash(images),
     records: stableHash(records),
-    usableRecords: records.filter((r) => r[4] === true).length,
+    usableRecords: records.filter((r) => r[2]).length,
     plans: { pilot: planFacts(loaded, "pilot"), core: planFacts(loaded, "core") },
     view,
   };

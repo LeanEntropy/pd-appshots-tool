@@ -29,7 +29,7 @@ export interface Storage {
   exists(key: string): boolean;
   /** Every key under a prefix (recursive, unordered). */
   list(prefix: string): Iterable<string>;
-  /** Ids of every project that has settings (project.json), for rebuilding the registry. */
+  /** Ids of every project folder with settings (project.json) or library references (refs.json). */
   listProjectIds(): string[];
   /** Local-disk capability: the OS path of a key, for tools that need a file (sharp, CLIs). */
   localPath(key: string): string;

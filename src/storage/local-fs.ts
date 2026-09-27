@@ -2,10 +2,12 @@ import { createHash } from "node:crypto";
 import {
   createReadStream,
   existsSync,
+  linkSync,
   mkdirSync,
   readdirSync,
   readFileSync,
   renameSync,
+  rmSync,
   statSync,
   writeFileSync,
 } from "node:fs";
@@ -93,7 +95,17 @@ export class LocalFsStorage implements Storage {
     mkdirSync(dirname(p), { recursive: true });
     const tmp = `${p}.${process.pid}.${++tmpCounter}.tmp`;
     writeFileSync(tmp, bytes);
-    renameSync(tmp, p);
+    try {
+      // Exclusive commit: linking never replaces an existing file (a rename would).
+      linkSync(tmp, p);
+    } catch (e) {
+      if ((e as NodeJS.ErrnoException).code !== "EEXIST") throw e;
+      if (hash && sha256(readFileSync(p)) !== hash)
+        throw new Error(`A different file is already stored under "${k}"`);
+      return "exists";
+    } finally {
+      rmSync(tmp, { force: true });
+    }
     return "written";
   }
 
@@ -114,7 +126,11 @@ export class LocalFsStorage implements Storage {
     if (!existsSync(this.root)) return [];
     return readdirSync(this.root, { withFileTypes: true })
       .filter((e) => e.isDirectory() && /^[a-z0-9-]{1,60}$/.test(e.name))
-      .filter((e) => existsSync(join(this.root, e.name, "project.json")))
+      .filter(
+        (e) =>
+          existsSync(join(this.root, e.name, "project.json")) ||
+          existsSync(join(this.root, e.name, "refs.json")),
+      )
       .map((e) => e.name)
       .sort();
   }

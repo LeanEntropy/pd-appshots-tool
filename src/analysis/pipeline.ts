@@ -21,8 +21,26 @@ export interface PipelineSpec {
   schema: string;
   prompts: { fullAnalysis: string; review: string; adjudicate: string };
   models: { producer: string; reviewer: string; settle: string };
+  /** Which images get a second opinion; "none" when reviews are off. */
+  review: ReviewPolicy | "none";
   modelCopy: string;
   settleRules: string;
+}
+
+export interface ReviewPolicy {
+  coreCoverage: number;
+  expansionCoverage: number;
+  alsoBelowConfidence: number;
+}
+
+export function reviewPolicy(config: Config): ReviewPolicy | "none" {
+  const r = config.review;
+  if (!r.enabled) return "none";
+  return {
+    coreCoverage: r.coreCoverage,
+    expansionCoverage: r.expansionCoverage,
+    alsoBelowConfidence: r.alsoBelowConfidence,
+  };
 }
 
 /** The pipeline a project's settings run today. */
@@ -40,6 +58,7 @@ export function currentPipeline(config: Config): PipelineSpec {
       reviewer: config.review.enabled ? config.models.imageReview : "none",
       settle: config.models.adjudicate,
     },
+    review: reviewPolicy(config),
     modelCopy: MODEL_COPY.version,
     settleRules: SETTLE_RULES_VERSION,
   };

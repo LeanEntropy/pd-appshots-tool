@@ -26,6 +26,7 @@ export const ToolDefaultsSchema = ConfigBase.pick({
 export type ToolDefaults = z.infer<typeof ToolDefaultsSchema>;
 
 const Tier = z.enum(["direct", "same_audience", "reference"]);
+const Section = z.record(z.string(), z.unknown());
 
 /** One project's settings (workspace/<id>/project.json), written only by the tool. */
 export const ProjectSettingsSchema = z
@@ -72,8 +73,24 @@ export const ProjectSettingsSchema = z
     }),
     category: z.string().min(1),
     ownAssets: z.object({ dir: z.string().min(1), psd: z.string().optional() }).optional(),
-    /** Advanced values that differ from the tool defaults (not in the UI yet). */
-    overrides: z.record(z.string(), z.unknown()).optional(),
+    /**
+     * Advanced values that differ from the tool defaults (not in the UI yet). Only tool-default
+     * sections are allowed, so an override can never change the project, its game or folder.
+     */
+    overrides: z
+      .strictObject({
+        download: Section,
+        core: Section,
+        review: Section,
+        budget: Section,
+        estimates: Section,
+        run: Section,
+        tierWeights: Section,
+        models: Section,
+        taxonomy: z.string().min(1),
+      })
+      .partial()
+      .optional(),
     archived: z.boolean().optional(),
   })
   .superRefine((s, ctx) => {
@@ -100,12 +117,6 @@ export const ProjectSettingsSchema = z
     const gls = s.markets.map((m) => m.gl);
     if (new Set(gls).size !== gls.length)
       ctx.addIssue({ code: "custom", path: ["markets"], message: "one language per country" });
-    if (s.overrides && "workspace" in s.overrides)
-      ctx.addIssue({
-        code: "custom",
-        path: ["overrides", "workspace"],
-        message: "the workspace folder is shared by all projects and cannot be overridden",
-      });
   });
 export type ProjectSettings = z.infer<typeof ProjectSettingsSchema>;
 

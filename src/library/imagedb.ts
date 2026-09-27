@@ -13,6 +13,7 @@ import {
   type Refs,
   readRefs,
 } from "./refs.ts";
+import { forgetRefs } from "./serve.ts";
 
 /** Library fact files never change once written, so they are cached for the whole process. */
 const factsCache = new Map<string, LibraryFacts>();
@@ -147,6 +148,7 @@ export class LibraryImageDb implements ImageDb {
     for (const [g, f] of this.pendingGoogle) this.storage.putJson(LIB.google(g), f);
     this.pendingGoogle.clear();
     this.storage.putJson(this.refsKey, this.refs);
+    forgetRefs(this.storage.localPath(this.refsKey));
   }
 
   abs(relPath: string): string {

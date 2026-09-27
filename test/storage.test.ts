@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
-import { existsSync, mkdtempSync, readFileSync, writeFileSync } from "node:fs";
+import { existsSync, mkdtempSync, readFileSync, utimesSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { test } from "node:test";
@@ -82,6 +82,7 @@ test("locks: exclusive, released only by their owner, stale ones taken over", ()
     s.localPath(LOCKS.library),
     JSON.stringify({ ...dead, pid: process.pid, heartbeatAt: old }),
   );
+  utimesSync(s.localPath(LOCKS.library), new Date(old), new Date(old));
   assert.ok(!("heldBy" in tryAcquire(s, LOCKS.library, { projectId: null, kind: "x" })));
   // Release by a non-owner does nothing; the owner's release removes it.
   if (!("heldBy" in c)) {
@@ -118,4 +119,25 @@ test("acquireAll takes every lock or none", () => {
     ok.release();
   }
   assert.ok(!existsSync(s.localPath(LOCKS.ai)));
+});
+
+test("a lock lost to a takeover is noticed before anything more is written", () => {
+  const s = temp();
+  const held = acquireAll(s, [LOCKS.ai], { projectId: "a", kind: "import" });
+  assert.ok(!("heldBy" in held));
+  if ("heldBy" in held) return;
+  held.check();
+  const other = {
+    nonce: "d".repeat(32),
+    pid: process.pid,
+    processStartedAt: "x",
+    projectId: "b",
+    kind: "analysis",
+    startedAt: new Date().toISOString(),
+    heartbeatAt: new Date().toISOString(),
+  };
+  writeFileSync(s.localPath(LOCKS.ai), JSON.stringify(other));
+  assert.throws(() => held.check(), /lost/);
+  held.release();
+  assert.equal(JSON.parse(readFileSync(s.localPath(LOCKS.ai), "utf8")).nonce, other.nonce);
 });

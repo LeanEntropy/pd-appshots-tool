@@ -3,6 +3,7 @@ import {
   analysisKey,
   MODEL_COPY,
   type PipelineSpec,
+  type ReviewPolicy,
   SETTLE_RULES_VERSION,
   unprovenKey,
 } from "../../analysis/pipeline.ts";
@@ -33,7 +34,12 @@ const modelOf = (ref: string | undefined) => ref?.split(":")[1];
  * usable by their own project exactly as before. The model-copy and settling-rule versions have
  * not changed since the first analysis, so the current ones apply.
  */
-export function proveRecord(storage: Storage, ctx: ProjectContext, r: AnalysisRecord): Provenance {
+export function proveRecord(
+  storage: Storage,
+  ctx: ProjectContext,
+  r: AnalysisRecord,
+  policy: ReviewPolicy | "none",
+): Provenance {
   const no = (reason: string): Provenance => ({
     key: unprovenKey(ctx.projectId),
     provenance: "unproven",
@@ -41,6 +47,8 @@ export function proveRecord(storage: Storage, ctx: ProjectContext, r: AnalysisRe
     reason,
   });
   if (!r.producer) return no("no model answer (the analysis failed)");
+  // A reviewed record satisfies the project's review policy whatever share it samples.
+  if (policy === "none") return no("second opinions are switched off in this project");
   if (!r.schema) return no("no schema version");
   const m = storage.getJson(projectKey(ctx, "runs", r.runId, "manifest.json")) as
     | RunManifest
@@ -80,6 +88,7 @@ export function proveRecord(storage: Storage, ctx: ProjectContext, r: AnalysisRe
     schema: r.schema,
     prompts: { fullAnalysis: pf, review: pf, adjudicate: pa },
     models: { producer, reviewer, settle },
+    review: policy,
     modelCopy: MODEL_COPY.version,
     settleRules: SETTLE_RULES_VERSION,
   };

@@ -7,12 +7,18 @@ const IMAGE = /^images\/(orig|thumb|model)\/([0-9a-f]{64})(-\d+)?\.(jpg|png|webp
 const TTL_MS = 3000;
 const cache = new Map<string, { at: number; ids: Set<string> }>();
 
+/** Called whenever refs are written in this process, so a removed image is refused at once. */
+export function forgetRefs(refsPath: string): void {
+  cache.delete(refsPath);
+}
+
 function referenced(paths: ProjectPaths, refsKey: string): Set<string> {
-  const hit = cache.get(refsKey);
+  const id = workspaceStorage(paths.workspace).localPath(refsKey);
+  const hit = cache.get(id);
   if (hit && Date.now() - hit.at < TTL_MS) return hit.ids;
   const refs = readRefs(workspaceStorage(paths.workspace), refsKey, paths.projectId);
   const ids = new Set(Object.keys(refs.images));
-  cache.set(refsKey, { at: Date.now(), ids });
+  cache.set(id, { at: Date.now(), ids });
   return ids;
 }
 
