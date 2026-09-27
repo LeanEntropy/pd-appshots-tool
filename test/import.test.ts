@@ -164,4 +164,5 @@ test("a rollback keeps library entries another project uses", async () => {
   await assert.rejects(runImport({ ...opts(root, loaded.path, true), failAfter: "gate" }));
   const origs = files(join(root, "workspace", "_library", "images", "orig"));
   assert.equal(origs.length, 1, "only the shared image stays");
-  assert.ok(origs[0]?.includes(img.id));});
+  assert.ok(origs[0]?.includes(img.id));
+});
