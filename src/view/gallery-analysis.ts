@@ -1,14 +1,11 @@
 /**
- * In-page analysis gate and live status. "Start analysis" asks the local server for the approval
- * numbers (no AI). Only "Approve and run" starts model calls, for exactly the batch shown. The
- * status box is always filled (running, last result, or "nothing yet"); the page never reloads
- * itself: new analyses and the final report are fetched and shown in place.
+ * In-page analysis gate. "Start analysis" opens a modal approval dialog with the numbers and
+ * thumbnails of exactly the images in the batch (no AI). Only "Approve and run" starts model calls,
+ * for exactly the batch shown; the dialog then turns into the run panel (see gallery-run.ts). The
+ * page never reloads itself: new analyses and the final report are fetched and shown in place.
  */
 export const ANALYSIS_SCRIPT = `
 let shownPlan = null;
-let pollTimer = null;
-let lastStatus = null;
-let wasRunning = false;
 
 function money(n) { return "$" + Number(n || 0).toFixed(2); }
 function elapsed(from, to) {
@@ -17,60 +14,79 @@ function elapsed(from, to) {
   return Math.floor(s / 60) + " min " + String(s % 60).padStart(2, "0") + " s";
 }
 
+const TIER_WORDS = { full: "full analysis", "layer-diff": "text-layer diff", identical: "already analysed, no AI" };
+
+function thumbOf(id) {
+  for (const a of [...DATA.ours, ...DATA.named, ...DATA.chart]) for (const d of a.decks) for (const i of d.images) if (i.imageId === id && i.thumb) return i.thumb;
+  return null;
+}
+
+function gameBlock(p, g) {
+  const items = p.items.filter((it) => it.appId === g.appId).sort((x, y) => x.position - y.position);
+  const newOnes = items.filter((it) => it.tier !== "identical").length;
+  const out = p.excluded.filter((x) => x.name === g.name);
+  const known = items.filter((it) => it.tier === "identical").map((it) => "#" + it.position);
+  const figs = items.filter((it) => it.tier !== "identical").map((it) => {
+    const t = thumbOf(it.imageId);
+    return '<figure class="' + esc(it.tier) + '" title="Position ' + it.position + ": " + esc(TIER_WORDS[it.tier] || it.tier) + '">' + (t ? '<img src="' + IMG + esc(t) + '" alt="' + esc(g.name) + " position " + it.position + '">' : "") + "<figcaption>#" + it.position + "</figcaption></figure>";
+  }).join("");
+  return '<div class="agame"><strong>' + esc(g.name) + "</strong>: " + newOnes + " of " + (items.length + out.length) + " will be analysed"
+    + (known.length ? ", already analysed (no AI): " + known.join(", ") : "")
+    + (out.length ? '<span class="meta"> &middot; left out: ' + out.map((x) => "#" + x.position).join(", ") + " (" + esc([...new Set(out.map((x) => x.reason))].join("; ")) + ")</span>" : "")
+    + '<div class="athumbs">' + (figs || '<span class="meta">No new images from this game.</span>') + "</div></div>";
+}
+
 function renderApproval(p) {
-  const games = p.games.map((g) => "<li>" + esc(g.name) + ": positions " + (g.positions.join(", ") || "none") + "</li>").join("");
   const passes = p.estimate.passes.map((m) => "<tr><td>" + esc(m.role) + "</td><td>" + esc(m.model) + "</td><td>" + m.calls + "</td><td>" + m.images + "</td></tr>").join("");
-  const excluded = p.excluded.length ? '<p class="meta">Left out (shown raw, not analysed): ' + p.excluded.length + " screenshots, e.g. " + esc(p.excluded[0].name + " position " + p.excluded[0].position + ": " + p.excluded[0].reason) + "</p>" : "";
   const blocked = !p.withinCap ? '<p class="warn">This batch would take the core above its cap. It cannot run.</p>' : "";
   const canRun = p.withinCap && (p.counts.newImages > 0 || p.synthesisNeeded);
-  document.getElementById("approval").innerHTML = "<h3>" + (p.stage === "pilot" ? "Core pilot" : "Core check") + ": approval</h3>"
-    + "<p>" + esc(p.market.label) + ". To analyse: <strong>" + p.counts.full + "</strong>, marketing-layer diff: " + p.counts.layerDiff + ", already analysed or identical (no AI): " + p.counts.identical + ". Core total after this batch: " + p.coreTotal + " of " + p.cap + ".</p>"
-    + "<ul>" + games + "</ul>" + excluded
+  const box = document.getElementById("approval");
+  box.innerHTML = '<h3 id="approvalTitle">Approve the ' + (p.stage === "pilot" ? "core pilot" : "core check") + "?</h3>"
+    + '<p class="big">' + esc(p.market.label) + ". <strong>" + p.counts.newImages + " images will be sent to AI</strong> (full analysis: " + p.counts.full + ", text-layer diff: " + p.counts.layerDiff + "), from " + p.games.length + " games. Already analysed or identical (no AI): " + p.counts.identical + ". Left out: " + p.excluded.length + ". Core total after this batch: " + p.coreTotal + " of " + p.cap + ".</p>"
+    + p.games.map((g) => gameBlock(p, g)).join("")
     + '<table class="passes"><tr><th>Step</th><th>Model</th><th>Calls</th><th>Images</th></tr>' + passes + "</table>"
-    + "<p>Estimated cost: <strong>" + money(p.estimate.usd[0]) + " to " + money(p.estimate.usd[1]) + "</strong> on Claude, plus about " + Math.round(p.estimate.gptTokens / 1000) + "k GPT tokens. Provisional.</p>"
-    + (p.synthesisNeeded ? "<p class=\\"meta\\">Then: patterns across competitors, our game vs the patterns, recommendations, and the final report.</p>" : "")
+    + '<p class="big">Estimated cost: <strong>' + money(p.estimate.usd[0]) + " to " + money(p.estimate.usd[1]) + "</strong> on Claude, plus about " + Math.round(p.estimate.gptTokens / 1000) + "k GPT tokens. Provisional.</p>"
+    + (p.synthesisNeeded ? '<p class="meta">Then: patterns across competitors, our game vs the patterns, recommendations, and the final report.</p>' : "")
     + blocked
-    + (canRun ? '<button id="approve" class="primary">Approve and run</button> ' : "<p>Nothing to run: everything is analysed and reported.</p>") + '<button id="cancelApproval">Cancel</button>';
+    + '<div class="actions">' + (canRun ? '<button id="approve" class="primary">Approve and run</button>' : "<p>Nothing to run: everything is analysed and reported.</p>") + '<button id="cancelApproval">Cancel</button></div>';
+  box.scrollTop = 0;
+  box.focus();
+}
+
+function approvalDialog(text) {
+  const dlg = document.getElementById("approvalDlg");
+  const box = document.getElementById("approval");
+  if (text !== undefined) box.innerHTML = '<p class="big">' + esc(text) + '</p><div class="actions"><button id="cancelApproval">Close</button></div>';
+  if (!dlg.open) { if (dlg.showModal) dlg.showModal(); else dlg.setAttribute("open", ""); }
+  box.scrollIntoView({ block: "start" });
+  box.focus();
+}
+
+function closeApproval() {
+  shownPlan = null;
+  const dlg = document.getElementById("approvalDlg");
+  if (dlg.open) { if (dlg.close) dlg.close(); else dlg.removeAttribute("open"); }
+  document.getElementById("approval").textContent = "";
 }
 
 async function showApproval() {
   const stage = document.getElementById("stage").value;
-  document.getElementById("approval").textContent = "Working out the numbers (no AI)...";
+  approvalDialog("Working out the numbers (no AI)...");
   try {
     const r = await apiPost("/api/analysis/plan", { stage });
-    if (!r.ok) { document.getElementById("approval").textContent = (r.body.problems || ["Could not prepare the batch."]).join(" "); return; }
+    if (!r.ok) { approvalDialog((r.body.problems || ["Could not prepare the batch."]).join(" ")); return; }
     shownPlan = r.body.plan;
     renderApproval(shownPlan);
-  } catch { document.getElementById("approval").textContent = "The gallery server is not running. Start it with: npm run gallery"; }
+  } catch { approvalDialog("The gallery server is not running. Start it with: npm run gallery"); }
 }
 
 async function approve() {
   if (!shownPlan) return;
   const r = await apiPost("/api/analysis/run", { stage: shownPlan.stage, planHash: shownPlan.planHash });
-  if (!r.ok) { document.getElementById("approval").innerHTML = '<p class="warn">' + esc((r.body.problems || ["Not started."]).join(" ")) + "</p>"; return; }
-  document.getElementById("approval").textContent = "";
+  if (!r.ok) { approvalDialog((r.body.problems || ["Not started."]).join(" ")); shownPlan = null; return; }
   shownPlan = null;
-  pollStatus();
-}
-
-function renderStatus() {
-  const el = document.getElementById("status");
-  const s = lastStatus;
-  if (!s) { el.innerHTML = '<p class="meta">Checking the analysis status...</p>'; return; }
-  const errs = (s.errors || []).slice(-8).map((e) => "<li>" + esc((e.name ? e.name + (e.position ? " #" + e.position : "") + ": " : "") + e.message) + "</li>").join("");
-  const errBox = s.errors && s.errors.length ? '<details class="errs"' + (s.running ? "" : " open") + "><summary>" + s.errors.length + " problem" + (s.errors.length > 1 ? "s" : "") + "</summary><ul>" + errs + "</ul></details>" : "";
-  let h;
-  if (s.running) {
-    const p = s.progress || { message: "Starting...", done: 0, total: 0 };
-    h = '<p class="now"><span class="spin" aria-hidden="true"></span>' + esc(p.message) + "</p>"
-      + '<p class="meta">' + p.done + " of " + p.total + " screenshots done &middot; elapsed " + elapsed(s.startedAt) + " &middot; spent " + money(s.spentUsd) + "</p>";
-  } else if (s.startedAt) {
-    h = (s.error ? '<p class="warn"><strong>' + esc(s.error) + "</strong></p>" : '<p class="ok"><strong>Finished.</strong></p>')
-      + '<p class="meta">Last run: ' + esc(new Date(s.startedAt).toLocaleString()) + ", took " + elapsed(s.startedAt, s.finishedAt) + ", spent " + money(s.spentUsd) + ".</p>"
-      + (s.synthesisSkipped ? '<p class="meta">Patterns and recommendations not written: ' + esc(s.synthesisSkipped) + "</p>" : "")
-      + (s.report ? '<p class="meta">Report saved: ' + esc(s.report) + "</p>" : "");
-  } else h = '<p class="meta">No analysis has run yet. Press Start analysis to see the numbers first.</p>';
-  el.innerHTML = "<h2>Analysis status</h2>" + h + errBox;
+  showRunInDialog();
+  await pollStatus();
 }
 
 async function refreshAnalyses() {
@@ -80,7 +96,8 @@ async function refreshAnalyses() {
     DATA.info = INFO;
     for (const a of [...DATA.ours, ...DATA.named, ...DATA.chart]) for (const d of a.decks) for (const i of d.images) i.analysis = (i.imageId && r.captions[i.imageId]) || null;
     render();
-  } catch {}
+    return r.captions;
+  } catch { return null; }
 }
 
 async function loadReport() {
@@ -102,32 +119,19 @@ async function loadOverview(rebuild) {
     if (!r.ok) { box.innerHTML = '<p class="warn">' + esc((r.body.problems || ["The overview could not be built."]).join(" ")) + "</p>" + button; return; }
     const o = r.body.overview;
     box.innerHTML = o
-      ? '<details open><summary><strong>Store overview (free, no AI)</strong></summary><p class="meta">Saved as ' + esc(o.file) + "</p>" + o.html + button.replace("Building...", "Rebuild the overview") + "</details>"
-      : '<details open><summary><strong>Store overview (free, no AI)</strong></summary><p>Not built yet.</p>' + button.replace("Rebuild the overview", "Build the overview") + "</details>";
+      ? "<details" + (rebuild ? " open" : "") + '><summary><strong>Store overview (free, no AI)</strong> <span class="meta">(click to show or hide)</span></summary><p class="meta">Saved as ' + esc(o.file) + "</p>" + o.html + button.replace("Building...", "Rebuild the overview") + "</details>"
+      : '<details><summary><strong>Store overview (free, no AI)</strong> <span class="meta">(click to show or hide)</span></summary><p>Not built yet.</p>' + button.replace("Rebuild the overview", "Build the overview") + "</details>";
   } catch {}
 }
 
-async function pollStatus() {
-  clearTimeout(pollTimer);
-  try {
-    lastStatus = await (await fetch("/api/analysis/status")).json();
-    renderStatus();
-    if (lastStatus.running) { wasRunning = true; pollTimer = setTimeout(pollStatus, 1500); }
-    else if (wasRunning) { wasRunning = false; refreshAnalyses(); loadReport(); }
-  } catch {
-    document.getElementById("status").innerHTML = '<h2>Analysis status</h2><p class="warn">The gallery server is not reachable. Start it with: npm run gallery</p>';
-    pollTimer = setTimeout(pollStatus, 5000);
-  }
-}
-
-setInterval(() => { if (lastStatus && lastStatus.running) renderStatus(); }, 1000);
 document.addEventListener("click", (e) => {
   if (e.target.id === "startAnalysis") showApproval();
   if (e.target.id === "approve") { e.target.disabled = true; approve(); }
   if (e.target.id === "rebuildOverview") { e.target.disabled = true; e.target.textContent = "Building (about a minute the first time)..."; loadOverview(true); }
-  if (e.target.id === "cancelApproval") { shownPlan = null; document.getElementById("approval").textContent = ""; }
+  if (e.target.id === "cancelApproval") closeApproval();
 });
 document.addEventListener("change", (e) => { if (e.target.id === "stage") loadReport(); });
+document.getElementById("approvalDlg").addEventListener("close", () => { shownPlan = null; runInDialog = false; });
 if (location.protocol.startsWith("http")) { pollStatus(); loadReport(); loadOverview(false); }
 else document.getElementById("status").innerHTML = '<h2>Analysis status</h2><p class="meta">Open this page with npm run gallery to run and follow the analysis.</p>';
 `;

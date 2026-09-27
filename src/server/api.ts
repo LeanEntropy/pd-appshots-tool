@@ -1,14 +1,21 @@
 import { existsSync, readFileSync } from "node:fs";
+import { join } from "node:path";
 import { z } from "zod";
 import { readLatest } from "../analysis/final-report.ts";
 import { approvalProblem, jobState, runApproved } from "../analysis/job.ts";
 import { labeler } from "../analysis/labels.ts";
-import { buildAnalysisPlan, readSavedPlan, type Stage } from "../analysis/plan.ts";
+import {
+  type AnalysisPlan,
+  buildAnalysisPlan,
+  readSavedPlan,
+  type Stage,
+} from "../analysis/plan.ts";
 import { infoViews, summaries } from "../analysis/records.ts";
 import { describeAnalysisPlan } from "../analysis/report.ts";
 import { coreOrder, type LoadedConfig, loadTaxonomy, projectPaths } from "../config/load.ts";
 import { type FitView, fitFor, resolvePick, savePick } from "../core/selection.ts";
 import { overviewFile, writeOverview } from "../overview/overview-report.ts";
+import { readJsonIfExists, writeJsonAtomic } from "../util/fsx.ts";
 import { markdownToHtml } from "../view/md-html.ts";
 
 export interface ApiResponse {
@@ -97,13 +104,38 @@ export function postAnalysisRun(
     planHash,
   );
   if (problem) return { status: 409, body: { problems: [problem] } };
+  const approved = readSavedPlan(loaded, stage) as AnalysisPlan;
+  writeJsonAtomic(batchFile(loaded), { stage, planHash, ...runBatch(approved) });
   void start(loaded, stage, planHash);
   return { status: 202, body: { started: true } };
 }
 
-/** The running job, or the last one saved on disk. */
+/**
+ * The running job, or the last one saved on disk, plus the images the run analyses (from the
+ * approved plan) and its cost estimate, so the page can list each image's state after a reload.
+ */
 export function getAnalysisStatus(loaded?: LoadedConfig): ApiResponse {
-  return { status: 200, body: jobState(loaded) };
+  const job = jobState(loaded);
+  if (!loaded || !job.stage) return { status: 200, body: { ...job, batch: null } };
+  // The snapshot taken at approval; a plan shown later for the same stage does not change it.
+  const snap = readJsonIfExists(batchFile(loaded)) as { stage?: string } | undefined;
+  const plan = readSavedPlan(loaded, job.stage);
+  const batch = snap?.stage === job.stage ? snap : plan ? runBatch(plan) : null;
+  return { status: 200, body: { ...job, batch } };
+}
+
+function batchFile(loaded: LoadedConfig): string {
+  return join(projectPaths(loaded).pending, "analysis-batch.json");
+}
+
+/** The images a run sends to AI, and its cost estimate. */
+function runBatch(plan: AnalysisPlan) {
+  return {
+    estimateUsd: plan.estimate.usd,
+    items: plan.items
+      .filter((i) => i.tier !== "identical")
+      .map((i) => ({ name: i.name, position: i.position, imageId: i.imageId })),
+  };
 }
 
 /** Fresh analyses for the (i) popovers and thumbnail captions, without reloading the page. */

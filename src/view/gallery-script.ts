@@ -2,6 +2,7 @@ import { ANALYSIS_SCRIPT } from "./gallery-analysis.ts";
 import { GRID_SCRIPT } from "./gallery-grid.ts";
 import { INFO_SCRIPT } from "./gallery-info.ts";
 import { PICKER_SCRIPT } from "./gallery-picker.ts";
+import { RUN_SCRIPT } from "./gallery-run.ts";
 
 /** Client-side script for the raw deck gallery. Plain JS, no external libraries. */
 const RENDER_SCRIPT = `
@@ -54,4 +55,4 @@ document.addEventListener("change", (e) => {
 document.getElementById("locale").innerHTML = '<option value="all">All countries</option>' + DATA.markets.map((m) => '<option value="' + esc(m.gl) + '">' + esc(m.label) + "</option>").join("");
 `;
 
-export const GALLERY_SCRIPT = `${RENDER_SCRIPT}\n${INFO_SCRIPT}\n${PICKER_SCRIPT}\n${GRID_SCRIPT}\n${ANALYSIS_SCRIPT}\nrender();\nloadSaved();\n`;
+export const GALLERY_SCRIPT = `${RENDER_SCRIPT}\n${INFO_SCRIPT}\n${PICKER_SCRIPT}\n${GRID_SCRIPT}\n${RUN_SCRIPT}\n${ANALYSIS_SCRIPT}\nrender();\nloadSaved();\n`;
