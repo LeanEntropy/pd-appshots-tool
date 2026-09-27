@@ -91,11 +91,15 @@ export const reviewSchema = z.strictObject({
 });
 export type Review = z.infer<typeof reviewSchema>;
 
-/** One recommendation per position, 1..N with no gaps, N within the allowed deck length. */
+/** Art-only screen types: no in-game screen is captured for them. */
+const ART_ONLY = new Set(["feature_image", "key_art"]);
+
+/** One recommendation per position, 1..N with no gaps, within the deck length; labels match specs. */
 export function recommendationProblems(
   r: Recommendations,
   minLen: number,
   maxLen: number,
+  ours: ReadonlyMap<number, string> = new Map(),
 ): string[] {
   const problems: string[] = [];
   const pos = r.positions.map((p) => p.position);
@@ -105,9 +109,43 @@ export function recommendationProblems(
   const want = Array.from({ length: n }, (_, i) => i + 1).join(",");
   if ([...pos].sort((a, b) => a - b).join(",") !== want)
     problems.push("positions must be 1, 2, 3 ... with no gaps or repeats");
-  for (const p of r.positions) {
+  for (const p of r.positions)
     if (p.marketingLayer.present && !p.marketingLayer.texts.length)
       problems.push(`position ${p.position}: a marketing layer needs at least one text`);
+  return [...problems, ...labelProblems(r, ours)];
+}
+
+/**
+ * Each slot's label must match its spec (by code): a kept screenshot keeps its screen type and
+ * must exist, a recaptured in-game screen is not labelled as art-only, and an in-game screen type
+ * shows a screenshot (a title image counts as the in-game title screen).
+ */
+export function labelProblems(r: Recommendations, ours: ReadonlyMap<number, string>): string[] {
+  const problems: string[] = [];
+  for (const p of r.positions) {
+    const at = `position ${p.position} is labelled ${p.screenType}`;
+    const keep = /keep our current position (\d+)/i.exec(p.source);
+    const recap = /recapture our position (\d+)/i.exec(p.source);
+    const n = Number((keep ?? recap)?.[1]);
+    const was = ours.get(n);
+    if ((keep || recap) && ours.size && !ours.has(n))
+      problems.push(`position ${p.position}: our deck has no position ${n} to keep or recapture`);
+    if (keep && was && was !== p.screenType)
+      problems.push(
+        `${at}, but it keeps our position ${keep[1]}, which is ${was}: use that screen type or change the source`,
+      );
+    if (recap && ART_ONLY.has(p.screenType))
+      problems.push(
+        `${at}, but its source recaptures an in-game screen (our position ${recap[1]}${was ? `, ${was}` : ""}): label it with that screen's type, or make it art built from existing assets`,
+      );
+    if (
+      !ART_ONLY.has(p.screenType) &&
+      p.marketingLayer.proportion === PROPORTION.art &&
+      p.screenType !== "title_image"
+    )
+      problems.push(
+        `${at}, an in-game screen, but its layout shows no screenshot (${PROPORTION.art})`,
+      );
   }
   return problems;
 }

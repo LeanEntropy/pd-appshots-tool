@@ -154,3 +154,11 @@ test("the status lists the images of the approved batch, also after a restart", 
     ],
   );
 });
+
+test("the store overview always starts folded, with a clear toggle", () => {
+  assert.match(GALLERY_SCRIPT, /Click to expand or fold/);
+  assert.doesNotMatch(
+    GALLERY_SCRIPT,
+    /<details class="sec" open><summary><span class="sec-t">Store overview/,
+  );
+});

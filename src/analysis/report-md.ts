@@ -159,6 +159,12 @@ export function reportMarkdown(d: ReportData, label: Labeler): string[] {
   const r = d.ai?.recommendations;
   if (r && d.ai) {
     if (!d.ai.current) out.push(`_From run ${d.ai.runId}, written from older analyses._`, "");
+    if (d.recProblems.length)
+      out.push(
+        "> **Check these slots: the label does not match the spec (found by code).**",
+        ...d.recProblems.map((x) => `> - ${x}`),
+        "",
+      );
     out.push(
       "| # | Screen | Source | Headline |",
       "|---|---|---|---|",

@@ -5,6 +5,11 @@ import { plainLabel } from "../src/analysis/labels.ts";
 import { patternFit } from "../src/analysis/pattern-fit.ts";
 import { type DeckEntry, findPatterns } from "../src/analysis/patterns.ts";
 import { mapTitleScreen } from "../src/analysis/record-refresh.ts";
+import {
+  labelProblems,
+  type Recommendations,
+  recommendationProblems,
+} from "../src/analysis/synthesis-schema.ts";
 import { NAV_SCRIPT } from "../src/view/gallery-nav.ts";
 import { REPORT_SCRIPT } from "../src/view/gallery-report.ts";
 import { REPORT_PARTS_SCRIPT } from "../src/view/gallery-report-parts.ts";
@@ -137,4 +142,79 @@ test("report page: position rows start with our game, fit marks show, text is es
   assert.match(html, /&#60;script&#62;/);
   assert.match(html, /data-info="id1"/);
   assert.match((ctx.fit as (x: unknown) => string)(d), /\[X\] different/);
+});
+
+test("a recommended slot whose label does not match its spec is caught by code", () => {
+  const slot = (position: number, screenType: string, source: string, proportion: string) => ({
+    position,
+    screenType,
+    subtype: "",
+    source,
+    screenshot: {
+      orientation: "portrait",
+      whatToCapture: "",
+      action: "",
+      atmosphere: "",
+      mainColours: "",
+    },
+    marketingLayer: {
+      present: false,
+      proportion,
+      backgroundMask: { shape: "", colour: "", location: "" },
+      texts: [],
+      elements: [],
+    },
+    why: "",
+  });
+  const ours = new Map([
+    [1, "title_image"],
+    [5, "metagame"],
+  ]);
+  const r = {
+    rationale: "",
+    positions: [
+      slot(1, "title_image", "keep our current position 1", "marketing image, no screenshot"),
+      slot(2, "feature_image", "recapture our position 5", "marketing image, no screenshot"),
+      slot(3, "gameplay", "keep our current position 5", "full screenshot, small layer"),
+      slot(4, "gameplay", "new capture", "marketing image, no screenshot"),
+    ],
+  } as unknown as Recommendations;
+  const p = recommendationProblems(r, 1, 9, ours);
+  assert.equal(p.length, 3);
+  assert.match(
+    p[0] ?? "",
+    /position 2 .*recaptures an in-game screen \(our position 5, metagame\)/,
+  );
+  assert.match(p[1] ?? "", /position 3 .*keeps our position 5, which is metagame/);
+  assert.match(p[2] ?? "", /position 4 .*shows no screenshot/);
+});
+
+test("a kept or recaptured position our deck does not have is caught", () => {
+  const r = {
+    rationale: "",
+    positions: [
+      {
+        position: 1,
+        screenType: "gameplay",
+        subtype: "",
+        source: "keep our current position 9",
+        screenshot: {
+          orientation: "portrait",
+          whatToCapture: "",
+          action: "",
+          atmosphere: "",
+          mainColours: "",
+        },
+        marketingLayer: {
+          present: false,
+          proportion: "full screenshot, small layer",
+          backgroundMask: { shape: "", colour: "", location: "" },
+          texts: [],
+          elements: [],
+        },
+        why: "",
+      },
+    ],
+  } as unknown as Recommendations;
+  assert.match(labelProblems(r, new Map([[1, "gameplay"]])).join(), /no position 9/);
 });

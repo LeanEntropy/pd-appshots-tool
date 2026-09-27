@@ -109,8 +109,8 @@ async function loadOverview(rebuild) {
     if (!r.ok) { box.innerHTML = '<p class="warn">' + esc((r.body.problems || ["The overview could not be built."]).join(" ")) + "</p>" + button; return; }
     const o = r.body.overview;
     box.innerHTML = o
-      ? '<details class="sec" open><summary><span class="sec-t">Store overview (free, no AI)</span></summary><div class="sec-b"><p class="meta">Saved as ' + esc(o.file) + "</p>" + o.html + button.replace("Building...", "Rebuild the overview") + "</div></details>"
-      : '<details class="sec" open><summary><span class="sec-t">Store overview (free, no AI)</span></summary><div class="sec-b"><p>Not built yet.</p>' + button.replace("Rebuild the overview", "Build the overview") + "</div></details>";
+      ? '<details class="sec"' + (rebuild ? " open" : "") + '><summary><span class="sec-t">Store overview (free, no AI)</span> <span class="meta">Click to expand or fold</span></summary><div class="sec-b"><p class="meta">Saved as ' + esc(o.file) + "</p>" + o.html + button.replace("Building...", "Rebuild the overview") + "</div></details>"
+      : '<details class="sec"><summary><span class="sec-t">Store overview (free, no AI)</span> <span class="meta">Click to expand or fold</span></summary><div class="sec-b"><p>Not built yet.</p>' + button.replace("Rebuild the overview", "Build the overview") + "</div></details>";
   } catch {}
 }
 

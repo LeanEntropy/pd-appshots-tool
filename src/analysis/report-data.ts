@@ -9,7 +9,12 @@ import { type FitSummary, patternFit } from "./pattern-fit.ts";
 import { findPatterns, type Patterns } from "./patterns.ts";
 import type { AnalysisPlan } from "./plan.ts";
 import { type AnalysisRecord, isUsable, screenLabel } from "./records.ts";
-import type { Interpretation, Recommendations, Review } from "./synthesis-schema.ts";
+import {
+  type Interpretation,
+  labelProblems,
+  type Recommendations,
+  type Review,
+} from "./synthesis-schema.ts";
 
 /** One store position of one game, exactly as Google Play shows it. */
 export interface OrderRow {
@@ -68,6 +73,8 @@ export interface ReportData {
   synthesis: { state: "current" | "stale" | "missing"; reason: string; howTo: string };
   /** Competitor examples per recommended position (same screen type, same position first). */
   examples: Record<string, Example[]>;
+  /** Label/spec mismatches in the recommendations, found by code (e.g. a recapture labelled art). */
+  recProblems: string[];
   /** Plain names for the codes used in the patterns and recommendations. */
   labels: Record<string, string>;
 }
@@ -236,6 +243,14 @@ export function buildReportData(x: ReportInputs): ReportData {
     ai,
     synthesis,
     examples: examples(ai?.recommendations ?? null, games),
+    recProblems: ai?.recommendations
+      ? labelProblems(
+          ai.recommendations,
+          new Map(
+            (games.find((g) => g.ours)?.rows ?? []).map((r) => [r.position, r.screenType ?? ""]),
+          ),
+        )
+      : [],
     labels: labelsFor(x.label, patterns, oursVs, ai?.recommendations ?? null),
   };
 }

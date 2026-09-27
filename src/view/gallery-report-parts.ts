@@ -84,6 +84,7 @@ function recsHtml(d) {
   const pos = [...r.positions].sort((a, b) => a.position - b.position);
   const rv = ai.review;
   return (ai.current ? "" : '<p class="warn">From run ' + esc(ai.runId) + ", written from older analyses.</p>")
+    + ((d.recProblems || []).length ? '<div class="banner stale"><p><strong>Check these slots:</strong> the label does not match the spec (found by code).</p><ul>' + d.recProblems.map((x) => "<li>" + esc(x) + "</li>").join("") + "</ul></div>" : "")
     + "<p>" + esc(r.rationale) + "</p>"
     + '<table class="rt"><tr><th>#</th><th>Screen</th><th>Source</th><th>Headline</th></tr>' + pos.map((p) => "<tr><th>" + p.position + "</th><td>" + esc(L(p.screenType)) + (p.subtype ? " / " + esc(L(p.subtype)) : "") + "</td><td>" + esc(p.source) + "</td><td><strong>" + esc((p.marketingLayer.texts[0] || {}).text || "") + "</strong></td></tr>").join("") + "</table>"
     + pos.map((p) => slotHtml(d, p)).join("")

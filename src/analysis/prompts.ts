@@ -9,7 +9,7 @@ export const PROMPT_VERSIONS = {
   fullAnalysis: "full-analysis.v4",
   adjudicate: "adjudicate.v3",
   patterns: "patterns.v2",
-  recommend: "recommend.v1",
+  recommend: "recommend.v2",
   recommendReview: "recommend-review.v1",
 } as const;
 export type PromptName = keyof typeof PROMPT_VERSIONS;

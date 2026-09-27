@@ -113,7 +113,8 @@ export async function synthesise(
     `Recommend between ${minLen} and ${maxLen} positions (our current deck has ${input.ourDeckLength}).`,
   ].join("\n\n");
   const schema = recommendationSchema(taxonomy);
-  const check = (v: Recommendations) => recommendationProblems(v, minLen, maxLen);
+  const oursTypes = new Map(input.ours.map((e) => [e.position, e.final.screenshot.screenType]));
+  const check = (v: Recommendations) => recommendationProblems(v, minLen, maxLen, oursTypes);
   report("recommend", "Writing recommendations…");
   const rec = await validatedCall(
     "recommend",
