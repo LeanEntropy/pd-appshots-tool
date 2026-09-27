@@ -1,0 +1,1021 @@
+<title>Screenshot Recipe Proposal</title>
+<style>
+  :root {
+    color-scheme: light;
+    --bg: #EEF2F0;
+    --surface: #FFFFFF;
+    --surface-2: #E3E9E6;
+    --border: #CFD8D4;
+    --text: #172420;
+    --text-muted: #55665F;
+    --accent: #0B6E62;
+    --accent-strong: #075149;
+    --accent-soft: #DCEEEA;
+    --approve: #1F7A46;
+    --approve-soft: #DEF2E5;
+    --change: #A9600A;
+    --change-soft: #F8E7D2;
+    --question: #6B4FB0;
+    --question-soft: #EAE3F8;
+    --shadow: rgba(15,35,30,0.10);
+    --code-bg: #101815;
+    --code-fg: #DCEAE4;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      color-scheme: dark;
+      --bg: #0F1815;
+      --surface: #17211D;
+      --surface-2: #1E2A25;
+      --border: #2C3A34;
+      --text: #E7EFEA;
+      --text-muted: #9FB2AA;
+      --accent: #4FC2AE;
+      --accent-strong: #7ED8C7;
+      --accent-soft: #1B3B36;
+      --approve: #5BC98A;
+      --approve-soft: #1C3A2A;
+      --change: #E2954A;
+      --change-soft: #3C2C18;
+      --question: #B29CE8;
+      --question-soft: #2E2646;
+      --shadow: rgba(0,0,0,0.35);
+      --code-bg: #0B120F;
+      --code-fg: #CFE3DB;
+    }
+  }
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --bg: #0F1815;
+    --surface: #17211D;
+    --surface-2: #1E2A25;
+    --border: #2C3A34;
+    --text: #E7EFEA;
+    --text-muted: #9FB2AA;
+    --accent: #4FC2AE;
+    --accent-strong: #7ED8C7;
+    --accent-soft: #1B3B36;
+    --approve: #5BC98A;
+    --approve-soft: #1C3A2A;
+    --change: #E2954A;
+    --change-soft: #3C2C18;
+    --question: #B29CE8;
+    --question-soft: #2E2646;
+    --shadow: rgba(0,0,0,0.35);
+    --code-bg: #0B120F;
+    --code-fg: #CFE3DB;
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    padding-block: 28px 64px;
+    background: var(--bg);
+    color: var(--text);
+    font-family: "IBM Plex Sans", ui-sans-serif, system-ui, "Segoe UI", Roboto, sans-serif;
+    font-size: 15px;
+    line-height: 1.55;
+  }
+  .mono, code, .tag, .item-num, .decision-num, th, .locale-badge, .verdict-badge, .status-pill, .summary-chip, .decided-tag {
+    font-family: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  }
+  .wrap { max-width: 960px; margin: 0 auto; padding-inline: 16px; }
+  h1, h2, h3 { text-wrap: balance; font-weight: 600; }
+  a { color: var(--accent-strong); }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  /* header */
+  .page-header { padding-block: 4px 20px; border-bottom: 1px solid var(--border); }
+  .eyebrow { margin: 0 0 6px; font-family: "IBM Plex Mono", monospace; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--text-muted); }
+  .page-header h1 { margin: 0 0 8px; font-size: 30px; letter-spacing: -0.01em; }
+  .tagline { margin: 0 0 14px; max-width: 64ch; color: var(--text-muted); font-size: 16px; }
+  .status-pill { display: inline-block; padding: 5px 12px; border-radius: 999px; background: var(--accent-soft); color: var(--accent-strong); font-size: 12px; letter-spacing: .04em; text-transform: uppercase; font-weight: 600; }
+  .change-box { background: var(--accent-soft); border: 1px solid var(--accent); border-radius: 10px; padding: 14px 16px; margin: 16px 0 4px; font-size: 14px; color: var(--text); max-width: 74ch; }
+  .change-box strong { color: var(--accent-strong); }
+
+  /* summary bar */
+  .summary-bar { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 10; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 10px 14px; margin-block: 18px; box-shadow: 0 1px 3px var(--shadow); }
+  .summary-counts { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; font-size: 13px; }
+  .summary-total { color: var(--text-muted); margin-right: 4px; }
+  .summary-total strong { color: var(--text); font-size: 15px; }
+  .summary-chip { padding: 3px 9px; border-radius: 999px; border: 1px solid var(--border); background: var(--surface-2); font-size: 12px; }
+  .summary-chip.approve { color: var(--approve); border-color: var(--approve); background: var(--approve-soft); }
+  .summary-chip.change { color: var(--change); border-color: var(--change); background: var(--change-soft); }
+  .summary-chip.question { color: var(--question); border-color: var(--question); background: var(--question-soft); }
+  .db-notice { margin: 0 0 18px; padding: 9px 12px; border-radius: 8px; background: var(--change-soft); color: var(--change); border: 1px solid var(--change); font-size: 13px; }
+
+  /* buttons */
+  .btn { font: inherit; font-size: 13px; border-radius: 7px; border: 1px solid var(--border); background: var(--surface); color: var(--text); padding: 7px 12px; cursor: pointer; }
+  .btn:hover { border-color: var(--accent); color: var(--accent-strong); }
+  .btn-ghost { background: transparent; }
+  .btn-small { padding: 5px 10px; font-size: 12px; }
+  @media (prefers-reduced-motion: no-preference) { .btn { transition: border-color .12s ease, color .12s ease; } }
+
+  section { margin-top: 40px; }
+  h2 { font-size: 22px; margin: 0 0 6px; border-bottom: 2px solid var(--border); padding-bottom: 8px; }
+  .section-intro { color: var(--text-muted); margin: 10px 0 18px; max-width: 68ch; }
+
+  /* already-decided list */
+  .decided-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+  .decided-list li { display: flex; gap: 10px; align-items: baseline; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 9px 13px; font-size: 14px; }
+  .decided-tag { flex: none; font-size: 11px; color: var(--text-muted); background: var(--surface-2); border-radius: 5px; padding: 2px 7px; }
+
+  /* decision cards */
+  .decision-grid { display: grid; grid-template-columns: 1fr; gap: 16px; }
+  .decision-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 18px 20px; box-shadow: 0 1px 2px var(--shadow); display: flex; flex-direction: column; gap: 10px; }
+  .decision-num { color: var(--text-muted); font-size: 12px; letter-spacing: .06em; }
+  .decision-q { margin: 0; font-size: 17px; }
+  .tag { display: inline-block; font-size: 11px; letter-spacing: .05em; text-transform: uppercase; color: var(--text-muted); margin-right: 8px; vertical-align: middle; }
+  .rec-tag { background: var(--accent-soft); color: var(--accent-strong); padding: 3px 8px; border-radius: 5px; font-weight: 600; }
+  .decision-rec { background: var(--accent-soft); border-left: 3px solid var(--accent); border-radius: 0 8px 8px 0; padding: 10px 12px; margin: 0; }
+  .decision-alt, .decision-why { margin: 0; color: var(--text); }
+  .decision-alt { color: var(--text-muted); }
+  .evidence-note { background: var(--surface-2); border: 1px dashed var(--border); border-radius: 8px; padding: 10px 12px; font-size: 13.5px; color: var(--text); }
+  .evidence-note strong { color: var(--accent-strong); }
+
+  /* controls (shared by decisions and items) */
+  .control-row { margin-top: 4px; }
+  .radio-group { display: flex; flex-wrap: wrap; gap: 8px; }
+  .radio-pill { display: inline-flex; align-items: center; gap: 6px; padding: 5px 11px; border: 1px solid var(--border); border-radius: 999px; font-size: 13px; cursor: pointer; background: var(--surface); }
+  .radio-pill input { margin: 0; accent-color: currentColor; }
+  .radio-pill.approve:has(input:checked) { background: var(--approve-soft); border-color: var(--approve); color: var(--approve); }
+  .radio-pill.change:has(input:checked) { background: var(--change-soft); border-color: var(--change); color: var(--change); }
+  .radio-pill.question:has(input:checked) { background: var(--question-soft); border-color: var(--question); color: var(--question); }
+  .note-label { display: block; font-size: 11px; text-transform: uppercase; letter-spacing: .05em; color: var(--text-muted); margin: 8px 0 4px; }
+  .note-field { width: 100%; border: 1px solid var(--border); border-radius: 7px; padding: 8px 9px; background: var(--surface); color: var(--text); font: inherit; font-size: 13.5px; resize: vertical; }
+  details.note-details { margin-top: 6px; }
+  details.note-details summary { cursor: pointer; font-size: 12.5px; color: var(--accent-strong); }
+
+  /* proposal items */
+  .prop-section-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; margin-top: 30px; border-bottom: 1px solid var(--border); padding-bottom: 8px; }
+  .prop-section-head h3 { margin: 0; font-size: 17px; }
+  .item { border-top: 1px solid var(--border); padding-block: 14px; }
+  .item:first-of-type { border-top: none; }
+  .item-head { display: flex; align-items: baseline; gap: 10px; }
+  .item-num { color: var(--text-muted); font-size: 12px; min-width: 22px; }
+  .item-head h4 { margin: 0; font-size: 15px; }
+  .item-body { margin: 6px 0 0 32px; color: var(--text); }
+  .item-body ul { margin: 6px 0; padding-left: 20px; }
+  .item .control-row { margin-left: 32px; }
+
+  /* diagrams & tables */
+  .diagram-scroll, .table-scroll { overflow-x: auto; border: 1px solid var(--border); border-radius: 10px; background: var(--surface); }
+  .diagram-scroll { padding: 14px; margin-block: 14px 26px; }
+  .table-scroll { margin-block: 14px 26px; }
+  table { border-collapse: collapse; width: 100%; min-width: 520px; font-size: 13.5px; }
+  th, td { padding: 8px 11px; border-bottom: 1px solid var(--border); text-align: left; vertical-align: top; }
+  thead th { background: var(--surface-2); font-size: 11.5px; text-transform: uppercase; letter-spacing: .03em; color: var(--text-muted); }
+  tbody tr:last-child td { border-bottom: none; }
+
+  /* example / mock cards */
+  .example-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 18px 20px; margin-block: 14px; box-shadow: 0 1px 2px var(--shadow); }
+  .example-card.mock { border-style: dashed; }
+  .example-head { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 10px; }
+  .locale-badge { background: var(--accent-soft); color: var(--accent-strong); padding: 4px 10px; border-radius: 6px; font-size: 12.5px; }
+  .example-badge { background: var(--question-soft); color: var(--question); padding: 4px 10px; border-radius: 6px; font-size: 12.5px; text-transform: uppercase; letter-spacing: .04em; }
+  .verdict-badge { padding: 4px 10px; border-radius: 6px; font-size: 12.5px; text-transform: uppercase; letter-spacing: .04em; }
+  .verdict-badge.modify { background: var(--change-soft); color: var(--change); }
+  .example-grid { display: grid; grid-template-columns: 1fr; gap: 12px; margin: 0; }
+  .example-grid dt { font-family: "IBM Plex Mono", monospace; font-size: 11.5px; text-transform: uppercase; letter-spacing: .05em; color: var(--text-muted); margin: 0 0 3px; }
+  .example-grid dd { margin: 0; }
+  .mock-list { margin: 0; padding-left: 0; list-style: none; display: grid; gap: 6px; font-size: 14px; }
+  .mock-list li { display: flex; justify-content: space-between; gap: 12px; border-bottom: 1px dashed var(--border); padding-bottom: 6px; }
+  .mock-list li:last-child { border-bottom: none; padding-bottom: 0; }
+  .mock-list .k { color: var(--text-muted); }
+  .mock-list .v { font-weight: 600; text-align: right; }
+  .mock-total { margin-top: 10px; padding-top: 10px; border-top: 2px solid var(--border); font-size: 14.5px; }
+
+  /* review outcome */
+  .stat-strip { display: flex; flex-wrap: wrap; gap: 14px; margin: 14px 0 18px; }
+  .stat-tile { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 12px 16px; min-width: 120px; }
+  .stat-tile .num { font-family: "IBM Plex Mono", monospace; font-size: 22px; font-weight: 600; display: block; }
+  .stat-tile .lbl { font-size: 12px; color: var(--text-muted); }
+  ul.open-questions { padding-left: 20px; }
+  ul.open-questions li { margin-bottom: 6px; }
+
+  footer { margin-top: 48px; padding-top: 16px; border-top: 1px solid var(--border); color: var(--text-muted); font-size: 12.5px; }
+
+  @media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; transition: none !important; animation: none !important; } }
+</style>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+
+<div class="wrap">
+
+  <header class="page-header">
+    <p class="eyebrow">Internal tool proposal · v2 (revised)</p>
+    <h1>Store Screenshot Recipe</h1>
+    <p class="tagline">Pulls competitor Google Play screenshots, analyses them in an expanding circle of checks, and recommends exactly which screen to capture and how to design each slot of our own store listing &mdash; showing you the image count and cost before every step.</p>
+    <span class="status-pill">Revised plan: awaiting your review</span>
+    <div class="change-box">
+      <strong>What changed since the first version:</strong> the pipeline now grows outward from a small, capped core instead of analysing everything at once &mdash; an <em>expanding circle</em> that starts with 5&ndash;8 close competitors in English, checks itself for a stable pattern, then lets you choose what to add next. The core check is hard-capped at <strong>80&ndash;100 AI-analysed images</strong>, and every step, core or expansion, shows the exact image count before it runs. Screenshots are now sorted into cost tiers &mdash; identical, lightly re-checked, or fully analysed &mdash; so only genuinely new content gets a full read. The models changed to a performance-first line-up (Fable 5.1, Opus 5.5, gpt-5.6-sol, with GPT-6 Astra reserved for special cases; no Sonnet, no Haiku). And every step is named in plain language throughout &mdash; "reading each screenshot," "checking the analysis," never a step code.
+    </div>
+  </header>
+
+  <div class="summary-bar" id="summary-bar" role="status" aria-live="polite">
+    <div class="summary-counts">
+      <span class="summary-total"><strong id="summary-answered">0</strong>/35 answered</span>
+      <span class="summary-chip approve">Approve <b id="count-approve">0</b></span>
+      <span class="summary-chip change">Change <b id="count-change">0</b></span>
+      <span class="summary-chip question">Question <b id="count-question">0</b></span>
+      <span class="summary-chip">Unanswered <b id="count-unanswered">35</b></span>
+    </div>
+    <button id="general-comment-btn" class="btn btn-ghost" type="button" hidden>General comment</button>
+  </div>
+  <p id="db-notice" class="db-notice" role="status" hidden>Responses aren't being saved right now &mdash; this page can't reach the feedback store. Your choices and notes still work on screen for this visit, but won't be kept.</p>
+
+  <!-- ============ ALREADY DECIDED ============ -->
+  <section id="decided" aria-labelledby="decided-heading">
+    <h2 id="decided-heading">Already decided</h2>
+    <p class="section-intro">Settled in earlier rounds. Shown here for the record &mdash; no controls, nothing to re-approve.</p>
+    <ul class="decided-list">
+      <li><span class="decided-tag">33</span> The Philippines storefront uses English only.</li>
+      <li><span class="decided-tag">32</span> Hong Kong uses zh-TW; zh-HK is probed separately, later.</li>
+      <li><span class="decided-tag">30</span> Chart games are downloaded and shown raw at no AI cost, and analysed only if you pick them.</li>
+      <li><span class="decided-tag">31</span> Chart-game locales are the countries where each game actually charts, plus the US-English baseline.</li>
+      <li><span class="decided-tag">23</span> Screenshot count is worked out from what competitors actually do, not set by hand &mdash; recommended and capped at 8.</li>
+      <li><span class="decided-tag">34</span> The Play feature graphic and promo video are out of V1 entirely: no download, no analysis.</li>
+      <li><span class="decided-tag">35</span> The repo holds the tool only (code, configs, taxonomy, prompts). Each user's own run data &mdash; images, analysis, reports &mdash; stays in their own gitignored local folder.</li>
+      <li><span class="decided-tag">14&ndash;19</span> Models are performance-first: Fable 5.1 reads screenshots, Opus 5.5 handles layer differences, translation and recommendations, and gpt-5.6-sol checks the AI work (GPT-6 Astra only for special cases). No Sonnet, no Haiku.</li>
+      <li><span class="decided-tag">36</span> The core check is capped at 80&ndash;100 AI-analysed images in total, with a hard stop; anything past that is an expansion you choose.</li>
+      <li><span class="decided-tag">37</span> A whole deck is analysed in one AI call where possible, falling back automatically to one image per call.</li>
+    </ul>
+  </section>
+
+  <!-- ============ DECISIONS ============ -->
+  <section id="decisions" aria-labelledby="decisions-heading">
+    <h2 id="decisions-heading">Your decisions, first</h2>
+    <p class="section-intro">Six open decisions (items 38&ndash;43 of the revised proposal). Each has a recommended default, highlighted below &mdash; approve it, ask for a change, or flag a question.</p>
+
+    <div class="decision-grid">
+
+      <article class="decision-card" id="item-38">
+        <div class="decision-num">38</div>
+        <h3 class="decision-q">Which competitors form the core check, and in what priority order?</h3>
+        <p class="decision-rec"><span class="tag rec-tag">Recommended</span>Capybara Go, Mini Tales, Heroll, Dicero, Archero 2, Survivor.io, BagMaster Isekai &mdash; 7 games, in that order.</p>
+        <p class="decision-alt"><span class="tag">Alternatives</span>Swap in Legend of Mushroom, Legend of Slime or Overgeared Hero in place of one of the seven.</p>
+        <p class="decision-why"><span class="tag">Why</span>This mixes the direct competitors (not yet very successful, but the closest match) with same-audience games, while staying inside the whole-deck fit rule for the image cap.</p>
+        <div class="control-row" data-decision="38"></div>
+      </article>
+
+      <article class="decision-card" id="item-39">
+        <div class="decision-num">39</div>
+        <h3 class="decision-q">Where exactly should the core cap sit, within the 80&ndash;100 range?</h3>
+        <p class="decision-rec"><span class="tag rec-tag">Recommended</span>100 as the hard stop, aiming for about 85 images in practice.</p>
+        <p class="decision-alt"><span class="tag">Alternatives</span>Set the hard stop lower, e.g. 90, to save cost &middot; skip an aiming point and just enforce the 100 hard stop.</p>
+        <p class="decision-why"><span class="tag">Why</span>85 comfortably fits our own 7 images plus 7&ndash;8 whole competitor decks at roughly 9.5 images each, while the 100 hard stop leaves headroom for a slightly longer deck without refusing to start.</p>
+        <div class="control-row" data-decision="39"></div>
+      </article>
+
+      <article class="decision-card" id="item-40">
+        <div class="decision-num">40</div>
+        <h3 class="decision-q">When should the core check suggest stopping early?</h3>
+        <p class="decision-rec"><span class="tag rec-tag">Recommended</span>After at least 5 competitor decks, once the last 2 decks changed no slot's top screen type and no share moved more than 10 points.</p>
+        <p class="decision-alt"><span class="tag">Alternatives</span>Require more decks (e.g. 7) before allowing an early stop &middot; use a tighter or looser share-shift threshold.</p>
+        <p class="decision-why"><span class="tag">Why</span>5 decks is enough to see a real pattern without spending the whole cap on it; requiring 2 unchanged decks in a row guards against stopping on a fluke.</p>
+        <div class="control-row" data-decision="40"></div>
+      </article>
+
+      <article class="decision-card" id="item-41">
+        <div class="decision-num">41</div>
+        <h3 class="decision-q">How much of the AI output gets a second, cross-family read?</h3>
+        <p class="decision-rec"><span class="tag rec-tag">Recommended</span>100% in the core check; in expansions, every full analysis plus 25% of the layer-difference checks and anything low-confidence.</p>
+        <p class="decision-alt"><span class="tag">Alternatives</span>Review 100% everywhere, for maximum confidence at higher cost &middot; sample less than 25% in expansions to save further.</p>
+        <p class="decision-why"><span class="tag">Why</span>The core check sets the pattern for everything after it, so it's worth reviewing in full; once the process is validated, expansions can sample.</p>
+        <div class="control-row" data-decision="41"></div>
+      </article>
+
+      <article class="decision-card" id="item-42">
+        <div class="decision-num">42</div>
+        <h3 class="decision-q">What's the budget ceiling per expansion?</h3>
+        <p class="decision-rec"><span class="tag rec-tag">Recommended</span>$30, adjustable in config.</p>
+        <p class="decision-alt"><span class="tag">Alternatives</span>No fixed ceiling &middot; a different default value.</p>
+        <p class="decision-why"><span class="tag">Why</span>A per-increment ceiling keeps each expansion's cost predictable and bounded, while staying a config value you can raise.</p>
+        <div class="control-row" data-decision="42"></div>
+      </article>
+
+      <article class="decision-card" id="item-43">
+        <div class="decision-num">43</div>
+        <h3 class="decision-q">Which library reads our own PSD's layers and text?</h3>
+        <p class="decision-rec"><span class="tag rec-tag">Recommended</span>psd-tools (Python) &mdash; already proven on our PSD via the spike script.</p>
+        <p class="decision-alt"><span class="tag">Alternatives</span>ag-psd (TypeScript-only, avoids a second runtime, but unproven on our PSD).</p>
+        <p class="decision-why"><span class="tag">Why</span>A proven reader beats an unproven one, even at the cost of adding a second runtime to the repo.</p>
+        <div class="control-row" data-decision="43"></div>
+      </article>
+
+    </div>
+  </section>
+
+  <!-- ============ PROPOSAL ITEMS 1-29 ============ -->
+  <section id="proposal" aria-labelledby="proposal-heading">
+    <h2 id="proposal-heading">The proposal</h2>
+    <p class="section-intro">Items 1&ndash;29, grouped as in the revised proposal. Approve each one, or flag a change or question, with an optional note.</p>
+
+    <div class="prop-section" data-section-letter="A">
+      <div class="prop-section-head">
+        <h3>A. What the tool is</h3>
+        <button class="btn btn-small approve-all" data-section="A" type="button">Approve all in this section</button>
+      </div>
+
+      <article class="item" id="item-1">
+        <div class="item-head"><span class="item-num">1</span><h4>A reusable, config-driven repo</h4></div>
+        <div class="item-body">
+          <p>Operated with Claude Code. For each locale it recommends the screenshot order and count, the in-game screen to capture, a full marketing-layer spec, translation notes, and what to change in our current images.</p>
+        </div>
+        <div class="control-row" data-item="1"></div>
+      </article>
+
+      <article class="item" id="item-2">
+        <div class="item-head"><span class="item-num">2</span><h4>Code first, AI only with your OK</h4></div>
+        <div class="item-body">
+          <p>Code does everything that doesn't need judgement. AI is used only where judgement is needed, and never without your approval of the image count and cost first.</p>
+        </div>
+        <div class="control-row" data-item="2"></div>
+      </article>
+
+      <article class="item" id="item-3">
+        <div class="item-head"><span class="item-num">3</span><h4>Rogue Legends is the first config</h4></div>
+        <div class="item-body">
+          <p>The tool is game-agnostic. Other games need a new config file, not code changes.</p>
+        </div>
+        <div class="control-row" data-item="3"></div>
+      </article>
+    </div>
+
+    <div class="prop-section" data-section-letter="B">
+      <div class="prop-section-head">
+        <h3>B. How it works: the expanding circle</h3>
+        <button class="btn btn-small approve-all" data-section="B" type="button">Approve all in this section</button>
+      </div>
+
+      <article class="item" id="item-4">
+        <div class="item-head"><span class="item-num">4</span><h4>Setup, at no AI cost</h4></div>
+        <div class="item-body">
+          <p>First shows how many decks and images it will download, and the disk space, and waits for your OK. Then downloads our deck, the core competitors' English decks, and the top-10 grossing decks for every configured country, and shows them all raw.</p>
+        </div>
+        <div class="control-row" data-item="4"></div>
+      </article>
+
+      <article class="item" id="item-5">
+        <div class="item-head"><span class="item-num">5</span><h4>Core check</h4></div>
+        <div class="item-body">
+          <ul>
+            <li>Our deck plus 5&ndash;8 of the closest named competitors, US English only.</li>
+            <li>Capped at 80&ndash;100 AI-analysed images in total, with a hard stop.</li>
+            <li>Whole decks only: the tool picks as many complete competitor decks as fit, in your priority order, shows the exact count, and won't start if fewer than 5 fit.</li>
+            <li>Only our live store screenshots (7) count; our local files are matched to them and kept as reference.</li>
+            <li>It starts with a small pilot: ours plus 2 competitors.</li>
+          </ul>
+        </div>
+        <div class="control-row" data-item="5"></div>
+      </article>
+
+      <article class="item" id="item-6">
+        <div class="item-head"><span class="item-num">6</span><h4>Early stop</h4></div>
+        <div class="item-body">
+          <p>When the pattern stops changing, the tool suggests stopping. You decide.</p>
+        </div>
+        <div class="control-row" data-item="6"></div>
+      </article>
+
+      <article class="item" id="item-7">
+        <div class="item-head"><span class="item-num">7</span><h4>First recommendation</h4></div>
+        <div class="item-body">
+          <p>For US English. You rate it in the report page.</p>
+        </div>
+        <div class="control-row" data-item="7"></div>
+      </article>
+
+      <article class="item" id="item-8">
+        <div class="item-head"><span class="item-num">8</span><h4>The tool then asks how to expand</h4></div>
+        <div class="item-body">
+          <ul>
+            <li>More English competitors.</li>
+            <li>Countries, from a checkbox list.</li>
+            <li>Chart games, picked from the raw view.</li>
+          </ul>
+          <p>You can pick more than one.</p>
+        </div>
+        <div class="control-row" data-item="8"></div>
+      </article>
+
+      <article class="item" id="item-9">
+        <div class="item-head"><span class="item-num">9</span><h4>Each expansion is a separate increment</h4></div>
+        <div class="item-body">
+          <p>Before it runs, the tool shows: how many new images it will process, split by cost level; how many model passes that means, including the review model (so 85 images reads as about 170 passes); anything it must add first, e.g. the English analysis of a game you picked for a country; and the estimated cost. It waits for your OK. When a budget ceiling is hit, the lowest-priority competitor/country pairs are dropped first.</p>
+        </div>
+        <div class="control-row" data-item="9"></div>
+      </article>
+    </div>
+
+    <div class="prop-section" data-section-letter="C">
+      <div class="prop-section-head">
+        <h3>C. How it keeps cost down (cheapest first)</h3>
+        <button class="btn btn-small approve-all" data-section="C" type="button">Approve all in this section</button>
+      </div>
+
+      <article class="item" id="item-10">
+        <div class="item-head"><span class="item-num">10</span><h4>Identical to the English image: no AI</h4></div>
+        <div class="item-body">
+          <p>The analysis is reused and the screenshot is flagged "unchanged from English" &mdash; about the screenshot, not the whole store page.</p>
+        </div>
+        <div class="control-row" data-item="10"></div>
+      </article>
+
+      <article class="item" id="item-11">
+        <div class="item-head"><span class="item-num">11</span><h4>Same screen with a new marketing layer</h4></div>
+        <div class="item-body">
+          <p>Only the cropped band and text areas are sent, plus the English analysis, and a lighter capable model returns the differences.</p>
+        </div>
+        <div class="control-row" data-item="11"></div>
+      </article>
+
+      <article class="item" id="item-12">
+        <div class="item-head"><span class="item-num">12</span><h4>Different screenshot</h4></div>
+        <div class="item-body">
+          <p>Full analysis with the strongest model.</p>
+        </div>
+        <div class="control-row" data-item="12"></div>
+      </article>
+
+      <article class="item" id="item-13">
+        <div class="item-head"><span class="item-num">13</span><h4>Cropping and batching</h4></div>
+        <div class="item-body">
+          <p>Images are cropped and resized to what the model needs. A whole deck is analysed per call where possible. Translation works on text only.</p>
+        </div>
+        <div class="control-row" data-item="13"></div>
+      </article>
+    </div>
+
+    <div class="prop-section" data-section-letter="D">
+      <div class="prop-section-head">
+        <h3>D. Models (performance first)</h3>
+        <button class="btn btn-small approve-all" data-section="D" type="button">Approve all in this section</button>
+      </div>
+
+      <article class="item" id="item-14">
+        <div class="item-head"><span class="item-num">14</span><h4>Reading each screenshot: Fable 5.1</h4></div>
+        <div class="item-body"><p>It was best at reading band colours in our test.</p></div>
+        <div class="control-row" data-item="14"></div>
+      </article>
+
+      <article class="item" id="item-15">
+        <div class="item-head"><span class="item-num">15</span><h4>Marketing-layer differences: Opus 5.5</h4></div>
+        <div class="item-body"><p>It read every Asian-script headline correctly in our test. This is a smaller job than a full read: it compares the cropped text and band areas against the English analysis.</p></div>
+        <div class="control-row" data-item="15"></div>
+      </article>
+
+      <article class="item" id="item-16">
+        <div class="item-head"><span class="item-num">16</span><h4>Checking the image analysis: gpt-5.6-sol</h4></div>
+        <div class="item-body"><p>The most accurate GPT model in our test. GPT-6 Astra is kept for special cases only and never used for document reviews.</p></div>
+        <div class="control-row" data-item="16"></div>
+      </article>
+
+      <article class="item" id="item-17">
+        <div class="item-head"><span class="item-num">17</span><h4>Settling disagreements, translation and recommendations: Opus 5.5</h4></div>
+        <div class="item-body"><p>Covers adjudication, translation and genre lingo, and per-country recommendations.</p></div>
+        <div class="control-row" data-item="17"></div>
+      </article>
+
+      <article class="item" id="item-18">
+        <div class="item-head"><span class="item-num">18</span><h4>Checking the recommendations: gpt-5.6-sol</h4></div>
+        <div class="item-body"><p>To be confirmed in the pilot.</p></div>
+        <div class="control-row" data-item="18"></div>
+      </article>
+
+      <article class="item" id="item-19">
+        <div class="item-head"><span class="item-num">19</span><h4>No Sonnet, no Haiku</h4></div>
+        <div class="item-body"><p>No Sonnet is used for screenshots and no Haiku is used anywhere.</p></div>
+        <div class="control-row" data-item="19"></div>
+      </article>
+    </div>
+
+    <div class="prop-section" data-section-letter="E">
+      <div class="prop-section-head">
+        <h3>E. What you get</h3>
+        <button class="btn btn-small approve-all" data-section="E" type="button">Approve all in this section</button>
+      </div>
+
+      <article class="item" id="item-20">
+        <div class="item-head"><span class="item-num">20</span><h4>Local folder = source of truth</h4></div>
+        <div class="item-body">
+          <p>Holds all images (full-res and optimised), all analysis data, and offline markdown reports: per locale, per competitor deck, our assets, recommendations, and a chart-games gallery. Every run is dated and can be compared with earlier runs.</p>
+        </div>
+        <div class="control-row" data-item="20"></div>
+      </article>
+
+      <article class="item" id="item-21">
+        <div class="item-head"><span class="item-num">21</span><h4>A private report page (claude.ai Artifact)</h4></div>
+        <div class="item-body">
+          <p>Built from the same data. Shows recommendations (current vs. recommended side by side), every analysed deck in store order, a locale comparison, the raw chart games, and statistics. If Artifacts aren't available, the same page is built as an offline folder.</p>
+        </div>
+        <div class="control-row" data-item="21"></div>
+      </article>
+
+      <article class="item" id="item-22">
+        <div class="item-head"><span class="item-num">22</span><h4>Feedback</h4></div>
+        <div class="item-body">
+          <p>Approve / reject / note on every recommendation and screenshot, plus comments. The next run applies these as tracked corrections.</p>
+        </div>
+        <div class="control-row" data-item="22"></div>
+      </article>
+
+      <article class="item" id="item-23">
+        <div class="item-head"><span class="item-num">23</span><h4>Screenshot count is a finding, not a setting</h4></div>
+        <div class="item-body">
+          <p>The tool reports how many screenshots competitors use per locale, and recommends a count capped at 8, framed as "what competitors do." Google Play allows 8 phone screenshots; longer competitor decks likely mix device types, and are still analysed in full.</p>
+        </div>
+        <div class="control-row" data-item="23"></div>
+      </article>
+    </div>
+
+    <div class="prop-section" data-section-letter="F">
+      <div class="prop-section-head">
+        <h3>F. Milestones (each shows its image count and waits for you)</h3>
+        <button class="btn btn-small approve-all" data-section="F" type="button">Approve all in this section</button>
+      </div>
+
+      <article class="item" id="item-24">
+        <div class="item-head"><span class="item-num">24</span><h4>Setup</h4></div>
+        <div class="item-body"><p>Repo, config, taxonomy, a host check, and all downloads. <strong>You:</strong> approve the download preview, then confirm the core competitor list and its exact image count.</p></div>
+        <div class="control-row" data-item="24"></div>
+      </article>
+
+      <article class="item" id="item-25">
+        <div class="item-head"><span class="item-num">25</span><h4>Core pilot</h4></div>
+        <div class="item-body"><p>About 25 images, 100% cross-checked. Also tests the "same screen, new layer" check on hand-labelled pairs (no AI cost), and measures real costs. <strong>You:</strong> rate the accuracy; the taxonomy is then frozen.</p></div>
+        <div class="control-row" data-item="25"></div>
+      </article>
+
+      <article class="item" id="item-26">
+        <div class="item-head"><span class="item-num">26</span><h4>Core check</h4></div>
+        <div class="item-body"><p>About 55&ndash;65 more images (about 80&ndash;90 in total), plus the first US-English recommendation. <strong>You:</strong> rate it and choose expansions.</p></div>
+        <div class="control-row" data-item="26"></div>
+      </article>
+
+      <article class="item" id="item-27">
+        <div class="item-head"><span class="item-num">27</span><h4>Expansions</h4></div>
+        <div class="item-body"><p>Repeatable, each approved separately. <strong>You:</strong> approve each one and rate its recommendation.</p></div>
+        <div class="control-row" data-item="27"></div>
+      </article>
+
+      <article class="item" id="item-28">
+        <div class="item-head"><span class="item-num">28</span><h4>Final report and feedback loop</h4></div>
+        <div class="item-body"><p>The final report is published and feedback is collected for the next run.</p></div>
+        <div class="control-row" data-item="28"></div>
+      </article>
+
+      <article class="item" id="item-29">
+        <div class="item-head"><span class="item-num">29</span><h4>Estimated cost</h4></div>
+        <div class="item-body"><p>Core check about $17&ndash;28 on your Claude subscription plus about 1.5&ndash;1.8M gpt-5.6-sol tokens (provisional; recomputed from the pilot's real numbers). Each added country about $4&ndash;6 (the real counts are shown before approval).</p></div>
+        <div class="control-row" data-item="29"></div>
+      </article>
+    </div>
+  </section>
+
+  <!-- ============ DIAGRAMS ============ -->
+  <section id="diagrams" aria-labelledby="diagrams-heading">
+    <h2 id="diagrams-heading">How it runs</h2>
+    <p class="section-intro">Three views of the same system: the expanding-circle flow, the per-image cost tiers, and where the data lives.</p>
+
+    <h3>The expanding circle</h3>
+    <div class="diagram-scroll">
+<pre class="mermaid">
+flowchart TD
+  A["Setup - no AI cost"] --> B{{"You approve the download preview"}}
+  B --> C["Core pilot - about 25 images, ours + 2 competitors"]
+  C --> D["Core check - remaining core competitors, up to the image cap"]
+  D --> E["First recommendation - US English"]
+  E --> F{{"The tool asks: how do you want to expand?"}}
+  F --> G["Pick more English competitors"]
+  F --> H["Pick countries - checkbox list"]
+  F --> I["Pick chart games from the raw view"]
+  G --> J{{"You approve the new image count and cost"}}
+  H --> J
+  I --> J
+  J --> K["Run the expansion"]
+  K --> L["Updated recommendation"]
+  L --> F
+</pre>
+    </div>
+
+    <h3>Cost tiers, per image (cheapest first)</h3>
+    <div class="diagram-scroll">
+<pre class="mermaid">
+flowchart LR
+  IMG["A new screenshot"] --> Q1{{"Identical to the English image?"}}
+  Q1 -->|"Yes"| T1["No AI - reuse the English analysis"]
+  Q1 -->|"No"| Q2{{"Same screen, new marketing layer?"}}
+  Q2 -->|"Yes"| T2["Send only the cropped text and band areas, plus the English analysis"]
+  T2 --> T2R["Opus 5.5 returns a list of differences"]
+  Q2 -->|"No"| T3["Full analysis of the whole screenshot"]
+  T3 --> T3R["Fable 5.1 reads the screen"]
+  T1 --> REV["gpt-5.6-sol checks the analysis - Astra for special cases"]
+  T2R --> REV
+  T3R --> REV
+</pre>
+    </div>
+
+    <h3>Where the data lives</h3>
+    <div class="diagram-scroll">
+<pre class="mermaid">
+flowchart LR
+  LOCAL["Local workspace folder - images, analysis data, manifests (source of truth)"] -->|"generator script"| REPORT["claude.ai report page - published view"]
+  REPORT -->|"approve, reject, note"| FEEDBACK["Feedback database (responses-v2) and comments"]
+  FEEDBACK -->|"bring in your feedback"| CORR["Tracked corrections"]
+  CORR -->|"invalidates affected inputs"| NEXT["Next run"]
+  NEXT --> LOCAL
+</pre>
+    </div>
+  </section>
+
+  <!-- ============ TABLES ============ -->
+  <section id="tables" aria-labelledby="tables-heading">
+    <h2 id="tables-heading">Reference tables</h2>
+
+    <h3>Which model does which job</h3>
+    <div class="table-scroll">
+      <table>
+        <thead><tr><th>Task</th><th>Model</th><th>Why AI is needed</th><th>Note</th></tr></thead>
+        <tbody>
+          <tr><td>Reading each screenshot (screen type, capture, marketing layer, exact text)</td><td>Fable 5.1</td><td>Judgement on screen type; reads stylised multi-script text where OCR fails</td><td>Best band-colour accuracy in the bake-off; no Sonnet, per the user's rule</td></tr>
+          <tr><td>Marketing-layer differences on crops</td><td>Opus 5.5</td><td>Reads localized text and describes layer changes</td><td>Read every Japanese, Korean, Traditional Chinese and Thai headline correctly in the bake-off</td></tr>
+          <tr><td>Checking the screenshot analysis (cross-family)</td><td>gpt-5.6-sol by default; GPT-6 Astra for special/high-value cases only</td><td>Independent second reading</td><td>Sol matches or beats Astra on every accuracy metric measured</td></tr>
+          <tr><td>Settling disagreements</td><td>Opus 5.5</td><td>Judges between two readings, given both outputs and the image</td><td>&mdash;</td></tr>
+          <tr><td>Translation and genre lingo</td><td>Opus 5.5 (text only)</td><td>Meaning-level comparison, genre terms</td><td>&mdash;</td></tr>
+          <tr><td>Per-country recommendations</td><td>Opus 5.5</td><td>Interprets the deterministic statistics</td><td>&mdash;</td></tr>
+          <tr><td>Checking the recommendations (cross-family)</td><td>gpt-5.6-sol</td><td>Independent read of the reasoning</td><td>Based on indirect evidence; to be confirmed in the pilot. Terra is not used here: it mislabels marketing-band screens</td></tr>
+          <tr><td>Reviewing plans, prompts, schemas, code and documents (building the tool itself)</td><td>gpt-5.6-sol or gpt-5.6-terra; never GPT-6 Astra</td><td>Cross-family check on the tool, not on screenshots</td><td>User rule</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>Why these models (bake-off results)</h3>
+    <div class="table-scroll">
+      <table>
+        <thead><tr><th>Model</th><th>Considered for</th><th>Screen-type accuracy</th><th>Band-colour accuracy</th><th>Verdict</th></tr></thead>
+        <tbody>
+          <tr><td>Fable 5.1</td><td>Reading each screenshot</td><td>8/10</td><td>Best: avg. distance 47.5 (own assets)</td><td>Chosen</td></tr>
+          <tr><td>Opus 5.5</td><td>Reading each screenshot</td><td>7/10</td><td>123.0</td><td>Not chosen here; used for layer diffs, translation and recommendations instead</td></tr>
+          <tr><td>Sonnet 5</td><td>Reading each screenshot</td><td>9/10</td><td>121.0</td><td>Excluded by the user's rule (no Sonnet for screenshots), despite strong numbers</td></tr>
+          <tr><td>Haiku 4.5</td><td>Reading each screenshot</td><td>10/10</td><td>168.7, plus hallucinated Korean/Thai text</td><td>Excluded; zero-importance work only</td></tr>
+          <tr><td>gpt-5.6-sol</td><td>Checking the analysis</td><td>10/10</td><td>16.2 (competitor images)</td><td>Chosen as the default reviewer</td></tr>
+          <tr><td>GPT-6 Astra</td><td>Checking the analysis</td><td>7/10</td><td>14.3</td><td>Reserved for special/high-value cases only</td></tr>
+          <tr><td>gpt-5.6-terra</td><td>Checking the analysis</td><td>6/10</td><td>21.3; also mislabels marketing bands as promo</td><td>Rejected as a reviewer</td></tr>
+          <tr><td>gpt-5.6-luna</td><td>Checking the analysis</td><td>8/10</td><td>20.7</td><td>Not used; slowest, no accuracy edge over Sol</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="evidence-note"><strong>Tested on our screenshots.</strong> The same prompt was run on 10 real images (5 of ours, checked against the PSD, plus 5 competitor screenshots in Japanese, Korean, Traditional Chinese and Thai) across 8 models, for $2.24 total Claude-side spend plus subscription-billed Codex calls. Details: <code>docs/research/vision-models-bakeoff.md</code>.</p>
+
+    <h3>Image budget and cost for the core check (provisional)</h3>
+    <div class="table-scroll">
+      <table>
+        <thead><tr><th>Item</th><th>Estimate</th></tr></thead>
+        <tbody>
+          <tr><td>Fable full analysis</td><td>~85 images &times; $0.15&ndash;0.25 &asymp; $13&ndash;21</td></tr>
+          <tr><td>gpt-5.6-sol review at 100% coverage</td><td>~85 images &times; ~17k input tokens &asymp; 1.5M tokens (subscription, not billed per token)</td></tr>
+          <tr><td>Opus adjudication</td><td>~5&ndash;10 disputes &asymp; $1</td></tr>
+          <tr><td>Retries and per-image fallbacks</td><td>allowance ~15% of analysis cost &asymp; $2&ndash;3</td></tr>
+          <tr><td>Opus English lingo + recommendation</td><td>&asymp; $1&ndash;2</td></tr>
+          <tr><td>GPT recommendation review</td><td>1&ndash;2 calls</td></tr>
+          <tr><td><strong>Core total (provisional)</strong></td><td><strong>&asymp; $17&ndash;28 Claude-side + ~1.5&ndash;1.8M gpt-5.6-sol tokens</strong></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="section-intro">Images: 7 competitors &times; ~9.5 + our 7 &asymp; 74&ndash;90; exact counts come from setup. Each added country afterwards costs about $4&ndash;6, with the real tier counts shown before approval. Every approval screen after the pilot recomputes its estimate from the pilot's measured deck-call, fallback, retry and review costs &mdash; the bake-off measured single-image calls only.</p>
+
+    <h3>Build vs. reuse, with licenses</h3>
+    <div class="table-scroll">
+      <table>
+        <thead><tr><th>Component</th><th>Chosen</th><th>License</th><th>Reason</th></tr></thead>
+        <tbody>
+          <tr><td>Play ingest</td><td>google-play-scraper (fallback: @mradex77/google-play-scraper)</td><td>MIT</td><td>Proven in the spike</td></tr>
+          <tr><td>Image resize/encode</td><td>sharp</td><td>Apache-2.0</td><td>&mdash;</td></tr>
+          <tr><td>Perceptual hash</td><td>sharp-phash</td><td>MIT</td><td>Built on sharp</td></tr>
+          <tr><td>Palette</td><td>colorthief</td><td>MIT</td><td>node-vibrant has no license file</td></tr>
+          <tr><td>Language detection</td><td>franc-min + Unicode-script check</td><td>MIT</td><td>Deterministic language of the text the model read</td></tr>
+          <tr><td>Band measurement</td><td>Custom</td><td>&mdash;</td><td>No library exists for this limited scope</td></tr>
+          <tr><td>PSD text/layers</td><td>psd-tools (Python), pending decision 43 vs. ag-psd</td><td>MIT</td><td>Proven on our PSD via the spike script</td></tr>
+          <tr><td>OCR</td><td>None in V1; tesseract.js gets one pilot test</td><td>Apache-2.0</td><td>Vision models beat classic OCR on stylised game text</td></tr>
+          <tr><td>Schemas</td><td>zod</td><td>MIT</td><td>&mdash;</td></tr>
+          <tr><td>Concurrency</td><td>p-limit</td><td>MIT</td><td>&mdash;</td></tr>
+          <tr><td>Rejected: AppStoreCat / mcp-appstore / Qwen3-VL / Grounded-SAM-2 / OmniParser</td><td>&mdash;</td><td>various</td><td>Heavier stack for no gain, GPU needs, overkill, or the wrong task</td></tr>
+          <tr><td>Pattern reference only (no code copied)</td><td>Stora, shots, aso-skill</td><td>no/unclear license</td><td>&mdash;</td></tr>
+          <tr><td>Taxonomy, cost tiering, consensus, stability, recommendation</td><td>Custom</td><td>&mdash;</td><td>The novel part</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>Taxonomy draft</h3>
+    <div class="table-scroll">
+      <table>
+        <thead><tr><th>Screen type group</th><th>Examples</th></tr></thead>
+        <tbody>
+          <tr><td>key_art</td><td>title/logo, character showcase, collage, CG scene</td></tr>
+          <tr><td>gameplay</td><td>battle, boss, victory, defeat, skill select, board/dice, backpack/merge, idle/auto, PvP, dungeon run</td></tr>
+          <tr><td>metagame</td><td>progression, character roster, character detail, gear, pets, skills/talents, base/town, gacha/summon, idle rewards</td></tr>
+          <tr><td>map_world</td><td>world map, stage select</td></tr>
+          <tr><td>social</td><td>guild, arena/leaderboard, co-op, chat</td></tr>
+          <tr><td>events_rewards</td><td>event, login rewards, battle pass</td></tr>
+          <tr><td>iap</td><td>shop, offer</td></tr>
+          <tr><td>promo</td><td>feature callout, social proof, collab/IP, update news</td></tr>
+          <tr><td>other</td><td>a note is required</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="table-scroll">
+      <table>
+        <thead><tr><th>Marketing-layer vocabulary</th><th>Covers</th></tr></thead>
+        <tbody>
+          <tr><td>Composition</td><td>How the capture and layer fit together on the frame</td></tr>
+          <tr><td>Bands</td><td>Type, position, size, colour (measured hex, or "unknown")</td></tr>
+          <tr><td>Text blocks</td><td>Role, exact text, language, style, fill, stroke, size, approximate region</td></tr>
+          <tr><td>Character/item callouts</td><td>Kind, source, identity, placement, scale, whether it breaks the frame</td></tr>
+          <tr><td>Decorations and badges</td><td>&mdash;</td></tr>
+          <tr><td>Relation to the screen</td><td>How the layer relates to the capture underneath, and occlusion %</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="section-intro">The bake-off exposed a taxonomy gap: the "board/dice vs. world map" boundary needs a written definition &mdash; our own "maps" screen was read as board/dice by 4 of 5 models tested.</p>
+  </section>
+
+  <!-- ============ EXAMPLES ============ -->
+  <section id="example" aria-labelledby="example-heading">
+    <h2 id="example-heading">Examples</h2>
+
+    <h3>Example approval screen</h3>
+    <p class="section-intro">What you'll see before the tool spends any money on a step &mdash; illustrative numbers, not from a real run.</p>
+    <div class="example-card mock">
+      <div class="example-head">
+        <span class="example-badge">Example &middot; approval screen</span>
+      </div>
+      <ul class="mock-list">
+        <li><span class="k">Core check</span><span class="v">58 images</span></li>
+        <li><span class="k">Identical to English (no AI)</span><span class="v">0</span></li>
+        <li><span class="k">New marketing layer (light analysis)</span><span class="v">6</span></li>
+        <li><span class="k">Full analysis</span><span class="v">52</span></li>
+        <li><span class="k">Checking passes, by gpt-5.6-sol (100% in the core check)</span><span class="v">~58</span></li>
+      </ul>
+      <p class="mock-total"><strong>Estimated cost:</strong> $9&ndash;14 on your Claude subscription, plus about 210k gpt-5.6-sol tokens. <button class="btn btn-small" type="button" disabled>Approve this batch</button></p>
+    </div>
+
+    <h3>Example recommendation entry</h3>
+    <p class="section-intro">One entry as it would render in the recommendations tab.</p>
+    <div class="example-card">
+      <div class="example-head">
+        <span class="locale-badge">ja-JP &middot; slot 1</span>
+        <span class="verdict-badge modify">Modify</span>
+      </div>
+      <dl class="example-grid">
+        <div><dt>Capture</dt><dd>gameplay: boss &mdash; "boss vs two-headed ogre, mid-cast max VFX, HP ~40%"</dd></div>
+        <div><dt>Marketing layer</dt><dd>Full-bleed capture; bottom diagonal band, 22% height, measured <code>#B3122E</code>; headline &ldquo;&#12508;&#12473;&#12434;&#20498;&#12379;&#65281;&rdquo; (gloss: "Defeat the boss!"), outlined; oversized enemy/boss cut-out breaking the frame.</dd></div>
+        <div><dt>vs. current</dt><dd>Modify &mdash; our slot 1 is currently skill-select with an English headline; JP decks use a boss scene with Japanese text in 9 of 11 decks (n=11).</dd></div>
+        <div><dt>Generated by</dt><dd>Fable 5.1 read the screenshot, Opus 5.5 wrote the recommendation, gpt-5.6-sol checked both.</dd></div>
+      </dl>
+    </div>
+  </section>
+
+  <!-- ============ RISKS ============ -->
+  <section id="risks" aria-labelledby="risks-heading">
+    <h2 id="risks-heading">Risks</h2>
+
+    <div class="table-scroll">
+      <table>
+        <thead><tr><th>#</th><th>Risk</th><th>Mitigation</th></tr></thead>
+        <tbody>
+          <tr><td>1</td><td>80&ndash;100 images may not be enough for a stable pattern</td><td>Stability metric shown per deck; you expand with more English competitors if unstable</td></tr>
+          <tr><td>2</td><td>Capture-match errors: changed gameplay mistaken for a marketing-only change, or vice versa</td><td>Code-only capture-match test on hand-labelled pairs in the pilot, with a published false-match rate; uncertain matches go to full analysis</td></tr>
+          <tr><td>3</td><td>Approximate regions miss text in crops</td><td>Generous padding plus a low-res context thumbnail; an escape flag; review sample</td></tr>
+          <tr><td>4</td><td>Deck-per-call attention dilution</td><td>Per-image validation, fallback to per-image calls, pilot comparison on one deck</td></tr>
+          <tr><td>5</td><td>Fewer than 5 whole competitor decks fit the cap</td><td>The whole-deck fit rule refuses to start; you raise the cap or change the list</td></tr>
+          <tr><td>6</td><td>Taxonomy boundary gaps (board/dice vs. map)</td><td>Written definitions; the pilot rating freezes the taxonomy</td></tr>
+          <tr><td>7</td><td>Chart games are MMO/gacha &mdash; a different audience</td><td>Shown raw; analysed only if picked; separate statistics</td></tr>
+          <tr><td>8</td><td>Play scraping ToS; chart endpoint fragility</td><td>Throttle and cache; manual chart-list fallback; private report page</td></tr>
+          <tr><td>9</td><td>Report-page host capabilities not available to other users</td><td>Setup check; local-only mode</td></tr>
+          <tr><td>10</td><td>Model picks rest on a 10-image test</td><td>Models are config values; the pilot re-checks accuracy on real decks before the core check runs</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ============ REVIEW OUTCOME ============ -->
+  <section id="review" aria-labelledby="review-heading">
+    <h2 id="review-heading">Review outcome</h2>
+    <div class="stat-strip">
+      <div class="stat-tile"><span class="num">14</span><span class="lbl">findings</span></div>
+      <div class="stat-tile"><span class="num">2</span><span class="lbl">already fixed by the model-name correction</span></div>
+      <div class="stat-tile"><span class="num">11</span><span class="lbl">accepted and applied</span></div>
+      <div class="stat-tile"><span class="num">1</span><span class="lbl">partly accepted</span></div>
+    </div>
+    <p>GPT cross-review (<code>docs/plan-v2.review-gpt.md</code>, reviewer gpt-5.6-sol via Codex CLI) returned 14 findings against the revised plan and proposal. All 14 were accepted or applied, one only partly; two of them (the non-existent <code>gpt-6-sol</code> slug, and the recommendation-reviewer default) were already resolved by the coordinator's model-name correction &mdash; Sol as the default GPT reviewer &mdash; made right after the review ran.</p>
+    <p>Real fixes the review drove: the core check now has an explicit whole-deck fit rule, so it always tries for at least 5 complete competitor decks and refuses to start rather than risk stopping mid-deck; the "8 screenshots" figure is now framed as our own recommendation cap, not a Play-imposed maximum, since real decks of 10 and 13 exist; setup shows a download preview and waits for approval before pulling any images at all; approval screens now show both the unique images counted against the cap and the separate model-pass count (so 85 images reading as ~170 passes is visible, not hidden); expansion planning bundles in any missing English baseline analysis automatically; and settled items like the 80&ndash;100 cap and whole-deck calls moved out of the open-decisions list into "Already decided" above, rather than being re-litigated as if still open.</p>
+  </section>
+
+  <footer>
+    Built from <code>docs/product-proposal-v2.md</code>, <code>docs/plan-v2.md</code>, <code>docs/plan-v2.review-gpt.md</code> and <code>docs/research/vision-models-bakeoff.md</code>. Reply with approvals, changes or questions above &mdash; responses save automatically as you go.
+  </footer>
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  var SECTIONS = { A: [1,2,3], B: [4,5,6,7,8,9], C: [10,11,12,13], D: [14,15,16,17,18,19], E: [20,21,22,23], F: [24,25,26,27,28,29] };
+  var ALL_NUMS = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,38,39,40,41,42,43];
+  var TOTAL = ALL_NUMS.length;
+  var STATE = {};
+  for (var i = 0; i < ALL_NUMS.length; i++) STATE[ALL_NUMS[i]] = { status: null, note: "" };
+
+  var DB = null;
+  var writeQueue = {};
+  var noteTimers = {};
+
+  function buildRadioGroupHTML(n) {
+    return (
+      '<div class="radio-group" role="radiogroup" aria-label="Response for item ' + n + '">' +
+      '<label class="radio-pill approve"><input type="radio" name="status-' + n + '" id="item-' + n + '-approve" value="approve"> Approve</label>' +
+      '<label class="radio-pill change"><input type="radio" name="status-' + n + '" id="item-' + n + '-change" value="change"> Change</label>' +
+      '<label class="radio-pill question"><input type="radio" name="status-' + n + '" id="item-' + n + '-question" value="question"> Question</label>' +
+      '</div>'
+    );
+  }
+
+  function renderItemControls(container, n) {
+    container.innerHTML =
+      buildRadioGroupHTML(n) +
+      '<details class="note-details" id="item-' + n + '-note-details">' +
+      '<summary>Add a note</summary>' +
+      '<label class="note-label" for="item-' + n + '-note">Note</label>' +
+      '<textarea id="item-' + n + '-note" class="note-field" rows="2" placeholder="Optional note..."></textarea>' +
+      '</details>';
+    wireControls(n);
+  }
+
+  function renderDecisionControls(container, n) {
+    container.innerHTML =
+      buildRadioGroupHTML(n) +
+      '<label class="note-label" for="item-' + n + '-note">Note</label>' +
+      '<textarea id="item-' + n + '-note" class="note-field" rows="2" placeholder="Optional note..."></textarea>';
+    wireControls(n);
+  }
+
+  function wireControls(n) {
+    var radios = document.querySelectorAll('input[name="status-' + n + '"]');
+    for (var i = 0; i < radios.length; i++) {
+      radios[i].addEventListener("change", function (ev) {
+        var num = parseInt(ev.target.name.split("-")[1], 10);
+        STATE[num].status = ev.target.value;
+        updateSummary();
+        scheduleWrite(num);
+      });
+    }
+    var noteEl = document.getElementById("item-" + n + "-note");
+    if (noteEl) {
+      noteEl.addEventListener("input", function () {
+        STATE[n].note = noteEl.value;
+        clearTimeout(noteTimers[n]);
+        noteTimers[n] = setTimeout(function () { scheduleWrite(n); }, 800);
+      });
+    }
+  }
+
+  function applyStateToUI(n) {
+    var st = STATE[n];
+    if (!st) return;
+    if (st.status) {
+      var r = document.getElementById("item-" + n + "-" + st.status);
+      if (r) r.checked = true;
+    }
+    var noteEl = document.getElementById("item-" + n + "-note");
+    if (noteEl && document.activeElement !== noteEl) {
+      noteEl.value = st.note || "";
+    }
+  }
+
+  function updateSummary() {
+    var approve = 0, change = 0, question = 0, answered = 0;
+    for (var i = 0; i < ALL_NUMS.length; i++) {
+      var n = ALL_NUMS[i];
+      var s = STATE[n] && STATE[n].status;
+      if (s === "approve") approve++;
+      else if (s === "change") change++;
+      else if (s === "question") question++;
+      if (s) answered++;
+    }
+    document.getElementById("summary-answered").textContent = answered;
+    document.getElementById("count-approve").textContent = approve;
+    document.getElementById("count-change").textContent = change;
+    document.getElementById("count-question").textContent = question;
+    document.getElementById("count-unanswered").textContent = TOTAL - answered;
+  }
+
+  function scheduleWrite(n) {
+    if (!DB) return;
+    var data = STATE[n];
+    var prior = writeQueue[n] || Promise.resolve();
+    writeQueue[n] = prior.then(function () {
+      return DB.collection("responses-v2").doc("item-" + n).set({
+        item: n,
+        status: data.status || "",
+        note: data.note || "",
+        updatedAt: new Date().toISOString()
+      });
+    }).catch(function (err) {
+      console.error("Failed to save response for item " + n, err);
+    });
+  }
+
+  function approveAllInSection(letter) {
+    var items = SECTIONS[letter] || [];
+    for (var i = 0; i < items.length; i++) {
+      var n = items[i];
+      STATE[n].status = "approve";
+      var r = document.getElementById("item-" + n + "-approve");
+      if (r) r.checked = true;
+      scheduleWrite(n);
+    }
+    updateSummary();
+  }
+
+  function renderAllControls() {
+    var itemRows = document.querySelectorAll(".control-row[data-item]");
+    for (var i = 0; i < itemRows.length; i++) {
+      var n = parseInt(itemRows[i].getAttribute("data-item"), 10);
+      renderItemControls(itemRows[i], n);
+    }
+    var decisionRows = document.querySelectorAll(".control-row[data-decision]");
+    for (var j = 0; j < decisionRows.length; j++) {
+      var dn = parseInt(decisionRows[j].getAttribute("data-decision"), 10);
+      renderDecisionControls(decisionRows[j], dn);
+    }
+    var approveAllButtons = document.querySelectorAll(".approve-all");
+    for (var k = 0; k < approveAllButtons.length; k++) {
+      approveAllButtons[k].addEventListener("click", function (ev) {
+        approveAllInSection(ev.currentTarget.getAttribute("data-section"));
+      });
+    }
+  }
+
+  function showDbNotice() {
+    var el = document.getElementById("db-notice");
+    if (el) el.hidden = false;
+  }
+
+  function initDb() {
+    if (!window.claude || typeof window.claude.use !== "function") {
+      showDbNotice();
+      return;
+    }
+    window.claude.use("db").then(function (db) {
+      if (!db) { showDbNotice(); return; }
+      DB = db;
+      DB.collection("responses-v2").onSnapshot(function (snap) {
+        var docs = snap.docs || [];
+        for (var i = 0; i < docs.length; i++) {
+          var d = docs[i];
+          if (!d.exists) continue;
+          var data = d.data();
+          if (!data || !data.item) continue;
+          var n = data.item;
+          if (!STATE[n]) continue;
+          var noteEl = document.getElementById("item-" + n + "-note");
+          var editingNote = noteEl && document.activeElement === noteEl;
+          STATE[n].status = data.status || null;
+          if (!editingNote) STATE[n].note = data.note || "";
+          applyStateToUI(n);
+        }
+        updateSummary();
+      }, function (err) {
+        console.error("responses-v2 subscription error", err);
+        showDbNotice();
+      });
+    }).catch(function (err) {
+      console.error("db capability unavailable", err);
+      showDbNotice();
+    });
+  }
+
+  function initComments() {
+    var btn = document.getElementById("general-comment-btn");
+    if (!window.claude || typeof window.claude.use !== "function") return;
+    window.claude.use("comments").then(function (comments) {
+      if (!comments) return;
+      btn.hidden = false;
+      btn.addEventListener("click", function () {
+        comments.openComposer({ element: btn }).catch(function (err) {
+          console.error("openComposer failed", err);
+        });
+      });
+    }).catch(function (err) {
+      console.error("comments capability unavailable", err);
+    });
+  }
+
+  document.addEventListener("DOMContentLoaded", function () {
+    renderAllControls();
+    updateSummary();
+    initDb();
+    initComments();
+  });
+})();
+</script>

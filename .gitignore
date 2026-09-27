@@ -1,0 +1,22 @@
+# Run data (images, analysis, reports) stays local
+workspace/
+node_modules/
+.venv/
+__pycache__/
+*.pyc
+
+# Secrets
+.env
+.env.*
+*.key
+*.pem
+secrets/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Own source assets (read-only material, not part of the tool)
+rogue-legends_current/

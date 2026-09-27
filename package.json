@@ -1,0 +1,38 @@
+{
+  "name": "store-screenshot-recipe",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Config-driven Google Play screenshot competitor analysis tool",
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "doctor": "tsx src/cli.ts doctor",
+    "preview": "tsx src/cli.ts preview",
+    "download": "tsx src/cli.ts download",
+    "own-assets": "tsx src/cli.ts own-assets",
+    "deck-view": "tsx src/cli.ts deck-view",
+    "select": "tsx src/cli.ts select",
+    "gallery": "tsx src/cli.ts gallery",
+    "pilot": "tsx src/cli.ts pilot",
+    "core": "tsx src/cli.ts core",
+    "fit": "tsx src/cli.ts fit",
+    "typecheck": "tsc --noEmit",
+    "lint": "biome check .",
+    "format": "biome format --write .",
+    "test": "tsx --test test/*.test.ts"
+  },
+  "dependencies": {
+    "google-play-scraper": "^10.1.3",
+    "sharp": "^0.35.4",
+    "sharp-phash": "^2.2.0",
+    "zod": "^4.6.5"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.5.14",
+    "@types/node": "^22.20.4",
+    "tsx": "^4.23.15",
+    "typescript": "^7.0.2"
+  }
+}

@@ -1,0 +1,85 @@
+{
+  "id": "mobile-rpg",
+  "version": "1.0.0-draft",
+  "status": "draft: frozen after the core pilot rating",
+  "screenTypes": [
+    {
+      "id": "key_art",
+      "label": "Key art",
+      "subtypes": ["title_logo", "character_showcase", "collage", "cg_scene"]
+    },
+    {
+      "id": "gameplay",
+      "label": "Gameplay",
+      "subtypes": [
+        "battle",
+        "boss",
+        "victory",
+        "defeat",
+        "skill_select",
+        "board_dice",
+        "backpack_merge",
+        "idle_auto",
+        "pvp",
+        "dungeon_run"
+      ]
+    },
+    {
+      "id": "metagame",
+      "label": "Metagame",
+      "subtypes": [
+        "progression",
+        "character_roster",
+        "character_detail",
+        "gear",
+        "pets",
+        "skills_talents",
+        "base_town",
+        "gacha_summon",
+        "idle_rewards"
+      ]
+    },
+    { "id": "map_world", "label": "Map / world", "subtypes": ["world_map", "stage_select"] },
+    {
+      "id": "social",
+      "label": "Social",
+      "subtypes": ["guild", "arena_leaderboard", "coop", "chat"]
+    },
+    {
+      "id": "events_rewards",
+      "label": "Events and rewards",
+      "subtypes": ["event", "login_rewards", "battle_pass"]
+    },
+    { "id": "iap", "label": "Shop / offers", "subtypes": ["shop", "offer"] },
+    {
+      "id": "promo",
+      "label": "Promo",
+      "subtypes": ["feature_callout", "social_proof", "collab_ip", "update_news"]
+    },
+    { "id": "other", "label": "Other", "subtypes": [], "noteRequired": true }
+  ],
+  "definitions": {
+    "gameplay.board_dice": "The player acts on a board of tiles or dice during a run (rolling, moving a token, resolving tile effects). A board shown only as a choice of where to go next is not board_dice.",
+    "map_world.world_map": "An overview of places, chapters or boards the player chooses between, outside of active play. Our 'maps' screen (three board tiles side by side) belongs here, not in board_dice."
+  },
+  "marketingLayer": {
+    "composition": ["full_bleed_capture", "framed_capture", "split", "collage", "no_capture"],
+    "band": {
+      "type": ["solid", "gradient", "diagonal", "shape", "none"],
+      "position": ["top", "bottom", "middle", "overlay"],
+      "size": "height as a percent of the image",
+      "colour": "measured hex or \"unknown\""
+    },
+    "textBlock": {
+      "role": ["headline", "subheadline", "label", "badge", "legal", "other"],
+      "fields": ["exactText", "language", "style", "fill", "stroke", "size", "approximateRegion"]
+    },
+    "callout": {
+      "kind": ["character", "item", "creature", "ui_element"],
+      "fields": ["source", "identity", "placement", "scale", "breaksFrame"]
+    },
+    "decorations": ["badge", "frame", "particles", "logo", "other"],
+    "relationToScreen": ["describes", "exaggerates", "unrelated"],
+    "occlusionPercent": "0-100"
+  }
+}

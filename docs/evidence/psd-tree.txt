@@ -1,0 +1,171 @@
+PSD: C:\projects\ai\pd-appstore-tool\rogue-legends_current\_APPLE STORE.psd
+Canvas size: (1080, 1920)
+Color mode: 3
+Number of top-level layers: 6
+================================================================================
+- [group] 'Group 4' size=(0, 0) bbox=(0, 0, 0, 0) hidden opacity=255 blend=BlendMode.PASS_THROUGH
+  - [smartobject] 'C - Image Sequence_014_6870' size=(1080, 1920) bbox=(0, 0, 1080, 1920) hidden opacity=255 blend=BlendMode.NORMAL
+      SMARTOBJECT filename: C - Image Sequence_014_6870.jpg
+  - [pixel] 'Layer 15' size=(1080, 1920) bbox=(0, 0, 1080, 1920) hidden opacity=255 blend=BlendMode.NORMAL
+  - [pixel] 'Layer 16' size=(946, 531) bbox=(134, 1389, 1080, 1920) hidden opacity=255 blend=BlendMode.NORMAL
+  - [pixel] 'statue1' size=(1992, 1992) bbox=(-464, -28, 1528, 1964) hidden opacity=61 blend=BlendMode.SCREEN
+  - [smartobject] 'Poison' size=(1080, 1920) bbox=(0, 0, 1080, 1920) hidden opacity=255 blend=BlendMode.NORMAL
+      SMARTOBJECT filename: Poison.jpg
+  - [pixel] 'Layer 23' size=(148, 60) bbox=(362, 1175, 510, 1235) hidden opacity=255 blend=BlendMode.NORMAL
+  - [pixel] 'Layer 22' size=(1002, 246) bbox=(37, 1131, 1039, 1377) hidden opacity=255 blend=BlendMode.NORMAL
+  - [smartobject] 'Bolt' size=(1080, 1920) bbox=(0, 0, 1080, 1920) hidden opacity=255 blend=BlendMode.NORMAL
+      SMARTOBJECT filename: Bolt.jpg
+  - [pixel] 'Layer 25' size=(149, 38) bbox=(294, 686, 443, 724) hidden opacity=255 blend=BlendMode.NORMAL
+  - [pixel] 'Layer 24' size=(1000, 222) bbox=(39, 666, 1039, 888) hidden opacity=255 blend=BlendMode.NORMAL
+  - [smartobject] 'vlad 1_' size=(1239, 764) bbox=(370, 979, 1609, 1743) hidden opacity=255 blend=BlendMode.NORMAL
+      SMARTOBJECT filename: vlad 1_.png
+  - [group] 'bossfight copy 4' size=(0, 0) bbox=(0, 0, 0, 0) hidden opacity=255 blend=BlendMode.PASS_THROUGH
+    - [pixel] 'Layer 7' size=(1343, 553) bbox=(-148, 1501, 1195, 2054) hidden opacity=255 blend=BlendMode.NORMAL
+    - [pixel] 'Layer 8' size=(1080, 643) bbox=(0, 1219, 1080, 1862) hidden opacity=255 blend=BlendMode.NORMAL
+  - [group] 'epic boss fight copy 4' size=(0, 0) bbox=(0, 0, 0, 0) hidden opacity=255 blend=BlendMode.PASS_THROUGH
+    - [type] 'CHOOSE YOUR' size=(834, 288) bbox=(67, 1467, 901, 1755) hidden opacity=255 blend=BlendMode.NORMAL
+        TEXT: 'CHOOSE YOUR'
+        FONTSET: ['BoldenVan', 'AdobeInvisFont', 'MyriadHebrew-Regular']
+        RUN: font='BoldenVan' size=170.0 fill=rgba(247,247,4,1.0) stroke=rgba(0,0,0,1.0)
+    - [type] 'FATE   ' size=(396, 241) bbox=(431, 1633, 827, 1874) hidden opacity=255 blend=BlendMode.NORMAL
+        TEXT: 'FATE \r '
+        FONTSET: ['BoldenVan', 'AdobeInvisFont', 'MyriadHebrew-Regular']
+        RUN: font='BoldenVan' size=205.1 fill=rgba(255,255,255,1.0) stroke=rgba(0,0,0,1.0)
+    - [type] '!   ' size=(46, 153) bbox=(866, 1611, 912, 1764) hidden opacity=255 blend=BlendMode.NORMAL
+        TEXT: '! \r '
+        FONTSET: ['BoldenVan', 'AdobeInvisFont', 'MyriadHebrew-Regular']
+        RUN: font='BoldenVan' size=205.1 fill=rgba(255,255,255,1.0) stroke=rgba(0,0,0,1.0)
+- [group] 'Group 3' size=(0, 0) bbox=(0, 0, 0, 0) hidden opacity=255 blend=BlendMode.PASS_THROUGH
+  - [smartobject] 'F - Image Sequence_018_0171' size=(1080, 1920) bbox=(0, 0, 1080, 1920) hidden opacity=255 blend=BlendMode.NORMAL
+      SMARTOBJECT filename: F - Image Sequence_018_0171.jpg
+  - [pixel] 'Layer 14' size=(1080, 748) bbox=(0, 1206, 1080, 1954) hidden opacity=168 blend=BlendMode.NORMAL
+  - [pixel] 'Layer 18' size=(712, 247) bbox=(368, 941, 1080, 1188) hidden opacity=255 blend=BlendMode.NORMAL
+  - [pixel] 'Layer 17' size=(451, 318) bbox=(629, 1213, 1080, 1531) hidden opacity=255 blend=BlendMode.NORMAL
+  - [smartobject] 'blacksmith' size=(674, 742) bbox=(441, 960, 1115, 1702) hidden opacity=255 blend=BlendMode.NORMAL
+      SMARTOBJECT filename: blacksmith.png
+  - [group] 'bossfight copy 3' size=(0, 0) bbox=(0, 0, 0, 0) hidden opacity=255 blend=BlendMode.PASS_THROUGH
+    - [pixel] 'Layer 7' size=(1343, 553) bbox=(-148, 1501, 1195, 2054) hidden opacity=255 blend=BlendMode.NORMAL
+    - [pixel] 'Layer 8' size=(1080, 643) bbox=(0, 1219, 1080, 1862) hidden opacity=255 blend=BlendMode.NORMAL
+  - [group] 'epic boss fight copy 3' size=(0, 0) bbox=(0, 0, 0, 0) hidden opacity=255 blend=BlendMode.PASS_THROUGH
+    - [type] 'COLLECT AND' size=(770, 271) bbox=(87, 1478, 857, 1749) hidden opacity=255 blend=BlendMode.NORMAL
+        TEXT: 'COLLECT AND'
+        FONTSET: ['BoldenVan', 'AdobeInvisFont', 'MyriadHebrew-Regular']
+        RUN: font='BoldenVan' size=170.0 fill=rgba(247,247,4,1.0) stroke=rgba(0,0,0,1.0)
+    - [type] 'UPGRADE   ' size=(721, 294) bbox=(247, 1590, 968, 1884) hidden opacity=255 blend=BlendMode.NORMAL
+        TEXT: 'UPGRADE \r '
+        FONTSET: ['BoldenVan', 'AdobeInvisFont', 'MyriadHebrew-Regular']
+        RUN: font='BoldenVan' size=205.1 fill=rgba(255,255,255,1.0) stroke=rgba(0,0,0,1.0)
+    - [type] '!   ' size=(46, 153) bbox=(1005, 1558, 1051, 1711) hidden opacity=255 blend=BlendMode.NORMAL
+        TEXT: '! \r '
+        FONTSET: ['BoldenVan', 'AdobeInvisFont', 'MyriadHebrew-Regular']
+        RUN: font='BoldenVan' size=205.1 fill=rgba(255,255,255,1.0) stroke=rgba(0,0,0,1.0)
+- [group] 'Group 2' size=(0, 0) bbox=(0, 0, 0, 0) hidden opacity=255 blend=BlendMode.PASS_THROUGH
+  - [smartobject] 'ftrgfg' size=(1080, 2038) bbox=(-1, -227, 1079, 1811) hidden opacity=255 blend=BlendMode.NORMAL
+      SMARTOBJECT filename: Generative Fill 2.psb
+  - [pixel] 'Layer 11' size=(0, 0) bbox=(0, 0, 0, 0) hidden opacity=255 blend=BlendMode.NORMAL
+  - [pixel] 'Layer 12' size=(1080, 1790) bbox=(0, 0, 1080, 1790) hidden opacity=255 blend=BlendMode.NORMAL
+  - [smartobject] 'chapter 6__ copy' size=(2649, 2455) bbox=(-506, 76, 2143, 2531) hidden opacity=255 blend=BlendMode.NORMAL
+      SMARTOBJECT filename: chapter 6__ copy.png
+  - [pixel] 'MAP 2 _ orc land_' size=(1106, 959) bbox=(-1, -261, 1105, 698) hidden opacity=255 blend=BlendMode.NORMAL
+  - [pixel] 'Layer 13' size=(1080, 1658) bbox=(0, -27, 1080, 1631) hidden opacity=255 blend=BlendMode.NORMAL
+  - [pixel] 'Layer 21' size=(48, 48) bbox=(516, 994, 564, 1042) hidden opacity=255 blend=BlendMode.NORMAL
+  - [smartobject] 'kas' size=(635, 892) bbox=(489, 921, 1124, 1813) hidden opacity=255 blend=BlendMode.NORMAL
+      SMARTOBJECT filename: kas.png
+  - [group] 'bossfight copy 2' size=(0, 0) bbox=(0, 0, 0, 0) hidden opacity=255 blend=BlendMode.PASS_THROUGH
+    - [pixel] 'Layer 7' size=(1343, 553) bbox=(-148, 1501, 1195, 2054) hidden opacity=255 blend=BlendMode.NORMAL
+    - [pixel] 'Layer 8' size=(1080, 643) bbox=(0, 1219, 1080, 1862) hidden opacity=255 blend=BlendMode.NORMAL
+  - [group] 'epic boss fight copy 2' size=(0, 0) bbox=(0, 0, 0, 0) hidden opacity=255 blend=BlendMode.PASS_THROUGH
+    - [type] 'EVERY BOARD ' size=(538, 195) bbox=(37, 1570, 575, 1765) hidden opacity=255 blend=BlendMode.NORMAL
+        TEXT: 'EVERY BOARD\r'
+        FONTSET: ['BoldenVan', 'AdobeInvisFont', 'MyriadHebrew-Regular']
+        RUN: font='BoldenVan' size=170.0 fill=rgba(247,247,4,1.0) stroke=rgba(0,0,0,1.0)
+    - [type] ' ADVENTURE   ' size=(751, 290) bbox=(216, 1597, 967, 1887) hidden opacity=255 blend=BlendMode.NORMAL
+        TEXT: ' ADVENTURE \r '
+        FONTSET: ['BoldenVan', 'AdobeInvisFont', 'MyriadHebrew-Regular']
+        RUN: font='BoldenVan' size=205.1 fill=rgba(255,255,255,1.0) stroke=rgba(0,0,0,1.0)
+    - [type] ' NEW   ' size=(286, 173) bbox=(626, 1452, 912, 1625) hidden opacity=255 blend=BlendMode.NORMAL
+        TEXT: ' NEW \r '
+        FONTSET: ['BoldenVan', 'AdobeInvisFont', 'MyriadHebrew-Regular']
+        RUN: font='BoldenVan' size=205.1 fill=rgba(255,255,255,1.0) stroke=rgba(0,0,0,1.0)
+    - [type] '!   ' size=(46, 153) bbox=(1005, 1558, 1051, 1711) hidden opacity=255 blend=BlendMode.NORMAL
+        TEXT: '! \r '
+        FONTSET: ['BoldenVan', 'AdobeInvisFont', 'MyriadHebrew-Regular']
+        RUN: font='BoldenVan' size=205.1 fill=rgba(255,255,255,1.0) stroke=rgba(0,0,0,1.0)
+- [group] 'bossfight copy' size=(0, 0) bbox=(0, 0, 0, 0) hidden opacity=255 blend=BlendMode.PASS_THROUGH
+  - [group] 'Group 1' size=(0, 0) bbox=(0, 0, 0, 0) hidden opacity=255 blend=BlendMode.PASS_THROUGH
+    - [smartobject] 'B - Image Sequence_015_0325' size=(1080, 1920) bbox=(0, 0, 1080, 1920) hidden opacity=255 blend=BlendMode.NORMAL
+        SMARTOBJECT filename: B - Image Sequence_015_0325.jpg
+    - [smartobject] 'skeleton Mage' size=(234, 249) bbox=(746, 643, 980, 892) hidden opacity=255 blend=BlendMode.NORMAL
+        SMARTOBJECT filename: skeleton Mage.png
+    - [smartobject] 'posion' size=(101, 127) bbox=(76, 662, 177, 789) hidden opacity=255 blend=BlendMode.NORMAL
+        SMARTOBJECT filename: posion.png
+    - [pixel] 'Layer 9' size=(62, 14) bbox=(103, 798, 165, 812) hidden opacity=255 blend=BlendMode.NORMAL
+    - [pixel] 'Layer 19' size=(718, 470) bbox=(131, 1077, 849, 1547) hidden opacity=255 blend=BlendMode.NORMAL
+    - [smartobject] 'hero' size=(777, 772) bbox=(357, 953, 1134, 1725) hidden opacity=255 blend=BlendMode.NORMAL
+        SMARTOBJECT filename: hero.png
+    - [pixel] 'Layer 7' size=(1343, 553) bbox=(-148, 1501, 1195, 2054) hidden opacity=255 blend=BlendMode.NORMAL
+    - [pixel] 'Layer 8' size=(1080, 643) bbox=(0, 1219, 1080, 1862) hidden opacity=255 blend=BlendMode.NORMAL
+    - [smartobject] 'sword' size=(323, 345) bbox=(727, 1307, 1050, 1652) hidden opacity=255 blend=BlendMode.NORMAL
+        SMARTOBJECT filename: sword.png
+    - [smartobject] 'Layer 10' size=(90, 91) bbox=(937, 1132, 1027, 1223) hidden opacity=255 blend=BlendMode.NORMAL
+        SMARTOBJECT filename: Layer 10.psb
+    - [smartobject] 'Layer 10 copy' size=(57, 56) bbox=(977, 1231, 1034, 1287) hidden opacity=255 blend=BlendMode.NORMAL
+        SMARTOBJECT filename: Layer 10.psb
+    - [smartobject] 'Layer 10 copy 4' size=(80, 78) bbox=(656, 1305, 736, 1383) hidden opacity=255 blend=BlendMode.NORMAL
+        SMARTOBJECT filename: Layer 10.psb
+    - [smartobject] 'Layer 10 copy 3' size=(54, 54) bbox=(713, 1386, 767, 1440) hidden opacity=255 blend=BlendMode.NORMAL
+        SMARTOBJECT filename: Layer 10.psb
+    - [smartobject] 'Layer 10 copy 2' size=(47, 47) bbox=(931, 1278, 978, 1325) hidden opacity=255 blend=BlendMode.NORMAL
+        SMARTOBJECT filename: Layer 10.psb
+  - [group] 'epic boss fight copy' size=(0, 0) bbox=(0, 0, 0, 0) hidden opacity=255 blend=BlendMode.PASS_THROUGH
+    - [type] 'BATTLE AND' size=(683, 255) bbox=(61, 1507, 744, 1762) hidden opacity=255 blend=BlendMode.NORMAL
+        TEXT: 'BATTLE AND'
+        FONTSET: ['BoldenVan', 'AdobeInvisFont', 'MyriadHebrew-Regular']
+        RUN: font='BoldenVan' size=170.0 fill=rgba(247,247,4,1.0) stroke=rgba(0,0,0,1.0)
+    - [type] 'LEVEL UP   ' size=(711, 292) bbox=(270, 1602, 981, 1894) hidden opacity=255 blend=BlendMode.NORMAL
+        TEXT: 'LEVEL UP \r '
+        FONTSET: ['BoldenVan', 'AdobeInvisFont', 'MyriadHebrew-Regular']
+        RUN: font='BoldenVan' size=205.1 fill=rgba(255,255,255,1.0) stroke=rgba(0,0,0,1.0)
+    - [type] '!   ' size=(46, 153) bbox=(1005, 1558, 1051, 1711) hidden opacity=255 blend=BlendMode.NORMAL
+        TEXT: '! \r '
+        FONTSET: ['BoldenVan', 'AdobeInvisFont', 'MyriadHebrew-Regular']
+        RUN: font='BoldenVan' size=205.1 fill=rgba(255,255,255,1.0) stroke=rgba(0,0,0,1.0)
+- [group] 'boss fight' size=(1473, 2054) bbox=(-148, 0, 1325, 2054) visible opacity=255 blend=BlendMode.PASS_THROUGH
+  - [smartobject] 'Image Sequence_019_15355 copy' size=(1080, 1920) bbox=(0, 0, 1080, 1920) visible opacity=255 blend=BlendMode.NORMAL
+      SMARTOBJECT filename: Image Sequence_019_15355 copy.psb
+  - [group] 'boss ifight' size=(1177, 784) bbox=(148, 930, 1325, 1714) visible opacity=255 blend=BlendMode.PASS_THROUGH
+    - [smartobject] 'remove' size=(897, 720) bbox=(107, 1022, 1004, 1742) hidden opacity=255 blend=BlendMode.NORMAL
+        SMARTOBJECT filename: generative.psb
+    - [smartobject] 'ChatGPT Image Feb 15, 2026, 03_06_25 PM' size=(751, 532) bbox=(312, 1189, 1063, 1721) hidden opacity=255 blend=BlendMode.NORMAL
+        SMARTOBJECT filename: ChatGPT Image Feb 15, 2026, 03_06_25 PM.png
+    - [smartobject] 'Generative Fill copy' size=(974, 643) bbox=(56, 888, 1030, 1531) hidden opacity=255 blend=BlendMode.NORMAL
+        SMARTOBJECT filename: Generative Fill.psb
+    - [smartobject] 'Generative Fill' size=(1034, 691) bbox=(18, 1013, 1052, 1704) hidden opacity=255 blend=BlendMode.NORMAL
+        SMARTOBJECT filename: Generative Fill.psb
+    - [pixel] 'Layer 20' size=(932, 540) bbox=(148, 1080, 1080, 1620) visible opacity=255 blend=BlendMode.NORMAL
+    - [pixel] 'Layer 26' size=(149, 467) bbox=(474, 1072, 623, 1539) visible opacity=117 blend=BlendMode.NORMAL
+    - [smartobject] 'ancient construct' size=(924, 784) bbox=(401, 930, 1325, 1714) visible opacity=255 blend=BlendMode.NORMAL
+        SMARTOBJECT filename: ancient construct.png
+    - [smartobject] 'two headed ogre' size=(894, 869) bbox=(352, 901, 1246, 1770) hidden opacity=255 blend=BlendMode.NORMAL
+        SMARTOBJECT filename: two headed ogre.png
+    - [smartobject] 'dragom' size=(807, 739) bbox=(472, 953, 1279, 1692) hidden opacity=255 blend=BlendMode.NORMAL
+        SMARTOBJECT filename: dragom.png
+    - [pixel] 'Layer 3' size=(1080, 422) bbox=(0, 1498, 1080, 1920) hidden opacity=255 blend=BlendMode.NORMAL
+  - [group] 'bossfight' size=(1343, 553) bbox=(-148, 1501, 1195, 2054) visible opacity=255 blend=BlendMode.PASS_THROUGH
+    - [pixel] 'Layer 7' size=(1343, 553) bbox=(-148, 1501, 1195, 2054) visible opacity=255 blend=BlendMode.NORMAL
+    - [pixel] 'Layer 8' size=(1080, 643) bbox=(0, 1219, 1080, 1862) visible opacity=255 blend=BlendMode.NORMAL
+  - [group] 'epic boss fight' size=(967, 365) bbox=(84, 1518, 1051, 1883) visible opacity=255 blend=BlendMode.PASS_THROUGH
+    - [type] 'EPIC BOSS' size=(589, 240) bbox=(84, 1518, 673, 1758) visible opacity=255 blend=BlendMode.NORMAL
+        TEXT: 'EPIC BOSS'
+        FONTSET: ['BoldenVan', 'AdobeInvisFont', 'MyriadHebrew-Regular']
+        RUN: font='BoldenVan' size=170.0 fill=rgba(247,247,4,1.0) stroke=rgba(0,0,0,1.0)
+    - [type] 'FIGHTS   ' size=(633, 299) bbox=(332, 1584, 965, 1883) visible opacity=255 blend=BlendMode.NORMAL
+        TEXT: 'FIGHTS \r '
+        FONTSET: ['BoldenVan', 'AdobeInvisFont', 'MyriadHebrew-Regular']
+        RUN: font='BoldenVan' size=205.1 fill=rgba(255,255,255,1.0) stroke=rgba(0,0,0,1.0)
+    - [type] '!   ' size=(46, 153) bbox=(1005, 1558, 1051, 1711) visible opacity=255 blend=BlendMode.NORMAL
+        TEXT: '! \r '
+        FONTSET: ['BoldenVan', 'AdobeInvisFont', 'MyriadHebrew-Regular']
+        RUN: font='BoldenVan' size=205.1 fill=rgba(255,255,255,1.0) stroke=rgba(0,0,0,1.0)
+- [smartobject] 'ref' size=(1080, 1920) bbox=(0, 0, 1080, 1920) hidden opacity=255 blend=BlendMode.NORMAL
+    SMARTOBJECT filename: unnamed (2).webp
