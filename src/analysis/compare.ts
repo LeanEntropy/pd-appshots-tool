@@ -43,20 +43,36 @@ export interface Comparison {
 
 export const HEADLINE_MIN_SIMILARITY = 0.85;
 
-/** Compares two independent readings of the same image. */
+/** Compares two independent readings of the same image (both layers). */
 export function compareReadings(a: ImageAnalysis, b: ImageAnalysis): Comparison {
   const disputes: string[] = [];
   const notes: string[] = [];
-  if (a.screenType !== b.screenType)
-    disputes.push(`screen type: ${a.screenType} vs ${b.screenType}`);
-  else if (a.subtype !== b.subtype)
-    notes.push(`subtype: ${a.subtype || "none"} vs ${b.subtype || "none"}`);
+  const sa = a.screenshot;
+  const sb = b.screenshot;
+  const ma = a.marketingLayer;
+  const mb = b.marketingLayer;
+  if (sa.screenType !== sb.screenType)
+    disputes.push(`screen type: ${sa.screenType} vs ${sb.screenType}`);
+  else if (sa.subtype !== sb.subtype)
+    notes.push(`subtype: ${sa.subtype || "none"} vs ${sb.subtype || "none"}`);
+  if (sa.orientation !== sb.orientation)
+    disputes.push(`orientation: ${sa.orientation} vs ${sb.orientation}`);
+  if (ma.present !== mb.present)
+    disputes.push(
+      `marketing layer: ${ma.present ? "present" : "absent"} vs ${mb.present ? "present" : "absent"}`,
+    );
   if (textSimilarity(a.headline, b.headline) < HEADLINE_MIN_SIMILARITY) {
     disputes.push(`headline: "${a.headline}" vs "${b.headline}"`);
   }
-  if (a.hasMarketingLayer !== b.hasMarketingLayer)
-    notes.push("marketing layer present: readings differ");
-  if (a.bands.length !== b.bands.length)
-    notes.push(`bands: ${a.bands.length} vs ${b.bands.length}`);
+  const count = (label: string, x: number, y: number) => {
+    if (x !== y) notes.push(`${label}: ${x} vs ${y}`);
+  };
+  count("background masks", ma.backgroundMasks.length, mb.backgroundMasks.length);
+  count("texts", ma.texts.length, mb.texts.length);
+  count("extra elements", ma.elements.length, mb.elements.length);
+  if (Math.abs(sa.captureAreaPercent - sb.captureAreaPercent) > 25)
+    notes.push(`screenshot area: ${sa.captureAreaPercent}% vs ${sb.captureAreaPercent}%`);
+  if (Math.abs(ma.coveragePercent - mb.coveragePercent) > 25)
+    notes.push(`marketing layer area: ${ma.coveragePercent}% vs ${mb.coveragePercent}%`);
   return { disputes, notes };
 }

@@ -1,6 +1,6 @@
 import { spawn } from "node:child_process";
-import { existsSync } from "node:fs";
-import { join } from "node:path";
+import { existsSync, readFileSync, statSync } from "node:fs";
+import { delimiter, dirname, extname, isAbsolute, join } from "node:path";
 
 export interface ProcResult {
   code: number | null;
@@ -9,24 +9,111 @@ export interface ProcResult {
   timedOut: boolean;
 }
 
-function quoteForCmd(a: string): string {
-  return a === "" || /[\s"&|<>^]/.test(a) ? `"${a.replace(/"/g, '\\"')}"` : a;
+/** How a command is actually started. `shell` is only ever used for plain arguments. */
+export interface Resolved {
+  file: string;
+  prefixArgs: string[];
+  shell: boolean;
+}
+
+const PLAIN_ARG = /^[A-Za-z0-9 _\-.,:=@+/\\]*$/;
+const MAX_SHELL_ARG = 2000;
+
+function isFile(p: string): boolean {
+  try {
+    return statSync(p).isFile();
+  } catch {
+    return false;
+  }
+}
+
+/** Finds a command on PATH the way Windows does (PATHEXT), or returns null. */
+export function findOnPath(cmd: string, env: NodeJS.ProcessEnv = process.env): string | null {
+  const exts = (env.PATHEXT ?? ".COM;.EXE;.BAT;.CMD").split(";").filter(Boolean);
+  const candidates = extname(cmd) ? [cmd] : exts.map((e) => cmd + e.toLowerCase());
+  const dirs =
+    isAbsolute(cmd) || cmd.includes("/") || cmd.includes("\\")
+      ? [""]
+      : (env.PATH ?? env.Path ?? "").split(delimiter).filter(Boolean);
+  for (const d of dirs) {
+    for (const c of candidates) {
+      const p = d ? join(d, c) : c;
+      if (isFile(p)) return p;
+    }
+  }
+  return null;
+}
+
+/** The script an npm-generated .cmd shim runs with node, e.g. node_modules\@openai\codex\bin\codex.js. */
+export function npmShimTarget(shimPath: string): string | null {
+  const text = readFileSync(shimPath, "utf8");
+  // npm templates: "%dp0%\node_modules\...\x.js" (current) and "%~dp0\node_modules\...\x.js" (older).
+  const m = /"%(?:dp0%|~dp0)\\?([^"%]+\.(?:js|mjs|cjs))"/i.exec(text);
+  if (!m?.[1]) return null;
+  const script = join(dirname(shimPath), m[1]);
+  return existsSync(script) ? script : null;
 }
 
 /**
- * Runs a program, optionally feeding text on stdin. On Windows, npm-installed CLIs are .cmd
- * shims that need a shell, so arguments are quoted for cmd.exe there.
+ * Windows: a real .exe is started directly (shell:false, libuv quotes each argument correctly);
+ * an npm .cmd shim is replaced by `node <script>` (also shell:false). Only an unknown .cmd/.bat
+ * goes through cmd.exe, and then only with plain arguments (see assertShellSafe).
  */
+export function resolveCommand(cmd: string, env: NodeJS.ProcessEnv = process.env): Resolved {
+  if (process.platform !== "win32") return { file: cmd, prefixArgs: [], shell: false };
+  const found = findOnPath(cmd, env);
+  if (!found) return { file: cmd, prefixArgs: [], shell: false };
+  const ext = extname(found).toLowerCase();
+  if (ext === ".cmd" || ext === ".bat") {
+    const script = npmShimTarget(found);
+    if (script) {
+      const localNode = join(dirname(found), "node.exe");
+      return {
+        file: existsSync(localNode) ? localNode : process.execPath,
+        prefixArgs: [script],
+        shell: false,
+      };
+    }
+    return { file: found, prefixArgs: [], shell: true };
+  }
+  return { file: found, prefixArgs: [], shell: false };
+}
+
+/** cmd.exe re-parses the command line; anything but plain words could be mangled. */
+export function assertShellSafe(file: string, args: readonly string[]): void {
+  for (const a of args) {
+    if (!PLAIN_ARG.test(a) || a.length > MAX_SHELL_ARG || a.endsWith("\\")) {
+      throw new Error(
+        `Refusing to pass this argument to ${file} through cmd.exe, because cmd.exe would change it: ${a.slice(0, 80)}${a.length > 80 ? "..." : ""}. Install the program as an .exe or pass the value on stdin.`,
+      );
+    }
+  }
+}
+
+/** Runs a program, optionally feeding text on stdin. Never passes JSON or long text through cmd.exe. */
 export function run(
   cmd: string,
   args: readonly string[],
   opts: { input?: string; timeoutMs?: number; cwd?: string } = {},
 ): Promise<ProcResult> {
-  const win = process.platform === "win32";
-  const useShell = win && !cmd.toLowerCase().endsWith(".exe");
-  const finalArgs = useShell ? args.map(quoteForCmd) : [...args];
+  let r: Resolved;
+  try {
+    r = resolveCommand(cmd);
+    if (r.shell) assertShellSafe(r.file, args);
+  } catch (e) {
+    return Promise.resolve({
+      code: -1,
+      stdout: "",
+      stderr: e instanceof Error ? e.message : String(e),
+      timedOut: false,
+    });
+  }
+  const finalArgs = r.shell
+    ? args.map((a) => (a === "" || /\s/.test(a) ? `"${a}"` : a))
+    : [...r.prefixArgs, ...args];
+  const file = r.shell && /\s/.test(r.file) ? `"${r.file}"` : r.file;
   return new Promise((resolve) => {
-    const child = spawn(cmd, finalArgs, { shell: useShell, cwd: opts.cwd, windowsHide: true });
+    const child = spawn(file, finalArgs, { shell: r.shell, cwd: opts.cwd, windowsHide: true });
     let stdout = "";
     let stderr = "";
     let timedOut = false;
@@ -40,6 +127,7 @@ export function run(
     child.stderr.on("data", (d: Buffer) => {
       stderr += d.toString("utf8");
     });
+    child.stdin.on("error", () => {});
     child.on("error", (e) => {
       clearTimeout(timer);
       resolve({ code: -1, stdout, stderr: stderr + e.message, timedOut });

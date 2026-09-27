@@ -136,5 +136,9 @@ Output per locale:
   - Reviews cover plans, code, prompts/schemas and analysis outputs (e.g. screenshot classifications and the final recommendation).
   - The reviewer gets the artifact plus the requirements, and returns concrete findings. The orchestrator decides on fixes, and asks the user when there is a disagreement that matters.
 
+## Repo
+- GitHub: https://github.com/LeanEntropy/pd-appshots-tool (private), remote `origin`, branch `master`.
+- Commit or push only when the user asks.
+
 ## Key references
 - Tool landscape research: `reports/Game store screenshot analysis tools.md`, with notes in `research_notes/`.

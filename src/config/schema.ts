@@ -81,7 +81,9 @@ export const ConfigSchema = z
         expectedDisputeRate: z.number().min(0).max(1).default(0.1),
         retryAllowance: z.number().min(0).max(1).default(0.15),
         reviewTokensPerImage: z.number().int().default(17000),
-        imagesPerCall: z.number().int().min(1).max(20).default(10),
+        imagesPerCall: z.number().int().min(1).max(20).default(1),
+        /** Pattern summary + recommendations + review + a possible revision, per batch. */
+        synthesisUsd: z.tuple([z.number(), z.number()]).default([0.6, 1.5]),
       })
       .default({
         fullAnalysisUsdPerImage: [0.15, 0.25],
@@ -90,8 +92,13 @@ export const ConfigSchema = z
         expectedDisputeRate: 0.1,
         retryAllowance: 0.15,
         reviewTokensPerImage: 17000,
-        imagesPerCall: 10,
+        imagesPerCall: 1,
+        synthesisUsd: [0.6, 1.5],
       }),
+    /** A batch stops after this many images in a row fail with the same error. */
+    run: z.object({ stopAfterSameErrors: z.number().int().min(1).default(3) }).default({
+      stopAfterSameErrors: 3,
+    }),
     tierWeights: z.object({
       direct: z.number().positive(),
       same_audience: z.number().positive(),

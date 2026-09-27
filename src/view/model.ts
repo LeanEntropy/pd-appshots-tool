@@ -1,5 +1,6 @@
 import { existsSync, readdirSync } from "node:fs";
 import { join } from "node:path";
+import type { ImageAnalysis } from "../analysis/schema.ts";
 import type { Config } from "../config/schema.ts";
 import type { Group } from "../core/targets.ts";
 import type { ImageDb } from "../store/imagedb.ts";
@@ -11,6 +12,26 @@ export interface ViewAnalysis {
   screen: string;
   headline: string;
   status: string;
+}
+
+/** Full analysis of one image, shown by the (i) popover. */
+export interface InfoView {
+  status: string;
+  screen: string;
+  final: ImageAnalysis | null;
+  differences: string[];
+  problems: string[];
+  models: string[];
+  updatedAt: string;
+  game: string;
+  position: number;
+  filename: string;
+  /** Path relative to the project workspace (served by the gallery), or null. */
+  file: string | null;
+  sourceUrl: string | null;
+  appearances: string[];
+  labels: { type: string; subtype: string } | null;
+  mappedFrom: string | null;
 }
 
 export interface ViewImage {
@@ -61,6 +82,8 @@ export interface ViewModel {
   coreMarket: { gl: string; hl: string; label: string };
   deviceClasses: string[];
   pilotCompetitors: number;
+  /** Analyses by image id, for the (i) popover. */
+  info: Record<string, InfoView>;
 }
 
 export function latestRun(runsDir: string): RunManifest | undefined {
@@ -79,6 +102,7 @@ export function buildViewModel(
   db: ImageDb,
   selection: string[],
   analyses: ReadonlyMap<string, ViewAnalysis> = new Map(),
+  info: Record<string, InfoView> = {},
 ): ViewModel {
   const baseline = config.markets.find((m) => m.baseline) ?? config.markets[0];
   const label = (gl: string, hl: string) => {
@@ -159,5 +183,6 @@ export function buildViewModel(
     })(),
     deviceClasses: [...config.core.deviceClasses],
     pilotCompetitors: config.core.pilotCompetitors,
+    info,
   };
 }

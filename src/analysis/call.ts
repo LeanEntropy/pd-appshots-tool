@@ -91,13 +91,15 @@ export async function validatedCall<T>(
       return { value: parsed.data, key, problems: [] };
   }
   let problems: string[] = [];
+  let repairs: string[] = [];
+  let callErrors = 0;
   const jsonSchema = toJsonSchema(schema);
   for (let attempt = 0; attempt <= MAX_REPAIRS; attempt++) {
     const left = ctx.remainingUsd();
     if (left <= 0.01)
       return { value: null, key, problems: ["the spending limit for this batch was reached"] };
-    const repair = problems.length
-      ? `\n\nYour previous answer had these problems; fix them:\n- ${problems.join("\n- ")}`
+    const repair = repairs.length
+      ? `\n\nYour previous answer had these problems; fix them:\n- ${repairs.join("\n- ")}`
       : "";
     const r = await provider.call({
       model: provider.model,
@@ -110,13 +112,18 @@ export async function validatedCall<T>(
     });
     if (r.costUsd) ctx.onCost(r.costUsd);
     if (!r.ok) {
-      problems = [r.error ?? "the model call failed"];
+      // A failed call (CLI error, timeout) is retried once; the same error twice ends it.
+      const err = `${provider.model}: ${r.error ?? "the model call failed"}`;
+      callErrors++;
+      if (callErrors >= 2 || problems[0] === err) return { value: null, key, problems: [err] };
+      problems = [err];
       continue;
     }
     const parsed = schema.safeParse(r.output);
     problems = parsed.success
       ? check(parsed.data, refs)
       : parsed.error.issues.slice(0, 10).map((i) => `${i.path.join(".")}: ${i.message}`);
+    repairs = problems;
     if (parsed.success && problems.length === 0) {
       const obj: StoredObject = {
         step,
@@ -165,8 +172,9 @@ export async function analyseImages(
     take(deck.value, deck.key, images);
     return result;
   }
-  if (images.length === 1) {
-    result.failed.set((images[0] as ChunkImage).imageId, deck.problems.join("; "));
+  // One image, or a failed call (not a validation problem): no per-image fallback.
+  if (images.length === 1 || deck.problems[0]?.startsWith(`${provider.model}: `)) {
+    for (const im of images) result.failed.set(im.imageId, deck.problems.join("; "));
     return result;
   }
   for (const im of images) {

@@ -4,13 +4,56 @@ import type { PlanItem } from "./plan.ts";
 import type { RenderedPrompt } from "./prompts.ts";
 import type { Provider } from "./providers.ts";
 import type { AnalysisRecord, AnalysisStatus } from "./records.ts";
-import { adjudicationSchema } from "./schema.ts";
+import { adjudicationSchema, type ImageAnalysis, SCHEMA_VERSION } from "./schema.ts";
 
 export interface Decision {
+  chosen: "first" | "second" | "neither";
   screenType: string;
   subtype: string;
+  orientation: "portrait" | "landscape" | "not_applicable";
+  marketingLayerPresent: boolean;
   headline: string;
   reason: string;
+}
+
+/** The chosen reading becomes the base; the decided fields override it. */
+export function applyDecision(
+  a: ImageAnalysis,
+  b: ImageAnalysis | undefined,
+  d: Decision,
+): ImageAnalysis {
+  const base = d.chosen === "second" && b ? b : a;
+  const layer = base.marketingLayer;
+  const other = base === a ? b : a;
+  const empty = {
+    ...layer,
+    present: false,
+    coveragePercent: 0,
+    backgroundMasks: [],
+    texts: [],
+    elements: [],
+    mainColours: [],
+    relationToScreen: "none" as const,
+  };
+  const marketingLayer =
+    d.marketingLayerPresent === layer.present
+      ? layer
+      : d.marketingLayerPresent
+        ? other?.marketingLayer.present
+          ? other.marketingLayer
+          : layer
+        : empty;
+  return {
+    ...base,
+    screenshot: {
+      ...base.screenshot,
+      screenType: d.screenType,
+      subtype: d.subtype,
+      orientation: d.orientation,
+    },
+    marketingLayer,
+    headline: d.headline,
+  };
 }
 
 /** Every sent image decided exactly once, and nothing else. */
@@ -105,15 +148,24 @@ export function buildRecord(x: RecordInput): AnalysisRecord {
       ? `second opinion could not be read: ${x.reviewed.failed.get(id) ?? "no answer"}`
       : undefined,
   ].filter((p): p is string => !!p);
+  const final = a && d ? applyDecision(a, x.reviewed.readings.get(id), d) : a;
+  const unsettled =
+    d && final && d.marketingLayerPresent && !final.marketingLayer.present
+      ? "the adjudicator saw a marketing layer that neither reading described"
+      : null;
+  if (unsettled) {
+    problems.push(unsettled);
+    status = "disputed";
+  }
   return {
     imageId: id,
+    schema: SCHEMA_VERSION,
     appId: x.item.appId,
     gl: x.item.gl,
     hl: x.item.hl,
     position: x.item.position,
     status,
-    final:
-      a && d ? { ...a, screenType: d.screenType, subtype: d.subtype, headline: d.headline } : a,
+    final,
     producer: a ? { model: x.models.producer, object: x.produced.objects.get(id) ?? "" } : null,
     reviewer:
       reviewedOk && x.models.reviewer

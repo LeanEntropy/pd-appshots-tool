@@ -52,7 +52,11 @@ export async function tempProject(
     const slots: DeckSlot[] = [];
     for (let i = 0; i < phone + tablet; i++) {
       const img = await picture(seed++, i >= phone);
-      const { record } = await db.ingest(img, undefined, `${appId}-${i}`);
+      const { record } = await db.ingest(
+        img,
+        { appId, gl: "us", hl: "en", position: i + 1 },
+        `${appId}-${i}`,
+      );
       slots.push({
         position: i + 1,
         googleId: `${appId}-${i}`,

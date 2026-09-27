@@ -71,8 +71,8 @@ test("run: deck calls, blind review, disputes settled, results cached and reused
     onProgress: () => {},
   });
   assert.equal(out.records.length, 8);
-  assert.equal(producer.calls.length, 3);
-  assert.equal(reviewer.calls.length, 3);
+  assert.equal(producer.calls.length, 8);
+  assert.equal(reviewer.calls.length, 8);
   assert.equal(adjudicator.calls.length, 1);
   assert.equal(out.records.filter((r) => r.status === "adjudicated").length, 1);
   assert.equal(out.records.filter((r) => r.status === "ok").length, 7);
@@ -85,6 +85,7 @@ test("run: deck calls, blind review, disputes settled, results cached and reused
 
 test("a deck answer that fails validation is repaired, then falls back to one image per call", async () => {
   const loaded = await setup();
+  loaded.config.estimates.imagesPerCall = 10;
   const plan = buildAnalysisPlan(loaded, "pilot");
   const producer = fakeProvider({
     read: () => ({ screenType: "gameplay", headline: "" }),
@@ -138,8 +139,12 @@ test("a required second opinion that cannot be read leaves the image unreviewed,
     adjudicator: producer,
     onProgress: () => {},
   });
-  assert.equal(out.records.filter((r) => r.status === "unreviewed").length, 8);
+  // The same failure three times in a row stops the batch, loudly.
+  assert.equal(out.records.filter((r) => r.status === "unreviewed").length, 3);
+  assert.match(out.aborted ?? "", /3 images in a row failed with the same error/);
+  assert.equal(out.errors.length, 3);
   assert.match(out.records[0]?.problems[0] ?? "", /second opinion could not be read/);
+  assert.equal(out.synthesisSkipped, "the batch stopped early");
 });
 
 test("the approval fingerprint changes when any number on the screen changes", async () => {

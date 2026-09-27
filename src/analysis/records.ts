@@ -2,8 +2,11 @@ import { existsSync, readdirSync } from "node:fs";
 import { join } from "node:path";
 import type { ProjectPaths } from "../config/load.ts";
 import { readJson, writeJsonAtomic } from "../util/fsx.ts";
-import type { ViewAnalysis } from "../view/model.ts";
-import type { ImageAnalysis } from "./schema.ts";
+import type { InfoView, ViewAnalysis } from "../view/model.ts";
+import type { ImageIdentity } from "./identity.ts";
+import { type Labeler, plainLabel, screenName } from "./labels.ts";
+import type { MappedFrom } from "./record-refresh.ts";
+import { type ImageAnalysis, SCHEMA_VERSION } from "./schema.ts";
 
 /** Plan-v2 statuses, plus "unreviewed": a required second opinion could not be read. */
 export type AnalysisStatus =
@@ -16,6 +19,8 @@ export type AnalysisStatus =
 
 export interface AnalysisRecord {
   imageId: string;
+  /** Schema version of `final`; records of another version are analysed again. */
+  schema?: string;
   appId: string;
   gl: string;
   hl: string;
@@ -30,13 +35,37 @@ export interface AnalysisRecord {
   problems: string[];
   runId: string;
   updatedAt: string;
+  /** Which image this is: game, files, source URL, every appearance. Rebuilt on every write. */
+  identity?: ImageIdentity;
+  /** Taxonomy id@version the screen type refers to. */
+  taxonomy?: string;
+  /** Set when a deterministic taxonomy mapping changed the screen type (no model call). */
+  mappedFrom?: MappedFrom | null;
+  /** Version of the deterministic taxonomy mapping last applied. */
+  mapping?: string;
 }
 
 /** Statuses that count as usable in statistics and for reuse by identical images. */
 export const USABLE: readonly AnalysisStatus[] = ["ok", "adjudicated", "corrected"];
 
+/** Done = usable status, current schema, and a reading. Failed or old records are redone. */
+export function isUsable(r: AnalysisRecord | undefined): r is AnalysisRecord & {
+  final: ImageAnalysis;
+} {
+  return !!r && USABLE.includes(r.status) && r.schema === SCHEMA_VERSION && !!r.final;
+}
+
+export function recordFile(paths: ProjectPaths, imageId: string): string {
+  return join(paths.analysis, `${imageId}.json`);
+}
+
 export function writeRecord(paths: ProjectPaths, r: AnalysisRecord): void {
-  writeJsonAtomic(join(paths.analysis, `${r.imageId}.json`), r);
+  writeJsonAtomic(recordFile(paths, r.imageId), r);
+}
+
+export function readRecord(paths: ProjectPaths, imageId: string): AnalysisRecord | undefined {
+  const f = recordFile(paths, imageId);
+  return existsSync(f) ? (readJson(f) as AnalysisRecord) : undefined;
 }
 
 export function readRecords(paths: ProjectPaths): Map<string, AnalysisRecord> {
@@ -49,17 +78,63 @@ export function readRecords(paths: ProjectPaths): Map<string, AnalysisRecord> {
   return out;
 }
 
-export function summaries(paths: ProjectPaths): Map<string, ViewAnalysis> {
+export function screenLabel(a: ImageAnalysis | null, label: Labeler = plainLabel): string {
+  if (!a) return "not analysed";
+  return screenName(label, a.screenshot.screenType, a.screenshot.subtype);
+}
+
+/** Short caption under a thumbnail: usable analyses only (failed ones are shown as errors). */
+export function summaries(
+  paths: ProjectPaths,
+  label: Labeler = plainLabel,
+): Map<string, ViewAnalysis> {
   const out = new Map<string, ViewAnalysis>();
   for (const [id, r] of readRecords(paths)) {
-    const screen = r.final
-      ? `${r.final.screenType}${r.final.subtype ? ` / ${r.final.subtype}` : ""}`
-      : "not analysed";
+    if (!isUsable(r)) continue;
     out.set(id, {
-      screen: screen.replace(/_/g, " "),
-      headline: r.final?.headline ?? "",
+      screen: screenLabel(r.final, label),
+      headline: r.final.headline,
       status: r.status,
     });
+  }
+  return out;
+}
+
+/** Everything the (i) popover shows, per image id. Includes failed records with their errors. */
+export function infoViews(
+  paths: ProjectPaths,
+  label: Labeler = plainLabel,
+): Record<string, InfoView> {
+  const out: Record<string, InfoView> = {};
+  for (const [id, r] of readRecords(paths)) {
+    const usable = isUsable(r);
+    const idn = r.identity;
+    out[id] = {
+      status: usable ? r.status : r.status === "failed" ? "failed" : `${r.status} (outdated)`,
+      screen: usable ? screenLabel(r.final, label) : "",
+      final: usable ? r.final : null,
+      differences: r.differences,
+      problems: r.problems,
+      models: [r.producer?.model, r.reviewer?.model, r.adjudication?.model].filter(
+        (m): m is string => !!m,
+      ),
+      updatedAt: r.updatedAt,
+      game: idn?.game ?? r.appId,
+      position: r.position,
+      filename: idn?.filename ?? id,
+      file: idn?.files.original?.relative ?? null,
+      sourceUrl: idn?.sourceUrl ?? null,
+      appearances: (idn?.appearances ?? []).map(
+        (a) => `${a.game} ${a.gl.toUpperCase()}-${a.hl} #${a.position}`,
+      ),
+      labels: usable
+        ? {
+            type: label(r.final.screenshot.screenType),
+            subtype: r.final.screenshot.subtype ? label(r.final.screenshot.subtype) : "",
+          }
+        : null,
+      mappedFrom: r.mappedFrom ? label(r.mappedFrom.screenType) : null,
+    };
   }
   return out;
 }

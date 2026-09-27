@@ -21,6 +21,8 @@ const TaxonomySchema = z.object({
     z.object({ id: z.string(), label: z.string(), subtypes: z.array(z.string()) }),
   ),
   definitions: z.record(z.string(), z.string()).default({}),
+  /** Display names for subtype codes; others are shown with spaces and a capital letter. */
+  subtypeLabels: z.record(z.string(), z.string()).default({}),
 });
 export type Taxonomy = z.infer<typeof TaxonomySchema>;
 
@@ -57,6 +59,7 @@ export function projectPaths(loaded: LoadedConfig) {
     imagesModel: join(base, "images", "model"),
     objects: join(base, "objects"),
     analysis: join(base, "analysis"),
+    orders: join(base, "orders"),
     reports: join(base, "reports"),
     imageDb: join(base, "images", "db.json"),
     decks: join(base, "decks"),

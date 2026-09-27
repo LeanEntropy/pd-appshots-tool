@@ -1,0 +1,120 @@
+import { type LoadedConfig, loadTaxonomy, projectPaths } from "../config/load.ts";
+import { ImageDb } from "../store/imagedb.ts";
+import { normaliseText } from "./compare.ts";
+import { type ImageIdentity, identityBuilder } from "./identity.ts";
+import { type AnalysisRecord, readRecords, writeRecord } from "./records.ts";
+import type { ImageAnalysis } from "./schema.ts";
+
+/**
+ * Deterministic taxonomy mapping, versioned apart from the analysis schema: old "key art"
+ * readings become the user's terms when the evidence is clear, without any model call.
+ */
+export const TAXONOMY_MAPPING = "key-art-to-title-or-feature.v1";
+
+export interface MappedFrom {
+  /** The model's original classification, kept so a newer mapping can start from it. */
+  screenType: string;
+  subtype: string;
+  orientation: ImageAnalysis["screenshot"]["orientation"];
+  rule: string;
+}
+
+/** key_art with no in-game capture: logo or game title → title image; other callout text → feature image. */
+export function mapKeyArt(
+  a: ImageAnalysis,
+  game: string,
+): { final: ImageAnalysis; mappedFrom: MappedFrom | null } {
+  const s = a.screenshot;
+  const m = a.marketingLayer;
+  if (s.screenType !== "key_art") return { final: a, mappedFrom: null };
+  const noCapture = s.captureAreaPercent <= 5 || s.framing === "none";
+  if (!noCapture) return { final: a, mappedFrom: null };
+  const title = normaliseText(game);
+  // Only the game's own logo or title counts (not a publisher or partner logo).
+  const names = (x: string) => !!title && normaliseText(x).includes(title);
+  const logo =
+    s.subtype === "title_logo" ||
+    m.elements.some(
+      (e) => e.kind === "logo" && (names(e.what) || /game (logo|title)/i.test(e.what)),
+    ) ||
+    m.texts.some((t) => names(t.text));
+  const to = (screenType: string, subtype: string, rule: string) => ({
+    final: {
+      ...a,
+      screenshot: { ...s, screenType, subtype, orientation: "not_applicable" as const },
+    },
+    mappedFrom: { screenType: s.screenType, subtype: s.subtype, orientation: s.orientation, rule },
+  });
+  if (logo)
+    return to(
+      "title_image",
+      "logo_with_art",
+      `${TAXONOMY_MAPPING}: no capture, shows the game logo or title`,
+    );
+  if (m.texts.length) {
+    const sub = s.subtype === "character_showcase" ? "character_showcase" : "feature_callout";
+    return to(
+      "feature_image",
+      sub,
+      `${TAXONOMY_MAPPING}: no capture, callout text without the logo`,
+    );
+  }
+  return { final: a, mappedFrom: null };
+}
+
+/** Adds the identity block and the taxonomy mapping. Idempotent; called on every write. */
+export function refreshRecord(
+  r: AnalysisRecord,
+  identityOf: (r: AnalysisRecord) => ImageIdentity,
+  taxonomy: string,
+): AnalysisRecord {
+  const identity = identityOf(r);
+  const out: AnalysisRecord = { ...r, identity, taxonomy, mapping: TAXONOMY_MAPPING };
+  if (!r.final || (r.mappedFrom && r.mapping === TAXONOMY_MAPPING)) return out;
+  // Start from the model's own classification, so a changed mapping is applied afresh.
+  const base: ImageAnalysis = r.mappedFrom
+    ? {
+        ...r.final,
+        screenshot: {
+          ...r.final.screenshot,
+          screenType: r.mappedFrom.screenType,
+          subtype: r.mappedFrom.subtype,
+          orientation: r.mappedFrom.orientation ?? r.final.screenshot.orientation,
+        },
+      }
+    : r.final;
+  const m = mapKeyArt(base, identity.game);
+  return { ...out, final: m.final, mappedFrom: m.mappedFrom };
+}
+
+/** Record writer that refreshes identity and mapping first (shared lookups for a whole run). */
+export function recordWriter(loaded: LoadedConfig, db?: ImageDb) {
+  const paths = projectPaths(loaded);
+  const t = loadTaxonomy(loaded).taxonomy;
+  const identityOf = identityBuilder(
+    paths,
+    db ?? ImageDb.open(paths.imageDb, paths.imagesOrig, paths.imagesThumb),
+    loaded.config,
+  );
+  return (r: AnalysisRecord): AnalysisRecord => {
+    const out = refreshRecord(r, identityOf, `${t.id}@${t.version}`);
+    writeRecord(paths, out);
+    return out;
+  };
+}
+
+/** Backfill: rewrites every saved record with its identity and mapping. No AI call. */
+export function refreshAllRecords(loaded: LoadedConfig): { records: number; mapped: string[] } {
+  const write = recordWriter(loaded);
+  const mapped: string[] = [];
+  let n = 0;
+  for (const r of readRecords(projectPaths(loaded)).values()) {
+    const out = write(r);
+    n++;
+    if (out.mappedFrom && !r.mappedFrom)
+      mapped.push(
+        `${out.identity?.game} #${out.position}: ${out.mappedFrom.screenType} → ${out.final?.screenshot.screenType}`,
+      );
+  }
+  return { records: n, mapped };
+}

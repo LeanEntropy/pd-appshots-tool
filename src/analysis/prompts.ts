@@ -6,8 +6,11 @@ import { sha256 } from "../util/hash.ts";
 
 /** Prompt files in prompts/analysis/. Changing a file requires a new version name. */
 export const PROMPT_VERSIONS = {
-  fullAnalysis: "full-analysis.v1",
-  adjudicate: "adjudicate.v1",
+  fullAnalysis: "full-analysis.v2",
+  adjudicate: "adjudicate.v2",
+  patterns: "patterns.v1",
+  recommend: "recommend.v1",
+  recommendReview: "recommend-review.v1",
 } as const;
 export type PromptName = keyof typeof PROMPT_VERSIONS;
 
@@ -20,7 +23,7 @@ export interface RenderedPrompt {
 
 export function taxonomyText(t: Taxonomy): { list: string; definitions: string } {
   const list = t.screenTypes
-    .map((s) => `- ${s.id}: ${s.subtypes.join(", ") || "(explain in notes)"}`)
+    .map((s) => `- ${s.id} (${s.label}): ${s.subtypes.join(", ") || "(explain in notes)"}`)
     .join("\n");
   const definitions =
     Object.entries(t.definitions)

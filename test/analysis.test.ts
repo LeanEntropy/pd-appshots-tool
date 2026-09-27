@@ -15,6 +15,7 @@ const taxonomy = {
   id: "t",
   version: "1",
   definitions: {},
+  subtypeLabels: {},
   screenTypes: [
     { id: "gameplay", label: "G", subtypes: ["battle", "boss"] },
     { id: "other", label: "O", subtypes: [] },
@@ -41,7 +42,7 @@ test("cost tiers: analysed or repeated images are free, near-identical localised
   assert.equal(t[3]?.basedOn, "x");
 });
 
-test("estimate: one call per deck of up to 10, review of every image, cost range with allowance", () => {
+test("estimate: one call per image by default, review of every image, review of every image, cost range with allowance", () => {
   const mk = (appId: string, n: number) =>
     Array.from({ length: n }, (_, i) => ({
       appId,
@@ -56,7 +57,7 @@ test("estimate: one call per deck of up to 10, review of every image, cost range
     }));
   const e = estimate(config, [...mk("ours", 7), ...mk("a", 12), ...mk("b", 5)]);
   const full = e.passes[0];
-  assert.equal(full?.calls, 1 + 2 + 1);
+  assert.equal(full?.calls, 24);
   assert.equal(full?.images, 24);
   assert.equal(e.passes[2]?.images, 24);
   assert.equal(e.expectedDisputes, 3);
@@ -88,10 +89,15 @@ test("semantic checks: every sent image answered once, subtypes from the taxonom
   const ok = [reading("img1", "gameplay", ""), reading("img2", "gameplay", "")];
   assert.deepEqual(semanticProblems(taxonomy, ["img1", "img2"], ok), []);
   assert.equal(semanticProblems(taxonomy, ["img1", "img2"], [ok[0] as never]).length, 1);
-  const badSub = { ...reading("img1", "gameplay", ""), subtype: "dance" };
+  const base = reading("img1", "gameplay", "");
+  const badSub = { ...base, screenshot: { ...base.screenshot, subtype: "dance" } };
   assert.equal(semanticProblems(taxonomy, ["img1"], [badSub]).length, 1);
   const other = reading("img1", "other", "");
   assert.equal(semanticProblems(taxonomy, ["img1"], [other]).length, 1);
+  const noLayer = reading("img1", "gameplay", "", false);
+  assert.deepEqual(semanticProblems(taxonomy, ["img1"], [noLayer]), []);
+  const contradiction = { ...base, marketingLayer: { ...base.marketingLayer, present: false } };
+  assert.ok(semanticProblems(taxonomy, ["img1"], [contradiction]).length >= 1);
 });
 
 test("the JSON schema is strict at every level (usable by both Claude and OpenAI)", () => {

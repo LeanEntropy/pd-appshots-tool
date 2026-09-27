@@ -23,7 +23,11 @@ const modelName = (ref: string) => ref.split(":")[1] ?? ref;
  * Model passes and provisional cost for a batch. Full analyses and reviews go one deck per call
  * (up to imagesPerCall images); disputes go to the adjudicator. Retries are an allowance.
  */
-export function estimate(config: Config, items: readonly TierResult[]): Estimate {
+export function estimate(
+  config: Config,
+  items: readonly TierResult[],
+  synthesis = false,
+): Estimate {
   const e = config.estimates;
   const byApp = new Map<string, TierResult[]>();
   for (const it of items) byApp.set(it.appId, [...(byApp.get(it.appId) ?? []), it]);
@@ -52,7 +56,10 @@ export function estimate(config: Config, items: readonly TierResult[]): Estimate
   const usd: [number, number] = [0, 1].map((k) => {
     const fa = full * (e.fullAnalysisUsdPerImage[k] as number);
     const ld = diff * (e.layerDiffUsdPerImage[k] as number);
-    return Math.round(((fa + ld) * allowance + disputes * e.adjudicationUsdPerDispute) * 100) / 100;
+    const syn = synthesis ? (e.synthesisUsd[k] as number) : 0;
+    return (
+      Math.round(((fa + ld) * allowance + disputes * e.adjudicationUsdPerDispute + syn) * 100) / 100
+    );
   }) as [number, number];
   const passes: ModelPasses[] = [
     {
@@ -84,6 +91,32 @@ export function estimate(config: Config, items: readonly TierResult[]): Estimate
       note: `estimate: ${Math.round(e.expectedDisputeRate * 100)}% of cross-checked images`,
     },
   ];
+  if (synthesis) {
+    const rec = modelName(config.models.recommend);
+    passes.push(
+      {
+        role: "Pattern summary",
+        model: rec,
+        calls: 1,
+        images: 0,
+        note: "text only, from the computed patterns",
+      },
+      {
+        role: "Recommendations",
+        model: rec,
+        calls: 1,
+        images: 0,
+        note: "text only; one revision if the check finds major problems",
+      },
+      {
+        role: "Recommendation check",
+        model: modelName(config.models.recommendationReview),
+        calls: config.review.enabled ? 1 : 0,
+        images: 0,
+        note: config.review.enabled ? "cross-family review" : "turned off",
+      },
+    );
+  }
   return {
     passes,
     usd,

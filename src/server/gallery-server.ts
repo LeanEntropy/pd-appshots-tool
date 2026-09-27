@@ -8,7 +8,9 @@ import { type LoadedConfig, projectPaths } from "../config/load.ts";
 import { renderGalleryHtml } from "../steps/deck-view.ts";
 import {
   type ApiResponse,
+  getAnalyses,
   getAnalysisStatus,
+  getReport,
   getSelection,
   postAnalysisPlan,
   postAnalysisRun,
@@ -104,7 +106,15 @@ export function createGalleryServer(
         return send(res, r.status, r.body);
       }
       if (url.pathname === "/api/analysis/status" && req.method === "GET") {
-        const r = getAnalysisStatus();
+        const r = getAnalysisStatus(loaded);
+        return send(res, r.status, r.body);
+      }
+      if (url.pathname === "/api/analyses" && req.method === "GET") {
+        const r = getAnalyses(loaded);
+        return send(res, r.status, r.body);
+      }
+      if (url.pathname === "/api/report" && req.method === "GET") {
+        const r = getReport(loaded, url.searchParams.get("stage"));
         return send(res, r.status, r.body);
       }
       const post = POSTS[url.pathname];

@@ -30,14 +30,23 @@ export interface Provider {
   call(c: VisionCall): Promise<VisionResult>;
 }
 
-/** Claude Code CLI with the cost-saving flags proven in the bake-off (custom system prompt file). */
+/**
+ * Claude Code CLI with the cost-saving flags proven in the bake-off (custom system prompt file).
+ * The JSON schema must be an argument (the CLI takes no file); util/proc.ts starts claude.exe
+ * directly, never through cmd.exe, so the JSON arrives intact on Windows.
+ */
 export function claudeProvider(model: string): Provider {
   return {
     family: "anthropic",
     model,
     async call(c) {
       const list = c.images.map((i) => `${i.ref}: ${i.path}`).join("\n");
-      const input = `${c.prompt}\n\nRead each image file with the Read tool, then answer.\n${list}`;
+      const input = c.images.length
+        ? `${c.prompt}\n\nRead each image file with the Read tool, then answer.\n${list}`
+        : c.prompt;
+      const tools = c.images.length
+        ? ["--tools", "Read", "--allowedTools", "Read"]
+        : ["--tools", ""];
       const args = [
         "-p",
         "--model",
@@ -48,10 +57,7 @@ export function claudeProvider(model: string): Provider {
         "--strict-mcp-config",
         "--system-prompt-file",
         c.system.file,
-        "--tools",
-        "Read",
-        "--allowedTools",
-        "Read",
+        ...tools,
         "--output-format",
         "json",
         "--json-schema",
@@ -101,14 +107,15 @@ export function codexProvider(model: string, schemaDir: string): Provider {
       if (!existsSync(schemaFile)) writeFileSync(schemaFile, schemaText);
       const out = join(tmpdir(), `ssr-codex-${process.pid}-${Date.now()}.json`);
       const refs = c.images.map((i) => i.ref).join(", ");
-      const input = `${c.system.text}\n\n${c.prompt}\n\nThe attached images are, in order: ${refs}.`;
+      const input = c.images.length
+        ? `${c.system.text}\n\n${c.prompt}\n\nThe attached images are, in order: ${refs}.`
+        : `${c.system.text}\n\n${c.prompt}`;
       const args = ["exec", "-m", model, "-s", "read-only", "--skip-git-repo-check", "--ephemeral"];
       for (const i of c.images) args.push("-i", i.path);
       args.push("--output-schema", schemaFile, "-o", out, "-");
       const r = await run("codex", args, { input, timeoutMs: c.timeoutMs });
       try {
         const text = readFileSync(out, "utf8");
-        rmSync(out, { force: true });
         if (r.code !== 0)
           return { ok: false, output: null, costUsd: null, error: r.stderr.slice(-400) };
         return { ok: true, output: JSON.parse(text), costUsd: null, error: null };
@@ -119,6 +126,8 @@ export function codexProvider(model: string, schemaDir: string): Provider {
           costUsd: null,
           error: r.timedOut ? "timed out" : r.stderr.slice(-400) || "no output",
         };
+      } finally {
+        rmSync(out, { force: true });
       }
     },
   };

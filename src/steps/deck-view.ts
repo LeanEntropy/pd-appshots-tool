@@ -1,7 +1,8 @@
 import { writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
-import { summaries } from "../analysis/records.ts";
-import { coreOrder, type LoadedConfig, projectPaths } from "../config/load.ts";
+import { labeler } from "../analysis/labels.ts";
+import { infoViews, summaries } from "../analysis/records.ts";
+import { coreOrder, type LoadedConfig, loadTaxonomy, projectPaths } from "../config/load.ts";
 import { ImageDb } from "../store/imagedb.ts";
 import { ensureDir } from "../util/fsx.ts";
 import { galleryHtml } from "../view/gallery-html.ts";
@@ -19,7 +20,14 @@ function viewModel(loaded: LoadedConfig): ViewModel {
   const run = latestRun(paths.runs);
   if (!run) throw new Error("No download run found yet. Run the download step first.");
   const db = ImageDb.open(paths.imageDb, paths.imagesOrig, paths.imagesThumb);
-  return buildViewModel(loaded.config, run, db, coreOrder(loaded, paths), summaries(paths));
+  return buildViewModel(
+    loaded.config,
+    run,
+    db,
+    coreOrder(loaded, paths),
+    summaries(paths, labeler(loadTaxonomy(loaded).taxonomy)),
+    infoViews(paths, labeler(loadTaxonomy(loaded).taxonomy)),
+  );
 }
 
 /** The gallery page, built fresh from the latest download, the saved pick and analyses. */

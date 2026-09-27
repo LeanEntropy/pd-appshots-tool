@@ -1,5 +1,6 @@
 import { ANALYSIS_SCRIPT } from "./gallery-analysis.ts";
 import { GRID_SCRIPT } from "./gallery-grid.ts";
+import { INFO_SCRIPT } from "./gallery-info.ts";
 import { PICKER_SCRIPT } from "./gallery-picker.ts";
 
 /** Client-side script for the raw deck gallery. Plain JS, no external libraries. */
@@ -23,7 +24,7 @@ function caption(i) {
 function thumbs(deck) {
   if (deck.status !== "ok") return '<div class="na">' + (deck.status === "unavailable" ? "Not available in this country" : "Could not be read") + "</div>";
   return deck.images.map((i) => i.thumb
-    ? '<figure><a href="' + IMG + esc(i.full) + '" target="_blank" rel="noopener" title="Position ' + i.position + ", " + i.width + "x" + i.height + ", " + esc(i.device) + '"><img loading="lazy" src="' + IMG + esc(i.thumb) + '" alt="Position ' + i.position + '">' + (i.sameAsBaseline ? '<span class="badge">same as English</span>' : "") + (i.device === "tablet" ? '<span class="badge tab">tablet-shaped</span>' : "") + "</a>" + caption(i) + "</figure>"
+    ? '<figure><a href="' + IMG + esc(i.full) + '" target="_blank" rel="noopener" title="Position ' + i.position + ", " + i.width + "x" + i.height + ", " + esc(i.device) + '"><img loading="lazy" src="' + IMG + esc(i.thumb) + '" alt="Position ' + i.position + '">' + (i.sameAsBaseline ? '<span class="badge">same as English</span>' : "") + (i.device === "tablet" ? '<span class="badge tab">tablet-shaped</span>' : "") + "</a>" + infoBtn(i.imageId) + caption(i) + "</figure>"
     : '<div class="na">Position ' + i.position + ": download failed</div>").join("");
 }
 
@@ -53,4 +54,4 @@ document.addEventListener("change", (e) => {
 document.getElementById("locale").innerHTML = '<option value="all">All countries</option>' + DATA.markets.map((m) => '<option value="' + esc(m.gl) + '">' + esc(m.label) + "</option>").join("");
 `;
 
-export const GALLERY_SCRIPT = `${RENDER_SCRIPT}\n${PICKER_SCRIPT}\n${GRID_SCRIPT}\n${ANALYSIS_SCRIPT}\nrender();\nloadSaved();\n`;
+export const GALLERY_SCRIPT = `${RENDER_SCRIPT}\n${INFO_SCRIPT}\n${PICKER_SCRIPT}\n${GRID_SCRIPT}\n${ANALYSIS_SCRIPT}\nrender();\nloadSaved();\n`;

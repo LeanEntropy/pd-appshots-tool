@@ -18,6 +18,7 @@
     "pilot": "tsx src/cli.ts pilot",
     "core": "tsx src/cli.ts core",
     "fit": "tsx src/cli.ts fit",
+    "refresh-records": "tsx src/cli.ts refresh-records",
     "typecheck": "tsc --noEmit",
     "lint": "biome check .",
     "format": "biome format --write .",

@@ -67,6 +67,7 @@
     "expansionCoverage": 1,
     "alsoBelowConfidence": 0.7
   },
+  "run": { "stopAfterSameErrors": 3 },
   "budget": { "maxUsdPerIncrement": 30 },
   "estimates": {
     "fullAnalysisUsdPerImage": [0.15, 0.25],
@@ -75,7 +76,8 @@
     "expectedDisputeRate": 0.1,
     "retryAllowance": 0.15,
     "reviewTokensPerImage": 17000,
-    "imagesPerCall": 10
+    "imagesPerCall": 1,
+    "synthesisUsd": [0.6, 1.5]
   },
   "tierWeights": { "direct": 3, "same_audience": 2, "reference": 1, "chart": 1 },
   "models": {
@@ -89,6 +91,6 @@
     "recommendationReview": "codex:gpt-5.6-sol",
     "codeReview": "codex:gpt-5.6-sol"
   },
-  "taxonomy": "taxonomies/mobile-rpg.v1.json",
+  "taxonomy": "taxonomies/mobile-rpg.v3.json",
   "ownAssets": { "dir": "rogue-legends_current", "psd": "_APPLE STORE.psd" }
 }

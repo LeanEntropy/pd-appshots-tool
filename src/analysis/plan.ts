@@ -5,9 +5,11 @@ import { baselineMarket, coreMarket } from "../core/targets.ts";
 import { ImageDb } from "../store/imagedb.ts";
 import { readJsonIfExists, writeJsonAtomic } from "../util/fsx.ts";
 import { stableHash } from "../util/hash.ts";
+import { batchDataHash } from "./entries.ts";
 import { type Estimate, estimate } from "./estimate.ts";
+import { readLatest } from "./final-report.ts";
 import { PROMPT_VERSIONS } from "./prompts.ts";
-import { readRecords, USABLE } from "./records.ts";
+import { isUsable, readRecords } from "./records.ts";
 import { SCHEMA_VERSION } from "./schema.ts";
 import { assignTiers, type TierInput, type TierResult } from "./tiers.ts";
 
@@ -36,6 +38,8 @@ export interface AnalysisPlan {
   coreTotal: number;
   withinCap: boolean;
   estimate: Estimate;
+  /** Patterns and recommendations must be (re)written: new images, or none for this data yet. */
+  synthesisNeeded: boolean;
   models: Record<string, string>;
   versions: { prompts: Record<string, string>; schema: string; taxonomy: string };
   review: unknown;
@@ -105,7 +109,7 @@ export function buildAnalysisPlan(
 
   const records = readRecords(paths);
   const analysed = [...records.values()]
-    .filter((r) => USABLE.includes(r.status))
+    .filter((r) => isUsable(r))
     .map((r) => ({
       appId: r.appId,
       imageId: r.imageId,
@@ -135,8 +139,7 @@ export function buildAnalysisPlan(
       if (s.imageId) coreIds.add(s.imageId);
   }
   const alreadyInCore = [...coreIds].filter((id) => {
-    const r = records.get(id);
-    return r && USABLE.includes(r.status);
+    return isUsable(records.get(id));
   }).length;
   const coreTotal = alreadyInCore + counts.newImages;
   const versions = {
@@ -145,7 +148,12 @@ export function buildAnalysisPlan(
     taxonomy: loadTaxonomy(loaded).hash,
   };
   const models = { ...config.models } as Record<string, string>;
-  const est = estimate(config, items);
+  const latest = readLatest(paths, stage);
+  const synthesisNeeded =
+    counts.newImages > 0 ||
+    !latest?.complete ||
+    latest.dataHash !== batchDataHash({ games, items, versions }, records);
+  const est = estimate(config, items, synthesisNeeded);
   const body = {
     stage,
     market: { gl: market.gl, hl: market.hl, label: market.label },
@@ -157,6 +165,7 @@ export function buildAnalysisPlan(
     coreTotal,
     withinCap: coreTotal <= config.core.imageCap,
     estimate: est,
+    synthesisNeeded,
     models,
     versions,
     review: config.review,

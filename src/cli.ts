@@ -1,5 +1,6 @@
 import { writeFileSync } from "node:fs";
 import { join } from "node:path";
+import { refreshAllRecords } from "./analysis/record-refresh.ts";
 import { type LoadedConfig, loadConfig, projectPaths } from "./config/load.ts";
 import { openBrowser, startGalleryServer } from "./server/gallery-server.ts";
 import { runAnalyzeStep } from "./steps/analyze.ts";
@@ -29,6 +30,7 @@ const HELP = `Store Screenshot Recipe: setup commands (no AI analysis)
   npm run core        The same for the full core check
   npm run select      Save the pick from the terminal: -- --pick "Name, Name, ..." (fallback to the page)
   npm run fit         Show which whole decks fit in the core check with the current pick
+  npm run refresh-records  Rebuild each analysis record's identity block and taxonomy mapping (no AI)
 
 Options: --config <file> (default configs/rogue-legend.json)`;
 
@@ -143,6 +145,12 @@ Your pick saves automatically. Keep this window open while you use the page; pre
     case "core": {
       const opts = { yes: args.yes, dryRun: args.flags.has("dry-run") };
       return (await runAnalyzeStep(loaded, args.command, opts, log)) ? 0 : 1;
+    }
+    case "refresh-records": {
+      const r = refreshAllRecords(loaded);
+      log(`Refreshed ${r.records} analysis records (identity and taxonomy mapping, no AI call).`);
+      for (const m of r.mapped) log(`  ${m}`);
+      return 0;
     }
     case "publish-deck-view":
       log(

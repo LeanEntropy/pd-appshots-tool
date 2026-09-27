@@ -1,9 +1,14 @@
+import { existsSync, readFileSync } from "node:fs";
 import { z } from "zod";
+import { readLatest } from "../analysis/final-report.ts";
 import { approvalProblem, jobState, runApproved } from "../analysis/job.ts";
+import { labeler } from "../analysis/labels.ts";
 import { buildAnalysisPlan, readSavedPlan, type Stage } from "../analysis/plan.ts";
+import { infoViews, summaries } from "../analysis/records.ts";
 import { describeAnalysisPlan } from "../analysis/report.ts";
-import { coreOrder, type LoadedConfig, projectPaths } from "../config/load.ts";
+import { coreOrder, type LoadedConfig, loadTaxonomy, projectPaths } from "../config/load.ts";
 import { type FitView, fitFor, resolvePick, savePick } from "../core/selection.ts";
+import { markdownToHtml } from "../view/md-html.ts";
 
 export interface ApiResponse {
   status: number;
@@ -95,6 +100,39 @@ export function postAnalysisRun(
   return { status: 202, body: { started: true } };
 }
 
-export function getAnalysisStatus(): ApiResponse {
-  return { status: 200, body: jobState() };
+/** The running job, or the last one saved on disk. */
+export function getAnalysisStatus(loaded?: LoadedConfig): ApiResponse {
+  return { status: 200, body: jobState(loaded) };
+}
+
+/** Fresh analyses for the (i) popovers and thumbnail captions, without reloading the page. */
+export function getAnalyses(loaded: LoadedConfig): ApiResponse {
+  const paths = projectPaths(loaded);
+  return {
+    status: 200,
+    body: {
+      info: infoViews(paths, labeler(loadTaxonomy(loaded).taxonomy)),
+      captions: Object.fromEntries(summaries(paths, labeler(loadTaxonomy(loaded).taxonomy))),
+    },
+  };
+}
+
+/** The latest final report of a batch, as HTML for the page (plus where the markdown is). */
+export function getReport(loaded: LoadedConfig, stage: string | null): ApiResponse {
+  const parsed = z.enum(["pilot", "core"]).safeParse(stage);
+  if (!parsed.success) return { status: 400, body: { problems: ["Unknown batch."] } };
+  const latest = readLatest(projectPaths(loaded), parsed.data);
+  if (!latest || !existsSync(latest.file)) return { status: 200, body: { report: null } };
+  const md = readFileSync(latest.file, "utf8");
+  return {
+    status: 200,
+    body: {
+      report: {
+        runId: latest.runId,
+        file: latest.file,
+        complete: latest.complete,
+        html: markdownToHtml(md),
+      },
+    },
+  };
 }

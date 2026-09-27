@@ -1,0 +1,144 @@
+{
+  "id": "mobile-rpg",
+  "version": "3.0.0-draft",
+  "status": "draft: frozen after the core pilot rating",
+  "screenTypes": [
+    {
+      "id": "title_image",
+      "label": "Title image",
+      "subtypes": ["logo_with_art", "logo_only"]
+    },
+    {
+      "id": "feature_image",
+      "label": "Feature image",
+      "subtypes": [
+        "feature_callout",
+        "character_showcase",
+        "reward_showcase",
+        "social_proof",
+        "collab_ip"
+      ]
+    },
+    {
+      "id": "key_art",
+      "label": "Key art (other)",
+      "subtypes": ["title_logo", "character_showcase", "collage", "cg_scene"]
+    },
+    {
+      "id": "gameplay",
+      "label": "Gameplay",
+      "subtypes": [
+        "battle",
+        "boss",
+        "victory",
+        "defeat",
+        "skill_select",
+        "board_dice",
+        "backpack_merge",
+        "idle_auto",
+        "pvp",
+        "dungeon_run",
+        "travel_exploration",
+        "board"
+      ]
+    },
+    {
+      "id": "metagame",
+      "label": "Metagame",
+      "subtypes": [
+        "progression",
+        "character_roster",
+        "character_detail",
+        "gear",
+        "pets",
+        "skills_talents",
+        "base_town",
+        "gacha_summon",
+        "idle_rewards",
+        "inventory",
+        "player_profile",
+        "evolution_upgrade",
+        "level_progression",
+        "game_pass"
+      ]
+    },
+    {
+      "id": "map_world",
+      "label": "Map / world",
+      "subtypes": ["world_map", "stage_select"]
+    },
+    {
+      "id": "social",
+      "label": "Social",
+      "subtypes": ["guild", "arena_leaderboard", "coop", "chat"]
+    },
+    {
+      "id": "events_rewards",
+      "label": "Events and rewards",
+      "subtypes": ["event", "login_rewards", "battle_pass"]
+    },
+    {
+      "id": "iap",
+      "label": "Shop / offers",
+      "subtypes": ["shop", "offer"]
+    },
+    {
+      "id": "promo",
+      "label": "Promo",
+      "subtypes": ["feature_callout", "social_proof", "collab_ip", "update_news"]
+    },
+    {
+      "id": "other",
+      "label": "Other",
+      "subtypes": [],
+      "noteRequired": true
+    }
+  ],
+  "definitions": {
+    "gameplay.board_dice": "The player acts on a board of tiles or dice during a run (rolling, moving a token, resolving tile effects). A board shown only as a choice of where to go next is not board_dice.",
+    "map_world.world_map": "An overview of places, chapters or boards the player chooses between, outside of active play. Our 'maps' screen (three board tiles side by side) belongs here, not in board_dice.",
+    "gameplay.travel_exploration": "The hero or party moves through a level, corridor or overworld during a run, without an active fight.",
+    "gameplay.board": "Any board-game style play surface other than dice (card board, grid, tiles) during active play.",
+    "metagame.level_progression": "Chapter, level or tier progress outside of play (level lists, progress tracks, star counts).",
+    "metagame.game_pass": "A season or game pass reward track. Use events_rewards.battle_pass only when the screen is framed as a limited-time event.",
+    "metagame.evolution_upgrade": "Upgrading, evolving, merging or ascending a hero, pet or item, outside of play.",
+    "metagame.player_profile": "The player's own profile, account level, stats overview or avatar page.",
+    "metagame.inventory": "Bag, item or equipment inventory lists (not a single item detail in gear).",
+    "title_image": "PREFERRED for art that is not an in-game screen and features the game's logo or title (e.g. key art with the logo). logo_only: little besides the logo; logo_with_art: logo over painted art or characters.",
+    "feature_image": "PREFERRED for promotional art or a callout that highlights a feature (a character, a reward, a mode, a rating, a collaboration) with no gameplay capture. If the logo is the main subject, use title_image.",
+    "key_art": "Only for non-gameplay art that is neither a title image nor a feature image.",
+    "promo": "Only when promotional content sits on or beside an in-game capture; without a capture use feature_image."
+  },
+  "marketingLayer": {
+    "composition": ["full_bleed_capture", "framed_capture", "split", "collage", "no_capture"],
+    "band": {
+      "type": ["solid", "gradient", "diagonal", "shape", "none"],
+      "position": ["top", "bottom", "middle", "overlay"],
+      "size": "height as a percent of the image",
+      "colour": "measured hex or \"unknown\""
+    },
+    "textBlock": {
+      "role": ["headline", "subheadline", "label", "badge", "legal", "other"],
+      "fields": ["exactText", "language", "style", "fill", "stroke", "size", "approximateRegion"]
+    },
+    "callout": {
+      "kind": ["character", "item", "creature", "ui_element"],
+      "fields": ["source", "identity", "placement", "scale", "breaksFrame"]
+    },
+    "decorations": ["badge", "frame", "particles", "logo", "other"],
+    "relationToScreen": ["describes", "exaggerates", "unrelated"],
+    "occlusionPercent": "0-100"
+  },
+  "subtypeLabels": {
+    "logo_with_art": "Logo with art",
+    "logo_only": "Logo only",
+    "cg_scene": "CG scene",
+    "iap": "Shop / offers",
+    "pvp": "PvP",
+    "collab_ip": "Collaboration / IP",
+    "board_dice": "Board (dice)",
+    "backpack_merge": "Backpack / merge",
+    "idle_auto": "Idle / auto battle",
+    "ui_element": "UI element"
+  }
+}

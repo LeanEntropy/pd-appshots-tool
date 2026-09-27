@@ -8,8 +8,13 @@ reports) lives in the gitignored `workspace/` folder. The plan is in `docs/plan-
 
 ## Status
 
-Setup milestone done. Core pilot built: analysis with Fable 5.1, a blind second opinion from
-gpt-5.6-sol, disagreements settled by Opus 5.5, all cached by content. Nothing is sent to a model
+Setup milestone done. Core analysis built to the user's spec
+(`docs/analysis-requirements-user-2026-09-27.md`): each image is read on two layers (screenshot and
+marketing layer) by Fable 5.1, cross-checked by gpt-5.6-sol, disagreements settled by Opus 5.5, and
+saved immediately by content hash (never analysed twice; interrupted runs resume). Then, by code:
+store order per game per date, patterns across competitors, and our game vs the patterns; Opus
+summarises the patterns and writes the recommendations, which gpt-5.6-sol checks. The final report
+is shown in the gallery and saved as markdown plus JSON. Nothing is sent to a model
 without an explicit approval of the numbers shown first. Only phone-shaped screenshots are analysed
 by default (`core.deviceClasses`); tablet-shaped ones are kept and shown greyed out.
 
@@ -42,6 +47,7 @@ after `--`, e.g. `npm run download -- --yes`.
 | **Gallery (main screen)** | `npm run gallery` | Starts a small local server and opens the gallery: comparison grid (position N of every game in one column), competitor picker with drag-and-drop that saves automatically, and **Start analysis** (approval screen, then **Approve and run**). Run the same command to reopen it later |
 | Pick competitors (fallback) | `npm run select -- --pick "Archero 2, Capybara Go, ..."` | Saves the pick from the terminal (names or package ids), or asks in the terminal |
 | Analysis approval | `npm run pilot` / `npm run core` | Shows the approval screen (games and positions, images by cost level, model passes, estimated cost). No AI call. In Claude Code: `/analyze pilot` |
+| Refresh analysis records | `npm run refresh-records` | Rebuilds each record's identity block (game, files, source URL, every appearance) and the taxonomy mapping. No AI call |
 | Check the core size | `npm run fit` | Applies the whole-deck rule to your pick: our deck first, whole competitor decks only, within the cap |
 
 Development: `npm test`, `npm run typecheck`, `npm run lint`.
@@ -58,7 +64,12 @@ workspace/<project>/            run data (gitignored)
   images/thumb/<sha256>.webp    240 px thumbnails
   images/db.json                image database: hashes, perceptual hash, size, device guess, where seen
   decks/<app>/<country>-<lang>.json   store order per game and country, pointing to image ids
-  runs/<run id>/manifest.json   immutable record of each download run
+  runs/<run id>/manifest.json   immutable record of each download or analysis run
+  analysis/<sha256>.json        per-image analysis (both layers), saved as soon as it is done
+  objects/                      every model answer, cached by its full input
+  orders/<app>/<gl-hl>/<date>.json   store order per game per date, with screen types
+  reports/<run id>/report.md    final report (+ patterns.json, ours-vs.json, recommendations.json, review.json)
+  pending/analysis-status.json  last analysis status (shown in the gallery after a restart)
   own/                          our local files matched to the live deck, PSD facts
   views/index.md, views/decks/  offline markdown
   views/gallery.html            raw deck gallery with the competitor picker

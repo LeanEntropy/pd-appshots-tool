@@ -27,7 +27,7 @@ function renderGrid() {
       const i = d && d.images.find((x) => x.position === p);
       if (!i || !i.thumb) { html += "<td></td>"; continue; }
       const excluded = !r.inCore || !DATA.deviceClasses.includes(i.device);
-      html += '<td class="' + (excluded ? "out" : "") + '"><a href="' + IMG + esc(i.full) + '" target="_blank" rel="noopener" title="' + esc(r.app.name) + ", position " + p + ", " + i.width + "x" + i.height + (excluded ? ", not analysed" : "") + '"><img loading="lazy" src="' + IMG + esc(i.thumb) + '" alt="' + esc(r.app.name) + " position " + p + '">' + (i.device === "tablet" ? '<span class="badge tab">tablet-shaped</span>' : "") + "</a>" + caption(i) + "</td>";
+      html += '<td class="' + (excluded ? "out" : "") + '"><a href="' + IMG + esc(i.full) + '" target="_blank" rel="noopener" title="' + esc(r.app.name) + ", position " + p + ", " + i.width + "x" + i.height + (excluded ? ", not analysed" : "") + '"><img loading="lazy" src="' + IMG + esc(i.thumb) + '" alt="' + esc(r.app.name) + " position " + p + '">' + (i.device === "tablet" ? '<span class="badge tab">tablet-shaped</span>' : "") + "</a>" + infoBtn(i.imageId) + caption(i) + "</td>";
     }
     html += "</tr>";
   }
