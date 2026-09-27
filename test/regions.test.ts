@@ -41,6 +41,14 @@ test("regions slightly past an edge are clamped; nonsensical ones lose only thei
   const after = clampRegions(before);
   assert.deepEqual(semanticProblems(taxonomy, ["img1"], [after]), []);
   assert.equal(after.marketingLayer.texts[0]?.text, "EPIC BOSS FIGHTS");
+  // A capture drawn far outside the image keeps the capture, without a position.
+  const far = reading("img1", "gameplay", "X");
+  const cap = far.screenshot.captures[0];
+  if (cap) cap.region = { x: 10, y: 150, w: 80, h: 60 };
+  const fixed = clampRegions(far);
+  assert.deepEqual(semanticProblems(taxonomy, ["img1"], [fixed]), []);
+  assert.equal(fixed.screenshot.captures.length, 1);
+  assert.deepEqual(fixed.screenshot.captures[0]?.region, none);
 });
 
 test("a model answer with a box slightly out of range is accepted without a repair call", async () => {
@@ -78,7 +86,7 @@ test("a model answer with a box slightly out of range is accepted without a repa
     w: 90,
     h: 5,
   });
-  // The cached answer is clamped the same way on reuse (no new call).
+  // The cache keeps the raw answer (box still out of range); reuse clamps it again, no new call.
   const again = await analyseImages(
     "review",
     provider,

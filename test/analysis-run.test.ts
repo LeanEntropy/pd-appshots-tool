@@ -146,6 +146,17 @@ test("a failed second opinion keeps the first reading and the batch goes on", as
   assert.equal(out.errors.length, 0);
   assert.match(out.records[0]?.problems[0] ?? "", /second opinion could not be read/);
   assert.doesNotMatch(out.synthesisSkipped ?? "", /no usable analysis|stopped early/);
+  // Saved "unreviewed" records are reused from disk: the next plan and run need no model call.
+  const next = buildAnalysisPlan(loaded, "pilot");
+  assert.equal(next.counts.newImages, 0);
+  const before = producer.calls.length;
+  await runAnalysis(loaded, next, {
+    producer,
+    reviewer: null,
+    adjudicator: producer,
+    onProgress: () => {},
+  });
+  assert.equal(producer.calls.length, before);
 });
 
 test("the approval fingerprint changes when any number on the screen changes", async () => {

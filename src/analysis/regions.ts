@@ -36,9 +36,9 @@ export function clampRegion(r: Box): Box {
 }
 
 /**
- * Every region of a reading clamped into the image. Captures keep their original region when it
- * is nonsensical: a capture without a position would hide a real problem, so it stays for the
- * checks to report.
+ * Every region of a reading clamped into the image. A nonsensical box (texts, masks, elements
+ * and captures alike) keeps its item but loses its position; the capture count stays intact, so
+ * the composition checks still hold. Nothing downstream uses capture positions.
  */
 export function clampRegions(a: ImageAnalysis): ImageAnalysis {
   const m = a.marketingLayer;
@@ -53,10 +53,7 @@ export function clampRegions(a: ImageAnalysis): ImageAnalysis {
     },
     screenshot: {
       ...s,
-      captures: s.captures.map((c) => {
-        const r = clampRegion(c.region);
-        return { ...c, region: r.w > 0 ? r : c.region };
-      }),
+      captures: s.captures.map((c) => ({ ...c, region: clampRegion(c.region) })),
     },
   };
 }
