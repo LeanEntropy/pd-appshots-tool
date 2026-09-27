@@ -48,7 +48,7 @@ Output per locale:
   - Before each step, show the count per tier and wait for approval.
 - **Plan v2 approved** (2026-09-27, `docs/plan-v2.md`), with these settings:
   - The user picks the core competitors in the tool's interface; they are not fixed in config.
-  - Early-stop rule and review coverage are adjustable parameters. Initial values: early stop after ≥5 decks, when 2 decks in a row change nothing and no share moves more than 10 points; review coverage is a toggle, starting at 100% everywhere.
+  - Early-stop rule and review coverage are adjustable parameters. Early stop after ≥5 decks, when 2 decks in a row change nothing and no share moves more than 10 points. Image review by GPT is currently PAUSED by the user (coverage 0) until they say resume.
   - Core cap: 100 hard stop, aiming for ~85. Budget ceiling per expansion: $30, adjustable.
   - The PSD reader is psd-tools. It's optional; it gives exact facts about our current marketing layer.
   - Each game project keeps its own image database, so an identical image is never analysed twice.
@@ -119,6 +119,16 @@ Output per locale:
   - full recommendations.
 - Store images can be composites: a landscape marketing image containing portrait captures, or several captures in one image (common in Asian decks). The analysis supports 0..N captures per image plus a composition type.
 - Anything measurable from pixels (orientation, size, aspect ratio, dominant colours) is computed by code for EVERY image and never marked "not applicable".
+- Before any AI step, the UI shows exactly which images will be analysed, per game, visually marked, with counts. The approval panel must be unmistakable: highlighted, scrolled into view and focused.
+- UI is split into separate pages or tabs with a clear, colourful menu (Overview, Competitors, Screenshots, Analysis, Report), not one long page.
+- Report format: `docs/report-requirements-user-2026-09-28.md` (authoritative):
+  - a table of contents;
+  - the verdict and key optimisation points first;
+  - patterns (including order), each marked as fits or different;
+  - a position table: row N = everyone's Nth image, ours first;
+  - recommendations.
+- A title image is usually an in-game screenshot (the title screen).
+- The report ALWAYS includes the deterministic content (exact store order per game, position-by-position comparison, pattern stats with n, ours vs patterns), even if AI synthesis is missing.
 - UX rules:
   - always show live progress ("Analyzing image 5 / 80");
   - runs are resumable and never re-analyse;
