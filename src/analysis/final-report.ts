@@ -8,6 +8,7 @@ import {
 } from "../config/load.ts";
 import type { ImageDb } from "../store/imagedb.ts";
 import { ensureDir, readJsonIfExists, writeJsonAtomic } from "../util/fsx.ts";
+import { captureLines, imageLine } from "./info-text.ts";
 import { labeler } from "./labels.ts";
 import { compareOrders, orderHistory } from "./orders.ts";
 import type { AnalysisPlan, Stage } from "./plan.ts";
@@ -97,15 +98,15 @@ export function writeFinalReport(
     }
     lines.push(
       "",
-      "| Position | Screenshot | Screen type | Headline | Layer | Status | Differences between readings |",
-      "|---|---|---|---|---|---|---|",
+      "| Position | Screenshot | Image | Screen type | In-game captures | Headline | Layer | Status | Differences between readings |",
+      "|---|---|---|---|---|---|---|---|---|",
     );
     for (const pos of g.positions) {
       const item = plan.items.find((i) => i.appId === g.appId && i.position === pos);
       const r = item ? all.get(item.imageId) : undefined;
       const f = r?.final ?? null;
       lines.push(
-        `| ${pos} | ${thumb(db, item?.imageId ?? null, `${g.name} ${pos}`)} | ${cell(f ? screenLabel(f, label) : "")} | ${cell(f?.headline ?? "")} | ${f ? (f.marketingLayer.present ? "yes" : "no") : ""} | ${r?.status ?? "not run"} | ${cell((r?.differences ?? []).join("; "))} |`,
+        `| ${pos} | ${thumb(db, item?.imageId ?? null, `${g.name} ${pos}`)} | ${cell(imageLine(r?.identity?.image) ?? "")} | ${cell(f ? screenLabel(f, label) : "")} | ${cell(f ? `${label(f.screenshot.composition)}${f.screenshot.captures.length ? `: ${captureLines(f, r?.identity?.image, label).join("; ")}` : ""}` : "")} | ${cell(f?.headline ?? "")} | ${f ? (f.marketingLayer.present ? "yes" : "no") : ""} | ${r?.status ?? "not run"} | ${cell((r?.differences ?? []).join("; "))} |`,
       );
     }
     lines.push("");

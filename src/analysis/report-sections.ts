@@ -104,7 +104,7 @@ export function patternSection(
       ...interp.keyPatterns.map((k) => `- **${k.pattern}** (${k.strength}): ${k.evidence}`),
       "",
     );
-    out.push("How our deck compares, in short: " + interp.oursSummary, "");
+    out.push(`How our deck compares, in short: ${interp.oursSummary}`, "");
   }
   out.push(
     `Computed from ${p.images} screenshots of ${p.games.length} games. Deck length: ${p.deckLength.min} to ${p.deckLength.max} (median ${p.deckLength.median}).`,
@@ -129,10 +129,14 @@ export function patternSection(
     "",
     "### Format and layers",
     "",
-    `- Image orientation: ${list(p.orientation.canvas)}. Capture orientation: ${list(p.orientation.capture)}.`,
+    `- Image orientation (from the pixel size): ${list(p.orientation.canvas)}. In-game capture orientation: ${list(p.orientation.capture)}.`,
+    `- Composition: ${list(p.composition, 4, label)}. In-game captures per image: ${list(p.capturesPerImage, 4)}.`,
+    `- Portrait in-game screenshot shown inside a landscape marketing image: ${p.portraitInLandscape.n} images (${pct(p.portraitInLandscape.share)}).`,
+    `- Image orientation per country: ${p.orientation.byCountry.map((c) => `${c.market.toUpperCase()} ${list(c.mix, 3)}`).join("; ")}.`,
     `- Marketing layer present: ${pct(p.marketingLayer.share)} (${p.marketingLayer.perGame.map((g) => `${g.name} ${pct(g.share)}`).join(", ")}).`,
     `- Layer vs screenshot: ${list(p.proportion, 5)}.`,
-    `- Screenshot colours: ${list(p.colours.screenshot, 6)}.`,
+    `- Whole-image colours (measured from the pixels): ${list(p.colours.image, 6)}.`,
+    `- In-game capture colours: ${list(p.colours.screenshot, 6)}.`,
     `- Marketing layer colours: ${list(p.colours.layer, 6)}. Mask colours: ${list(p.colours.masks, 6)}. Text colours: ${list(p.colours.texts, 6)}.`,
     `- Mask shapes: ${list(p.maskShapes)}. Mask locations: ${list(p.maskLocations)}. Text positions: ${list(p.textPositions)}. Extra elements: ${list(p.elementKinds)}.`,
     "",

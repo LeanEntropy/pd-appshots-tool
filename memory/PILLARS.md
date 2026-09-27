@@ -117,11 +117,17 @@ Output per locale:
   - store order saved per game per date;
   - patterns across competitors, and ours compared against them;
   - full recommendations.
+- Store images can be composites: a landscape marketing image containing portrait captures, or several captures in one image (common in Asian decks). The analysis supports 0..N captures per image plus a composition type.
+- Anything measurable from pixels (orientation, size, aspect ratio, dominant colours) is computed by code for EVERY image and never marked "not applicable".
 - UX rules:
   - always show live progress ("Analyzing image 5 / 80");
   - runs are resumable and never re-analyse;
   - a final report at the end;
   - an (i) icon with hover details on every analysed image.
+- The image and analysis database is SHARED ACROSS PROJECTS: the same image is never downloaded or analysed twice, even for different games' projects.
+- Project-setup plan approved on 2026-09-27 (`docs/plan-project-setup.md`, D1–D6 as proposed).
+- Web-readiness rule (not building web now): keep AI providers, storage and jobs each behind one interface, so a hosted website is cheap later. No direct filesystem calls from feature code.
+- Multi-project: the user creates projects in the UI (own game plus competitors, Google Play only in V1), can work on several games, and can resume any project mid-work.
 - The tool must never make the user move or handle files. Every choice made in its UI is saved by the tool automatically (e.g. a local server with autosave).
 - User-facing text (chat, pages, reports) uses plain descriptive names, never internal codes like S6, L1 or F8.
 - Plan first. Only small or obvious tasks skip planning. Everything else follows this flow:

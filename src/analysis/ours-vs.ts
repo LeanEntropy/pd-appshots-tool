@@ -114,12 +114,22 @@ export function compareOurs(
       `our images are ${canvas.key}; competitors mostly use ${theirCanvas.key} (${pct(theirCanvas.share)})`,
     );
   }
-  const capture = counts(ours.map((e) => e.final.screenshot.orientation))[0];
+  const capture = counts(
+    ours.flatMap((e) => e.final.screenshot.captures.map((c) => c.orientation)),
+  )[0];
   const theirCapture = p.orientation.capture[0];
   if (capture && theirCapture && capture.key !== theirCapture.key) {
     slight++;
     reasons.push(
       `our in-game captures are mostly ${label(capture.key)}; competitors' are mostly ${label(theirCapture.key)} (${pct(theirCapture.share)})`,
+    );
+  }
+  const ourComp = counts(ours.map((e) => e.final.screenshot.composition))[0];
+  const theirComp = p.composition[0];
+  if (ourComp && theirComp && ourComp.key !== theirComp.key) {
+    slight++;
+    reasons.push(
+      `our images are mostly "${label(ourComp.key)}"; competitors' are mostly "${label(theirComp.key)}" (${pct(theirComp.share)})`,
     );
   }
   const layerShare = ours.length

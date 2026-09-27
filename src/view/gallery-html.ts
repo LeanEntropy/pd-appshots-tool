@@ -51,12 +51,13 @@ table.passes { font-size: 12px; border-collapse: collapse; } table.passes td, ta
 .warn { color: var(--warn); }
 figure, table.grid td { position: relative; }
 button.info { position: absolute; top: 4px; right: 4px; margin: 0; width: 22px; height: 22px; padding: 0; border-radius: 50%; border: 1px solid #fff; background: var(--accent); color: #fff; font: italic 700 13px/20px Georgia, serif; text-align: center; z-index: 2; }
-button.info.bad { background: var(--warn); }
+button.info.pending { background: var(--muted); font: 700 13px/18px system-ui, sans-serif; }
+details.tech summary { cursor: pointer; color: var(--muted); font-size: 12px; }
 button.info:focus-visible { outline: 3px solid var(--text); outline-offset: 1px; }
-#infoPop { position: absolute; z-index: 50; max-height: 70vh; overflow-y: auto; background: var(--card); color: var(--text); border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; box-shadow: 0 6px 24px rgba(0,0,0,.25); font-size: 13px; }
+#infoPop { position: fixed; z-index: 50; max-width: calc(100vw - 16px); box-sizing: border-box; overflow-y: auto; background: var(--card); color: var(--text); border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; box-shadow: 0 6px 24px rgba(0,0,0,.25); font-size: 13px; }
 #infoPop h4 { margin: 0 0 2px; font-size: 14px; } #infoPop h5 { margin: 8px 0 2px; font-size: 13px; }
 #infoPop dl { display: grid; grid-template-columns: max-content 1fr; gap: 2px 8px; margin: 0; } #infoPop dt { color: var(--muted); } #infoPop dd { margin: 0; }
-#infoPop ul { margin: 4px 0; padding-left: 18px; }
+#infoPop ul, #infoPop ol { margin: 4px 0; padding-left: 18px; }
 .sw { display: inline-block; width: 11px; height: 11px; border: 1px solid var(--line); border-radius: 2px; margin: 0 3px -1px 0; }
 #status { background: var(--card); border: 2px solid var(--accent); border-radius: 8px; padding: 10px 12px; margin-bottom: 12px; }
 #status h2 { margin: 0 0 4px; font-size: 15px; } #status p { margin: 4px 0; }
@@ -65,7 +66,7 @@ button.info:focus-visible { outline: 3px solid var(--text); outline-offset: 1px;
 @keyframes spin { to { transform: rotate(360deg); } }
 @media (prefers-reduced-motion: reduce) { .spin { animation: none; } }
 details.errs summary { color: var(--warn); cursor: pointer; } details.errs li { color: var(--warn); font-size: 12px; }
-#report > details { background: var(--card); border: 1px solid var(--line); border-radius: 8px; padding: 12px; margin-bottom: 16px; }
+#overview > details, #report > details { background: var(--card); border: 1px solid var(--line); border-radius: 8px; padding: 12px; margin-bottom: 16px; }
 #report h2 { font-size: 17px; } #report h3 { font-size: 15px; margin-top: 16px; } #report h4 { font-size: 14px; }
 .tablewrap { overflow-x: auto; } table.rtable { border-collapse: collapse; font-size: 12px; margin: 6px 0; }
 table.rtable th, table.rtable td { border: 1px solid var(--line); padding: 4px 6px; vertical-align: top; text-align: left; }
@@ -95,6 +96,7 @@ export function galleryHtml(vm: ViewModel, token = ""): string {
 <body>
 <div class="wrap">
 <main>
+<div id="overview"></div>
 <div id="report"></div>
 <h1>Raw store decks: ${escHtml(vm.project)}</h1>
 <p class="meta">Downloaded run ${escHtml(vm.runId)}. Images as they appear on Google Play, in store order. Analysed screenshots show their screen type and headline under the picture, and an (i) button: hover or focus it to see the full analysis. Tick the named competitors for the core check and drag them into order on the right. Tablet-shaped screenshots are shown but not analysed.</p>

@@ -8,6 +8,7 @@ import { infoViews, summaries } from "../analysis/records.ts";
 import { describeAnalysisPlan } from "../analysis/report.ts";
 import { coreOrder, type LoadedConfig, loadTaxonomy, projectPaths } from "../config/load.ts";
 import { type FitView, fitFor, resolvePick, savePick } from "../core/selection.ts";
+import { overviewFile, writeOverview } from "../overview/overview-report.ts";
 import { markdownToHtml } from "../view/md-html.ts";
 
 export interface ApiResponse {
@@ -135,4 +136,31 @@ export function getReport(loaded: LoadedConfig, stage: string | null): ApiRespon
       },
     },
   };
+}
+
+/** The free store overview (no AI) as HTML, or null if it was not built yet. */
+export function getOverview(loaded: LoadedConfig): ApiResponse {
+  const file = overviewFile(loaded);
+  if (!existsSync(file)) return { status: 200, body: { overview: null } };
+  return {
+    status: 200,
+    body: { overview: { file, html: markdownToHtml(readFileSync(file, "utf8")) } },
+  };
+}
+
+let building: Promise<unknown> | null = null;
+
+/** Rebuilds the overview from the downloaded data (no AI; about a minute the first time). */
+export async function postOverview(loaded: LoadedConfig): Promise<ApiResponse> {
+  if (building)
+    return { status: 409, body: { problems: ["The overview is already being built."] } };
+  try {
+    building = writeOverview(loaded);
+    await building;
+    return getOverview(loaded);
+  } catch (e) {
+    return { status: 500, body: { problems: [e instanceof Error ? e.message : String(e)] } };
+  } finally {
+    building = null;
+  }
 }

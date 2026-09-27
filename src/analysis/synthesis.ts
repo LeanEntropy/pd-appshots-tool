@@ -50,7 +50,7 @@ export function brief(e: DeckEntry): string {
         ),
       ].join("; ")
     : "no marketing layer";
-  return `${e.name} #${e.position}: ${s.screenType}${s.subtype ? `/${s.subtype}` : ""}, ${e.canvas} image, capture ${s.orientation} ${s.captureAreaPercent}%, ${s.description} Action: ${s.action} Mood: ${s.atmosphere}. Colours: ${colours(s.mainColours)}. ${layer}`;
+  return `${e.name} #${e.position}: ${s.screenType}${s.subtype ? `/${s.subtype}` : ""}, ${e.canvas} image, ${s.composition}, captures: ${s.captures.map((c) => `${c.orientation} ${c.screenType}${c.subtype ? `/${c.subtype}` : ""} ${c.framing} ${c.areaPercent}%`).join(" + ") || "none"}, ${s.description} Action: ${s.action} Mood: ${s.atmosphere}. Colours: ${colours(s.mainColours)}. ${layer}`;
 }
 
 /**

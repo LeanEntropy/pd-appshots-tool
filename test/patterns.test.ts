@@ -102,6 +102,8 @@ test("store order snapshots: moves, new, removed and re-typed positions", () => 
         screenType: t,
         subtype: "",
         orientation: "portrait",
+        composition: "single_full_capture",
+        captureOrientations: ["portrait"],
         marketingLayer: true,
       })),
     },
@@ -141,7 +143,8 @@ test("key art without a capture maps to title image (logo) or feature image (cal
   const art = (texts: string[], elements: string[] = []) => {
     const r = reading("img1", "key_art", texts[0] ?? "");
     r.screenshot.captureAreaPercent = 0;
-    r.screenshot.framing = "none";
+    r.screenshot.captures = [];
+    r.screenshot.composition = "pure_art";
     r.marketingLayer.texts = texts.map((t) => ({
       ...(r.marketingLayer.texts[0] as (typeof r.marketingLayer.texts)[number]),
       text: t,
@@ -160,7 +163,7 @@ test("key art without a capture maps to title image (logo) or feature image (cal
   };
   const t = mapKeyArt(art(["ARCHERO 2"]), "Archero 2");
   assert.equal(t.final.screenshot.screenType, "title_image");
-  assert.equal(t.final.screenshot.orientation, "not_applicable");
+  assert.equal(t.final.screenshot.composition, "pure_art", "the mapping keeps the composition");
   assert.equal(t.mappedFrom?.screenType, "key_art");
   assert.equal(
     mapKeyArt(art([], ["logo"]), "Archero 2").final.screenshot.screenType,
@@ -179,14 +182,16 @@ test("key art without a capture maps to title image (logo) or feature image (cal
   assert.equal(unclear.mappedFrom, null);
   const withCapture = art(["ARCHERO 2"]);
   withCapture.screenshot.captureAreaPercent = 70;
-  withCapture.screenshot.framing = "framed";
+  withCapture.screenshot.composition = "capture_in_marketing_art";
+  withCapture.screenshot.captures = reading("img1", "gameplay", "").screenshot.captures;
   assert.equal(mapKeyArt(withCapture, "Archero 2").mappedFrom, null);
 });
 
 test("a changed mapping version re-maps from the model's original classification", () => {
   const r = reading("img1", "key_art", "ARCHERO 2");
   r.screenshot.captureAreaPercent = 0;
-  r.screenshot.framing = "none";
+  r.screenshot.captures = [];
+  r.screenshot.composition = "pure_art";
   const identityOf = () => ({ game: "Archero 2" }) as never;
   const rec = {
     imageId: "x",
@@ -213,4 +218,40 @@ test("a changed mapping version re-maps from the model's original classification
   const stale = refreshRecord({ ...once, mapping: "old" }, identityOf, "t@3");
   assert.equal(stale.mappedFrom?.screenType, "key_art");
   assert.equal(stale.final?.screenshot.screenType, "title_image");
+});
+
+test("composition, captures per image, portrait-in-landscape and orientation per country", () => {
+  const land = entry("a", 1, "gameplay");
+  land.canvas = "landscape";
+  land.gl = "jp";
+  land.hl = "ja";
+  land.final.screenshot.composition = "multiple_captures";
+  const cap = land.final.screenshot.captures[0] as (typeof land.final.screenshot.captures)[number];
+  land.final.screenshot.captures = [cap, { ...cap }];
+  const us = entry("b", 1, "gameplay");
+  us.gl = "us";
+  us.hl = "en";
+  const p = findPatterns(
+    [land, us],
+    [
+      { appId: "a", name: "a", deckLength: 1 },
+      { appId: "b", name: "b", deckLength: 1 },
+    ],
+  );
+  assert.deepEqual(p.portraitInLandscape, { n: 1, share: 0.5 });
+  assert.deepEqual(
+    p.capturesPerImage.map((c) => c.key),
+    ["1", "2"],
+  );
+  assert.deepEqual(
+    p.composition.map((c) => c.key),
+    ["multiple_captures", "single_full_capture"],
+  );
+  assert.deepEqual(
+    p.orientation.byCountry.map((c) => [c.market, c.mix[0]?.key]),
+    [
+      ["jp-ja", "landscape"],
+      ["us-en", "portrait"],
+    ],
+  );
 });

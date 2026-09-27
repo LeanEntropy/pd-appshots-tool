@@ -4,6 +4,7 @@ import { test } from "node:test";
 import { compareReadings, textSimilarity } from "../src/analysis/compare.ts";
 import { estimate } from "../src/analysis/estimate.ts";
 import { deckAnalysisSchema, semanticProblems, toJsonSchema } from "../src/analysis/schema.ts";
+import { buildRecord } from "../src/analysis/settle.ts";
 import { assignTiers } from "../src/analysis/tiers.ts";
 import { ConfigSchema } from "../src/config/schema.ts";
 import { reading } from "./helpers/fake-provider.ts";
@@ -106,4 +107,43 @@ test("the JSON schema is strict at every level (usable by both Claude and OpenAI
   const closed = js.match(/"additionalProperties":false/g)?.length ?? 0;
   assert.ok(objects > 3);
   assert.equal(objects, closed);
+});
+
+test("an adjudicated reading that breaks the composition rules stays disputed", () => {
+  const a = reading("img1", "gameplay", "FIGHT");
+  const rec = buildRecord({
+    item: {
+      appId: "a",
+      gl: "us",
+      hl: "en",
+      position: 1,
+      imageId: "x",
+      phash: "",
+      tier: "full",
+      basedOn: null,
+      reason: "",
+      name: "A",
+    },
+    produced: { readings: new Map([["x", a]]), failed: new Map(), objects: new Map() },
+    reviewed: { readings: new Map([["x", a]]), failed: new Map(), objects: new Map() },
+    reviewRequired: true,
+    disputes: new Map([["x", ["composition"]]]),
+    notes: new Map(),
+    decision: {
+      chosen: "first",
+      screenType: "title_image",
+      subtype: "",
+      composition: "pure_art",
+      marketingLayerPresent: false,
+      headline: "FIGHT",
+      reason: "r",
+    },
+    adjudicationKey: "k",
+    models: { producer: "p", reviewer: "r", adjudicator: "o" },
+    runId: "run",
+    check: (x) => semanticProblems(taxonomy, [x.imageRef], [x]),
+  });
+  assert.equal(rec.status, "disputed");
+  assert.ok(rec.problems.some((p) => p.startsWith("after settling:")));
+  assert.equal(rec.final?.headline, "", "no headline without a marketing layer");
 });

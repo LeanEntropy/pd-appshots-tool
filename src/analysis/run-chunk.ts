@@ -10,6 +10,7 @@ import type { PlanItem } from "./plan.ts";
 import type { RenderedPrompt } from "./prompts.ts";
 import type { Provider } from "./providers.ts";
 import type { AnalysisRecord } from "./records.ts";
+import { semanticProblems } from "./schema.ts";
 import { buildRecord, type Decision, settle } from "./settle.ts";
 
 /** Model copy of an image: long edge 1568 px, JPEG, cached by image id. */
@@ -112,6 +113,7 @@ export async function analyseChunk(
       produced,
       reviewed,
       reviewRequired: !!d.reviewer && sample.has(c.imageId),
+      check: (a) => semanticProblems(d.taxonomy, [a.imageRef], [a]),
       disputes,
       notes,
       decision: settled.decisions.get(c.imageId),

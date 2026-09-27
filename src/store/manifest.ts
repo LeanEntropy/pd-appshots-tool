@@ -1,6 +1,6 @@
 import { join } from "node:path";
 import type { DeckTarget } from "../core/targets.ts";
-import type { DeviceClass } from "../play/screenshots.ts";
+import { type DeviceClass, withDeckDeviceClasses } from "../play/screenshots.ts";
 import { readJsonIfExists, safeName, writeJsonAtomic, writeJsonOnce } from "../util/fsx.ts";
 import { stableHash } from "../util/hash.ts";
 
@@ -42,7 +42,16 @@ export function readDeck(
   decksDir: string,
   t: { appId: string; gl: string; hl: string },
 ): DeckManifest | undefined {
-  return readJsonIfExists(deckPath(decksDir, t)) as DeckManifest | undefined;
+  const d = readJsonIfExists(deckPath(decksDir, t)) as DeckManifest | undefined;
+  return d && withDeckClasses(d);
+}
+
+/** Device classes are decided per deck (phone set first, tablet sets appended), on every read. */
+export function withDeckClasses(d: DeckManifest): DeckManifest {
+  const slots = withDeckDeviceClasses(d.slots ?? []);
+  const deviceMix = { phone: 0, tablet: 0, unknown: 0 };
+  for (const s of slots) deviceMix[s.deviceClass]++;
+  return { ...d, slots, deviceMix };
 }
 
 export interface RunManifest {

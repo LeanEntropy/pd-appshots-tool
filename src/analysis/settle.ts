@@ -10,7 +10,7 @@ export interface Decision {
   chosen: "first" | "second" | "neither";
   screenType: string;
   subtype: string;
-  orientation: "portrait" | "landscape" | "not_applicable";
+  composition: ImageAnalysis["screenshot"]["composition"];
   marketingLayerPresent: boolean;
   headline: string;
   reason: string;
@@ -46,13 +46,17 @@ export function applyDecision(
   return {
     ...base,
     screenshot: {
-      ...base.screenshot,
+      // The captures follow the decided composition: from the reading that has it, if any.
+      ...(base.screenshot.composition !== d.composition &&
+      other?.screenshot.composition === d.composition
+        ? other.screenshot
+        : base.screenshot),
+      composition: d.composition,
       screenType: d.screenType,
       subtype: d.subtype,
-      orientation: d.orientation,
     },
     marketingLayer,
-    headline: d.headline,
+    headline: d.marketingLayerPresent ? d.headline : "",
   };
 }
 
@@ -127,6 +131,8 @@ export interface RecordInput {
   adjudicationKey: string;
   models: { producer: string; reviewer: string | null; adjudicator: string };
   runId: string;
+  /** Checks a merged (adjudicated) reading; problems keep the record disputed. */
+  check?: (a: ImageAnalysis) => string[];
 }
 
 /**
@@ -151,10 +157,12 @@ export function buildRecord(x: RecordInput): AnalysisRecord {
   const final = a && d ? applyDecision(a, x.reviewed.readings.get(id), d) : a;
   const unsettled =
     d && final && d.marketingLayerPresent && !final.marketingLayer.present
-      ? "the adjudicator saw a marketing layer that neither reading described"
-      : null;
-  if (unsettled) {
-    problems.push(unsettled);
+      ? ["the adjudicator saw a marketing layer that neither reading described"]
+      : [];
+  // The merged reading must still be consistent (e.g. composition vs captures).
+  if (d && final && x.check) unsettled.push(...x.check(final).map((p) => `after settling: ${p}`));
+  if (unsettled.length) {
+    problems.push(...unsettled);
     status = "disputed";
   }
   return {

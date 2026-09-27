@@ -10,15 +10,25 @@ export function reading(
   return {
     imageRef,
     screenshot: {
-      orientation: "portrait",
+      composition: "single_full_capture",
       screenType,
       subtype: "",
+      captures: [
+        {
+          orientation: "portrait",
+          screenType,
+          subtype: "",
+          region: { x: 0, y: 10, w: 100, h: 85 },
+          areaPercent: 85,
+          framing: "full_bleed",
+          description: "test",
+        },
+      ],
       description: "test",
       action: "fighting",
       atmosphere: "epic",
       mainColours: [{ name: "blue", hex: "#1f6fd0" }],
       captureAreaPercent: 85,
-      framing: "full_bleed",
     },
     marketingLayer: layer
       ? {
@@ -151,7 +161,7 @@ export function fakeProvider(o: FakeOptions): Provider & { calls: VisionCall[] }
           chosen: "first",
           ...o.read(i.path),
           subtype: "",
-          orientation: "portrait",
+          composition: "single_full_capture",
           marketingLayerPresent: true,
           reason: "test",
         }));

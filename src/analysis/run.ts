@@ -167,7 +167,7 @@ export async function runAnalysis(
       });
       for (const raw of recs) {
         // Saved immediately (with its identity block), before the next image.
-        records.push(writeRec(raw));
+        records.push(await writeRec(raw));
         const rec = records.at(-1) as AnalysisRecord;
         done++;
         const item = part.find((p) => p.imageId === rec.imageId);

@@ -17,7 +17,11 @@ export interface DerivedPosition {
   position: number;
   screenType: string | null;
   subtype: string;
+  /** The image's own orientation, from its pixel size. */
   orientation: string | null;
+  /** Composition, and each in-game capture's orientation as read by the model. */
+  composition: string | null;
+  captureOrientations: string[];
   marketingLayer: boolean | null;
 }
 
@@ -94,7 +98,9 @@ export function enrichOrder(
       position: p.position,
       screenType: f?.screenshot.screenType ?? null,
       subtype: f?.screenshot.subtype ?? "",
-      orientation: f?.screenshot.orientation ?? null,
+      orientation: r?.identity?.image?.orientation ?? null,
+      composition: f?.screenshot.composition ?? null,
+      captureOrientations: f?.screenshot.captures.map((c) => c.orientation) ?? [],
       marketingLayer: f ? f.marketingLayer.present : null,
     };
   });

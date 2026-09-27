@@ -4,6 +4,7 @@ import type { ProjectPaths } from "../config/load.ts";
 import { readJson, writeJsonAtomic } from "../util/fsx.ts";
 import type { InfoView, ViewAnalysis } from "../view/model.ts";
 import type { ImageIdentity } from "./identity.ts";
+import { COMPOSITION, captureLines, imageLine, pendingMessage } from "./info-text.ts";
 import { type Labeler, plainLabel, screenName } from "./labels.ts";
 import type { MappedFrom } from "./record-refresh.ts";
 import { type ImageAnalysis, SCHEMA_VERSION } from "./schema.ts";
@@ -134,6 +135,12 @@ export function infoViews(
           }
         : null,
       mappedFrom: r.mappedFrom ? label(r.mappedFrom.screenType) : null,
+      image: imageLine(idn?.image),
+      imageColours:
+        idn?.image?.dominantColours.map((c) => ({ name: c.family ?? c.hex, hex: c.hex })) ?? [],
+      composition: usable ? (COMPOSITION[r.final.screenshot.composition] ?? null) : null,
+      captures: usable ? captureLines(r.final, idn?.image, label) : [],
+      pending: usable ? null : pendingMessage(r),
     };
   }
   return out;

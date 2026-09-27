@@ -19,12 +19,14 @@
     "core": "tsx src/cli.ts core",
     "fit": "tsx src/cli.ts fit",
     "refresh-records": "tsx src/cli.ts refresh-records",
+    "overview": "tsx src/cli.ts overview",
     "typecheck": "tsc --noEmit",
     "lint": "biome check .",
     "format": "biome format --write .",
     "test": "tsx --test test/*.test.ts"
   },
   "dependencies": {
+    "colorthief": "^3.5.0",
     "google-play-scraper": "^10.1.3",
     "sharp": "^0.35.4",
     "sharp-phash": "^2.2.0",

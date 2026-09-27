@@ -93,6 +93,20 @@ async function loadReport() {
   } catch {}
 }
 
+async function loadOverview(rebuild) {
+  const box = document.getElementById("overview");
+  const button = '<p><button id="rebuildOverview">' + (rebuild ? "Building..." : "Rebuild the overview") + '</button> <span class="meta">Free: computed from the downloaded images, no AI.</span></p>';
+  try {
+    if (rebuild) box.querySelector("#rebuildOverview") && (box.querySelector("#rebuildOverview").disabled = true);
+    const r = rebuild ? await apiPost("/api/overview", {}) : { ok: true, body: await (await fetch("/api/overview")).json() };
+    if (!r.ok) { box.innerHTML = '<p class="warn">' + esc((r.body.problems || ["The overview could not be built."]).join(" ")) + "</p>" + button; return; }
+    const o = r.body.overview;
+    box.innerHTML = o
+      ? '<details open><summary><strong>Store overview (free, no AI)</strong></summary><p class="meta">Saved as ' + esc(o.file) + "</p>" + o.html + button.replace("Building...", "Rebuild the overview") + "</details>"
+      : '<details open><summary><strong>Store overview (free, no AI)</strong></summary><p>Not built yet.</p>' + button.replace("Rebuild the overview", "Build the overview") + "</details>";
+  } catch {}
+}
+
 async function pollStatus() {
   clearTimeout(pollTimer);
   try {
@@ -110,9 +124,10 @@ setInterval(() => { if (lastStatus && lastStatus.running) renderStatus(); }, 100
 document.addEventListener("click", (e) => {
   if (e.target.id === "startAnalysis") showApproval();
   if (e.target.id === "approve") { e.target.disabled = true; approve(); }
+  if (e.target.id === "rebuildOverview") { e.target.disabled = true; e.target.textContent = "Building (about a minute the first time)..."; loadOverview(true); }
   if (e.target.id === "cancelApproval") { shownPlan = null; document.getElementById("approval").textContent = ""; }
 });
 document.addEventListener("change", (e) => { if (e.target.id === "stage") loadReport(); });
-if (location.protocol.startsWith("http")) { pollStatus(); loadReport(); }
+if (location.protocol.startsWith("http")) { pollStatus(); loadReport(); loadOverview(false); }
 else document.getElementById("status").innerHTML = '<h2>Analysis status</h2><p class="meta">Open this page with npm run gallery to run and follow the analysis.</p>';
 `;

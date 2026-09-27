@@ -55,8 +55,13 @@ export function compareReadings(a: ImageAnalysis, b: ImageAnalysis): Comparison 
     disputes.push(`screen type: ${sa.screenType} vs ${sb.screenType}`);
   else if (sa.subtype !== sb.subtype)
     notes.push(`subtype: ${sa.subtype || "none"} vs ${sb.subtype || "none"}`);
-  if (sa.orientation !== sb.orientation)
-    disputes.push(`orientation: ${sa.orientation} vs ${sb.orientation}`);
+  if (sa.composition !== sb.composition)
+    disputes.push(`composition: ${sa.composition} vs ${sb.composition}`);
+  if (sa.captures.length !== sb.captures.length)
+    notes.push(`in-game captures: ${sa.captures.length} vs ${sb.captures.length}`);
+  const [ca, cb] = [sa.captures[0], sb.captures[0]];
+  if (ca && cb && ca.orientation !== cb.orientation)
+    notes.push(`main capture orientation: ${ca.orientation} vs ${cb.orientation}`);
   if (ma.present !== mb.present)
     disputes.push(
       `marketing layer: ${ma.present ? "present" : "absent"} vs ${mb.present ? "present" : "absent"}`,

@@ -10,10 +10,12 @@ import {
   type ApiResponse,
   getAnalyses,
   getAnalysisStatus,
+  getOverview,
   getReport,
   getSelection,
   postAnalysisPlan,
   postAnalysisRun,
+  postOverview,
   postSelection,
 } from "./api.ts";
 
@@ -29,10 +31,14 @@ const TYPES: Record<string, string> = {
 };
 const STATIC_ROOTS = ["images", "views", "own"];
 const MAX_BODY = 64 * 1024;
-const POSTS: Record<string, (l: LoadedConfig, body: unknown) => ApiResponse> = {
+const POSTS: Record<
+  string,
+  (l: LoadedConfig, body: unknown) => ApiResponse | Promise<ApiResponse>
+> = {
   "/api/selection": postSelection,
   "/api/analysis/plan": postAnalysisPlan,
   "/api/analysis/run": (l, b) => postAnalysisRun(l, b),
+  "/api/overview": (l) => postOverview(l),
 };
 
 function send(res: ServerResponse, status: number, body: unknown): void {
@@ -109,6 +115,10 @@ export function createGalleryServer(
         const r = getAnalysisStatus(loaded);
         return send(res, r.status, r.body);
       }
+      if (url.pathname === "/api/overview" && req.method === "GET") {
+        const r = getOverview(loaded);
+        return send(res, r.status, r.body);
+      }
       if (url.pathname === "/api/analyses" && req.method === "GET") {
         const r = getAnalyses(loaded);
         return send(res, r.status, r.body);
@@ -131,7 +141,7 @@ export function createGalleryServer(
         } catch {
           return send(res, 400, { problems: ["The page sent something the tool cannot read."] });
         }
-        const r = post(loaded, body);
+        const r = await post(loaded, body);
         return send(res, r.status, r.body);
       }
       const file = req.method === "GET" ? staticFile(base, url.pathname) : null;

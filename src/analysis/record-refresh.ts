@@ -2,6 +2,7 @@ import { type LoadedConfig, loadTaxonomy, projectPaths } from "../config/load.ts
 import { ImageDb } from "../store/imagedb.ts";
 import { normaliseText } from "./compare.ts";
 import { type ImageIdentity, identityBuilder } from "./identity.ts";
+import { type ImageFacts, imageFacts } from "./image-facts.ts";
 import { type AnalysisRecord, readRecords, writeRecord } from "./records.ts";
 import type { ImageAnalysis } from "./schema.ts";
 
@@ -9,13 +10,12 @@ import type { ImageAnalysis } from "./schema.ts";
  * Deterministic taxonomy mapping, versioned apart from the analysis schema: old "key art"
  * readings become the user's terms when the evidence is clear, without any model call.
  */
-export const TAXONOMY_MAPPING = "key-art-to-title-or-feature.v1";
+export const TAXONOMY_MAPPING = "key-art-to-title-or-feature.v2";
 
 export interface MappedFrom {
   /** The model's original classification, kept so a newer mapping can start from it. */
   screenType: string;
   subtype: string;
-  orientation: ImageAnalysis["screenshot"]["orientation"];
   rule: string;
 }
 
@@ -27,7 +27,7 @@ export function mapKeyArt(
   const s = a.screenshot;
   const m = a.marketingLayer;
   if (s.screenType !== "key_art") return { final: a, mappedFrom: null };
-  const noCapture = s.captureAreaPercent <= 5 || s.framing === "none";
+  const noCapture = s.captures.length === 0 || s.composition === "pure_art";
   if (!noCapture) return { final: a, mappedFrom: null };
   const title = normaliseText(game);
   // Only the game's own logo or title counts (not a publisher or partner logo).
@@ -41,9 +41,9 @@ export function mapKeyArt(
   const to = (screenType: string, subtype: string, rule: string) => ({
     final: {
       ...a,
-      screenshot: { ...s, screenType, subtype, orientation: "not_applicable" as const },
+      screenshot: { ...s, screenType, subtype },
     },
-    mappedFrom: { screenType: s.screenType, subtype: s.subtype, orientation: s.orientation, rule },
+    mappedFrom: { screenType: s.screenType, subtype: s.subtype, rule },
   });
   if (logo)
     return to(
@@ -65,10 +65,11 @@ export function mapKeyArt(
 /** Adds the identity block and the taxonomy mapping. Idempotent; called on every write. */
 export function refreshRecord(
   r: AnalysisRecord,
-  identityOf: (r: AnalysisRecord) => ImageIdentity,
+  identityOf: (r: AnalysisRecord, facts: ImageFacts | null) => ImageIdentity,
   taxonomy: string,
+  facts: ImageFacts | null = null,
 ): AnalysisRecord {
-  const identity = identityOf(r);
+  const identity = identityOf(r, facts);
   const out: AnalysisRecord = { ...r, identity, taxonomy, mapping: TAXONOMY_MAPPING };
   if (!r.final || (r.mappedFrom && r.mapping === TAXONOMY_MAPPING)) return out;
   // Start from the model's own classification, so a changed mapping is applied afresh.
@@ -79,7 +80,6 @@ export function refreshRecord(
           ...r.final.screenshot,
           screenType: r.mappedFrom.screenType,
           subtype: r.mappedFrom.subtype,
-          orientation: r.mappedFrom.orientation ?? r.final.screenshot.orientation,
         },
       }
     : r.final;
@@ -91,25 +91,25 @@ export function refreshRecord(
 export function recordWriter(loaded: LoadedConfig, db?: ImageDb) {
   const paths = projectPaths(loaded);
   const t = loadTaxonomy(loaded).taxonomy;
-  const identityOf = identityBuilder(
-    paths,
-    db ?? ImageDb.open(paths.imageDb, paths.imagesOrig, paths.imagesThumb),
-    loaded.config,
-  );
-  return (r: AnalysisRecord): AnalysisRecord => {
-    const out = refreshRecord(r, identityOf, `${t.id}@${t.version}`);
+  const store = db ?? ImageDb.open(paths.imageDb, paths.imagesOrig, paths.imagesThumb);
+  const identityOf = identityBuilder(paths, store, loaded.config);
+  return async (r: AnalysisRecord): Promise<AnalysisRecord> => {
+    const facts = await imageFacts(paths, store, r.imageId);
+    const out = refreshRecord(r, identityOf, `${t.id}@${t.version}`, facts);
     writeRecord(paths, out);
     return out;
   };
 }
 
 /** Backfill: rewrites every saved record with its identity and mapping. No AI call. */
-export function refreshAllRecords(loaded: LoadedConfig): { records: number; mapped: string[] } {
+export async function refreshAllRecords(
+  loaded: LoadedConfig,
+): Promise<{ records: number; mapped: string[] }> {
   const write = recordWriter(loaded);
   const mapped: string[] = [];
   let n = 0;
   for (const r of readRecords(projectPaths(loaded)).values()) {
-    const out = write(r);
+    const out = await write(r);
     n++;
     if (out.mappedFrom && !r.mappedFrom)
       mapped.push(

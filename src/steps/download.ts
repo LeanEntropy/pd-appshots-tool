@@ -1,7 +1,7 @@
 import { type LoadedConfig, loadTaxonomy, projectPaths } from "../config/load.ts";
 import { computeStats, type RunStats } from "../core/stats.ts";
 import { baselineMarket, deckKey } from "../core/targets.ts";
-import { fullResUrl, googleImageId } from "../play/screenshots.ts";
+import { fullResUrl, googleImageId, withDeckDeviceClasses } from "../play/screenshots.ts";
 import { ImageDb } from "../store/imagedb.ts";
 import {
   type DeckManifest,
@@ -90,7 +90,7 @@ export async function runDownload(
   const deckHashes: Record<string, string> = {};
   for (const t of plan.targets) {
     const l = plan.listings[deckKey(t)];
-    const slots: DeckSlot[] = (l?.status === "ok" ? l.screenshots : []).map((url, i) => {
+    const rawSlots: DeckSlot[] = (l?.status === "ok" ? l.screenshots : []).map((url, i) => {
       const gid = googleImageId(url);
       const rec = db.byGoogleId(gid);
       if (rec) db.addSource(rec.id, { appId: t.appId, gl: t.gl, hl: t.hl, position: i + 1 });
@@ -105,6 +105,7 @@ export async function runDownload(
         orientation: rec?.orientation ?? "unknown",
       };
     });
+    const slots = withDeckDeviceClasses(rawSlots);
     const deviceMix = { phone: 0, tablet: 0, unknown: 0 };
     for (const s of slots) deviceMix[s.deviceClass]++;
     const deck: DeckManifest = {

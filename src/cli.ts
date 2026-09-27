@@ -2,6 +2,7 @@ import { writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { refreshAllRecords } from "./analysis/record-refresh.ts";
 import { type LoadedConfig, loadConfig, projectPaths } from "./config/load.ts";
+import { asiaVsUs, writeOverview } from "./overview/overview-report.ts";
 import { openBrowser, startGalleryServer } from "./server/gallery-server.ts";
 import { runAnalyzeStep } from "./steps/analyze.ts";
 import { runDeckView } from "./steps/deck-view.ts";
@@ -30,6 +31,7 @@ const HELP = `Store Screenshot Recipe: setup commands (no AI analysis)
   npm run core        The same for the full core check
   npm run select      Save the pick from the terminal: -- --pick "Name, Name, ..." (fallback to the page)
   npm run fit         Show which whole decks fit in the core check with the current pick
+  npm run overview    Free store overview per country (orientation, ratios, deck length, reuse, colours). No AI
   npm run refresh-records  Rebuild each analysis record's identity block and taxonomy mapping (no AI)
 
 Options: --config <file> (default configs/rogue-legend.json)`;
@@ -146,8 +148,15 @@ Your pick saves automatically. Keep this window open while you use the page; pre
       const opts = { yes: args.yes, dryRun: args.flags.has("dry-run") };
       return (await runAnalyzeStep(loaded, args.command, opts, log)) ? 0 : 1;
     }
+    case "overview": {
+      const { file, overview } = await writeOverview(loaded);
+      const a = asiaVsUs(overview.markets);
+      log(`Store overview (no AI): ${file}
+Landscape images: US ${Math.round(a.us * 100)}%, Asian markets ${Math.round(a.asia * 100)}%.`);
+      return 0;
+    }
     case "refresh-records": {
-      const r = refreshAllRecords(loaded);
+      const r = await refreshAllRecords(loaded);
       log(`Refreshed ${r.records} analysis records (identity and taxonomy mapping, no AI call).`);
       for (const m of r.mapped) log(`  ${m}`);
       return 0;

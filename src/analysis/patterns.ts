@@ -7,7 +7,12 @@ export interface DeckEntry {
   name: string;
   position: number;
   imageId: string;
-  canvas: "portrait" | "landscape";
+  /** The image's own orientation, from its pixel size. */
+  canvas: "portrait" | "landscape" | "square";
+  /** Colour families measured from the pixels (colorthief), most dominant first. */
+  imageColours?: string[];
+  gl?: string;
+  hl?: string;
   final: ImageAnalysis;
 }
 
@@ -51,10 +56,14 @@ export interface Patterns {
     images: number;
     positions: number[];
   }[];
-  orientation: { canvas: Count[]; capture: Count[] };
+  orientation: { canvas: Count[]; capture: Count[]; byCountry: { market: string; mix: Count[] }[] };
+  composition: Count[];
+  capturesPerImage: Count[];
+  /** A portrait in-game capture shown inside a landscape marketing image. */
+  portraitInLandscape: { n: number; share: number };
   marketingLayer: { share: number; perGame: { name: string; share: number }[] };
   proportion: Count[];
-  colours: { screenshot: Count[]; layer: Count[]; masks: Count[]; texts: Count[] };
+  colours: { image: Count[]; screenshot: Count[]; layer: Count[]; masks: Count[]; texts: Count[] };
   maskShapes: Count[];
   maskLocations: Count[];
   textPositions: Count[];
@@ -79,6 +88,9 @@ export function proportion(a: ImageAnalysis): string {
   if (c > 0) return PROPORTION.inside;
   return PROPORTION.art;
 }
+
+export const portraitInLandscape = (e: DeckEntry) =>
+  e.canvas === "landscape" && e.final.screenshot.captures.some((c) => c.orientation === "portrait");
 
 export function typeKey(a: ImageAnalysis): string {
   return a.screenshot.screenType;
@@ -177,7 +189,26 @@ export function findPatterns(
     screenTypes,
     orientation: {
       canvas: counts(entries.map((e) => e.canvas)),
-      capture: counts(entries.map((e) => e.final.screenshot.orientation)),
+      capture: counts(
+        entries.flatMap((e) => e.final.screenshot.captures.map((c) => c.orientation)),
+      ),
+      byCountry: [...new Set(entries.map((e) => `${e.gl ?? "?"}-${e.hl ?? "?"}`))].map((m) => ({
+        market: m,
+        mix: counts(
+          entries.filter((e) => `${e.gl ?? "?"}-${e.hl ?? "?"}` === m).map((e) => e.canvas),
+        ),
+      })),
+    },
+    composition: counts(entries.map((e) => e.final.screenshot.composition)),
+    capturesPerImage: counts(
+      entries.map((e) => {
+        const n = e.final.screenshot.captures.length;
+        return n >= 3 ? "3+" : String(n);
+      }),
+    ),
+    portraitInLandscape: {
+      n: entries.filter(portraitInLandscape).length,
+      share: share(entries.map(portraitInLandscape)),
     },
     marketingLayer: {
       share: share(layers.map((l) => l.present)),
@@ -190,6 +221,7 @@ export function findPatterns(
     },
     proportion: counts(entries.map((e) => proportion(e.final))),
     colours: {
+      image: counts(entries.flatMap((e) => e.imageColours ?? [])),
       screenshot: counts(
         entries.flatMap((e) =>
           e.final.screenshot.mainColours.slice(0, 2).map((c) => colourFamily(c.name, c.hex)),

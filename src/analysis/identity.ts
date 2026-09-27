@@ -5,6 +5,7 @@ import type { Config } from "../config/schema.ts";
 import type { ImageDb, ImageSource } from "../store/imagedb.ts";
 import { type DeckManifest, readDeck } from "../store/manifest.ts";
 import { readJson } from "../util/fsx.ts";
+import type { ImageFacts } from "./image-facts.ts";
 
 export interface FilePath {
   /** Relative to the project workspace folder (workspace/<project>/), forward slashes. */
@@ -30,7 +31,8 @@ export interface ImageIdentity {
   appId: string;
   /** The deck this record was analysed for. */
   analysedAs: { gl: string; hl: string; position: number };
-  size: { width: number; height: number; format: string; bytes: number };
+  /** Size, orientation, aspect ratio and dominant colours, computed from the pixels. */
+  image: ImageFacts | null;
   files: { original: FilePath | null; model: FilePath; thumb: FilePath | null };
   /** Full-resolution image on Google Play, and the store page it was analysed for. */
   sourceUrl: string | null;
@@ -92,13 +94,10 @@ export function identityBuilder(paths: ProjectPaths, db: ImageDb, config: Config
     absolute: abs,
     exists: existsSync(abs),
   });
-  return (r: {
-    imageId: string;
-    appId: string;
-    gl: string;
-    hl: string;
-    position: number;
-  }): ImageIdentity => {
+  return (
+    r: { imageId: string; appId: string; gl: string; hl: string; position: number },
+    facts: ImageFacts | null,
+  ): ImageIdentity => {
     const rec = db.get(r.imageId);
     const seen = new Set<string>();
     const sources = [...(rec?.sources ?? []), ...fromDecks(r.imageId)]
@@ -120,12 +119,7 @@ export function identityBuilder(paths: ProjectPaths, db: ImageDb, config: Config
       game: nameOf(r.appId, r.gl, r.hl),
       appId: r.appId,
       analysedAs: { gl: r.gl, hl: r.hl, position: r.position },
-      size: {
-        width: rec?.width ?? 0,
-        height: rec?.height ?? 0,
-        format: rec?.format ?? "",
-        bytes: rec?.bytes ?? 0,
-      },
+      image: facts,
       files: {
         original: rec ? file(db.abs(rec.file)) : null,
         model: file(join(paths.imagesModel, `${r.imageId}.jpg`)),

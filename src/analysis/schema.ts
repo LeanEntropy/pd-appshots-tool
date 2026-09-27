@@ -2,7 +2,7 @@ import { z } from "zod";
 import type { Taxonomy } from "../config/load.ts";
 
 /** Bump when the shape changes; part of every cache key. Records of other versions are redone. */
-export const SCHEMA_VERSION = "analysis-schema.v2";
+export const SCHEMA_VERSION = "analysis-schema.v3";
 
 /**
  * Every object is strict and every field required (empty or "unknown" instead of optional), so
@@ -60,24 +60,56 @@ const Element = z.strictObject({
   region: Region,
 });
 
+/** One in-game capture inside the image (an image can hold none, one or several). */
+const Capture = (types: [string, ...string[]]) =>
+  z.strictObject({
+    orientation: z
+      .enum(["portrait", "landscape", "square"])
+      .describe("orientation of this capture itself (it can differ from the image)"),
+    screenType: z.enum(types),
+    subtype: z.string().describe("a subtype from the taxonomy for this capture's type, or empty"),
+    region: Region,
+    areaPercent: z.number().describe("percent of the whole image this capture covers, 0-100"),
+    framing: z.enum([
+      "full_bleed",
+      "device_frame",
+      "rounded_card",
+      "plain_box",
+      "tilted",
+      "cutout",
+      "other",
+    ]),
+    description: z.string().describe("what this capture shows, in one sentence"),
+  });
+
 export function imageAnalysisSchema(taxonomy: Taxonomy) {
   const types = taxonomy.screenTypes.map((t) => t.id) as [string, ...string[]];
   return z.strictObject({
     imageRef: z.string().describe("the reference label given for this image, e.g. img1"),
     screenshot: z.strictObject({
-      orientation: z
-        .enum(["portrait", "landscape", "not_applicable"])
-        .describe("orientation of the in-game capture itself; not_applicable when there is none"),
-      screenType: z.enum(types),
+      composition: z
+        .enum(["single_full_capture", "capture_in_marketing_art", "multiple_captures", "pure_art"])
+        .describe(
+          "single_full_capture: one in-game capture fills (almost) the whole image; capture_in_marketing_art: one capture placed inside a larger marketing picture; multiple_captures: two or more captures in one image; pure_art: no in-game capture (title or feature image)",
+        ),
+      screenType: z
+        .enum(types)
+        .describe(
+          "the image's main screen type: the largest capture's type, or title/feature image for pure art",
+        ),
       subtype: z.string().describe("a subtype from the taxonomy for the screen type, or empty"),
-      description: z.string().describe("what the underlying in-game screen shows"),
-      action: z.string().describe("what is happening, what the player is doing"),
-      atmosphere: z.string().describe("the overall mood, e.g. tense, cheerful, epic, cosy"),
-      mainColours: z.array(Colour).describe("2-5 dominant colours of the capture, most first"),
+      captures: z
+        .array(Capture(types))
+        .describe("every in-game capture in the image, largest first; empty for pure art"),
       captureAreaPercent: z
         .number()
-        .describe("percent of the whole image area where the in-game capture is visible, 0-100"),
-      framing: z.enum(["full_bleed", "framed", "tilted_device", "multiple", "none"]),
+        .describe("percent of the whole image covered by all captures together, 0-100"),
+      description: z.string().describe("what the in-game screen(s) show, or the art for pure art"),
+      action: z.string().describe("what is happening, what the player is doing"),
+      atmosphere: z.string().describe("the overall mood, e.g. tense, cheerful, epic, cosy"),
+      mainColours: z
+        .array(Colour)
+        .describe("2-5 dominant colours of the captures (or the art), most first"),
     }),
     marketingLayer: z.strictObject({
       present: z.boolean().describe("false when nothing was added on top of the capture"),
@@ -110,7 +142,12 @@ export function adjudicationSchema(taxonomy: Taxonomy) {
         chosen: z.enum(["first", "second", "neither"]),
         screenType: z.enum(types),
         subtype: z.string(),
-        orientation: z.enum(["portrait", "landscape", "not_applicable"]),
+        composition: z.enum([
+          "single_full_capture",
+          "capture_in_marketing_art",
+          "multiple_captures",
+          "pure_art",
+        ]),
         marketingLayerPresent: z.boolean(),
         headline: z.string(),
         reason: z.string(),
@@ -158,9 +195,16 @@ export function semanticProblems(
       problems.push(`${i.imageRef}: "other" needs a note`);
     if (!(i.confidence >= 0 && i.confidence <= 1))
       problems.push(`${i.imageRef}: confidence out of range`);
-    const regions = [...m.backgroundMasks, ...m.texts, ...m.elements].map((x) => x.region);
+    const regions = [...m.backgroundMasks, ...m.texts, ...m.elements, ...s.captures].map(
+      (x) => x.region,
+    );
+    problems.push(...compositionProblems(taxonomy, i));
     if (!regions.every(inside)) problems.push(`${i.imageRef}: region out of range`);
-    if (!inRange(s.captureAreaPercent) || !inRange(m.coveragePercent))
+    if (
+      !inRange(s.captureAreaPercent) ||
+      !inRange(m.coveragePercent) ||
+      !s.captures.every((c) => inRange(c.areaPercent))
+    )
       problems.push(`${i.imageRef}: percentage out of range`);
     const hexes = [
       ...s.mainColours.map((c) => c.hex),
@@ -187,4 +231,37 @@ export function semanticProblems(
     }
   }
   return problems;
+}
+
+const ART = ["title_image", "feature_image", "key_art"];
+
+/** Composition, capture count, capture types and total area must agree. */
+export function compositionProblems(taxonomy: Taxonomy, i: ImageAnalysis): string[] {
+  const s = i.screenshot;
+  const n = s.captures.length;
+  const out: string[] = [];
+  const need: Record<string, [number, number]> = {
+    pure_art: [0, 0],
+    single_full_capture: [1, 1],
+    capture_in_marketing_art: [1, 1],
+    multiple_captures: [2, 99],
+  };
+  const [lo, hi] = need[s.composition] ?? [0, 99];
+  if (n < lo || n > hi)
+    out.push(`${i.imageRef}: composition ${s.composition} does not match ${n} captures`);
+  if (s.composition === "pure_art" && !ART.includes(s.screenType))
+    out.push(`${i.imageRef}: pure art must be a title image, feature image or key art`);
+  for (const c of s.captures) {
+    const t = taxonomy.screenTypes.find((x) => x.id === c.screenType);
+    if (c.subtype && t?.subtypes.length && !t.subtypes.includes(c.subtype))
+      out.push(
+        `${i.imageRef}: capture subtype "${c.subtype}" is not in the taxonomy for ${c.screenType}`,
+      );
+  }
+  const sum = s.captures.reduce((a, c) => a + c.areaPercent, 0);
+  if (Math.abs(Math.min(100, sum) - s.captureAreaPercent) > 15)
+    out.push(
+      `${i.imageRef}: captureAreaPercent should be about the sum of the captures' areas (${Math.round(sum)})`,
+    );
+  return out;
 }

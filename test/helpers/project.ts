@@ -19,9 +19,9 @@ export function picture(seed: number, tablet = false): Promise<Buffer> {
   const [w, h] = tablet ? [120, 160] : [90, 160];
   const raw = Buffer.alloc(w * h * 3);
   for (let i = 0; i < raw.length; i++) raw[i] = (i * (seed + 3) + seed * 97) % 251;
-  return sharp(raw, { raw: { width: w, height: h, channels: 3 } })
-    .png()
-    .toBuffer();
+  const img = sharp(raw, { raw: { width: w, height: h, channels: 3 } });
+  // Tablet pictures get a real iPad store size, so they are recognised as an appended iPad set.
+  return (tablet ? img.resize(1536, 2048, { kernel: "nearest" }) : img).png().toBuffer();
 }
 
 /**

@@ -47,6 +47,7 @@ after `--`, e.g. `npm run download -- --yes`.
 | **Gallery (main screen)** | `npm run gallery` | Starts a small local server and opens the gallery: comparison grid (position N of every game in one column), competitor picker with drag-and-drop that saves automatically, and **Start analysis** (approval screen, then **Approve and run**). Run the same command to reopen it later |
 | Pick competitors (fallback) | `npm run select -- --pick "Archero 2, Capybara Go, ..."` | Saves the pick from the terminal (names or package ids), or asks in the terminal |
 | Analysis approval | `npm run pilot` / `npm run core` | Shows the approval screen (games and positions, images by cost level, model passes, estimated cost). No AI call. In Claude Code: `/analyze pilot` |
+| Store overview (free) | `npm run overview` | Per country, from the downloaded images only: orientation mix, aspect ratios, deck lengths, reuse of US images, measured colours. Also shown and rebuildable in the gallery. No AI |
 | Refresh analysis records | `npm run refresh-records` | Rebuilds each record's identity block (game, files, source URL, every appearance) and the taxonomy mapping. No AI call |
 | Check the core size | `npm run fit` | Applies the whole-deck rule to your pick: our deck first, whole competitor decks only, within the cap |
 

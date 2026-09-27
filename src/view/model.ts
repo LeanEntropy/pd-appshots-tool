@@ -4,7 +4,7 @@ import type { ImageAnalysis } from "../analysis/schema.ts";
 import type { Config } from "../config/schema.ts";
 import type { Group } from "../core/targets.ts";
 import type { ImageDb } from "../store/imagedb.ts";
-import type { DeckManifest, RunManifest } from "../store/manifest.ts";
+import { type DeckManifest, type RunManifest, withDeckClasses } from "../store/manifest.ts";
 import { readJson } from "../util/fsx.ts";
 
 /** Short analysis summary shown under a thumbnail (from the analysis stage). */
@@ -32,6 +32,15 @@ export interface InfoView {
   appearances: string[];
   labels: { type: string; subtype: string } | null;
   mappedFrom: string | null;
+  /** "Portrait, 1242 × 2208 (9:16)", from the pixels. */
+  image: string | null;
+  imageColours: { name: string; hex: string }[];
+  /** Image composition in plain words (one capture, capture inside art, several, art only). */
+  composition: string | null;
+  /** Each in-game capture in plain words; empty when there is nothing worth saying. */
+  captures: string[];
+  /** Plain message when there is no usable analysis yet (retried in the next run). */
+  pending: string | null;
 }
 
 export interface ViewImage {
@@ -111,7 +120,10 @@ export function buildViewModel(
   };
   const order = new Map(config.markets.map((m, i) => [`${m.gl}|${m.hl}`, i]));
   const byApp = new Map<string, DeckManifest[]>();
-  for (const d of run.decks) byApp.set(d.appId, [...(byApp.get(d.appId) ?? []), d]);
+  for (const raw of run.decks) {
+    const d = withDeckClasses(raw);
+    byApp.set(d.appId, [...(byApp.get(d.appId) ?? []), d]);
+  }
 
   const apps: ViewApp[] = [];
   for (const [appId, decks] of byApp) {

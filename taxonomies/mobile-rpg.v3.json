@@ -139,6 +139,10 @@
     "board_dice": "Board (dice)",
     "backpack_merge": "Backpack / merge",
     "idle_auto": "Idle / auto battle",
-    "ui_element": "UI element"
+    "ui_element": "UI element",
+    "single_full_capture": "Single full screenshot",
+    "capture_in_marketing_art": "Screenshot inside marketing art",
+    "multiple_captures": "Several screenshots in one image",
+    "pure_art": "Art only (no screenshot)"
   }
 }
