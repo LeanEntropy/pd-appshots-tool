@@ -10,7 +10,7 @@ import { ConfigSchema } from "../src/config/schema.ts";
 import { reading } from "./helpers/fake-provider.ts";
 
 const config = ConfigSchema.parse(
-  JSON.parse(readFileSync(new URL("../configs/rogue-legend.json", import.meta.url), "utf8")),
+  JSON.parse(readFileSync(new URL("./fixtures/config.json", import.meta.url), "utf8")),
 );
 const taxonomy = {
   id: "t",

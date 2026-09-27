@@ -1,0 +1,96 @@
+{
+  "schemaVersion": 1,
+  "project": "rogue-legend",
+  "workspace": "workspace",
+  "ourApp": { "name": "Rogue Legend", "id": "com.pockethaven.roguelegend" },
+  "category": "auto",
+  "competitors": [
+    { "name": "Capybara Go", "id": "com.habby.capybara", "tier": "direct" },
+    { "name": "Mini Tales", "id": "com.loadcomplete.minitales", "tier": "direct" },
+    { "name": "Heroll", "id": "com.percent.aos.rollinghero", "tier": "direct" },
+    { "name": "Dicero", "id": "com.bailing.lark.roll.dev", "tier": "same_audience" },
+    { "name": "Archero 2", "id": "com.xq.archeroii", "tier": "same_audience" },
+    { "name": "Survivor.io", "id": "com.dxx.firenow", "tier": "same_audience" },
+    { "name": "BagMaster Isekai", "id": "com.DoorTeam.BagMaster", "tier": "same_audience" },
+    {
+      "name": "Overgeared Hero",
+      "id": "com.fiveminlab.overgeared.hero.backpack.merge",
+      "tier": "same_audience"
+    },
+    { "name": "Legend of Mushroom", "id": "com.mxdzzus.google", "tier": "same_audience" },
+    { "name": "Legend of Slime", "id": "com.loadcomplete.slimeidle", "tier": "same_audience" },
+    { "name": "Clash of Critters", "id": "com.farlightgames.pgame.gp", "tier": "reference" },
+    { "name": "Sword x Staff", "id": "com.zjcs.android.us", "tier": "reference" },
+    { "name": "Whoa Adventure", "id": "com.yzlmus.google", "tier": "reference" },
+    { "name": "Path of Kings", "id": "com.TornadoBear.WayofKings", "tier": "reference" }
+  ],
+  "markets": [
+    { "gl": "us", "hl": "en", "label": "United States (English)", "baseline": true },
+    { "gl": "jp", "hl": "ja", "label": "Japan" },
+    { "gl": "kr", "hl": "ko", "label": "South Korea" },
+    { "gl": "tw", "hl": "zh-TW", "label": "Taiwan" },
+    { "gl": "hk", "hl": "zh-TW", "label": "Hong Kong (Traditional Chinese)" },
+    { "gl": "th", "hl": "th", "label": "Thailand" },
+    { "gl": "vn", "hl": "vi", "label": "Vietnam" },
+    { "gl": "id", "hl": "id", "label": "Indonesia" },
+    { "gl": "ph", "hl": "en", "label": "Philippines (English)" }
+  ],
+  "charts": {
+    "collection": "GROSSING",
+    "depth": 10,
+    "analyse": "only-if-picked",
+    "includeBaselineLocale": true
+  },
+  "download": {
+    "namedCompetitorMarkets": "all",
+    "ourMarkets": "all",
+    "requestDelayMs": 800,
+    "imageConcurrency": 2,
+    "imageDelayMs": 250,
+    "metadataCacheHours": 24,
+    "estimatedBytesPerImage": 1000000
+  },
+  "core": {
+    "market": "us",
+    "imageCap": 100,
+    "imageTarget": 85,
+    "minCompetitors": 5,
+    "maxCompetitors": 8,
+    "pilotCompetitors": 2,
+    "slotCountCap": 8,
+    "deviceClasses": ["phone"],
+    "stability": { "minDecks": 5, "window": 2, "maxShareShift": 0.1 }
+  },
+  "review": {
+    "enabled": true,
+    "coreCoverage": 1,
+    "expansionCoverage": 1,
+    "alsoBelowConfidence": 0.7
+  },
+  "run": { "stopAfterSameErrors": 3 },
+  "budget": { "maxUsdPerIncrement": 30 },
+  "estimates": {
+    "fullAnalysisUsdPerImage": [0.15, 0.25],
+    "layerDiffUsdPerImage": [0.03, 0.06],
+    "adjudicationUsdPerDispute": 0.1,
+    "expectedDisputeRate": 0.1,
+    "retryAllowance": 0.15,
+    "reviewTokensPerImage": 17000,
+    "imagesPerCall": 1,
+    "synthesisUsd": [0.6, 1.5]
+  },
+  "tierWeights": { "direct": 3, "same_audience": 2, "reference": 1, "chart": 1 },
+  "models": {
+    "fullAnalysis": "claude:claude-fable-5-1",
+    "layerDiff": "claude:claude-opus-5-5",
+    "imageReview": "codex:gpt-5.6-sol",
+    "imageReviewSpecial": "codex:gpt-6-astra",
+    "adjudicate": "claude:claude-opus-5-5",
+    "translate": "claude:claude-opus-5-5",
+    "recommend": "claude:claude-opus-5-5",
+    "recommendationReview": "codex:gpt-5.6-sol",
+    "codeReview": "codex:gpt-5.6-sol"
+  },
+  "taxonomy": "taxonomies/mobile-rpg.v3.json",
+  "ownAssets": { "dir": "rogue-legends_current", "psd": "_APPLE STORE.psd" }
+}

@@ -35,7 +35,9 @@ export async function tempProject(
   mkdirSync(join(root, "configs"));
   cpSync(join(REPO, "prompts"), join(root, "prompts"), { recursive: true });
   cpSync(join(REPO, "taxonomies"), join(root, "taxonomies"), { recursive: true });
-  const cfg: unknown = JSON.parse(readFileSync(join(REPO, "configs", "rogue-legend.json"), "utf8"));
+  const cfg: unknown = JSON.parse(
+    readFileSync(join(REPO, "test", "fixtures", "config.json"), "utf8"),
+  );
   writeFileSync(join(root, "configs", "t.json"), JSON.stringify(cfg));
   const loaded = loadConfig(join(root, "configs", "t.json"));
   const paths = projectPaths(loaded);

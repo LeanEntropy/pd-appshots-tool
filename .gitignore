@@ -18,5 +18,8 @@ Thumbs.db
 .vscode/
 .idea/
 
+# Agent worktrees (Claude Code)
+.claude/worktrees/
+
 # Own source assets (read-only material, not part of the tool)
 rogue-legends_current/
