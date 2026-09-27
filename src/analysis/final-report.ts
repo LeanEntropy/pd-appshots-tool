@@ -67,7 +67,7 @@ export function writeFinalReport(
   if (o.stoppedForBudget)
     lines.push("**Stopped: the spending limit for this batch was reached.**", "");
   lines.push(
-    `- Analysed in this run: ${o.records.length}. Accepted: ${count("ok")}. Settled after a disagreement: ${count("adjudicated")}. Still disputed: ${count("disputed")}. Second opinion missing: ${count("unreviewed")}. Failed: ${count("failed")}.`,
+    `- Analysed in this run: ${o.records.length}. Accepted: ${count("ok")}. Settled after a disagreement: ${count("adjudicated")}. Still disputed: ${count("disputed")}. Not double-checked (second opinion failed, first reading kept): ${count("unreviewed")}. Failed: ${count("failed")}.`,
     "",
   );
   if (o.errors.length) {

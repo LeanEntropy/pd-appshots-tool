@@ -6,6 +6,7 @@ import { readJson, writeJsonAtomic } from "../util/fsx.ts";
 import { stableHash } from "../util/hash.ts";
 import type { RenderedPrompt } from "./prompts.ts";
 import type { Provider } from "./providers.ts";
+import { clampRegions } from "./regions.ts";
 import {
   deckAnalysisSchema,
   type ImageAnalysis,
@@ -59,7 +60,8 @@ export function objectFile(objectsDir: string, step: string, key: string): strin
 /**
  * One validated model call for a set of images, cached by content: the key covers the step,
  * model, prompt text, schema version, taxonomy and the ordered image ids. An answer that fails
- * validation gets up to two repair attempts with the problems listed.
+ * validation gets up to two repair attempts with the problems listed. `tidy` fixes harmless
+ * slips (e.g. a box slightly past an edge) before the checks, for fresh and cached answers alike.
  */
 export async function validatedCall<T>(
   step: string,
@@ -71,6 +73,7 @@ export async function validatedCall<T>(
   check: (value: T, refs: string[]) => string[],
   ctx: CallContext,
   extraKey: unknown = null,
+  tidy: (value: T) => T = (v) => v,
 ): Promise<{ value: T | null; key: string; problems: string[] }> {
   const refs = images.map((_, i) => `img${i + 1}`);
   const key = stableHash({
@@ -87,8 +90,8 @@ export async function validatedCall<T>(
   if (existsSync(file)) {
     const stored = readJson(file) as StoredObject;
     const parsed = schema.safeParse(stored.output);
-    if (parsed.success && check(parsed.data, refs).length === 0)
-      return { value: parsed.data, key, problems: [] };
+    const value = parsed.success ? tidy(parsed.data) : null;
+    if (value && check(value, refs).length === 0) return { value, key, problems: [] };
   }
   let problems: string[] = [];
   let repairs: string[] = [];
@@ -120,11 +123,14 @@ export async function validatedCall<T>(
       continue;
     }
     const parsed = schema.safeParse(r.output);
-    problems = parsed.success
-      ? check(parsed.data, refs)
-      : parsed.error.issues.slice(0, 10).map((i) => `${i.path.join(".")}: ${i.message}`);
+    const value = parsed.success ? tidy(parsed.data) : null;
+    problems = value
+      ? check(value, refs)
+      : parsed.success
+        ? []
+        : parsed.error.issues.slice(0, 10).map((i) => `${i.path.join(".")}: ${i.message}`);
     repairs = problems;
-    if (parsed.success && problems.length === 0) {
+    if (value && problems.length === 0) {
       const obj: StoredObject = {
         step,
         model: provider.model,
@@ -136,7 +142,7 @@ export async function validatedCall<T>(
         createdAt: new Date().toISOString(),
       };
       writeJsonAtomic(file, obj);
-      return { value: parsed.data, key, problems: [] };
+      return { value, key, problems: [] };
     }
   }
   return { value: null, key, problems };
@@ -156,6 +162,8 @@ export async function analyseImages(
   const schema = deckAnalysisSchema(ctx.taxonomy);
   const check = (v: z.infer<typeof schema>, refs: string[]) =>
     semanticProblems(ctx.taxonomy, refs, v.images);
+  // Boxes slightly past an edge are clamped for every model (producer and reviewer alike).
+  const tidy = (v: z.infer<typeof schema>) => ({ ...v, images: v.images.map(clampRegions) });
   const result: ChunkResult = { readings: new Map(), failed: new Map(), objects: new Map() };
   const take = (value: z.infer<typeof schema>, key: string, subset: readonly ChunkImage[]) => {
     value.images.forEach((a) => {
@@ -167,7 +175,18 @@ export async function analyseImages(
       }
     });
   };
-  const deck = await validatedCall(step, provider, system, DECK_TASK, images, schema, check, ctx);
+  const deck = await validatedCall(
+    step,
+    provider,
+    system,
+    DECK_TASK,
+    images,
+    schema,
+    check,
+    ctx,
+    null,
+    tidy,
+  );
   if (deck.value) {
     take(deck.value, deck.key, images);
     return result;
@@ -187,6 +206,8 @@ export async function analyseImages(
       schema,
       check,
       ctx,
+      null,
+      tidy,
     );
     if (one.value) take(one.value, one.key, [im]);
     else result.failed.set(im.imageId, one.problems.join("; "));

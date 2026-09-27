@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 import { approvalProblem } from "../src/analysis/job.ts";
 import { buildAnalysisPlan } from "../src/analysis/plan.ts";
-import { readRecords } from "../src/analysis/records.ts";
+import { isUsable, readRecords } from "../src/analysis/records.ts";
 import { runAnalysis } from "../src/analysis/run.ts";
 import { projectPaths } from "../src/config/load.ts";
 import { savePick } from "../src/core/selection.ts";
@@ -120,7 +120,7 @@ test("the spending guard stops a batch that costs far more than estimated", asyn
   assert.equal(producer.calls.length, 1);
 });
 
-test("a required second opinion that cannot be read leaves the image unreviewed, not ok", async () => {
+test("a failed second opinion keeps the first reading and the batch goes on", async () => {
   const loaded = await setup();
   const plan = buildAnalysisPlan(loaded, "pilot");
   const producer = fakeProvider({ read: () => ({ screenType: "gameplay", headline: "" }) });
@@ -139,12 +139,13 @@ test("a required second opinion that cannot be read leaves the image unreviewed,
     adjudicator: producer,
     onProgress: () => {},
   });
-  // The same failure three times in a row stops the batch, loudly.
-  assert.equal(out.records.filter((r) => r.status === "unreviewed").length, 3);
-  assert.match(out.aborted ?? "", /3 images in a row failed with the same error/);
-  assert.equal(out.errors.length, 3);
+  // Marked "not double-checked" (unreviewed), kept as usable, and no reason to stop the batch.
+  assert.equal(out.records.filter((r) => r.status === "unreviewed").length, out.records.length);
+  assert.ok(out.records.every((r) => isUsable(r)));
+  assert.equal(out.aborted, null);
+  assert.equal(out.errors.length, 0);
   assert.match(out.records[0]?.problems[0] ?? "", /second opinion could not be read/);
-  assert.equal(out.synthesisSkipped, "the batch stopped early");
+  assert.doesNotMatch(out.synthesisSkipped ?? "", /no usable analysis|stopped early/);
 });
 
 test("the approval fingerprint changes when any number on the screen changes", async () => {

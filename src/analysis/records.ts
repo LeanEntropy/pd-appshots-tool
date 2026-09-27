@@ -46,8 +46,11 @@ export interface AnalysisRecord {
   mapping?: string;
 }
 
-/** Statuses that count as usable in statistics and for reuse by identical images. */
-export const USABLE: readonly AnalysisStatus[] = ["ok", "adjudicated", "corrected"];
+/**
+ * Statuses that count as usable in statistics and for reuse by identical images. "unreviewed"
+ * keeps the first reading: a failed second opinion never throws away a valid analysis.
+ */
+export const USABLE: readonly AnalysisStatus[] = ["ok", "adjudicated", "corrected", "unreviewed"];
 
 /** Done = usable status, current schema, and a reading. Failed or old records are redone. */
 export function isUsable(r: AnalysisRecord | undefined): r is AnalysisRecord & {
@@ -111,7 +114,13 @@ export function infoViews(
     const usable = isUsable(r);
     const idn = r.identity;
     out[id] = {
-      status: usable ? r.status : r.status === "failed" ? "failed" : `${r.status} (outdated)`,
+      status: !usable
+        ? r.status === "failed"
+          ? "failed"
+          : `${r.status} (outdated)`
+        : r.status === "unreviewed"
+          ? "not double-checked (the second opinion failed; first reading kept)"
+          : r.status,
       screen: usable ? screenLabel(r.final, label) : "",
       final: usable ? r.final : null,
       differences: r.differences,
