@@ -116,7 +116,9 @@ export function loadProject(id: string, opts: { root: string }): LoadedConfig {
   const settings = readSettings(storage, { projectId: id });
   if (!settings) throw new Error(`There is no project "${id}".`);
   if (isDraft(settings))
-    throw new Error(`Project "${settings.name}" is still being set up: add a competitor first.`);
+    throw new Error(
+      `Project "${settings.name}" is still being set up: finish its steps on the tool's page first.`,
+    );
   const config = configFromSettings(settings, defaults);
   return {
     config,

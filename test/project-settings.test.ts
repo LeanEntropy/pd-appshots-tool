@@ -90,7 +90,9 @@ test("settings rules: duplicates, own game, US English first, drafts", () => {
   assert.ok(!bad({ ...s, competitors: [] }), "a draft is valid settings");
   const storage = workspaceStorage(join(root, "workspace"));
   storage.putJson(settingsKey({ projectId: s.id }), { ...s, competitors: [] });
-  assert.throws(() => loadProject(s.id, { root }), /add a competitor/);
+  assert.throws(() => loadProject(s.id, { root }), /still being set up/);
+  storage.putJson(settingsKey({ projectId: s.id }), { ...s, setupStep: 3 });
+  assert.throws(() => loadProject(s.id, { root }), /still being set up/, "steps not finished");
 });
 
 test("registry: rebuilt from project folders, bad file kept aside, last opened first", () => {

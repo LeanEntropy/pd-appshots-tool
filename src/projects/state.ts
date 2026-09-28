@@ -1,6 +1,7 @@
 import { readLatest } from "../analysis/final-report.ts";
 import { buildAnalysisPlan, type Stage } from "../analysis/plan.ts";
 import { type LoadedConfig, projectPaths } from "../config/load.ts";
+import type { ProjectSettings } from "../config/project-schema.ts";
 import { fitFor } from "../core/selection.ts";
 import { readJournal } from "../jobs/journal.ts";
 import { analysisStatus } from "../jobs/status.ts";
@@ -60,14 +61,23 @@ function steps(stage: ProjectStage): ProjectState["steps"] {
   }));
 }
 
-/** The draft state of a project that has no competitor yet (it cannot be loaded as a config). */
-export function draftState(id: string): ProjectState {
+const SETUP_STEPS = ["Your game", "Competitors", "Countries", "Charts", "Review and create"];
+
+/**
+ * The state of a project still in its new-project steps, or with no competitor yet (it cannot be
+ * loaded as a config). It reopens on the step where the user stopped.
+ */
+export function draftState(id: string, s?: ProjectSettings): ProjectState {
+  const step = s?.setupStep;
+  const line = step
+    ? `Setting up: step ${step} of 5, ${SETUP_STEPS[step - 1]?.toLowerCase()}`
+    : "Setting up: add at least one competitor";
   return {
     stage: "setup",
     substate: null,
-    line: "Setting up: add at least one competitor",
+    line,
     progress: null,
-    next: { label: "Open", href: `/p/${id}/` },
+    next: { label: "Continue setting up", href: `/p/${id}/setup` },
     notices: [],
     steps: steps("setup"),
   };
@@ -102,7 +112,14 @@ export function projectState(
     );
     return preview
       ? base("preview", "Ready to download", { label: "Open", href: `/p/${id}/` })
-      : base("setup", "Nothing downloaded yet", { label: "Open", href: `/p/${id}/` });
+      : // Settings are done (the project loads); the download preview is the step now.
+        {
+          ...base("setup", "Nothing downloaded yet", {
+            label: "Next: download preview",
+            href: `/p/${id}/`,
+          }),
+          steps: steps("preview"),
+        };
   }
   const view = fitFor(loaded);
   if (view.fit.selected.length < loaded.config.core.pilotCompetitors)

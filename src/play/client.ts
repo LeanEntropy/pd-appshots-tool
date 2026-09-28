@@ -3,6 +3,7 @@ import { join } from "node:path";
 import gplay, { type IAppItem, type IAppItemFullDetail } from "google-play-scraper";
 import { sleep } from "../util/cli-io.ts";
 import { readJsonIfExists, safeName, writeJsonAtomic } from "../util/fsx.ts";
+import { sharedPlayQueue } from "./queue.ts";
 import { dedupScreenshots } from "./screenshots.ts";
 
 export interface Listing {
@@ -60,7 +61,6 @@ function errorMessage(e: unknown): string {
 
 /** Google Play metadata with a polite delay between requests and an on-disk cache. */
 export class PlayClient {
-  private lastRequest = 0;
   public requests = 0;
   public cacheHits = 0;
 
@@ -78,15 +78,10 @@ export class PlayClient {
     }
   }
 
-  private async politely<T>(fn: () => Promise<T>): Promise<T> {
-    const wait = this.lastRequest + this.delayMs - Date.now();
-    if (wait > 0) await sleep(wait);
-    try {
-      this.requests++;
-      return await fn();
-    } finally {
-      this.lastRequest = Date.now();
-    }
+  /** Through the process-wide queue, so store checks and the wizard's lookups share one pace. */
+  private politely<T>(fn: () => Promise<T>): Promise<T> {
+    this.requests++;
+    return sharedPlayQueue(this.delayMs).run(fn, "background");
   }
 
   async listing(appId: string, gl: string, hl: string): Promise<Listing> {

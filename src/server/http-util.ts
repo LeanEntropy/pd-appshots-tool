@@ -53,7 +53,9 @@ export function sameOrigin(req: IncomingMessage): boolean {
   try {
     const o = new URL(origin);
     return (
-      (o.hostname === "127.0.0.1" || o.hostname === "localhost") && o.host === req.headers.host
+      o.protocol === "http:" &&
+      (o.hostname === "127.0.0.1" || o.hostname === "localhost") &&
+      o.host === req.headers.host
     );
   } catch {
     return false;
