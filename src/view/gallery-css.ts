@@ -1,4 +1,6 @@
 import { ACTION_CSS } from "./action.ts";
+import { EXPORT_CSS } from "./report-export.ts";
+import { PRINT_CSS } from "./report-print-css.ts";
 import { SHELL_CSS, TOKENS } from "./shell.ts";
 
 /** Page styles: tokens for light and dark, grid, dialog, run panel, pages and report. */
@@ -164,4 +166,6 @@ button.linkbtn { background: none; border: none; color: var(--accent); padding: 
 .expand label { display: block; margin: 3px 0; }
 .chip { display: inline-block; margin: 1px 0; padding: 0 7px; border: 1px solid var(--line); border-radius: 10px; background: var(--bg); font-size: 12px; }
 details.subsec { margin: 8px 0; } details.subsec > summary { cursor: pointer; font-weight: 600; } table.rt tr.ours th { color: var(--accent); }
+${EXPORT_CSS}
+${PRINT_CSS}
 `;

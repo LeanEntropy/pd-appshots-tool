@@ -58,9 +58,10 @@ ${served ? appBar(served.name) + stepBar(served.steps) : ""}
 <p class="meta">Shows the image count, model passes and estimated cost first. Nothing is sent to an AI model until you press Approve and run. Screenshots already analysed are never sent again.</p>
 </div></div></div></section>
 <section data-page="report" hidden><h2 class="ph" tabindex="-1">Report</h2>
-<div class="card"><label>Showing: <select id="reportRun"><option value="current">Now (from the saved analyses)</option></select></label>
+<div class="card noprint"><label>Showing: <select id="reportRun"><option value="current">Now (from the saved analyses)</option></select></label>
 <label><input type="checkbox" id="showImages" checked> Show images</label>
-<span class="meta">Batch: the one picked on the Analysis page.</span><p id="reportStatus" class="act-msg" hidden></p></div>
+<span class="meta">Batch: the one picked on the Analysis page.</span><p id="reportStatus" class="act-msg" hidden></p>
+<p><button type="button" id="reportPdf" class="primary">Export PDF</button> <button type="button" id="reportPrint">Print or save as PDF</button></p><p id="pdfStatus" class="act-msg" hidden></p><div id="pdfResult"></div></div>
 <div id="report"></div><div id="expansion"></div></section>
 </main>
 <dialog id="approvalDlg" aria-label="Analysis approval and progress"><div id="approval" tabindex="-1"></div></dialog>
