@@ -6,7 +6,7 @@ import { runFolders, versionFileKey } from "./store.ts";
 export interface PresetOutcome {
   /** A Ready version with its recommendations written exists (plan-reports D1). */
   ready: boolean;
-  /** The verdict and fit score of the newest saved version with report data, if any. */
+  /** The verdict and fit score of that same ready version, when it saved its report data. */
   verdict: string | null;
   score: number | null;
 }
@@ -22,14 +22,17 @@ export function presetOutcome(loaded: LoadedConfig, stage: "pilot" | "core"): Pr
   const mine = [...runFolders(s, paths)]
     .filter(([id]) => id.endsWith(`-${stage}`))
     .sort(([a], [b]) => b.localeCompare(a));
-  const ready =
-    !!readLatest(paths, stage)?.complete || mine.some(([, f]) => f.has("recommendations.json"));
-  const newest = mine.find(([, f]) => f.has("report-data.json"));
+  // One coherent version: the newest with its recommendations, else the complete latest run.
+  const latest = readLatest(paths, stage);
+  const done =
+    mine.find(([, f]) => f.has("recommendations.json"))?.[0] ??
+    (latest?.complete ? latest.runId : undefined);
+  const ready = done !== undefined;
   let verdict: string | null = null;
   let score: number | null = null;
-  if (newest)
+  if (done && mine.some(([id, f]) => id === done && f.has("report-data.json")))
     try {
-      const d = s.getJson(versionFileKey(paths, newest[0], "report-data.json")) as {
+      const d = s.getJson(versionFileKey(paths, done, "report-data.json")) as {
         fit?: { verdict?: unknown; score?: unknown } | null;
       };
       if (typeof d?.fit?.verdict === "string") verdict = d.fit.verdict;

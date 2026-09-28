@@ -136,6 +136,19 @@ test("an interrupted migration run again gives the same result, with no duplicat
     1,
     "no second Pilot report",
   );
+  // Interrupted with every version listed but the archive flags not set: they are repaired.
+  const all = readDef(s, paths, "r-pilot");
+  s.putJson(defKey(paths, "r-pilot"), {
+    ...all,
+    versions: all?.versions.map((v) => ({ ...v, archived: false })).reverse(),
+  });
+  syncPresetReports(s, paths, US);
+  const fixed = readDef(s, paths, "r-pilot");
+  assert.deepEqual(
+    fixed?.versions.map((v) => v.archived),
+    [true, true, true, false],
+  );
+  assert.equal(fixed?.versions.at(-1)?.id, RUNS.partial);
 });
 
 test("old runs are shown as their markdown; broken or partial data never crashes", async () => {

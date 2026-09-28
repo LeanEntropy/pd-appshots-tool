@@ -101,6 +101,11 @@ test("each finished Pilot run is the newest version; the previous one is archive
     pick: { name: string }[];
   };
   assert.equal(v.reportId, "r-pilot");
+  // One generation date: the list shows the one saved in version.json.
+  assert.equal(
+    def?.versions[1]?.generatedAt,
+    (v as unknown as { generatedAt: string }).generatedAt,
+  );
   assert.deepEqual(
     v.pick.map((g) => g.name),
     ["Rogue Legend", "Capybara Go", "Mini Tales"],

@@ -69,6 +69,19 @@ test("regression: a finished Full check completes every step, even with newer da
   assert.match(s.next.href, /#report$/);
 });
 
+test("the home line uses one version: the newest with recommendations, not a newer partial one", async () => {
+  const { loaded, finished } = await project();
+  finished("2026-09-28T16-21-48-545Z-core", "core");
+  const paths = projectPaths(loaded);
+  const s = workspaceStorage(paths.workspace);
+  const partial = "2026-09-29T10-00-00-000Z-core";
+  s.putText(projectKey(paths, "reports", partial, "report.md"), "# stopped\n");
+  s.putJson(projectKey(paths, "reports", partial, "report-data.json"), {
+    fit: { verdict: "very different", score: 0.2 },
+  });
+  assert.equal(projectState(loaded).line, "Full check done: on par (80%)");
+});
+
 test("when a run ends, the caller is told (the home card's summary is refreshed)", async () => {
   const { loaded } = await project();
   const plan = postAnalysisPlan(loaded, { stage: "pilot" }).body as { plan: { planHash: string } };

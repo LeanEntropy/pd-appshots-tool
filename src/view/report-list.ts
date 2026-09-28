@@ -220,13 +220,13 @@ document.addEventListener("click", (e) => {
     saveName(b, rid);
   } else if (b.classList.contains("rc-archive")) {
     const archived = !rep.archived;
-    act(b, { busy: archived ? "Archiving..." : "Restoring...", status: "rs-" + rid,
+    act(b, { busy: archived ? "Archiving..." : "Restoring...", status: "reportStatus",
       run: async () => { const r = await sendReq("PATCH", url, { archived }); await loadReport(); return r; },
       done: archived ? "Archived \\u201c" + rep.name + "\\u201d. Find it under Show archived." : "Restored \\u201c" + rep.name + "\\u201d." });
   } else if (b.classList.contains("rc-delete")) {
     const n = rep.versions.length;
     if (!confirm("Delete the report \\u201c" + rep.name + "\\u201d and its " + n + (n === 1 ? " version" : " versions") + "? The analyses stay in the library and are reused by other reports.")) return;
-    act(b, { busy: "Deleting...", status: "rs-" + rid,
+    act(b, { busy: "Deleting...", status: "reportStatus",
       run: async () => { const r = await sendReq("DELETE", url, {}); openState.delete(rid); await loadReport(); return r; },
       done: "Deleted \\u201c" + rep.name + "\\u201d." });
   }

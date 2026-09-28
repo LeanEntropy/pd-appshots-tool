@@ -6,6 +6,7 @@ import { legacyAnalysisJob, readJournal } from "../jobs/journal.ts";
 import { workspaceStorage } from "../storage/index.ts";
 import { mainMarket } from "./main-market.ts";
 import { syncPresetReports } from "./migrate.ts";
+import { newerReason } from "./stale.ts";
 import { listDefs, readVersionInputs, runFolders, versionFileKey } from "./store.ts";
 import { isPreset, type ReportDef, TYPE_NAMES } from "./types.ts";
 
@@ -39,33 +40,11 @@ export interface ReportSummary {
   versions: VersionSummary[];
 }
 
-const countriesOf = (d: ReportDef) =>
-  d.scope.markets.length > 3
-    ? d.scope.markets.map((m) => m.gl.toUpperCase()).join(" ")
-    : d.scope.markets.map((m) => m.label).join(", ");
-
-/** Why the data differs from what the newest version was built from, in plain words. */
-function newerReason(
-  x: ReportInputs,
-  main: { gl: string; hl: string },
-  inputs: ReturnType<typeof readVersionInputs>,
-  savedHash: string | null,
-): string | null {
-  if (inputs && (inputs.mainMarket.gl !== main.gl || inputs.mainMarket.hl !== main.hl))
-    return "The main country changed.";
-  if (!savedHash || savedHash === x.dataHash) return null;
-  if (inputs) {
-    const was = new Set(inputs.pick.map((g) => g.appId));
-    const now = new Set(x.plan.games.map((g) => g.appId));
-    const added = x.plan.games.filter((g) => !was.has(g.appId)).map((g) => g.name);
-    const removed = inputs.pick.filter((g) => !now.has(g.appId)).map((g) => g.name);
-    if (added.length || removed.length)
-      return `The pick changed (${[...added.map((n) => `${n} added`), ...removed.map((n) => `${n} removed`)].join(", ")}).`;
-    if (inputs.versions.taxonomy !== x.plan.versions.taxonomy)
-      return "The screen-type list was updated.";
-  }
-  return "New or updated analyses since this version was made.";
-}
+/** Plain names, codes only when there are more than three (from the version's own scope when saved). */
+const countriesOf = (markets: ReportDef["scope"]["markets"]) =>
+  markets.length > 3
+    ? markets.map((m) => m.gl.toUpperCase()).join(" ")
+    : markets.map((m) => m.label).join(", ");
 
 /**
  * The Report tab's list (plan-reports 5): runs the idempotent upkeep of the Pilot and Full check
@@ -136,7 +115,7 @@ export function listReports(loaded: LoadedConfig): ReportSummary[] {
       name: d.name,
       type: d.type,
       typeName: TYPE_NAMES[d.type],
-      countries: countriesOf(d),
+      countries: countriesOf(inputs?.scope.markets ?? d.scope.markets),
       competitors: names ? names.length : null,
       competitorNames: names ?? [],
       generatedAt: newest?.generatedAt ?? null,

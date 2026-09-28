@@ -59,10 +59,11 @@ export function recordPresetRun(loaded: LoadedConfig, x: ReportInputs, runId: st
     const s = workspaceStorage(paths.workspace);
     const main = mainMarket(loaded);
     const stage = x.plan.stage;
-    syncPresetReports(s, paths, main);
+    // version.json first: the upkeep then lists the folder with this exact generation date.
     const reportId = presetId(listDefs(s, paths), stage, main);
     const v = presetVersionInputs(x, { reportId, stage, main, now: new Date() });
     writeVersionInputs(s, paths, runId, v);
+    syncPresetReports(s, paths, main);
     addVersion(s, paths, reportId, { id: runId, generatedAt: v.generatedAt });
   } catch {
     // Recovered by syncPresetReports on the next list.

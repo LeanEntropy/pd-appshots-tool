@@ -62,28 +62,30 @@ export function syncPresetReports(
     }
     const fallback = `r-${stage}`;
     const presets = new Map(defs.filter((d) => d.type === stage).map((d) => [d.id, d]));
+    // The generation date of each version: its version.json, else its run id (older runs).
+    const dates = new Map<string, string>();
     const add = new Map<string, VersionEntry[]>();
     for (const [folder, files] of folders) {
       if (!folder.endsWith(`-${stage}`) || !REPORT_FILES.some((f) => files.has(f))) continue;
       const inputs = files.has("version.json") ? readVersionInputs(s, c, folder) : null;
+      const generatedAt = inputs?.generatedAt ?? dateFromRunId(folder) ?? now.toISOString();
+      dates.set(folder, generatedAt);
       const owner = inputs && presets.has(inputs.reportId) ? inputs.reportId : fallback;
       const def = presets.get(owner);
       if (!def || def.versions.some((v) => v.id === folder)) continue;
-      const generatedAt = inputs?.generatedAt ?? dateFromRunId(folder) ?? now.toISOString();
       add.set(owner, [...(add.get(owner) ?? []), { id: folder, generatedAt, archived: false }]);
     }
-    for (const [owner, extra] of add) {
-      const def = presets.get(owner);
-      if (!def) continue;
-      const versions = [...def.versions, ...extra].sort((a, b) =>
-        a.generatedAt.localeCompare(b.generatedAt),
-      );
+    // Every preset def converges to its canonical state (dates, order, all but the newest
+    // archived), and is written only when that differs from what is saved.
+    for (const def of presets.values()) {
+      const versions = [...def.versions, ...(add.get(def.id) ?? [])]
+        .map((v) => ({ ...v, generatedAt: dates.get(v.id) ?? v.generatedAt }))
+        .sort((a, b) => a.generatedAt.localeCompare(b.generatedAt));
       const newest = versions.at(-1)?.id;
-      saveDef(s, c, {
-        ...def,
-        versions: versions.map((v) => ({ ...v, archived: v.id !== newest })),
-      });
-      if (!written.includes(owner)) written.push(owner);
+      const next = { ...def, versions: versions.map((v) => ({ ...v, archived: v.id !== newest })) };
+      if (JSON.stringify(next.versions) === JSON.stringify(def.versions)) continue;
+      saveDef(s, c, next);
+      if (!written.includes(def.id)) written.push(def.id);
     }
   }
   return written;
