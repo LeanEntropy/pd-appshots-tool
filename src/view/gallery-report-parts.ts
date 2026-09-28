@@ -15,7 +15,7 @@ function patternsHtml(p) {
   const byType = p.byScreenType.map((t) => "<tr><td>" + esc(L(t.key)) + "</td><td>" + t.n + "</td><td>" + pc(t.layerShare) + "</td><td>" + shares(t.maskColours, 3, (k) => k) + "</td><td>" + shares(t.maskShapes, 2) + "</td><td>" + shares(t.textColours, 3, (k) => k) + "</td><td>" + shares(t.elementKinds, 3) + "</td></tr>").join("");
   const fmt = [
     ["Image orientation (pixels)", p.orientation.canvas], ["In-game capture orientation", p.orientation.capture],
-    ["Composition", p.composition], ["In-game captures per image", p.capturesPerImage], ["Layer vs screenshot", p.proportion],
+    ["Composition", p.composition], ["Screenshot areas per image (0 = full-screen art)", p.capturesPerImage], ["Layer vs screenshot", p.proportion],
     ["Whole-image colours (pixels)", p.colours.image], ["Marketing layer colours", p.colours.layer], ["Mask colours", p.colours.masks],
     ["Text colours", p.colours.texts], ["Mask shapes", p.maskShapes], ["Mask locations", p.maskLocations], ["Text positions", p.textPositions], ["Extra elements", p.elementKinds],
   ].map(([k, v]) => "<tr><th>" + esc(k) + "</th><td>" + shares(v, 5, (x) => x.replace(/_/g, " ")) + "</td></tr>").join("");

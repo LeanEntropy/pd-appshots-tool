@@ -1,5 +1,6 @@
 import { z } from "zod";
 import type { Taxonomy } from "../config/load.ts";
+import { artWording } from "./art-wording.ts";
 import { PROPORTION } from "./patterns.ts";
 
 /** Pattern interpretation (Opus): words only; every number comes from the computed patterns. */
@@ -91,7 +92,7 @@ export const reviewSchema = z.strictObject({
 });
 export type Review = z.infer<typeof reviewSchema>;
 
-/** Art-only screen types: no in-game screen is captured for them. */
+/** Screen types made as art from existing assets (a recaptured in-game screen is never one). */
 const ART_ONLY = new Set(["feature_image", "key_art"]);
 
 /** One recommendation per position, 1..N with no gaps, within the deck length; labels match specs. */
@@ -140,11 +141,12 @@ export function labelProblems(r: Recommendations, ours: ReadonlyMap<number, stri
       );
     if (
       !ART_ONLY.has(p.screenType) &&
-      p.marketingLayer.proportion === PROPORTION.art &&
-      p.screenType !== "title_image"
+      artWording(p.marketingLayer.proportion) === PROPORTION.art &&
+      p.screenType !== "title_image" &&
+      p.screenType !== "loading_screen"
     )
       problems.push(
-        `${at}, an in-game screen, but its layout shows no screenshot (${PROPORTION.art})`,
+        `${at}, an in-game screen, but its layout is ${PROPORTION.art}: use a layout that shows that screen`,
       );
   }
   return problems;

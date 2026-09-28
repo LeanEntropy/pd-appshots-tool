@@ -53,7 +53,8 @@ test("the capture lines only say something meaningful", () => {
   assert.deepEqual(captureLines(pureArt("title_image"), facts), [], "no noise for a title image");
   const noCap = pureArt("gameplay");
   noCap.screenshot.composition = "capture_in_marketing_art";
-  assert.deepEqual(captureLines(noCap, facts), ["none"]);
+  // Never "none": any art screen may be the game's own (user rule).
+  assert.deepEqual(captureLines(noCap, facts), []);
   assert.deepEqual(captureLines(reading("img1", "gameplay", ""), facts), [
     "Gameplay, fills the image, 85% of the image",
   ]);
@@ -88,7 +89,7 @@ test("composition must match the captures (schema v3)", () => {
   const bad = reading("img1", "gameplay", "");
   bad.screenshot.composition = "multiple_captures";
   assert.match(compositionProblems(t, bad)[0] ?? "", /does not match 1 captures/);
-  assert.match(compositionProblems(t, pureArt("gameplay"))[0] ?? "", /pure art must be/);
+  assert.match(compositionProblems(t, pureArt("gameplay"))[0] ?? "", /full-screen art must be/);
   const area = reading("img1", "gameplay", "");
   area.screenshot.captureAreaPercent = 20;
   assert.match(compositionProblems(t, area)[0] ?? "", /sum of the captures/);

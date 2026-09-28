@@ -186,7 +186,8 @@ test("a recommended slot whose label does not match its spec is caught by code",
     /position 2 .*recaptures an in-game screen \(our position 5, metagame\)/,
   );
   assert.match(p[1] ?? "", /position 3 .*keeps our position 5, which is metagame/);
-  assert.match(p[2] ?? "", /position 4 .*shows no screenshot/);
+  // Saved before the wording rule: the old layout name is still recognised.
+  assert.match(p[2] ?? "", /position 4 .*layout is full-screen art/);
 });
 
 test("a kept or recaptured position our deck does not have is caught", () => {

@@ -1,5 +1,6 @@
 import type { ImageDb } from "../store/imagedb.ts";
 import type { DeckManifest } from "../store/manifest.ts";
+import { artWordingDeep } from "./art-wording.ts";
 import { batchEntries } from "./entries.ts";
 import { orientationOf } from "./image-facts.ts";
 import { COMPOSITION, captureLines } from "./info-text.ts";
@@ -231,7 +232,8 @@ export function buildReportData(x: ReportInputs): ReportData {
         : "Every screenshot is analysed, but the AI insights and recommendations have not been written yet.",
       howTo,
     };
-  return {
+  // Display wording only (user rule): older text never says an art screen is not from the game.
+  return artWordingDeep({
     stage: plan.stage,
     market: plan.market.label,
     approved: x.approved,
@@ -252,5 +254,5 @@ export function buildReportData(x: ReportInputs): ReportData {
         )
       : [],
     labels: labelsFor(x.label, patterns, oursVs, ai?.recommendations ?? null),
-  };
+  });
 }

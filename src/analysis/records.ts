@@ -1,5 +1,6 @@
 import type { ProjectPaths } from "../config/load.ts";
 import type { InfoView, ViewAnalysis } from "../view/model.ts";
+import { artWording, artWordingDeep } from "./art-wording.ts";
 import type { ImageIdentity } from "./identity.ts";
 import { COMPOSITION, captureLines, imageLine, pendingMessage } from "./info-text.ts";
 import { type Labeler, plainLabel, screenName } from "./labels.ts";
@@ -101,7 +102,7 @@ export function summaries(
   for (const [id, r] of readRecords(paths)) {
     if (!isUsable(r)) continue;
     out.set(id, {
-      screen: screenLabel(r.final, label),
+      screen: artWording(screenLabel(r.final, label)),
       headline: r.final.headline,
       status: r.status,
     });
@@ -118,7 +119,7 @@ export function infoViews(
   for (const [id, r] of readRecords(paths)) {
     const usable = isUsable(r);
     const idn = r.identity;
-    out[id] = {
+    out[id] = artWordingDeep({
       status: !usable
         ? r.status === "failed"
           ? "failed"
@@ -155,7 +156,7 @@ export function infoViews(
       composition: usable ? (COMPOSITION[r.final.screenshot.composition] ?? null) : null,
       captures: usable ? captureLines(r.final, idn?.image, label) : [],
       pending: usable ? null : pendingMessage(r),
-    };
+    });
   }
   return out;
 }

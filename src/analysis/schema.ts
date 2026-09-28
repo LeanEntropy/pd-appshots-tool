@@ -90,12 +90,12 @@ export function imageAnalysisSchema(taxonomy: Taxonomy) {
       composition: z
         .enum(["single_full_capture", "capture_in_marketing_art", "multiple_captures", "pure_art"])
         .describe(
-          "single_full_capture: one in-game capture fills (almost) the whole image; capture_in_marketing_art: one capture placed inside a larger marketing picture; multiple_captures: two or more captures in one image; pure_art: no in-game capture (title or feature image)",
+          "single_full_capture: one in-game capture fills (almost) the whole image; capture_in_marketing_art: one capture placed inside a larger marketing picture; multiple_captures: two or more captures in one image; pure_art: the whole image is one full-screen art picture (title, loading, splash or feature art; it may be the game's own screen, so never say it is not from the game)",
         ),
       screenType: z
         .enum(types)
         .describe(
-          "the image's main screen type: the largest capture's type, or title/feature image for pure art",
+          "the image's main screen type: the largest capture's type, or title image / loading screen / feature image for full-screen art",
         ),
       subtype: z.string().describe("a subtype from the taxonomy for the screen type, or empty"),
       captures: z
@@ -233,7 +233,7 @@ export function semanticProblems(
   return problems;
 }
 
-const ART = ["title_image", "feature_image", "key_art"];
+const ART = ["title_image", "loading_screen", "feature_image", "key_art"];
 
 /** Composition, capture count, capture types and total area must agree. */
 export function compositionProblems(taxonomy: Taxonomy, i: ImageAnalysis): string[] {
@@ -250,7 +250,9 @@ export function compositionProblems(taxonomy: Taxonomy, i: ImageAnalysis): strin
   if (n < lo || n > hi)
     out.push(`${i.imageRef}: composition ${s.composition} does not match ${n} captures`);
   if (s.composition === "pure_art" && !ART.includes(s.screenType))
-    out.push(`${i.imageRef}: pure art must be a title image, feature image or key art`);
+    out.push(
+      `${i.imageRef}: full-screen art must be a title image, loading screen, feature image or key art`,
+    );
   for (const c of s.captures) {
     const t = taxonomy.screenTypes.find((x) => x.id === c.screenType);
     if (c.subtype && t?.subtypes.length && !t.subtypes.includes(c.subtype))

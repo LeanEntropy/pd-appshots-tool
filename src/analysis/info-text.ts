@@ -1,10 +1,8 @@
+import { ART_SCREEN_LABEL } from "./art-wording.ts";
 import type { ImageFacts } from "./image-facts.ts";
 import { humanise } from "./labels.ts";
 import type { AnalysisRecord } from "./records.ts";
 import type { ImageAnalysis } from "./schema.ts";
-
-/** Screen types that are art rather than an in-game screen: "no capture" is expected there. */
-export const ART_TYPES = new Set(["title_image", "feature_image", "key_art"]);
 
 /** "Portrait, 1242 × 2208 (9:16)": always from the pixels. */
 export function imageLine(f: ImageFacts | null | undefined): string | null {
@@ -26,13 +24,13 @@ export const COMPOSITION: Record<string, string> = {
   single_full_capture: "One in-game screenshot filling the image",
   capture_in_marketing_art: "An in-game screenshot inside marketing art",
   multiple_captures: "Several in-game screenshots in one image",
-  pure_art: "Art only, no in-game screenshot",
+  pure_art: ART_SCREEN_LABEL,
 };
 
 /**
  * Each in-game capture in plain words: type, its orientation only when it differs from the
- * image's, framing and share. Empty for pure art (nothing worth saying); ["none"] when a screen
- * that should show gameplay has no capture.
+ * image's, framing and share. Empty when the model saw no separate screenshot area: that is never
+ * shown as "none", because any art screen may be the game's own (title, loading, splash).
  */
 export function captureLines(
   a: ImageAnalysis,
@@ -40,8 +38,7 @@ export function captureLines(
   label: (code: string) => string = humanise,
 ): string[] {
   const s = a.screenshot;
-  if (!s.captures.length)
-    return s.composition === "pure_art" || ART_TYPES.has(s.screenType) ? [] : ["none"];
+  if (!s.captures.length) return [];
   return s.captures.map((c) => {
     const parts = [
       c.subtype ? `${label(c.screenType)} / ${label(c.subtype)}` : label(c.screenType),

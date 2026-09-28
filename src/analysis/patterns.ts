@@ -1,3 +1,4 @@
+import { ART_SCREEN } from "./art-wording.ts";
 import { colourFamily, textColourFamily } from "./colours.ts";
 import type { ImageAnalysis } from "./schema.ts";
 
@@ -76,7 +77,7 @@ export const PROPORTION = {
   small: "full screenshot, small layer",
   large: "screenshot with a large layer",
   inside: "small screenshot inside a marketing image",
-  art: "marketing image, no screenshot",
+  art: ART_SCREEN,
 } as const;
 
 /** Layer vs screenshot proportion, from the capture area (percent of the whole image). */

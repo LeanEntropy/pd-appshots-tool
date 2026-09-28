@@ -8,6 +8,7 @@ import {
 } from "../config/load.ts";
 import type { ImageDb } from "../store/imagedb.ts";
 import { ensureDir, readJsonIfExists, writeJsonAtomic } from "../util/fsx.ts";
+import { artWording } from "./art-wording.ts";
 import { labeler } from "./labels.ts";
 import { compareOrders, orderHistory } from "./orders.ts";
 import type { AnalysisPlan, Stage } from "./plan.ts";
@@ -101,7 +102,7 @@ export function writeFinalReport(
   });
   if (changes.length) lines.push("## Store order changes", "", ...changes, "");
   const file = join(dir, "report.md");
-  writeFileSync(file, `${lines.join("\n")}\n`);
+  writeFileSync(file, `${artWording(lines.join("\n"))}\n`);
   const files: Record<string, unknown> = {
     "report-data.json": data,
     "patterns.json": o.patterns,

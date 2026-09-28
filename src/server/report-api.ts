@@ -1,4 +1,5 @@
 ﻿import { z } from "zod";
+import { artWording, artWordingDeep } from "../analysis/art-wording.ts";
 import { buildReportData } from "../analysis/report-data.ts";
 import { listRuns, reportInputs, runFileKey } from "../analysis/report-inputs.ts";
 import { type LoadedConfig, projectPaths } from "../config/load.ts";
@@ -33,9 +34,10 @@ export function getReportRun(
   const mdKey = runFileKey(loaded, run.runId, "report.md");
   const file = storage.localPath(mdKey);
   const data = storage.getJson(runFileKey(loaded, run.runId, "report-data.json"));
-  if (data) return { status: 200, body: { runId: run.runId, file, data } };
+  // Saved before the art-screen wording rule: reworded for display (no AI, nothing re-analysed).
+  if (data) return { status: 200, body: { runId: run.runId, file, data: artWordingDeep(data) } };
   const md = storage.getText(mdKey) ?? "";
   // Old runs link images as ../../images/ (from reports/<run>/); the page sits in views/.
-  const html = markdownToHtml(md).replaceAll('"../../images/', '"../images/');
+  const html = markdownToHtml(artWording(md)).replaceAll('"../../images/', '"../images/');
   return { status: 200, body: { runId: run.runId, file, html } };
 }

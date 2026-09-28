@@ -108,7 +108,7 @@ export function patternSection(
     "### Format and layers",
     "",
     `- Image orientation (from the pixel size): ${list(p.orientation.canvas)}. In-game capture orientation: ${list(p.orientation.capture)}.`,
-    `- Composition: ${list(p.composition, 4, label)}. In-game captures per image: ${list(p.capturesPerImage, 4)}.`,
+    `- Composition: ${list(p.composition, 4, label)}. Screenshot areas per image (0 = full-screen art): ${list(p.capturesPerImage, 4)}.`,
     `- Portrait in-game screenshot shown inside a landscape marketing image: ${p.portraitInLandscape.n} images (${pct(p.portraitInLandscape.share)}).`,
     `- Image orientation per country: ${p.orientation.byCountry.map((c) => `${c.market.toUpperCase()} ${list(c.mix, 3)}`).join("; ")}.`,
     `- Marketing layer present: ${pct(p.marketingLayer.share)} (${p.marketingLayer.perGame.map((g) => `${g.name} ${pct(g.share)}`).join(", ")}).`,
