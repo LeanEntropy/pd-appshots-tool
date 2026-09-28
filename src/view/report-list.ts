@@ -8,12 +8,9 @@
  * feedback through act(). #report/<id> opens that card.
  */
 export const REPORT_LIST_CSS = `
-.rcard { background: var(--card); border: 1px solid var(--line); border-left: 6px solid var(--accent); border-radius: 12px; margin-bottom: 12px; }
-.rcard.t-core { border-left-color: var(--ok); } .rcard.t-country { border-left-color: var(--mid); } .rcard.t-compare { border-left-color: var(--accent-2); }
-.rcard > summary { cursor: pointer; padding: 10px 14px; display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: center; }
-.rcard > summary .rc-name { font-size: 17px; font-weight: 700; }
-.rcard > summary .rc-desc { flex-basis: 100%; color: var(--muted); font-size: 13px; }
-.rcard > .rc-b { padding: 4px 14px 12px; border-top: 1px solid var(--line); }
+.rcard { margin-bottom: 14px; }
+.rcard > summary { cursor: pointer; display: flex; flex-wrap: wrap; gap: 6px 12px; align-items: center; }
+.rcard > summary .rc-desc { flex-basis: 100%; }
 .rc-bar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 8px 0; }
 .pill.t-pilot { background: var(--accent); } .pill.t-core { background: var(--ok); } .pill.t-country { background: var(--mid); } .pill.t-compare { background: var(--accent-2); }
 .pill.newer { background: var(--warn); } .pill.none { background: var(--muted); }
@@ -69,7 +66,7 @@ function reportCardHtml(r) {
   const b =(cls, label, extra) => '<button type="button" class="' + cls + '" data-rid="' + id + '" data-act-key="' + cls.split(" ")[0] + "-" + id + '"' + (extra || "") + ">" + label + "</button>";
   return '<details class="rcard ' + (TYPE_CLS[r.type] || "") + '" data-rid="' + id + '" id="rc-' + id + '"><summary>' + summary + '</summary><div class="rc-b">'
     + (r.newer ? '<div class="banner stale"><p>' + pill("stale", "Newer data") + " " + esc(r.newer) + (r.canNow ? " Choose \\u201cNow\\u201d to see the report with the current data." : "") + "</p></div>" : "")
-    + '<div class="rc-bar"><label>Version: <select class="rc-ver" data-rid="' + id + '">' + versionOptions(r) + "</select></label>"
+    + '<div class="rc-top"><div class="rc-bar"><label>Version: <select class="rc-ver" data-rid="' + id + '">' + versionOptions(r) + "</select></label>"
     + (r.status.kind === "draft" ? b("rc-setup primary", "Continue setting up") : "")
     + (r.versions.length || r.canNow ? b("rc-pdf", "Export PDF") : "")
     + (r.versions.length || r.canNow ? b("rc-regen", "Regenerate") : "")
@@ -77,7 +74,7 @@ function reportCardHtml(r) {
     + (r.deletable ? b("rc-delete danger", "Delete") : '<span class="meta">The ' + esc(r.typeName) + " can be archived, not deleted.</span>") + "</div>"
     + '<div class="rc-edit" id="re-' + id + '" hidden><label>New name: <input type="text" maxlength="120" class="rc-input" id="rn-' + id + '" data-rid="' + id + '"></label> '
     + b("rc-save primary", "Save name") + " " + b("rc-cancel", "Cancel") + "</div>"
-    + '<p class="act-msg" id="rs-' + id + '" hidden></p><div class="rc-pdfres" id="rp-' + id + '"></div><p class="meta" id="rh-' + id + '"></p><div class="rbox" id="rb-' + id + '"></div></div></details>';
+    + '<p class="act-msg" id="rs-' + id + '" hidden></p><div class="rc-pdfres" id="rp-' + id + '"></div><p class="meta" id="rh-' + id + '"></p></div><div class="rbox" id="rb-' + id + '"></div></div></details>';
 }
 
 function renderReportList() {

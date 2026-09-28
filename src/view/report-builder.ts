@@ -7,7 +7,7 @@
  * appears only when no new analysis is needed; otherwise the exact images and cost are shown.
  */
 export const BUILDER_CSS = `
-#builder { border-left: 6px solid var(--accent); } #builder h3 { margin-top: 0; }
+#builder h3 { margin-top: 0; }
 #builder fieldset { border: 1px solid var(--line); border-radius: 8px; margin: 8px 0; padding: 6px 10px; }
 #builder fieldset label { display: inline-block; margin: 3px 14px 3px 0; } #builder label.off { color: var(--muted); }
 #builder .bcols { display: flex; flex-wrap: wrap; gap: 12px; } #builder .bcols > fieldset { flex: 1 1 320px; }

@@ -7,6 +7,7 @@ import { NAV_SCRIPT } from "../src/view/gallery-nav.ts";
 import { REPORT_SCRIPT } from "../src/view/gallery-report.ts";
 import { REPORT_PARTS_SCRIPT } from "../src/view/gallery-report-parts.ts";
 import { REPORT_LIST_SCRIPT } from "../src/view/report-list.ts";
+import { REPORTS_A_CSS } from "../src/view/report-style-a.ts";
 import { REPORT_SUMMARY_SCRIPT } from "../src/view/report-summary.ts";
 
 type Box = { innerHTML: string; classList: { toggle: () => void } };
@@ -211,4 +212,36 @@ test("the menu keeps #report/<id> deep links on the Report page", () => {
   const f = ctx.f as (h: string) => string;
   assert.equal(f("#report/r-pilot"), "report");
   assert.equal(f("#report"), "report");
+});
+
+test("the Reports tab look: an open card's header band holds the bar, sections carry their kind", () => {
+  const p = page();
+  const card = p.card(summary({}));
+  assert.match(card, /<div class="rc-b"><div class="rc-top"><div class="rc-bar">/);
+  assert.match(card, /id="rh-r-pilot"><\/p><\/div><div class="rbox" id="rb-r-pilot">/);
+  const box: Box = { innerHTML: "", classList: { toggle: () => {} } };
+  p.renderReport(box, data, "r-core", "core", "<ol><li>Run it</li></ol>");
+  const kinds = [
+    ...box.innerHTML.matchAll(/<details class="sec[^"]*"[^>]* data-sec="([a-z]+)"/g),
+  ].map((m) => m[1]);
+  assert.deepEqual(kinds, [
+    "summary",
+    "patterns",
+    "positions",
+    "recs",
+    "abtests",
+    "store",
+    "research",
+    "stats",
+  ]);
+  // Scoped to the Reports tab: the other tabs and the print page keep their own styles.
+  const rules = REPORTS_A_CSS.replace(/\/\*[\s\S]*?\*\//g, "")
+    .replace(/@(media|container)[^{]*\{/g, "")
+    .split("}")
+    .map((r) => r.split("{")[0]?.trim() ?? "");
+  for (const sel of rules.filter((r) => r && !r.startsWith(":root") && !r.startsWith("--"))) {
+    for (const part of sel.split(/,(?![^(]*\))/))
+      assert.match(part.trim(), /section\[data-page="report"\]/, `unscoped: ${part.trim()}`);
+  }
+  assert.doesNotMatch(REPORTS_A_CSS, /border-left:\s*[1-9]/, "no side bands");
 });
