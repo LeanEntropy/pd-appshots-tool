@@ -61,7 +61,7 @@ export function newClient(loaded: LoadedConfig, paths: ProjectPaths): PlayClient
 }
 
 /** Average full-resolution size from a few HEAD requests; falls back to the config value. */
-async function measureBytes(
+export async function measureBytes(
   listings: Listing[],
   fallback: number,
 ): Promise<{ bytes: number; source: "measured" | "config" }> {

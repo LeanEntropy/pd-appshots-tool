@@ -1,3 +1,4 @@
+import { ADD_CSS } from "./gallery-add.ts";
 import { CSS } from "./gallery-css.ts";
 import { GALLERY_SCRIPT } from "./gallery-script.ts";
 import type { ViewModel } from "./model.ts";
@@ -26,7 +27,7 @@ export function galleryHtml(vm: ViewModel, token = "", served?: GalleryServed): 
 <meta name="ssr-token" content="${escHtml(token)}">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Store Screenshot Recipe</title>
-<style>${CSS}</style>
+<style>${CSS}${ADD_CSS}</style>
 </head>
 <body>
 <div id="runbar" role="status" aria-live="polite" hidden></div>
@@ -41,6 +42,7 @@ ${served ? appBar(served.name) + stepBar(served.steps) : ""}
 <div id="overview"></div></section>
 <section data-page="competitors" hidden><h2 class="ph" tabindex="-1">Competitors</h2>
 <p class="meta">Tick the named competitors for the core check, then drag them into priority order in the list. Your pick saves automatically. Tablet-shaped screenshots are shown but not analysed.</p>
+<div id="addComp" class="card"></div>
 <div class="twocol"><div id="named"></div><div class="side"><div id="panel"></div></div></div></section>
 <section data-page="screenshots" hidden><h2 class="ph" tabindex="-1">Screenshots</h2>
 <details class="sec" open><summary><span class="sec-t">Comparison grid: ${escHtml(vm.coreMarket.label)}</span></summary><div class="sec-b">

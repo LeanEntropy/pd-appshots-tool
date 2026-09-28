@@ -8,6 +8,7 @@ import type { RunnerOptions } from "../jobs/index.ts";
 import type { Fetcher } from "../play/icon.ts";
 import { PlayLookup } from "../play/lookup.ts";
 import type { ProjectState } from "../projects/state.ts";
+import type { StoreDeps } from "../steps/add-competitor.ts";
 import { PROJECT_ID, type Storage, workspaceStorage } from "../storage/index.ts";
 import { statusPage } from "../view/pages-html.ts";
 
@@ -37,6 +38,8 @@ export interface AppContext {
   countries: () => CountryCatalogue;
   /** Icon downloads (tests inject a fake). */
   fetcher?: Fetcher;
+  /** Tests: store pages and images for an added competitor without the network. */
+  storeDeps?: StoreDeps;
 }
 
 export interface AppOptions {
@@ -49,6 +52,7 @@ export interface AppOptions {
   /** Tests: a lookup with a fake scraper. */
   play?: PlayLookup;
   fetcher?: Fetcher;
+  storeDeps?: StoreDeps;
 }
 
 /** The store pacing of the tool defaults (800 ms), or that when the defaults cannot be read. */
@@ -77,6 +81,7 @@ export function createAppContext(o: AppOptions): AppContext {
       return countries;
     },
     ...(o.fetcher ? { fetcher: o.fetcher } : {}),
+    ...(o.storeDeps ? { storeDeps: o.storeDeps } : {}),
     root: o.root,
     storage,
     token: o.token ?? randomBytes(16).toString("hex"),

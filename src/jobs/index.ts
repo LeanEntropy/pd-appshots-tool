@@ -11,11 +11,21 @@ import {
 } from "./runner.ts";
 import { type AnalysisStatus, analysisStatus, type LaneView, listJobs } from "./status.ts";
 
+export {
+  enqueueStore,
+  type StoreInput,
+  type StoreProgress,
+  type StoreStatus,
+  type StoreWork,
+  storeStatus,
+} from "./store-runner.ts";
+
 /**
  * Jobs behind one interface (plan 12B, B3). Routes and terminal commands only call these; no
  * route starts work itself. The first implementation is the in-process runner with the two
  * lanes (one AI job and one store job across all projects), the locks and the job journal.
- * This stage runs analysis batches; store checks and downloads join in a later stage.
+ * It runs analysis batches, and the store check and download of one added competitor
+ * (enqueueStore, storeStatus); the whole-project store check and download join in a later stage.
  */
 export type { AnalysisInput, AnalysisStatus, EnqueueResult, LaneView, RunnerOptions };
 export type JobKind = "analysis";

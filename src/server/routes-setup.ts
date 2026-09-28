@@ -183,7 +183,7 @@ export function postFinish(app: AppContext, id: string): ApiResponse {
 const chains = new Map<string, Promise<unknown>>();
 
 /** Settings writes of one project run one after another, so no save overwrites a newer one. */
-function oneAtATime<T>(id: string, fn: () => Promise<T>): Promise<T> {
+export function oneAtATime<T>(id: string, fn: () => Promise<T>): Promise<T> {
   const run = (chains.get(id) ?? Promise.resolve()).then(fn, fn);
   const tail = run.catch(() => {});
   chains.set(id, tail);
