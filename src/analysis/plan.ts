@@ -10,6 +10,7 @@ import { type Estimate, estimate } from "./estimate.ts";
 import { readLatest } from "./final-report.ts";
 import { PATTERN_FIT_VERSION } from "./pattern-fit.ts";
 import { PROMPT_VERSIONS } from "./prompts.ts";
+import { withCurrentMapping } from "./record-refresh.ts";
 import { isUsable, readRecords } from "./records.ts";
 import { SCHEMA_VERSION } from "./schema.ts";
 import { assignTiers, type TierInput, type TierResult } from "./tiers.ts";
@@ -108,7 +109,8 @@ export function buildAnalysisPlan(
     games.push({ appId: a.appId, name: a.name, positions });
   }
 
-  const records = readRecords(paths);
+  // The current taxonomy mapping, as the run and the report read them (same fingerprint).
+  const records = withCurrentMapping(readRecords(paths));
   const analysed = [...records.values()]
     .filter((r) => isUsable(r))
     .map((r) => ({
