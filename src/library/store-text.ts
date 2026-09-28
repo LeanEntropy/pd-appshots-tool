@@ -1,3 +1,4 @@
+import { z } from "zod";
 import { deriveKeywords, KEYWORDS_VERSION, type Keyword } from "../analysis/keywords.ts";
 import { appSegment } from "../play/answers.ts";
 import type { StoreOfficial } from "../play/store-text.ts";
@@ -71,20 +72,39 @@ function snapshotDates(storage: Storage, dir: string): string[] {
   return dates.sort();
 }
 
+/** Saved and readable (a damaged file does not count, so the backfill reads the page again). */
 export function hasStoreText(storage: Storage, appId: string, gl: string, hl: string): boolean {
-  return snapshotDates(storage, storeTextDir(appId, gl, hl)).length > 0;
+  return latestStoreText(storage, appId, gl, hl) !== undefined;
 }
 
-function valid(x: unknown): x is StoreSnapshot {
-  if (!x || typeof x !== "object") return false;
-  const s = x as Partial<StoreSnapshot>;
-  return (
-    typeof s.appId === "string" &&
-    typeof s.date === "string" &&
-    !!s.official &&
-    Array.isArray(s.official.chips)
-  );
-}
+const text = z.string().nullable();
+const Official = z.object({
+  title: text,
+  shortDescription: text,
+  description: text,
+  recentChanges: text,
+  genre: z.object({ id: text, name: text }),
+  chips: z.array(z.object({ id: text, name: z.string() })),
+  contentRating: text,
+});
+const Keywords = z.array(
+  z.object({
+    key: z.string(),
+    term: z.string(),
+    score: z.number(),
+    fields: z.array(z.enum(["title", "tags", "short", "description"])),
+  }),
+);
+const Snapshot = z.object({
+  appId: z.string(),
+  gl: z.string(),
+  hl: z.string(),
+  date: z.string().regex(DATE),
+  fetchedAt: z.string(),
+  official: Official,
+  textHash: z.string(),
+  derived: z.object({ version: z.unknown(), keywords: z.unknown() }).nullish().catch(null),
+});
 
 /**
  * The newest snapshot of one page, or undefined. Keywords saved by an older method are derived
@@ -105,11 +125,16 @@ export function latestStoreText(
     } catch {
       continue;
     }
-    if (!valid(raw)) continue;
-    if (raw.derived?.version === KEYWORDS_VERSION) return raw;
+    const snap = Snapshot.safeParse(raw);
+    if (!snap.success) continue;
+    const d = snap.data.derived;
+    const kept = d?.version === KEYWORDS_VERSION ? Keywords.safeParse(d.keywords) : null;
     return {
-      ...raw,
-      derived: { version: KEYWORDS_VERSION, keywords: deriveKeywords(raw.official, hl) },
+      ...snap.data,
+      derived: {
+        version: KEYWORDS_VERSION,
+        keywords: kept?.success ? kept.data : deriveKeywords(snap.data.official, hl),
+      },
     };
   }
   return undefined;

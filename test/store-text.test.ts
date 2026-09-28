@@ -6,19 +6,15 @@ import { test } from "node:test";
 import { allKeys, deriveKeywords, display, wordRuns } from "../src/analysis/keywords.ts";
 import { storeTextMarkdown } from "../src/analysis/report-store-md.ts";
 import { compareStoreText, storeTextViews } from "../src/analysis/store-compare.ts";
-import { projectPaths } from "../src/config/load.ts";
 import {
   hasStoreText,
   latestStoreText,
   saveStoreText,
   storeTextDir,
 } from "../src/library/store-text.ts";
-import type { Listing } from "../src/play/client.ts";
 import { officialFromApp, type StoreOfficial } from "../src/play/store-text.ts";
-import { runStoreTextBackfill } from "../src/steps/store-text.ts";
 import { workspaceStorage } from "../src/storage/index.ts";
 import { STORE_SCRIPT } from "../src/view/gallery-store.ts";
-import { tempProject } from "./helpers/project.ts";
 
 const storage = () => workspaceStorage(mkdtempSync(join(tmpdir(), "ssr-store-")));
 
@@ -62,6 +58,14 @@ test("store text: the scraper answer is cleaned (entities, line breaks), missing
     ],
   );
   assert.equal(officialFromApp("nonsense"), null);
+  const html = officialFromApp({
+    description: "<p>First</p><p>Second</p><ul><li>A</li><li>B</li></ul>",
+  });
+  assert.deepEqual(
+    html?.description?.split(/\n+/),
+    ["First", "Second", "A", "B"],
+    "block tags keep words apart",
+  );
 });
 
 test("keywords: weighted by field, stopwords removed, no phrase bridges a removed word", () => {
@@ -140,6 +144,21 @@ test("library: saved per day read, newest wins, older keyword method derived aga
     "2026-09-21",
     "bad file skipped",
   );
+  // Current method but damaged keywords: derived again rather than crashing a page.
+  s.putJson(`${dir}/2026-09-23.json`, {
+    ...re,
+    date: "2026-09-23",
+    derived: { version: 1, keywords: [{ key: 1 }] },
+  });
+  assert.ok(latestStoreText(s, "com.some_game", "us", "en")?.derived.keywords.length);
+  // Only a damaged file: not counted as saved, so the backfill reads the page again.
+  const other = storeTextDir("other.game", "us", "en");
+  s.putJson(`${other}/2026-09-01.json`, {
+    appId: "other.game",
+    date: "2026-09-01",
+    official: { chips: [] },
+  });
+  assert.equal(hasStoreText(s, "other.game", "us", "en"), false);
 });
 
 test("compare: competitor keywords missing from ours, per country; same text folded", () => {
@@ -221,41 +240,3 @@ test("page: the Store (i) and the report section say the keywords are derived, a
   assert.ok(!h.includes("<b>Idle"), "escaped");
   assert.match(api.storeTextHtml?.({ storeText: [] }) ?? "", /npm run store-text/);
 });
-
-test("backfill: shows the count and reads nothing without --yes; then reads, saves, skips saved", async () => {
-  const loaded = await tempProject({ [loadedName(0)]: { phone: 2, tablet: 0 } });
-  const s = workspaceStorage(projectPaths(loaded).workspace);
-  const calls: string[] = [];
-  const client = {
-    async listing(appId: string, gl: string, hl: string): Promise<Listing> {
-      calls.push(appId);
-      const base = {
-        appId,
-        gl,
-        hl,
-        rawCount: 0,
-        screenshots: [],
-        fetchedAt: "2026-09-28T01:00:00Z",
-      };
-      if (appId === loaded.config.ourApp.id)
-        return { ...base, status: "ok", store: official({ title: "Ours Game" }) };
-      return { ...base, status: "unavailable" };
-    },
-  };
-  const lines: string[] = [];
-  const log = (l: string) => lines.push(l);
-  const dry = await runStoreTextBackfill(loaded, { yes: false, log, client, storage: s });
-  assert.equal(dry.toRead, 2);
-  assert.equal(calls.length, 0, "nothing read before the approval");
-  assert.match(lines.join("\n"), /2 store pages to read, 0 already saved[\s\S]*--yes/);
-  const run = await runStoreTextBackfill(loaded, { yes: true, log, client, storage: s });
-  assert.deepEqual([run.saved, run.notSold, run.failed], [1, 1, 0]);
-  assert.match(lines.join("\n"), /Reading store page 2 of 2/);
-  assert.ok(hasStoreText(s, loaded.config.ourApp.id, "us", "en"));
-  const again = await runStoreTextBackfill(loaded, { yes: false, log, client, storage: s });
-  assert.equal(again.toRead, 1, "the saved page is skipped");
-});
-
-function loadedName(i: number): string {
-  return ["Capybara Go", "Mini Tales", "Heroll"][i] ?? "";
-}

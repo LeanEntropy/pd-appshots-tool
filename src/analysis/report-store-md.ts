@@ -16,16 +16,16 @@ export function storeTextMarkdown(cs: readonly StoreCountry[] | undefined): stri
     out.push(
       `### ${c.label}`,
       "",
-      "| Game | Category | Tags | Top keywords (derived) | Read |",
-      "|---|---|---|---|---|",
+      "| Game | Title and short description | Category | Tags | Top keywords (derived) | Read |",
+      "|---|---|---|---|---|---|",
     );
     for (const r of c.rows) {
       const name = cell(r.ours ? `**${r.name} (ours)**` : r.name);
       const s = r.store;
       out.push(
         s
-          ? `| ${name} | ${cell(`${s.category ?? "not shown"}${s.chipCategory ? ` (first tag: ${s.chipCategory})` : ""}`)} | ${cell(s.tags.join(", "))} | ${cell(s.keywords.join(", "))} | ${s.date} |`
-          : `| ${name} | not saved for this country | | | |`,
+          ? `| ${name} | ${cell([s.title, s.shortDescription].filter(Boolean).join(": "))} | ${cell(`${s.category ?? "not shown"}${s.chipCategory ? ` (first tag: ${s.chipCategory})` : ""}`)} | ${cell(s.tags.join(", "))} | ${cell(s.keywords.join(", "))} | ${s.date} |`
+          : `| ${name} | not saved for this country | | | | |`,
       );
     }
     out.push("");

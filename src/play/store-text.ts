@@ -44,7 +44,12 @@ const Raw = z.object({
 export function cleanText(s: string | null | undefined): string | null {
   if (!s) return null;
   const t = he
-    .decode(s.replace(/<br\s*\/?>/gi, "\n").replace(/<[^>]*>/g, ""))
+    .decode(
+      s
+        .replace(/<br\s*\/?>/gi, "\n")
+        .replace(/<\/?(?:p|div|li|ul|ol|h[1-6]|tr|table|blockquote)\b[^>]*>/gi, "\n")
+        .replace(/<[^>]*>/g, ""),
+    )
     .replace(/\r\n?/g, "\n")
     .replace(/[ \t ]+/g, " ")
     .replace(/\n{3,}/g, "\n\n")

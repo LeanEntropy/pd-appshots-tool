@@ -131,10 +131,14 @@ export async function runStoreTextBackfill(
     const l = await o.client.listing(p.appId, p.gl, p.hl);
     if (l.status === "unavailable") result.notSold++;
     else if (l.status !== "ok" || !l.store) result.failed++;
-    else result.saved += saveListingTexts(storage, [l], o.log).saved;
+    else {
+      const r = saveListingTexts(storage, [l], o.log);
+      result.saved += r.saved;
+      result.failed += r.failed;
+    }
   }
   o.log(
-    `Done. Saved ${result.saved}. Not sold in that country any more: ${result.notSold}. Could not be read: ${result.failed}${result.failed ? " (run the command again to retry them)" : ""}.`,
+    `Done. Saved ${result.saved}. Not sold in that country any more: ${result.notSold}. Could not be read or saved: ${result.failed}${result.failed ? " (run the command again to retry them)" : ""}.`,
   );
   return result;
 }
