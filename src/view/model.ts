@@ -35,7 +35,7 @@ export interface InfoView {
   /** "Portrait, 1242 × 2208 (9:16)", from the pixels. */
   image: string | null;
   imageColours: { name: string; hex: string }[];
-  /** Image composition in plain words (one capture, capture inside art, several, art only). */
+  /** Image composition in plain words (one capture, capture inside art, several, full-screen art). */
   composition: string | null;
   /** Each in-game capture in plain words; empty when there is nothing worth saying. */
   captures: string[];
