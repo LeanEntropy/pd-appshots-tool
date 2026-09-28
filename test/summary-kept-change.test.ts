@@ -69,8 +69,27 @@ test("key recommendations: a kept position with a new line, a moved one or a log
     "position 2 keeps our image as it is",
   );
   assert.match(s.keyRecommendations[0]?.text ?? "", /\(keep our current position 1: new text\)$/);
-  assert.match(s.keyRecommendations[1]?.text ?? "", /moved from position 4\)$/);
-  assert.match(s.keyRecommendations[2]?.text ?? "", /moved from position 3\)$/);
+  assert.match(s.keyRecommendations[1]?.text ?? "", /\(keep our current position 4: moved here\)$/);
+  assert.match(s.keyRecommendations[2]?.text ?? "", /: moved here, add the logo\)$/);
+  // Only 5 fit: new pictures and new text go before images that only move.
+  const many = summaryPart(
+    input(
+      [
+        rec(1, "keep our current position 2", ["A"]),
+        rec(2, "keep our current position 1", ["B"]),
+        rec(3, "keep our current position 4", ["C"]),
+        rec(4, "keep our current position 3", ["D"]),
+        rec(5, "new capture", []),
+        rec(6, "recapture our position 5", []),
+        rec(7, "keep our current position 7", ["NEW LINE"]),
+      ],
+      [ours(1, ["B"]), ours(2, ["A"]), ours(3, ["D"]), ours(4, ["C"]), ours(7, ["OLD"])],
+    ),
+  );
+  assert.deepEqual(
+    many.keyRecommendations.map((k) => k.position),
+    [1, 2, 5, 6, 7],
+  );
   const logo = summaryPart(
     input([rec(1, "keep our current position 1", ["Upgrade"], true)], [ours(1, ["Upgrade"])]),
   );
@@ -88,5 +107,5 @@ test("key recommendations: without our analyses only a moved kept position count
     s.keyRecommendations.map((k) => k.position),
     [2],
   );
-  assert.match(s.keyRecommendations[0]?.text ?? "", /moved from position 3\)$/);
+  assert.match(s.keyRecommendations[0]?.text ?? "", /\(keep our current position 3: moved here\)$/);
 });

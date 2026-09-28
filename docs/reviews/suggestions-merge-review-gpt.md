@@ -31,3 +31,11 @@ as art in the composition statistics). No major finding outside the one below.
   (`test/report-builder-view.test.ts`, `test/report-list-view.test.ts`), which assert one flag
   in the title and none in the running text.
 - Doc comment: fixed. `flagText()` is now documented as titles and headings only.
+
+## Follow-up from the Rogue Legend Full check data
+
+On the real data, "(keep our current position 5: moved from position 5)" repeated itself, and
+moved images could crowd new pictures out of the top 5. The fix: the note now reads "moved
+here" (plus "new text" or a logo change where they apply), and new pictures and text changes rank
+before images that only move. The 5 shown stay in position order. A second gpt-5.6-sol review
+of this change found nothing major.
