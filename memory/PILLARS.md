@@ -153,6 +153,7 @@ Output per locale:
 - Bottom line first, in every report and communication: the top summary holds the TL;DR, key recommendations and the A/B tests to run; the details follow.
 - A SETTINGS page inside the tool lets the user control the parameters: review on/off per AI step, early-stop values, suggestion thresholds, budget limits, models, etc. No config-file editing.
 - Main country: user-selectable per project (default US). The Pilot always runs on the main country. After the Pilot, EVERY report type is open. A Full check of the main country is HIGHLY recommended (a builder warning with its cost) but not a blocker; reports built on Pilot-only data say so.
+- Priorities: reports and analysis quality come FIRST. PDF export is low priority (basic version only for now).
 - Multiple reports per project: pilot, full, single-country, and multi-country comparison (chosen countries and competitors). All are listed folded in the Report tab, and each can be exported to PDF. Planned in `docs/plan-reports.md`.
 - Sharing without a website (planned milestone 3b): "Share project" exports one zip (Full / Core only / Light / Report only, with the size shown first; Light carries analysis-sized copies, D7 decided 2026-09-28), and the friend uses "Import project" (incremental). No live shared sync folders.
 - Web-readiness rule (not building web now): keep AI providers, storage and jobs each behind one interface, so a hosted website is cheap later. No direct filesystem calls from feature code.
@@ -174,7 +175,7 @@ Output per locale:
 
 ## Repo
 - GitHub: https://github.com/LeanEntropy/pd-appshots-tool (private), remote `origin`, branch `master`.
-- Commit or push only when the user asks.
+- Commit AND push after every major stage (a milestone merged, a plan finalised, a significant fix), with tests passing. Standing instruction from the user, 2026-09-28.
 
 ## Key references
 - Tool landscape research: `reports/Game store screenshot analysis tools.md`, with notes in `research_notes/`.
