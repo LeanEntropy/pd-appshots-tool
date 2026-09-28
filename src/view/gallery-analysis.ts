@@ -148,6 +148,8 @@ document.addEventListener("click", (e) => {
   if (e.target.id === "cancelApproval") closeApproval();
 });
 document.addEventListener("change", (e) => { if (e.target.id === "stage") loadReport(); });
+// Past the pilot, the page opens on the core check batch.
+if (["core", "recommendations", "expand"].includes(APP.stage)) document.getElementById("stage").value = "core";
 document.getElementById("approvalDlg").addEventListener("close", () => { shownPlan = null; if (runInDialog) goTo("analysis"); runInDialog = false; });
 if (location.protocol.startsWith("http")) { pollStatus(); loadOverview(false); }
 else document.getElementById("status").innerHTML = '<h2>Analysis status</h2><p class="meta">Open this page with npm start to run and follow the analysis.</p>';

@@ -79,6 +79,7 @@ export async function projectRoute(
     return sendHtml(
       res,
       renderGalleryHtml(loaded, app.token, {
+        name: app.names(id),
         apiBase: `/p/${id}/api`,
         steps: s.steps,
         stage: s.stage,

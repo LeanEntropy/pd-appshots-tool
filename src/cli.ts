@@ -1,4 +1,4 @@
-import { writeFileSync } from "node:fs";
+﻿import { writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { refreshAllRecords } from "./analysis/record-refresh.ts";
 import { writeCurrentReport } from "./analysis/report-inputs.ts";
@@ -113,7 +113,9 @@ async function start(args: Args): Promise<number> {
     typeof project === "string" ? `${origin}/p/${encodeURIComponent(project)}/` : `${origin}/`;
   if (!args.flags.has("no-open")) openBrowser(url);
   if (!server) {
-    log(`The tool is already running: ${url} (opened in your browser).`);
+    log(
+      `The tool is already running: ${url}${args.flags.has("no-open") ? "" : " (opened in your browser)"}.`,
+    );
     return 0;
   }
   log(`Store Screenshot Recipe: ${url}

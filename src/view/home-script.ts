@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Projects home script: cards from the registry's cached summaries at once, then each card's
  * fresh state; the "Working now" strip polls /api/jobs (every 2 s while something runs); the
  * Import offer for a project made before the shared library (runs only when pressed).
@@ -83,7 +83,7 @@ async function loadImport() {
     setTimeout(loadImport, 2000);
     return;
   }
-  const done = imp && imp.state !== "running" ? '<div class="importbox"><h2>' + (imp.state === "done" ? "Import finished" : "The import did not finish") + "</h2><pre>" + esc(imp.text) + "</pre></div>" : "";
+  const done = imp && imp.state !== "running" ? '<div class="importbox"><h2>' + (imp.state === "done" ? "Import finished: " + esc(imp.id) + " now uses the shared library" : "The import did not finish") + "</h2><details" + (imp.state === "done" ? "" : " open") + "><summary>What was checked</summary><pre>" + esc(imp.text) + "</pre></details></div>" : "";
   if (imp && imp.state === "done") loadProjects();
   el.innerHTML = done + r.found.map((f) => '<div class="importbox"><h2>Found an existing project: ' + esc(f.name) + "</h2><p>" + f.images.toLocaleString() + " images, " + f.analyses + " analyses. Importing moves it into the shared library: nothing is downloaded again, nothing is sent to AI, and its approval numbers stay the same.</p>"
     + '<p><button type="button" class="btn" data-dry="' + esc(f.id) + '">Show what will happen</button> <button type="button" class="btn primary" data-import="' + esc(f.id) + '">Import it</button></p><div id="dry-' + esc(f.id) + '"></div></div>').join("");
