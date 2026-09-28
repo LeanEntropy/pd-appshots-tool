@@ -96,7 +96,10 @@ ${band(" > summary")} { display: flex; flex-wrap: wrap; align-items: baseline; g
 ${band(" > summary::after")} { align-self: center; }
 ${band(" .sec-t")} { flex: 1; min-width: 0; font-size: 24px; font-weight: 800; color: var(--k-h); letter-spacing: -.015em; line-height: 1.2; }
 ${band(":not([open]) .sec-t")} { font-size: 19px; }
-${band(" .secno")} { font-size: 26px; font-weight: 800; font-variant-numeric: tabular-nums; margin-right: -.1em; opacity: .4; color: transparent; background: linear-gradient(to right, var(--k-h) 1ch, transparent 1ch); -webkit-background-clip: text; background-clip: text; }
+${S} .rbox, ${S} .rbox > details.sec:not([data-sec]) > .sec-b { counter-reset: secno; }
+${S} .rbox details.sec[data-sec]:has(> summary .secno) { counter-increment: secno; }
+${band(" .secno")} { font-size: 0; margin-right: 4px; }
+${band(" .secno::before")} { content: counter(secno); font-size: 26px; font-weight: 800; opacity: .4; color: var(--k-h); }
 ${band(" > .sec-b")} { padding: 12px 0 0; }
 ${band(" h3")} { font-size: 12.5px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: var(--k-h); margin: 24px 0 4px; }
 ${S} .rbox > details.sec:not([data-sec]):not(.research) { margin: 0; padding: 0; border: 0; border-radius: 0; background: none; }

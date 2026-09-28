@@ -11,6 +11,7 @@ export const REPORT_LIST_CSS = `
 .rcard { margin-bottom: 14px; }
 .rcard > summary { cursor: pointer; display: flex; flex-wrap: wrap; gap: 6px 12px; align-items: center; }
 .rcard > summary .rc-desc { flex-basis: 100%; }
+@media print { .rcard > summary { padding: 10px 14px; } .rcard > summary .rc-name { font-size: 17px; font-weight: 700; } .rcard > .rc-b { padding: 4px 14px 12px; } }
 .rc-bar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 8px 0; }
 .pill.t-pilot { background: var(--accent); } .pill.t-core { background: var(--ok); } .pill.t-country { background: var(--mid); } .pill.t-compare { background: var(--accent-2); }
 .pill.newer { background: var(--warn); } .pill.none { background: var(--muted); }
