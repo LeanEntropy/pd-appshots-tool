@@ -78,6 +78,8 @@ export interface ReportData {
   recProblems: string[];
   /** Plain names for the codes used in the patterns and recommendations. */
   labels: Record<string, string>;
+  /** Named competitors not on Google Play in the core country: not in this check, by design. */
+  leftOut: string[];
 }
 
 export interface ReportInputs {
@@ -95,6 +97,8 @@ export interface ReportInputs {
   /** Why the last run did not write the synthesis, from the saved run status. */
   lastSkip: string | null;
   estimateUsd: [number, number];
+  /** Named competitors not on Google Play in the core country (left out of this check). */
+  leftOut?: string[];
 }
 
 function row(x: ReportInputs, slot: DeckManifest["slots"][number], excluded: string | null) {
@@ -254,5 +258,6 @@ export function buildReportData(x: ReportInputs): ReportData {
         )
       : [],
     labels: labelsFor(x.label, patterns, oursVs, ai?.recommendations ?? null),
+    leftOut: x.leftOut ?? [],
   });
 }

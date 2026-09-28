@@ -3,6 +3,7 @@ import { join } from "node:path";
 import gplay, { type IAppItem, type IAppItemFullDetail } from "google-play-scraper";
 import { sleep } from "../util/cli-io.ts";
 import { readJsonIfExists, safeName, writeJsonAtomic } from "../util/fsx.ts";
+import { notSoldThere } from "./answers.ts";
 import { sharedPlayQueue } from "./queue.ts";
 import { dedupScreenshots } from "./screenshots.ts";
 
@@ -99,6 +100,18 @@ export class PlayClient {
           gplay.app({ appId, lang: hl, country: gl }),
         );
         const raw = app.screenshots ?? [];
+        // Google Play still shows a game that is not sold in this country, marked unavailable:
+        // it has no store page there (its screenshots belong to another country).
+        if (notSoldThere(app)) {
+          result = {
+            ...base,
+            status: "unavailable",
+            title: app.title,
+            rawCount: 0,
+            screenshots: [],
+          };
+          break;
+        }
         result = {
           ...base,
           status: "ok",

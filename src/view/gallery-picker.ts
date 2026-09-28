@@ -21,7 +21,7 @@ function fit() {
   for (const id of selection) {
     const a = named.get(id); const n = a ? a.analysedLength : 0;
     if (kept.length >= DATA.core.max) skipped.push([id, "the maximum number of decks is reached"]);
-    else if (n <= 0) skipped.push([id, "no English deck"]);
+    else if (n <= 0) skipped.push([id, a && a.notInBaseline ? "not on Google Play in " + DATA.coreMarket.label : "no English deck"]);
     else if (total + n > DATA.core.cap) skipped.push([id, "does not fit within the cap"]);
     else { kept.push(id); total += n; }
   }

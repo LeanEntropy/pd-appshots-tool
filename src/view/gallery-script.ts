@@ -35,9 +35,12 @@ function thumbs(deck) {
 function appCard(a, selectable) {
   const ranks = Object.entries(a.chartRanks).map(([gl, r]) => gl.toUpperCase() + " #" + r).join(", ");
   const decks = a.decks.filter((d) => locale === "all" || d.gl === locale);
-  const pick = selectable ? '<label class="pick"><input type="checkbox" data-id="' + esc(a.appId) + '"' + (selection.includes(a.appId) ? " checked" : "") + "> Core competitor</label>" : "";
+  const nb = a.notInBaseline;
+  // A game with no page in the core country cannot be in the core check: no tick, a clear note.
+  const pick = selectable && !nb ? '<label class="pick"><input type="checkbox" data-id="' + esc(a.appId) + '"' + (selection.includes(a.appId) ? " checked" : "") + "> Core competitor</label>" : "";
   const counts = a.analysedLength === a.baselineLength ? String(a.baselineLength || "n/a") : a.analysedLength + " phone of " + a.baselineLength;
-  return '<section class="app"><header><h3>' + esc(a.name) + '</h3><span class="meta">' + esc(a.appId) + " &middot; " + esc(a.tier.replace("_", " ")) + (ranks ? " &middot; chart: " + ranks : "") + " &middot; English deck: " + counts + "</span>" + pick + "</header>"
+  const note = nb ? '<p class="nb">Not on Google Play in ' + esc(DATA.coreMarket.label) + ": left out of the core check. " + (nb.availableIn.length ? "Shown in " + esc(nb.availableIn.join(", ")) + "." : "Not found in any of the project's countries.") + "</p>" : "";
+  return '<section class="app"><header><h3>' + esc(a.name) + '</h3><span class="meta">' + esc(a.appId) + " &middot; " + esc(a.tier.replace("_", " ")) + (ranks ? " &middot; chart: " + ranks : "") + (nb ? "" : " &middot; English deck: " + counts) + "</span>" + pick + "</header>" + note
     + decks.map((d) => '<div class="deck"><div class="loc">' + esc(d.label) + (d.status === "ok" ? " (" + d.length + ")" : "") + '</div><div class="row">' + thumbs(d) + "</div></div>").join("")
     + "</section>";
 }

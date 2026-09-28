@@ -27,6 +27,29 @@ function perGame(plan: DownloadPlan, targets: DeckTarget[]): string[] {
   return lines;
 }
 
+/**
+ * Named competitors with no store page in the core country (United States): they are left out
+ * of the core check and downloaded only where they exist. One plain line each.
+ */
+export function notInCoreMarket(plan: DownloadPlan, config: Config): string[] {
+  const core = config.markets.find((m) => m.gl === config.core.market) ?? config.markets[0];
+  if (!core) return [];
+  const label = (gl: string) => config.markets.find((m) => m.gl === gl)?.label ?? gl.toUpperCase();
+  const out: string[] = [];
+  for (const c of config.competitors) {
+    const mine = plan.targets.filter((t) => t.appId === c.id && t.group === "named");
+    const at = mine.find((t) => t.gl === core.gl && t.hl === core.hl);
+    if (!at || plan.listings[deckKey(at)]?.status !== "unavailable") continue;
+    const where = mine
+      .filter((t) => plan.listings[deckKey(t)]?.status === "ok")
+      .map((t) => label(t.gl));
+    out.push(
+      `${c.name}: not on Google Play in ${core.label}, so it is not in the core check. ${where.length ? `Downloaded in ${where.join(", ")}.` : "Not found in any of the project's countries: nothing to download."}`,
+    );
+  }
+  return out;
+}
+
 /** Plain-language preview for the terminal. */
 export function describePlan(plan: DownloadPlan, config: Config): string {
   const s = plan.summary;
@@ -48,6 +71,7 @@ export function describePlan(plan: DownloadPlan, config: Config): string {
     ),
     `    Chart games: ${s.groups.chart.apps} games, listed per country in pending/download-preview.md`,
     "",
+    ...notInCoreMarket(plan, config).flatMap((l) => [`  Note: ${l}`, ""]),
     `  Not available in that country: ${s.total.unavailable} store pages. Could not be read: ${s.total.failed}.`,
     `  Screenshots repeated in another store page (downloaded once): ${s.repeatedAcrossDecks}.`,
     `  Images to download: ${s.total.uniqueImages} (full resolution). Estimated disk space: ${formatBytes(s.estimatedBytes)} (${plan.bytesSource === "measured" ? "measured from a sample" : "rough estimate"}, about ${formatBytes(plan.bytesPerImage)} per image).`,
@@ -81,6 +105,7 @@ export function previewMarkdown(plan: DownloadPlan, config: Config): string {
     "",
     `Made ${plan.createdAt}. No images downloaded yet. AI calls: 0.`,
     "",
+    ...notInCoreMarket(plan, config).flatMap((l) => [`> ${l}`, ""]),
     "| Group | Game | Country | Chart position | Screenshots | Status |",
     "|---|---|---|---|---|---|",
   ];

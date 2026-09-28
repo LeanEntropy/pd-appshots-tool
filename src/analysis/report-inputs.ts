@@ -1,5 +1,5 @@
 ﻿import { type LoadedConfig, loadTaxonomy, projectPaths } from "../config/load.ts";
-import { coreDeck } from "../core/selection.ts";
+import { coreDeck, notInCoreMarket } from "../core/selection.ts";
 import { legacyAnalysisJob, readJournal } from "../jobs/journal.ts";
 import { projectKey, workspaceStorage } from "../storage/index.ts";
 import { openImageDb } from "../store/imagedb.ts";
@@ -115,6 +115,7 @@ export function reportInputs(
     latestAi,
     lastSkip: skip,
     estimateUsd: proposed.estimate.usd,
+    leftOut: notInCoreMarket(loaded).map((c) => c.name),
   };
 }
 

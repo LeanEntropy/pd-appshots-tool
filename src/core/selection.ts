@@ -11,6 +11,18 @@ export function coreDeck(loaded: LoadedConfig, appId: string): DeckManifest | un
   return d?.status === "ok" ? d : undefined;
 }
 
+/**
+ * Named competitors that are not on Google Play in the core country (their store page there was
+ * confirmed "not available"): they are left out of the core check, not an error.
+ */
+export function notInCoreMarket(loaded: LoadedConfig): { appId: string; name: string }[] {
+  const m = coreMarket(loaded.config);
+  const decks = projectPaths(loaded).decks;
+  return loaded.config.competitors
+    .filter((c) => readDeck(decks, { appId: c.id, gl: m.gl, hl: m.hl })?.status === "unavailable")
+    .map((c) => ({ appId: c.id, name: c.name }));
+}
+
 /** Slots analysed under the configured device classes (store order kept). */
 export function analysedSlots(config: Config, deck: DeckManifest | undefined) {
   return (deck?.slots ?? []).filter((s) => config.core.deviceClasses.includes(s.deviceClass));

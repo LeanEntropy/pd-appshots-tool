@@ -75,6 +75,11 @@ export interface ViewApp {
   baselineLength: number;
   /** Baseline screenshots of the analysed device classes (what counts in the core check). */
   analysedLength: number;
+  /**
+   * Not on Google Play in the baseline country (United States): the game is left out of the
+   * core check and shown in the countries where it exists. Absent (not false) otherwise.
+   */
+  notInBaseline?: { availableIn: string[] };
   decks: ViewDeck[];
 }
 
@@ -144,6 +149,13 @@ export function buildViewModel(
         base?.status === "ok"
           ? base.slots.filter((s) => config.core.deviceClasses.includes(s.deviceClass)).length
           : 0,
+      ...(base?.status === "unavailable"
+        ? {
+            notInBaseline: {
+              availableIn: decks.filter((d) => d.status === "ok").map((d) => label(d.gl, d.hl)),
+            },
+          }
+        : {}),
       decks: decks.map((d) => ({
         gl: d.gl,
         hl: d.hl,

@@ -19,6 +19,7 @@ h1 { font-size: 20px; margin: 0 0 4px; } h2 { font-size: 16px; margin: 24px 0 8p
 .row img { height: 180px; width: auto; border-radius: 4px; border: 1px solid var(--line); display: block; }
 .badge { position: absolute; left: 4px; bottom: 4px; background: rgba(0,0,0,.7); color: #fff; font-size: 10px; padding: 1px 4px; border-radius: 3px; }
 .na { color: var(--warn); font-size: 12px; padding: 8px 0; }
+.nb { margin: 4px 0 8px; padding: 6px 10px; border-left: 5px solid var(--mid); background: var(--card); font-weight: 600; font-size: 13px; }
 .side { position: sticky; top: 64px; align-self: start; max-height: calc(100vh - 80px); overflow-y: auto; }
 #panel { top: 16px; align-self: start; background: var(--card); border: 1px solid var(--line); border-radius: 8px; padding: 12px; }
 #panel h2 { margin-top: 0; } #panel li { margin: 4px 0; } #panel li.skip { color: var(--warn); }

@@ -53,6 +53,17 @@ export const ProjectSettingsSchema = z
           tier: Tier,
           iconFile: z.string().optional(),
           addedAt: z.string(),
+          /**
+           * Set when the game is not on Google Play in the United States: the first of the
+           * project's countries where it was found. It is then not in the US core check.
+           */
+          reference: z
+            .object({
+              gl: z.string().regex(/^[a-z]{2}$/),
+              hl: z.string().min(2),
+              label: z.string(),
+            })
+            .optional(),
         }),
       )
       .max(60),
