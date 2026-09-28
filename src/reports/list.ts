@@ -4,8 +4,11 @@ import { reportInputs } from "../analysis/report-inputs.ts";
 import { type LoadedConfig, projectPaths } from "../config/load.ts";
 import { legacyAnalysisJob, readJournal } from "../jobs/journal.ts";
 import { workspaceStorage } from "../storage/index.ts";
+import { builderNewer, draftStatus } from "./builder-status.ts";
+import { eligibility } from "./eligibility.ts";
 import { mainMarketRef } from "./main-market.ts";
 import { syncPresetReports } from "./migrate.ts";
+import { type PlanContext, planContext } from "./scope-plan.ts";
 import { newerReason } from "./stale.ts";
 import { listDefs, readVersionInputs, runFolders, versionFileKey } from "./store.ts";
 import { isPreset, type ReportDef, TYPE_NAMES } from "./types.ts";
@@ -24,6 +27,8 @@ export interface ReportSummary {
   type: ReportDef["type"];
   typeName: string;
   countries: string;
+  /** The country codes of the report, the first one first. */
+  markets: string[];
   competitors: number | null;
   /** The competitors the newest version was built from (for the Pilot and Full check, the pick). */
   competitorNames: string[];
@@ -59,6 +64,8 @@ export function listReports(loaded: LoadedConfig): ReportSummary[] {
   const folders = runFolders(s, paths);
   const job = readJournal(s, paths).jobs.ai ?? legacyAnalysisJob(s, paths) ?? undefined;
   const now = new Map<string, ReportInputs>();
+  let elig: ReturnType<typeof eligibility> | undefined;
+  let ctx: PlanContext | undefined;
   const current = (stage: "pilot" | "core") => {
     let x = now.get(stage);
     if (!x) {
@@ -74,9 +81,10 @@ export function listReports(loaded: LoadedConfig): ReportSummary[] {
         id: v.id,
         generatedAt: v.generatedAt,
         archived: v.archived,
-        format: folders.get(v.id)?.has("report-data.json")
-          ? ("data" as const)
-          : ("markdown" as const),
+        format:
+          folders.get(v.id)?.has("report-data.json") || folders.get(v.id)?.has("countries.json")
+            ? ("data" as const)
+            : ("markdown" as const),
       }))
       .reverse();
     const newest = versions[0];
@@ -109,6 +117,13 @@ export function listReports(loaded: LoadedConfig): ReportSummary[] {
         };
       const hash = inputs?.dataHash ?? readLatest(paths, d.type)?.dataHash ?? null;
       if (newest) newer = newerReason(x, main, inputs, hash);
+    } else if (!newest) {
+      ctx ??= planContext(loaded);
+      status = { kind: "draft", text: draftStatus(loaded, d, ctx) };
+    } else {
+      elig ??= eligibility(loaded);
+      ctx ??= planContext(loaded);
+      newer = builderNewer(loaded, d, inputs, elig, ctx);
     }
     return {
       id: d.id,
@@ -116,6 +131,7 @@ export function listReports(loaded: LoadedConfig): ReportSummary[] {
       type: d.type,
       typeName: TYPE_NAMES[d.type],
       countries: countriesOf(inputs?.scope.markets ?? d.scope.markets),
+      markets: (inputs?.scope.markets ?? d.scope.markets).map((m) => m.gl),
       competitors: names ? names.length : null,
       competitorNames: names ?? [],
       generatedAt: newest?.generatedAt ?? null,

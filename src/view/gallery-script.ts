@@ -11,8 +11,11 @@ import { REPORT_PARTS_SCRIPT } from "./gallery-report-parts.ts";
 import { RUN_SCRIPT } from "./gallery-run.ts";
 import { STORE_SCRIPT } from "./gallery-store.ts";
 import { PLAY_CARD_SCRIPT } from "./play-card.ts";
+import { BUILDER_SCRIPT } from "./report-builder.ts";
+import { BUILDER_REVIEW_SCRIPT } from "./report-builder-review.ts";
 import { EXPORT_SCRIPT } from "./report-export.ts";
 import { REPORT_LIST_SCRIPT } from "./report-list.ts";
+import { SUGGEST_SCRIPT } from "./report-suggest.ts";
 import { REPORT_SUMMARY_SCRIPT } from "./report-summary.ts";
 
 /** Client-side script for the raw deck gallery. Plain JS, no external libraries. */
@@ -68,4 +71,4 @@ document.getElementById("locale").innerHTML = '<option value="all">All countries
 `;
 
 export const GALLERY_SCRIPT = `${ACTION_SCRIPT}
-${RENDER_SCRIPT}\n${INFO_SCRIPT}\n${STORE_SCRIPT}\n${PICKER_SCRIPT}\n${GRID_SCRIPT}\n${NAV_SCRIPT}\n${REPORT_SCRIPT}\n${REPORT_PARTS_SCRIPT}\n${REPORT_SUMMARY_SCRIPT}\n${REPORT_LIST_SCRIPT}\n${RUN_SCRIPT}\n${ANALYSIS_SCRIPT}\n${EXPAND_SCRIPT}\n${EXPORT_SCRIPT}\n${PLAY_CARD_SCRIPT}\n${ADD_SCRIPT}\nrender();\nloadSaved();\naddInit();\nshowPage(false);\n`;
+${RENDER_SCRIPT}\n${INFO_SCRIPT}\n${STORE_SCRIPT}\n${PICKER_SCRIPT}\n${GRID_SCRIPT}\n${NAV_SCRIPT}\n${REPORT_SCRIPT}\n${REPORT_PARTS_SCRIPT}\n${REPORT_SUMMARY_SCRIPT}\n${REPORT_LIST_SCRIPT}\n${RUN_SCRIPT}\n${ANALYSIS_SCRIPT}\n${BUILDER_SCRIPT}\n${BUILDER_REVIEW_SCRIPT}\n${SUGGEST_SCRIPT}\n${EXPAND_SCRIPT}\n${EXPORT_SCRIPT}\n${PLAY_CARD_SCRIPT}\n${ADD_SCRIPT}\nrender();\nloadSaved();\naddInit();\nshowPage(false);\n`;

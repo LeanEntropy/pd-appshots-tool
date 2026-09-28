@@ -28,6 +28,11 @@ export const ReportScopeSchema = z.object({
   /** App ids, in priority order. Empty for the presets: they are derived from the pick. */
   competitors: z.array(z.string()).default([]),
   includeCharts: z.array(z.string()).default([]),
+  /**
+   * Game and country combinations the user chose to leave out to stay within the spending limit
+   * (explicit, shown in the report; distinct from "not sold here").
+   */
+  leftOut: z.array(z.object({ appId: z.string(), gl: z.string() })).optional(),
 });
 export type ReportScope = z.infer<typeof ReportScopeSchema>;
 
@@ -68,6 +73,8 @@ export const VersionInputsSchema = z.object({
   records: z.array(
     z.object({
       appId: z.string(),
+      /** The country of the image (reports of other countries than the main one). */
+      gl: z.string().optional(),
       position: z.number(),
       imageId: z.string().nullable(),
       updatedAt: z.string().nullable(),
@@ -84,6 +91,8 @@ export const VersionInputsSchema = z.object({
   dataHash: z.string().nullable(),
   /** The analysis run that wrote the AI parts, if any. */
   aiRunId: z.string().nullable(),
+  /** Reports of the builder: the check they rest on ("pilot" while there is no Full check). */
+  base: z.enum(["pilot", "core"]).nullable().optional(),
 });
 export type VersionInputs = z.infer<typeof VersionInputsSchema>;
 

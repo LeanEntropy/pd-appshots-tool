@@ -1,62 +1,40 @@
 /**
- * The expansion question after the core check: more English competitors and/or other countries,
- * each with its image count. The choice is saved automatically; running an expansion is the
- * next stage, so the page says it is waiting for that step.
+ * "What next?" (plan-reports 5, milestone R3): after the Pilot, the expansion question becomes a
+ * card with three buttons that open the report builder prefilled: Run the Full check (highly
+ * recommended while there is none), Compare countries, and Add more competitors in the main
+ * country. Saved expansion choices were turned into draft reports (listed below). Nothing runs
+ * from here: the builder shows its numbers first.
  */
 export const EXPAND_SCRIPT = `
-let expansion = null;
+let whatNext = null;
 
-function expansionHtml(o) {
-  const saved = o.saved || { competitors: [], countries: [] };
-  const box = (name, value, text, on) => '<label><input type="checkbox" name="' + name + '" value="' + esc(value) + '"' + (on ? " checked" : "") + "> " + text + "</label>";
-  const comps = o.competitors.map((c) => box("xcomp", c.appId, esc(c.name) + ' <span class="meta">(' + c.images + " English images)</span>", saved.competitors.includes(c.appId))).join("")
-    || '<p class="meta">Every competitor with an English deck is in the core check already.</p>';
-  const countries = o.countries.map((c) => box("xcountry", c.gl, esc(c.label) + ' <span class="meta">(' + c.images + " images from ours and the core competitors)</span>", saved.countries.includes(c.gl))).join("")
-    || '<p class="meta">No other countries in this project.</p>';
-  const note = saved.savedAt
-    ? '<p class="ok"><strong>Your choice is saved.</strong> It is waiting for the expansion step, which comes in the next update of the tool. Nothing runs and nothing is spent until then.</p>'
-    : '<p class="meta">Tick what you want next. Your choice saves automatically. Nothing runs until the expansion step, and it will show its numbers for approval first.</p>';
-  return '<section class="expand" aria-labelledby="expandTitle"><h3 id="expandTitle">How do you want to expand?</h3>'
-    + "<fieldset><legend>More English competitors</legend>" + comps + "</fieldset>"
-    + "<fieldset><legend>Other countries</legend>" + countries + "</fieldset>"
-    + '<div id="expandNote" role="status" aria-live="polite">' + note + "</div></section>";
+function whatNextHtml(o) {
+  const core = !o.coreReady
+    ? '<p><button type="button" class="primary wnext" data-next="core">Run the Full check</button> <span class="meta">Highly recommended: it strengthens every other report.</span></p>'
+    : "";
+  return '<section class="card expand" aria-labelledby="expandTitle"><h3 id="expandTitle">What next?</h3>' + core
+    + '<p><button type="button" class="wnext" data-next="compare">Compare countries</button> <button type="button" class="wnext" data-next="more">Add more competitors in ' + esc(theCountryOf(o.main.label)) + "</button></p>"
+    + '<p class="meta">Each opens the report builder with the choices filled in. It shows the exact images and cost first; nothing runs until you approve.</p></section>';
 }
 
 async function loadExpansion() {
   const el = document.getElementById("expansion");
   if (!el || !location.protocol.startsWith("http")) return;
   try {
-    const st = await getJson(API + "/state");
-    if (st.stage !== "recommendations" && st.stage !== "expand") { el.innerHTML = ""; return; }
-    expansion = await getJson(API + "/expansion");
-    el.innerHTML = expansionHtml(expansion);
-  } catch (e) { el.innerHTML = '<p class="act-msg bad" role="alert">The expansion choice could not be loaded: ' + esc(actReason(e)) + "</p>"; }
+    whatNext = await getJson(API + "/reports/builder");
+    el.innerHTML = whatNext.types.country.open ? whatNextHtml(whatNext) : "";
+  } catch (e) { el.innerHTML = '<p class="act-msg bad" role="alert">The next steps could not be loaded: ' + esc(actReason(e)) + "</p>"; }
 }
 
-// Each tick saves at once, one save after another; only the latest answer redraws the choice.
-let expandChain = Promise.resolve();
-let expandRev = 0;
-function saveExpansionChoice() {
-  const pick = (n) => [...document.querySelectorAll('input[name="' + n + '"]:checked')].map((x) => x.value);
-  const body = { competitors: pick("xcomp"), countries: pick("xcountry") };
-  const rev = ++expandRev;
-  actLine(document.getElementById("expandNote"), "busy", "Saving your choice...");
-  expandChain = expandChain.then(async () => {
-    try {
-      const r = await send(API + "/expansion", body);
-      if (rev !== expandRev) return;
-      expansion = r;
-      document.getElementById("expansion").innerHTML = expansionHtml(expansion);
-    } catch (e) {
-      if (rev !== expandRev) return;
-      const msg = "Your choice was not saved: " + actReason(e);
-      actLine(document.getElementById("expandNote"), "bad", msg);
-      toast(msg, "bad");
-    }
-  });
-}
-
-document.addEventListener("change", (e) => { if (e.target.name === "xcomp" || e.target.name === "xcountry") saveExpansionChoice(); });
-window.addEventListener("hashchange", () => { if (pageFromHash(location.hash) === "report") loadExpansion(); });
-if (pageFromHash(location.hash) === "report") loadExpansion();
+document.addEventListener("click", (e) => {
+  const b = e.target.closest && e.target.closest("button.wnext");
+  if (!b || !whatNext) return;
+  const main = whatNext.main;
+  const pre = b.dataset.next === "core" ? { type: "core" }
+    : b.dataset.next === "compare" ? { type: "compare", scope: { type: "compare", markets: [], competitors: whatNext.pick, includeCharts: [] } }
+    : { type: "country", scope: { type: "country", markets: [main], competitors: whatNext.pick, includeCharts: [] } };
+  act(b, { busy: "Opening the builder...", run: () => openBuilder(pre), done: "" });
+});
+window.addEventListener("hashchange", () => { if (pageFromHash(location.hash) === "report") { loadExpansion(); loadSuggestions(); } });
+if (pageFromHash(location.hash) === "report") { loadExpansion(); loadSuggestions(); }
 `;

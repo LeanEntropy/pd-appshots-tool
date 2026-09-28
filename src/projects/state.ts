@@ -5,6 +5,7 @@ import { fitFor } from "../core/selection.ts";
 import { readJournal } from "../jobs/journal.ts";
 import { analysisStatus } from "../jobs/status.ts";
 import { presetOutcome } from "../reports/ready.ts";
+import { suggestionsView } from "../reports/suggest.ts";
 import { workspaceStorage } from "../storage/index.ts";
 import { latestRun } from "../view/model.ts";
 
@@ -42,6 +43,8 @@ export interface ProjectState {
   notices: string[];
   /** Step bar: each step done, current or still to come. */
   steps: { label: string; state: "done" | "current" | "todo" }[];
+  /** The home card's "Next" line: the top suggested research (only when asked for). */
+  suggestion?: { text: string; href: string } | null;
 }
 
 const STEPS: { key: ProjectStage[]; label: string }[] = [
@@ -91,6 +94,7 @@ export function draftState(id: string, s?: ProjectSettings): ProjectState {
 export function projectState(
   loaded: LoadedConfig,
   names: (id: string) => string = (x) => x,
+  o: { suggestion?: boolean } = {},
 ): ProjectState {
   const paths = projectPaths(loaded);
   const id = paths.projectId;
@@ -174,14 +178,17 @@ export function projectState(
       progress: { done, total, label: `${done} of ${total} ${stage} images analysed` },
     };
   }
+  // After any interrupted job (it returned above): the top suggested research, code only.
+  const suggestion = o.suggestion ? topSuggestion(loaded, gallery("report")) : undefined;
   const increments = readJournal(workspaceStorage(paths.workspace), paths).increments;
   if (increments.length)
     return {
-      ...base("expand", "Expansion chosen: waiting for the expansion step", {
-        label: "Open the report",
+      ...base("expand", "Expansion chosen: it is a draft report in the Report tab", {
+        label: "Open the reports",
         href: gallery("report"),
       }),
       steps: steps("expand", core.ready),
+      ...(suggestion === undefined ? {} : { suggestion }),
     };
   const pct = core.score === null ? "" : ` (${Math.round(core.score * 100)}%)`;
   return {
@@ -193,5 +200,15 @@ export function projectState(
       { label: core.ready ? "Create a report" : "Open the report", href: gallery("report") },
     ),
     steps: steps("recommendations", core.ready),
+    ...(suggestion === undefined ? {} : { suggestion }),
   };
+}
+
+function topSuggestion(loaded: LoadedConfig, href: string): ProjectState["suggestion"] {
+  try {
+    const top = suggestionsView(loaded).suggestions.find((s) => s.category !== "same");
+    return top ? { text: `${top.title} (${top.costText}): ${top.why}`, href } : null;
+  } catch {
+    return null;
+  }
 }

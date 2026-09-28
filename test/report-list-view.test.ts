@@ -50,6 +50,7 @@ const summary = (o: Partial<ReportSummary>): ReportSummary => ({
   type: "pilot",
   typeName: "Pilot",
   countries: "United States (English)",
+  markets: ["us"],
   competitors: 2,
   competitorNames: ["Archero 2", "Capybara Go"],
   generatedAt: "2026-09-27T22:29:48.097Z",

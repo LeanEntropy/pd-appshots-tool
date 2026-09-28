@@ -3,6 +3,7 @@ import { artWording, artWordingDeep } from "../analysis/art-wording.ts";
 import { buildReportData } from "../analysis/report-data.ts";
 import { reportInputs } from "../analysis/report-inputs.ts";
 import { type LoadedConfig, projectPaths } from "../config/load.ts";
+import { draftsFromExpansion } from "../reports/drafts.ts";
 import { listReports } from "../reports/list.ts";
 import { mainMarketRef } from "../reports/main-market.ts";
 import {
@@ -34,10 +35,15 @@ function findDef(loaded: LoadedConfig, id: string) {
 }
 
 export function getReports(loaded: LoadedConfig): ApiResponse {
+  // Saved expansion choices become draft reports, once (plan-reports 7).
+  const drafts = draftsFromExpansion(loaded);
   return {
     status: 200,
     body: {
       reports: listReports(loaded),
+      notice: drafts.length
+        ? `Your saved expansion choice is now a draft report: ${drafts.map((d) => `“${d.name}”`).join(", ")}.`
+        : null,
       mainCountry: mainMarketRef(loaded).label,
       // The Settings page's Export PDF defaults (the page's export dialog starts from them).
       pdf: settingsOf(loaded.config).pdf,
@@ -79,8 +85,47 @@ export function getReportVersion(loaded: LoadedConfig, id: string, vid: string):
       status: 404,
       body: { problems: ["This version could not be found. Reload the page."] },
     };
-  const meta = { versionId: entry.id, generatedAt: entry.generatedAt, archived: entry.archived };
+  let research: unknown = null;
+  try {
+    if (files.has("suggestions.json"))
+      research = s.getJson(versionFileKey(paths, entry.id, "suggestions.json")) ?? null;
+  } catch {
+    // An unreadable list is simply not shown.
+  }
+  const meta = {
+    versionId: entry.id,
+    generatedAt: entry.generatedAt,
+    archived: entry.archived,
+    research,
+  };
   let note = "";
+  if (files.has("countries.json")) {
+    try {
+      const raw = s.getJson(versionFileKey(paths, entry.id, "countries.json")) as {
+        countries?: { gl?: unknown; label?: unknown; data?: unknown }[];
+      };
+      const countries = (raw?.countries ?? []).filter(
+        (c) => typeof c.label === "string" && SavedDataSchema.safeParse(c.data).success,
+      );
+      if (countries.length)
+        return {
+          status: 200,
+          body: {
+            ...meta,
+            countries: countries.map((c) => ({ ...c, data: artWordingDeep(c.data) })),
+            // The written report too: the PDF export prints it (one renderer per country page).
+            html: files.has("report.md")
+              ? markdownToHtml(
+                  artWording(s.getText(versionFileKey(paths, entry.id, "report.md")) ?? ""),
+                ).replaceAll('"../../images/', '"../images/')
+              : "",
+          },
+        };
+    } catch {
+      // Unreadable: shown as its markdown below.
+    }
+    note = "The saved data of this version is incomplete, so it is shown as its written report.";
+  }
   if (files.has("report-data.json")) {
     try {
       const raw = s.getJson(versionFileKey(paths, entry.id, "report-data.json"));
