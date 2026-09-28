@@ -130,8 +130,8 @@ test("add a competitor from the Competitors tab: checks, preview, download only 
   }
 });
 
-test("a saved game preview is refused once the game or countries changed", async () => {
-  const { w, id } = await downloadedProject();
+test("stale previews refused; a failed image is reported, not hidden; one approval downloads once", async () => {
+  const { w, id, store } = await downloadedProject();
   try {
     await w.post(`/p/${id}/api/competitors/add`, { id: "com.dxx.firenow", tier: "direct" });
     await w.post(`/p/${id}/api/competitors/check`, { id: "com.dxx.firenow" });
@@ -144,6 +144,40 @@ test("a saved game preview is refused once the game or countries changed", async
     assert.match(gamePlanProblem(loaded, edited, "com.dxx.firenow") ?? "", /Check the store again/);
     const old = { ...plan, createdAt: "2020-01-01T00:00:00.000Z" };
     assert.match(gamePlanProblem(loaded, old, "com.dxx.firenow") ?? "", /hours old/);
+
+    const api = (p: string) => `/p/${id}/api/competitors${p}`;
+    const fetchImage = store.deps.fetchImage;
+    store.deps.fetchImage = async (url) => {
+      if (url.includes("/f2")) throw new Error("HTTP 500");
+      return (fetchImage as NonNullable<typeof fetchImage>)(url);
+    };
+    const approve = { id: "com.dxx.firenow", planHash: plan.planHash };
+    assert.equal((await w.post(api("/download"), approve)).status, 202);
+    await settle(id);
+    const job = (await w.get(api("/job"))).json().job;
+    assert.equal(job.state, "failed");
+    assert.match(job.error, /1 images downloaded, but 1 could not be downloaded.*Check the store/);
+    const row = ((await w.get(api(""))).json().competitors as Row[]).find(
+      (c) => c.id === "com.dxx.firenow",
+    );
+    assert.deepEqual(
+      [row?.downloaded, (row as { incomplete?: boolean })?.incomplete],
+      [false, true],
+    );
+
+    // The same approval again fetches only what is missing, then cannot be replayed.
+    store.deps.fetchImage = fetchImage;
+    store.fetched.length = 0;
+    assert.equal((await w.post(api("/download"), approve)).status, 202);
+    await settle(id);
+    assert.equal((await w.get(api("/job"))).json().job.state, "finished");
+    assert.deepEqual(
+      store.fetched.map((f) => f.replace(/.*\//, "")),
+      ["f2=s0"],
+    );
+    const replay = await w.post(api("/download"), approve);
+    assert.equal(replay.status, 409);
+    assert.match(replay.body.problems?.[0] ?? "", /downloaded already/);
   } finally {
     w.server.close();
   }

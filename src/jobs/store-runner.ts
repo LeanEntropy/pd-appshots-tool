@@ -114,6 +114,7 @@ export function enqueueStore(
         held.check();
         save({ progress: { phase: input.kind, done, total, message, spentUsd: 0 } });
       });
+      held.check();
       save({ state: "finished", finishedAt: new Date().toISOString() });
     } catch (e) {
       save({

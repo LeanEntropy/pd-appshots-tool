@@ -75,7 +75,7 @@ function drawAddList() {
   if (sum) sum.textContent = "Competitors in this project (" + ADD.list.length + ")";
   el.innerHTML = '<ul class="addlist">' + ADD.list.map((c) => {
     const tier = (TIERS.find((t) => t[0] === c.tier) || [c.tier, c.tier])[1];
-    const state = c.downloaded ? (c.inPick ? "Downloaded, in your core pick" : "Downloaded") : "Not downloaded yet";
+    const state = c.downloaded ? (c.inPick ? "Downloaded, in your core pick" : "Downloaded") : c.incomplete ? "Download incomplete: check the store to fetch what is missing" : "Not downloaded yet";
     const actions = ADD.confirm === c.id
       ? '<div class="addconfirm" role="group" aria-label="Confirm removal"><p><strong>Remove ' + esc(c.name) + " from this project?</strong> It leaves the competitor list" + (c.inPick ? " and your core pick" : "") + ". Its screenshots and analyses stay in the shared library, so adding it back later costs nothing.</p>"
         + '<button type="button" class="primary" data-rmyes="' + esc(c.id) + '" data-act-key="rm:' + esc(c.id) + '">Yes, remove it</button> <button type="button" data-rmno="1">Cancel</button></div>'
@@ -175,6 +175,7 @@ function addDownload(btn) {
       await send(API + "/competitors/download", { id: p.appId, planHash: p.planHash });
       addEnded(await addWait(progress), "The download");
     },
+    fail: () => { ADD.preview = null; drawAddFlow(); addLoad().catch(() => {}); },
     done: () => { setTimeout(() => location.reload(), 1500); return p.name + " downloaded. Reloading the page to show it..."; } });
 }
 

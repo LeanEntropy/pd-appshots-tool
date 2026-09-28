@@ -90,6 +90,10 @@ export function postDownload(app: AppContext, loaded: LoadedConfig, raw: unknown
   const problem = gamePlanProblem(loaded, plan, id);
   if (problem) return conflict(problem);
   const paths = projectPaths(loaded);
+  // One approval downloads once: a replayed request after it finished starts nothing.
+  const last = storeStatus(app.storage, paths);
+  if (last?.kind === "download" && last.planHash === planHash && last.state === "finished")
+    return conflict(`${name} is downloaded already. Reload the page.`);
   const frozen = projectKey(paths, "state", "approved", `download-${planHash}.json`);
   app.storage.putJsonOnce(frozen, plan);
   const r = enqueueStore(
@@ -98,10 +102,10 @@ export function postDownload(app: AppContext, loaded: LoadedConfig, raw: unknown
     async (progress) => {
       const approved = app.storage.getJson(frozen) as DownloadPlan;
       progress(0, 0, `Downloading the images of ${name}`);
-      await downloadGame(
+      const done = await downloadGame(
         loaded,
         approved,
-        (done, total) => progress(done, total, `Downloading the images of ${name}`),
+        (n, total) => progress(n, total, `Downloading the images of ${name}`),
         app.storeDeps,
       );
       progress(1, 1, "Building the deck pages");
@@ -111,6 +115,11 @@ export function postDownload(app: AppContext, loaded: LoadedConfig, raw: unknown
         // The workspace page is built live; the offline pages can be rebuilt later.
         console.error("Deck pages after adding a competitor:", e);
       }
+      // What was fetched is kept; the job says plainly that something is missing.
+      if (done.failed.length || approved.incomplete.length)
+        throw new Error(
+          `${name}: ${done.downloaded} images downloaded, but ${done.failed.length ? `${done.failed.length} could not be downloaded` : "some store pages could not be read"}. What was downloaded is kept. Press Check the store to fetch what is missing.`,
+        );
     },
     { names: app.names },
   );

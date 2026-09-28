@@ -51,11 +51,19 @@ export function getCompetitors(app: AppContext, loaded: LoadedConfig): ApiRespon
     status: 200,
     body: {
       ourAppId: s.ourApp.id,
-      competitors: s.competitors.map((c) => ({
-        ...c,
-        downloaded: !!run?.decks.some((d) => d.appId === c.id && d.group === "named"),
-        inPick: pick.includes(c.id),
-      })),
+      competitors: s.competitors.map((c) => {
+        const decks = run?.decks.filter((d) => d.appId === c.id && d.group === "named") ?? [];
+        // Complete: every store page was read and every screenshot is on disk.
+        const complete = decks.every(
+          (d) => d.status !== "error" && d.slots.every((x) => x.imageId),
+        );
+        return {
+          ...c,
+          downloaded: decks.length > 0 && complete,
+          incomplete: decks.length > 0 && !complete,
+          inPick: pick.includes(c.id),
+        };
+      }),
       job: storeStatus(app.storage, paths),
     },
   };
@@ -137,7 +145,7 @@ export function postRemoveCompetitor(
     return conflict(`${gone.name} is being read from Google Play right now. Remove it afterwards.`);
   const pick = coreOrder(loaded, paths);
   const inPick = pick.includes(id);
-  write(app, { ...s, competitors: s.competitors.filter((c) => c.id !== id) });
+  // The pick first: if the tool stops between the two writes, the game is only unticked.
   const rc = readRunConfig(paths);
   if (rc && inPick) {
     const { confirmed: _cleared, ...rest } = rc;
@@ -148,6 +156,7 @@ export function postRemoveCompetitor(
       updatedAt: new Date().toISOString(),
     });
   }
+  write(app, { ...s, competitors: s.competitors.filter((c) => c.id !== id) });
   return {
     status: 200,
     body: {

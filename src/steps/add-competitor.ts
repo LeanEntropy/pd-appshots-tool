@@ -78,6 +78,7 @@ export async function checkGame(
     progress(++done, targets.length, message);
   }
   saveListingTexts(workspaceStorage(paths.workspace), Object.values(listings), () => {});
+  progress(done, targets.length, `Measuring the image sizes of ${name}`);
   const fallback = config.download.estimatedBytesPerImage;
   const measured =
     deps.measure === false
