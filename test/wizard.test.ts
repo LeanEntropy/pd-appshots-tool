@@ -227,7 +227,15 @@ test("wizard: a competitor not on Google Play in the US is allowed, with its ref
         /Japan \(Japanese\) is no longer ticked/.test(x),
       ),
     );
-    await w.post(`/p/${id}/api/settings`, { markets: [{ gl: "jp", hl: "ja" }] });
+    // A competitor that exists only in a country added in the same save is found there.
+    const both = await w.post(`/p/${id}/api/settings`, {
+      markets: [{ gl: "jp", hl: "ja" }],
+      competitors: [
+        { id: "com.jp.only", tier: "direct" },
+        { id: "com.jp.two", tier: "reference" },
+      ],
+    });
+    assert.equal(both.status, 200, both.body.problems?.[0]);
     assert.equal((await w.post(`/p/${id}/api/settings/finish`, {})).status, 200);
     assert.equal(loadProject(id, { root: w.root }).config.competitors[0]?.id, "com.jp.only");
   } finally {

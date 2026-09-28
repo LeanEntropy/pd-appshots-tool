@@ -114,7 +114,8 @@ export class PlayLookup {
     at: { gl: string; hl: string } = { gl: "us", hl: "en" },
   ): Promise<PlayDetails> {
     if (!PACKAGE_ID.test(appId)) throw notOnPlay();
-    const file = `${at.gl}-${at.hl}.json`;
+    // v2: entries from before the "available: false" check are not trusted (read again).
+    const file = `${at.gl}-${at.hl}.v2.json`;
     const k = key("shared", "cache", "play", "details", appSegment(appId), file);
     const hit = this.cached(k, DETAILS_HOURS);
     if (hit) {

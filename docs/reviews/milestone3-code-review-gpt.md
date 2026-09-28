@@ -62,3 +62,25 @@ All tests (148), `npm run typecheck` and `npm run lint` pass after the fixes.
 - Refusing a competitor unavailable in US Play is implemented consistently.
 - US-English is forced first, catalogue alternatives are checked, and the specified default Asia markets are present.
 - Finished projects correctly reject wizard settings changes with 409.
+
+## Follow-up review: competitors not on Google Play in the United States
+
+Date: 2026-09-28. Reviewer: gpt-5.6-sol (same invocation), on the diff of the change that allows such competitors (user decision): lookup in the project's other countries, the reference warning, and the pipeline showing them as left out of the US core. The change also treats a Play page marked `available: false` as "not available" (found live: Google Play serves a Japan-only game's page for country=us).
+
+3 findings: 2 fixed, 1 declined.
+
+| # | Sev. | Finding | Outcome | What was done / why |
+|---|---|---|---|---|
+| 1 | Med. | A save that adds a country and a competitor together looks the competitor up in the old country list | Fixed | The countries of the save are checked first and used for the lookup. Test added |
+| 2 | Med. | Lookup cache entries written before the availability check would still count a not-sold game as in the US for up to 24 hours | Fixed | The details cache key is versioned (`<gl>-<hl>.v2.json`), so older entries are read again. The download's store-page cache is per project and expires after 24 hours; a store check after that reads the availability afresh |
+| 3 | Low | No direct test of the download listing with `available: false` | Declined | `PlayClient.listing` calls the scraper directly (not injectable), and making it so is outside this change; the path was checked live (the Japan-only game's US page comes back "unavailable", 0 screenshots), and the lookup path has a test |
+
+Areas with no finding: order of the fallback countries, the core fit leaving the competitor out, the download preview, grid and report wording, and the saved reference warnings.
+
+### Raw review
+
+- **Medium — `src/server/routes-setup.ts`, `postSettings`: new competitors are looked up using stale markets.** The first lookup uses `before.markets`, so a settings request that adds a market and a competitor together rejects a competitor available only in the newly added market. Build the merged settings first and pass its markets to `detailsAnywhere`. Add a combined-update regression test.
+- **Medium — `src/play/lookup.ts`, `PlayLookup.details`: old cached US results bypass the new availability check.** Previous versions cached normalized `PlayDetails`, losing `available:false`; those entries remain valid for 24 hours and are treated as US-available, so the warning/reference is missing. Version the details-cache key or invalidate legacy entries.
+- **Low — `src/play/client.ts`, `PlayClient.listing`: missing direct regression test.** Tests cover `available:false` through lookup, but not the download-listing path that must emit an `unavailable` manifest with no screenshots.
+
+No finding: alternate-country ordering, core-fit exclusion, preview/grid/report presentation, and persisted reference warnings are otherwise handled consistently.

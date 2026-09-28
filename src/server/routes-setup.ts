@@ -89,6 +89,10 @@ export async function postSettings(
         ],
       },
     };
+  // The countries this save ends with: a competitor may exist only in a country added now.
+  const checked = p.data.markets ? checkMarkets(app.countries(), p.data.markets) : null;
+  if (checked && "problem" in checked) return bad(checked.problem);
+  const markets = checked ? checked.markets : before.markets;
   const found = new Map<string, { app: PlayDetails; reference: Reference | null }>();
   if (p.data.competitors) {
     const seen = new Set<string>();
@@ -100,7 +104,7 @@ export async function postSettings(
       if (before.competitors.some((x) => x.id === c.id)) continue;
       try {
         // Not on Google Play in the US: read in the first project country where it exists.
-        found.set(c.id, await app.play.detailsAnywhere(c.id, before.markets));
+        found.set(c.id, await app.play.detailsAnywhere(c.id, markets));
       } catch (e) {
         return playFailure(e);
       }
@@ -119,7 +123,8 @@ export async function postSettings(
         next.competitors.push({ ...had, tier: c.tier });
         continue;
       }
-      const f = found.get(c.id) ?? (await app.play.detailsAnywhere(c.id, s.markets));
+      const f =
+        found.get(c.id) ?? (await app.play.detailsAnywhere(c.id, checked ? markets : s.markets));
       const d = f.app;
       const iconFile = await fetchIcon(
         app.storage,
@@ -140,11 +145,7 @@ export async function postSettings(
       });
     }
   }
-  if (p.data.markets) {
-    const m = checkMarkets(app.countries(), p.data.markets);
-    if ("problem" in m) return bad(m.problem);
-    next.markets = m.markets;
-  }
+  if (checked) next.markets = markets;
   if (p.data.charts) {
     const isGame = (s.ourApp.genreId ?? "").startsWith("GAME");
     if (p.data.charts.enabled && !isGame)

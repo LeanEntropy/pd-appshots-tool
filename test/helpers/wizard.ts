@@ -26,6 +26,7 @@ export async function wizardServer(slowIcon?: Fetcher) {
       app("com.dxx.firenow", "Survivor.io", "GAME_ADVENTURE"),
       app("com.tool.app", "Some Tool", "TOOLS"),
       app("com.jp.only", "Japan Only", "GAME_ROLE_PLAYING", ["jp"]),
+      app("com.jp.two", "Japan Two", "GAME_ROLE_PLAYING", ["jp"]),
     ],
     [app("com.habby.capybara", "Capybara Go"), app("com.dxx.firenow", "Survivor.io")],
   );
