@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 import { runInNewContext } from "node:vm";
 import { renderGalleryHtml } from "../src/steps/deck-view.ts";
+import { FLAG_SCRIPT } from "../src/view/flags.ts";
 import { EXPAND_SCRIPT } from "../src/view/gallery-expand.ts";
 import { REPORT_SCRIPT } from "../src/view/gallery-report.ts";
 import { BUILDER_SCRIPT } from "../src/view/report-builder.ts";
@@ -15,6 +16,7 @@ type Ctx = Record<string, unknown> & {
   needsHtml: (p: unknown) => string;
   reviewHtml: (p: unknown) => string;
   suggestionCard: (s: unknown) => string;
+  raw_suggestionCard: (s: unknown) => string;
   researchHtml: (saved: unknown) => string;
   whatNextHtml: (o: unknown) => string;
 };
@@ -24,6 +26,7 @@ function page(): Ctx {
     IMG: "../images/",
     API: "/p/x/api",
     esc: (s: unknown) => String(s).replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`),
+    actEsc: (s: unknown) => String(s).replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`),
     money: (n: number) => `$${Number(n || 0).toFixed(2)}`,
     document: { addEventListener: () => {}, getElementById: () => null },
     window: { addEventListener: () => {} },
@@ -31,11 +34,19 @@ function page(): Ctx {
     pageFromHash: () => "overview",
   };
   runInNewContext(
-    `${REPORT_SCRIPT}\n${BUILDER_SCRIPT}\n${BUILDER_REVIEW_SCRIPT}\n${SUGGEST_SCRIPT}\n${EXPAND_SCRIPT}\nthis.bld = bld; this.builderHtml = builderHtml; this.needsHtml = needsHtml; this.reviewHtml = reviewHtml; this.suggestionCard = suggestionCard; this.researchHtml = researchHtml; this.whatNextHtml = whatNextHtml;`,
+    `${FLAG_SCRIPT}\n${REPORT_SCRIPT}\n${BUILDER_SCRIPT}\n${BUILDER_REVIEW_SCRIPT}\n${SUGGEST_SCRIPT}\n${EXPAND_SCRIPT}\nthis.bld = bld; this.builderHtml = builderHtml; this.needsHtml = needsHtml; this.reviewHtml = reviewHtml; this.suggestionCard = suggestionCard; this.researchHtml = researchHtml; this.whatNextHtml = whatNextHtml;`,
     ctx,
   );
+  // The words as read: the country flag markup (tested in flags.test.ts) is left out here.
+  for (const k of ["builderHtml", "needsHtml", "reviewHtml", "suggestionCard", "whatNextHtml"]) {
+    const f = ctx[k] as (...a: unknown[]) => string;
+    ctx[`raw_${k}`] = f;
+    ctx[k] = (...a: unknown[]) => unflag(f(...a));
+  }
   return ctx as Ctx;
 }
+
+const unflag = (h: string) => h.replace(/<span class="cty">(?:<img[^>]*>)?([^<]*)<\/span>/g, "$1");
 
 const US = { gl: "us", hl: "en", label: "United States (English)" };
 const TW = { gl: "tw", hl: "zh-TW", label: "Taiwan" };
@@ -156,6 +167,38 @@ test("suggestions and the report section: plain words, escaped, the buttons only
   assert.match(card, /based on older data/);
   assert.match(card, /class="sgo primary"[^>]*>Set up this report/);
   assert.match(card, />Dismiss</);
+  // Slim card: the chip and a short line up front, the rest behind a closed Details.
+  const slim = p.raw_suggestionCard({
+    id: "s-1",
+    category: "localise",
+    title: "A Japan report",
+    short: "Competitors change 5 of 5 images here.",
+    why: "Competitors change 5 of 5 images in Japan (long reason).",
+    what: "Japan: our game and 5 picked competitors",
+    costText: "12 images, about $2.10 to $3.40",
+    costChip: "about $2.75",
+    rankWhy: "High value",
+    older: false,
+    action: { label: "Set up this report", scope: { type: "country" } },
+    second: { label: "Also this", scope: { type: "country" } },
+  });
+  assert.match(slim, /<span class="chip">about \$2\.75<\/span>/);
+  assert.match(slim, /<p class="why">Competitors change 5 of 5 images here\.<\/p>/);
+  assert.match(
+    slim,
+    /<details class="offer-more"><summary>Details<\/summary><p>Competitors change 5 of 5 images in Japan/,
+  );
+  assert.doesNotMatch(slim, /<details class="offer-more" open/);
+  const [front, inside] = slim.split('<details class="offer-more">');
+  assert.doesNotMatch(
+    front ?? "",
+    /Also this|12 images/,
+    "second button and cost range only under Details",
+  );
+  assert.match(inside ?? "", /Also this/);
+  // Flags only in titles, never in the running text.
+  assert.equal((slim.match(/class="cty"/g) ?? []).length, 1);
+  assert.match(front ?? "", /<h4>A <span class="cty">Japan<\/span> report<\/h4>/);
   const research = p.researchHtml({
     items: [{ id: "s-1", title: "Run the Full check", costText: "free", why: "Why." }],
   });

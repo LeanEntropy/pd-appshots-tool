@@ -8,6 +8,8 @@ export interface Signal {
   category: "full-check" | "regenerate" | "pick-gap" | "localise" | "same" | "weak" | "charts";
   title: string;
   why: string;
+  /** The card's one short line (about 15 words at most); the full why sits under Details. */
+  short: string;
   what: string;
   value: number;
   /** Planner cost (code only): images to analyse and the cost range. Null: free. */

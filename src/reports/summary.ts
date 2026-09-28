@@ -1,5 +1,8 @@
+import { namesBrand } from "../analysis/brand.ts";
+import { lines, showsLogo } from "../analysis/image-tags.ts";
 import type { Labeler } from "../analysis/labels.ts";
 import type { FitSummary } from "../analysis/pattern-fit.ts";
+import type { DeckEntry } from "../analysis/patterns.ts";
 import { type Interpretation, logoOf, type Recommendations } from "../analysis/synthesis-schema.ts";
 
 /**
@@ -35,9 +38,42 @@ export interface SummaryInput {
   generatedAt: string | null;
   orderDates: (string | null)[];
   analysedAt: (string | null)[];
+  /** Our analysed images: a kept position counts as a change when its text or logo differs. */
+  ours?: readonly Pick<DeckEntry, "position" | "name" | "final">[];
 }
 
-const KEEP = /^keep our current position/i;
+const KEEP = /^keep our current position (\d+)/i;
+type RecPosition = Recommendations["positions"][number];
+const norm = (t: string) => t.toLowerCase().replace(/\s+/g, " ").trim();
+
+/**
+ * What a slot changes against our deck. A new or recaptured image is a change; a kept screenshot
+ * still changes when it moves, or when its marketing text or logo differs from ours. `what` is
+ * empty when the image stays as it is; `moveOnly` when the only change is its position.
+ */
+function changeOf(
+  p: RecPosition,
+  ours: SummaryInput["ours"],
+): { what: string[]; moveOnly: boolean } {
+  const keep = KEEP.exec(p.source);
+  if (!keep) return { what: ["change"], moveOnly: false };
+  const n = Number(keep[1]);
+  const what = n !== p.position ? ["moved here"] : [];
+  const cur = ours?.find((o) => o.position === n);
+  if (cur) {
+    const now = lines(cur.final, cur.name).map(norm);
+    const next = (p.marketingLayer.present ? p.marketingLayer.texts : [])
+      .map((t) => t.text)
+      .filter((t) => /[\p{L}\p{N}]/u.test(t) && !namesBrand(t, cur.name))
+      .map(norm);
+    if (next.some((t) => !now.includes(t))) what.push("new text");
+    else if (now.some((t) => !next.includes(t))) what.push("text removed");
+    const logo = logoOf(p);
+    if (logo && logo.show !== showsLogo(cur.final, cur.name))
+      what.push(logo.show ? "add the logo" : "remove the logo");
+  }
+  return { what, moveOnly: what.length === 1 && what[0] === "moved here" };
+}
 
 export function summaryPart(x: SummaryInput): SummaryPart {
   const f = x.fit;
@@ -56,13 +92,22 @@ export function summaryPart(x: SummaryInput): SummaryPart {
   const recs = x.recommendations
     ? [...x.recommendations.positions].sort((a, b) => a.position - b.position)
     : [];
-  const changes = recs.filter((p) => !KEEP.test(p.source));
-  const keyRecommendations = changes.slice(0, 5).map((p) => {
+  // The top 5 changes, new pictures and new text before images that only move; by position.
+  const changes = recs
+    .map((p) => ({ p, change: changeOf(p, x.ours) }))
+    .filter((c) => c.change.what.length);
+  const top = [
+    ...changes.filter((c) => !c.change.moveOnly),
+    ...changes.filter((c) => c.change.moveOnly),
+  ]
+    .slice(0, 5)
+    .sort((a, b) => a.p.position - b.p.position);
+  const keyRecommendations = top.map(({ p, change }) => {
     const headline = p.marketingLayer.present ? p.marketingLayer.texts[0]?.text : "";
     const logo = logoOf(p);
     return {
       position: p.position,
-      text: `${x.label(p.screenType)}${p.subtype ? ` / ${x.label(p.subtype)}` : ""}${headline ? `, headline "${headline}"` : ""}${logo ? `, ${logo.show ? "with" : "without"} the game logo` : ""} (${p.source})`,
+      text: `${x.label(p.screenType)}${p.subtype ? ` / ${x.label(p.subtype)}` : ""}${headline ? `, headline "${headline}"` : ""}${logo ? `, ${logo.show ? "with" : "without"} the game logo` : ""} (${p.source}${KEEP.test(p.source) ? `: ${change.what.join(", ")}` : ""})`,
     };
   });
   const dates = (xs: (string | null)[]) => xs.filter((d): d is string => !!d).sort();

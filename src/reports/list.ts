@@ -45,11 +45,9 @@ export interface ReportSummary {
   versions: VersionSummary[];
 }
 
-/** Plain names, codes only when there are more than three (from the version's own scope when saved). */
+/** Plain country names, never codes (from the version's own scope when saved). */
 const countriesOf = (markets: ReportDef["scope"]["markets"]) =>
-  markets.length > 3
-    ? markets.map((m) => m.gl.toUpperCase()).join(" ")
-    : markets.map((m) => m.label).join(", ");
+  markets.map((m) => m.label).join(", ");
 
 /**
  * The Report tab's list (plan-reports 5): runs the idempotent upkeep of the Pilot and Full check

@@ -21,8 +21,11 @@ export interface CountryBuildOptions {
   ai?: ReportAi;
   ctx?: PlanContext;
   research?: (plan: ScopePlan) => { lines: string[]; saved: unknown };
-  /** A banner for a partial version (stopped, failed or over the limit), with how to finish. */
-  partial?: string | null;
+  /**
+   * A banner for a partial version (stopped, failed or over the limit), with how to finish;
+   * a function is asked after the written parts are made (the limit can be reached there).
+   */
+  partial?: string | null | (() => string | null);
   planHash?: string | null;
   aiRunId?: string | null;
 }
@@ -45,7 +48,8 @@ export async function buildCountryVersion(
   const plan = buildScopePlan(loaded, def.scope, { proposeDrop: false, ctx });
   const ai = o.ai ?? cachedAi(loaded);
   const { report, inputs, problems } = await assembleCountryReport(loaded, def, plan, ctx, ai, now);
-  if (o.partial) report.banners.unshift(o.partial);
+  const partial = typeof o.partial === "function" ? o.partial() : o.partial;
+  if (partial) report.banners.unshift(partial);
   const versionId = newRunId(def.id, now);
   if (s.exists(versionFileKey(paths, versionId, "report.md")))
     return { ok: false, status: 409, problem: "A version was just built. Try again in a moment." };

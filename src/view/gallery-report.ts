@@ -40,7 +40,9 @@ function secList(research) {
 }
 // A saved "What to research next" list (the version's suggestions.json items).
 function researchList(list) {
-  return "<ol>" + list.map((s) => "<li><strong>" + esc(s.title) + "</strong> (" + esc(s.costText) + "). " + esc(s.why) + (s.older ? ' <span class="older">(based on older data)</span>' : "") + "</li>").join("") + "</ol>";
+  // Flags where the page has them (the print page does not).
+  const t = typeof flagText === "function" ? flagText : esc;
+  return "<ol>" + list.map((s) => "<li><strong>" + t(s.title) + "</strong> (" + esc(s.costText) + "). " + esc(s.why) + (s.older ? ' <span class="older">(based on older data)</span>' : "") + "</li>").join("") + "</ol>";
 }
 function sec(n, body, imgs, closed) {
   const id = repSecs[n].id;

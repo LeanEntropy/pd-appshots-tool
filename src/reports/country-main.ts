@@ -10,12 +10,12 @@ import { type LoadedConfig, loadTaxonomy } from "../config/load.ts";
 import type { PlayContext } from "./ab-section.ts";
 import type { CountrySlice } from "./build.ts";
 import type { ReportAi } from "./country-ai.ts";
-import { abFactsFor } from "./play-context.ts";
 
 /**
  * The main country inside a One country or Compare countries report (for example the main
- * country with more competitors): its own pattern wording, recommendations, their check and
- * A/B tests, written like the Full check's (plan-reports 3), from this report's competitors.
+ * country with more competitors): its own pattern wording, recommendations and their check,
+ * written like the Full check's (plan-reports 3) from this report's competitors. Its A/B tests
+ * are the report's own (one call over every country).
  */
 export async function mainSynthesis(
   loaded: LoadedConfig,
@@ -41,19 +41,14 @@ export async function mainSynthesis(
         recommend: ai.prompts.recommend,
         review: ai.prompts.recommendReview,
       },
-      ab: { writer: ai.writers.ab, prompt: ai.prompts.ab },
+      // The report writes its A/B tests once, over every country (the main one included).
+      ab: null,
     },
     taxonomy,
     {
       patterns,
       oursVs,
       fit,
-      ab: abFactsFor(loaded.config, s.market, {
-        fit,
-        ours: e.ours,
-        ourDeckLength: e.ourDeckLength,
-        deckLength: patterns.deckLength,
-      }),
       ours: e.ours,
       competitors: e.competitors,
       ourDeckLength: e.ourDeckLength,

@@ -5,6 +5,7 @@ import type { ImageDb } from "../store/imagedb.ts";
 import type { DeckManifest } from "../store/manifest.ts";
 import type { AbTestsOutput } from "./ab-tests-schema.ts";
 import { artWordingDeep } from "./art-wording.ts";
+import { asCounted } from "./categories.ts";
 import { batchEntries } from "./entries.ts";
 import { orientationOf } from "./image-facts.ts";
 import type { ArtMessage } from "./image-tags.ts";
@@ -139,6 +140,7 @@ function row(
   const img = id ? x.db.get(id) : undefined;
   const r = id ? x.records.get(id) : undefined;
   const f = isUsable(r) ? r.final : null;
+  const c = f ? asCounted(f) : null;
   const state = excluded
     ? "excluded"
     : f
@@ -159,10 +161,10 @@ function row(
     message: t.message,
     headline: f?.headline ?? "",
     orientation: orientationOf(slot.width, slot.height),
-    composition: f
-      ? (COMPOSITION[f.screenshot.composition] ?? x.label(f.screenshot.composition))
+    composition: c
+      ? (COMPOSITION[c.screenshot.composition] ?? x.label(c.screenshot.composition))
       : "",
-    captures: f ? captureLines(f, r?.identity?.image, x.label) : [],
+    captures: c ? captureLines(c, r?.identity?.image, x.label) : [],
     layer: f ? f.marketingLayer.present : null,
     state,
     note: excluded ?? (f ? "" : r ? `${r.status}: ${r.problems.join("; ")}` : "not analysed yet"),

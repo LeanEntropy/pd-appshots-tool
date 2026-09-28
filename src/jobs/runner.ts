@@ -135,7 +135,10 @@ export function startJob(
   const { planHash, approvalId } = spec;
   const journal = readJournal(storage, ctx);
   // One approval starts one job: a repeated or replayed request never pays twice.
-  if (journal.jobs.ai?.approvalId === approvalId)
+  if (
+    journal.jobs.ai?.approvalId === approvalId ||
+    journal.batches.some((b) => b.approvals.includes(approvalId))
+  )
     return refuse(
       409,
       "This approval was used already. Open the approval again to see the current numbers.",
@@ -174,11 +177,13 @@ export function startJob(
       firstApprovedPlanHash: planHash,
       limitUsd: round(limit),
       runs: [],
+      approvals: [],
       imageIds: [],
       createdAt: now,
     };
     journal.batches.push(batch);
   }
+  batch.approvals = [...batch.approvals, approvalId];
   batch.imageIds = [...new Set([...batch.imageIds, ...spec.attemptIds])];
   const job: Job = {
     id: randomBytes(8).toString("hex"),

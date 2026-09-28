@@ -35,20 +35,19 @@ function missingHtml(c) {
 function verdictCard(v) {
   return '<div class="vcard ' + (VERDICT_CLS[v.verdict] || "") + '"><h4>' + cflag(v.gl, v.label) + (v.isMain ? ' <span class="meta">(main country)</span>' : "") + "</h4>"
     + "<p>" + pill(VERDICT_CLS[v.verdict] || "none", v.verdict) + (v.points ? ' <span class="meta">' + v.points.fit + " of " + v.points.total + " pattern points, " + v.competitors + " competitors</span>" : "") + "</p>"
-    + (v.shortAnswer ? "<p>" + esc(v.shortAnswer) + "</p>" : "")
     + (v.keyPoint ? "<p><strong>Biggest gap:</strong> " + esc(v.keyPoint) + "</p>" : "")
-    + (v.localisation ? "<p><strong>Localisation:</strong> " + esc(v.localisation) + "</p>" : "") + "</div>";
+    + (v.shortAnswer || v.localisation ? "<details><summary>More</summary>" + (v.shortAnswer ? "<p>" + esc(v.shortAnswer) + "</p>" : "") + (v.localisation ? "<p><strong>Localisation:</strong> " + esc(v.localisation) + "</p>" : "") + "</details>" : "") + "</div>";
 }
 
 function countrySummaryHtml(c) {
   const s = c.summary;
-  const acts = s.keyActions.map((a) => "<li><strong>" + cflag(a.gl, a.label) + ":</strong> " + esc(a.text) + (a.why ? ' <span class="meta">' + esc(a.why) + "</span>" : "") + (a.impact ? " " + pill(a.impact === "large" ? "following" : a.impact === "medium" ? "slightly" : "none", a.impact + " impact") : "") + (a.source === "code" ? ' <span class="meta">(computed gap)</span>' : "") + "</li>").join("");
+  const acts = s.keyActions.map((a) => "<li><strong>" + esc(cname(a.label)) + ":</strong> " + esc(a.text) + (a.why ? ' <span class="meta">' + esc(a.why) + "</span>" : "") + (a.impact ? " " + pill(a.impact === "large" ? "following" : a.impact === "medium" ? "slightly" : "none", a.impact + " impact") : "") + (a.source === "code" ? ' <span class="meta">(computed gap)</span>' : "") + "</li>").join("");
   const d = s.dates;
   return missingHtml(c) + '<p class="short">' + esc(s.shortAnswer) + "</p>"
     + '<div class="vcards">' + s.verdicts.map((v) => verdictCard(s.verdicts.length === 1 ? Object.assign({}, v, { shortAnswer: "" }) : v)).join("") + "</div>"
     + "<h3>Key actions, most important first</h3>" + (acts ? '<ol class="keyrecs">' + acts + '</ol><p><button type="button" class="linkbtn" data-goto="rep-' + repRid + '-advice">Full spec per country</button></p>' : "<p>None: our page follows the competitors\\u2019 patterns here.</p>")
     + abCardsHtml({ abTests: c.abTests })
-    + '<p class="dates">Generated ' + esc(fmtWhen(d.generated)) + ". Store pages from " + esc(d.storeFrom && d.storeTo && d.storeFrom !== d.storeTo ? d.storeFrom + " to " + d.storeTo : d.storeFrom || "not saved") + ". Analyses as of " + esc(d.analyses || "none yet") + ". Main country (the reference for what changed): " + cflag(c.main.gl, c.main.label) + ".</p>";
+    + '<p class="dates">Generated ' + esc(fmtWhen(d.generated)) + ". Store pages from " + esc(d.storeFrom && d.storeTo && d.storeFrom !== d.storeTo ? d.storeFrom + " to " + d.storeTo : d.storeFrom || "not saved") + ". Analyses as of " + esc(d.analyses || "none yet") + ". Main country (the reference for what changed): " + esc(cname(c.main.label)) + ".</p>";
 }
 
 const CHANGE_WORDS = { same: "same as the main deck", translate: "translated", reword: "new wording", recapture: "recapture, local text", "new-picture": "new picture", moved: "moved" };

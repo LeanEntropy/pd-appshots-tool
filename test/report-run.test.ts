@@ -4,7 +4,7 @@ import { runInNewContext } from "node:vm";
 import sharp from "sharp";
 import { playSetup } from "../src/analysis/play-experiments.ts";
 import { type LoadedConfig, projectPaths } from "../src/config/load.ts";
-import { readJournal } from "../src/jobs/journal.ts";
+import { readJournal, writeJournal } from "../src/jobs/journal.ts";
 import type { CountryReport } from "../src/reports/country-report-types.ts";
 import { enqueueReport, reportApproval } from "../src/reports/report-job.ts";
 import { createReport, readDef, versionFileKey } from "../src/reports/store.ts";
@@ -257,4 +257,41 @@ test("a test across more than five languages says to split it into several exper
   const s = playSetup(markets, markets, markets, () => "high", false);
   assert.equal(s.languages.length, 6);
   assert.match(s.notes.join(" "), /up to 5 languages: split this test into several experiments/);
+});
+
+test("an approval starts one job, ever: replaying it after other jobs is refused", async () => {
+  const loaded = await japanProject();
+  const def = japanReport(loaded);
+  const paths = projectPaths(loaded);
+  const s = workspaceStorage(paths.workspace);
+  // Every call fails, so nothing is analysed and the plan stays the same between runs.
+  const failing = {
+    ...reportFake(),
+    call: async () => ({ ok: false, output: null, costUsd: 0, error: "down" }),
+  };
+  const first = reportApproval(loaded, def);
+  assert.ok(!("problem" in first));
+  const r1 = run(loaded, def.id, first.plan.planHash, failing);
+  assert.ok(r1.ok);
+  await r1.done;
+  const b = reportApproval(loaded, def);
+  assert.ok(!("problem" in b));
+  const r2 = run(loaded, def.id, b.plan.planHash, failing);
+  assert.ok(r2.ok, r2.ok ? "" : r2.problem);
+  await r2.done;
+  const same = reportApproval(loaded, def);
+  assert.ok(!("problem" in same));
+  assert.equal(same.plan.planHash, b.plan.planHash);
+  // Replaying approval b after the journal's job slot moved on: still used up.
+  const j = readJournal(s, paths);
+  const used = j.jobs.ai?.approvalId as string;
+  delete j.jobs.ai;
+  writeJournal(s, paths, j);
+  s.putJson(`projects/${paths.projectId}/pending/report-plan-${def.id}.json`, {
+    plan: b.plan,
+    createdAt: used.split("@")[1],
+  });
+  const again = run(loaded, def.id, b.plan.planHash, reportFake());
+  assert.equal(again.ok, false);
+  assert.match(again.ok ? "" : again.problem, /used already/);
 });

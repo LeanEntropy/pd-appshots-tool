@@ -26,7 +26,7 @@ function localisationHtml(c) {
   const L0 = c.localisation;
   if (!L0) return "<p>This report is about the main country only.</p>";
   const gls = [...new Set(L0.rows.map((r) => r.gl))];
-  return '<p class="meta">Each game\\u2019s page here against its own page in ' + cflag(L0.main.gl, L0.main.label) + ". Same file: byte-identical (content hash). Same picture, new text: the picture matches by perceptual hash and only the text layer was compared. Other picture: not on the main page.</p>"
+  return '<p class="meta">Each game\\u2019s page here against its own page in ' + esc(cname(L0.main.label)) + ". Same file: byte-identical (content hash). Same picture, new text: the picture matches by perceptual hash and only the text layer was compared. Other picture: not on the main page.</p>"
     + gls.map((gl) => { const r0 = L0.rows.find((r) => r.gl === gl); return "<h3>" + cflag(gl, r0 ? r0.country : gl) + "</h3>" + localCountry(c, gl); }).join("");
 }
 

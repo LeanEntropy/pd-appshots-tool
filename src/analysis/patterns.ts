@@ -1,5 +1,5 @@
 import { ART_SCREEN } from "./art-wording.ts";
-import { categoryOf, FULL_SCREEN_ART } from "./categories.ts";
+import { asCounted, categoryOf, FULL_SCREEN_ART } from "./categories.ts";
 import { colourFamily, textColourFamily } from "./colours.ts";
 import { type TagStats, tagStats } from "./image-tags.ts";
 import type { ImageAnalysis } from "./schema.ts";
@@ -99,7 +99,8 @@ export function proportion(a: ImageAnalysis): string {
 }
 
 export const portraitInLandscape = (e: DeckEntry) =>
-  e.canvas === "landscape" && e.final.screenshot.captures.some((c) => c.orientation === "portrait");
+  e.canvas === "landscape" &&
+  asCounted(e.final).screenshot.captures.some((c) => c.orientation === "portrait");
 
 /** The screen category the patterns compare (categories.ts). */
 export function typeKey(a: ImageAnalysis): string {
@@ -200,7 +201,7 @@ export function findPatterns(
     orientation: {
       canvas: counts(entries.map((e) => e.canvas)),
       capture: counts(
-        entries.flatMap((e) => e.final.screenshot.captures.map((c) => c.orientation)),
+        entries.flatMap((e) => asCounted(e.final).screenshot.captures.map((c) => c.orientation)),
       ),
       byCountry: [...new Set(entries.map((e) => `${e.gl ?? "?"}-${e.hl ?? "?"}`))].map((m) => ({
         market: m,
@@ -209,10 +210,10 @@ export function findPatterns(
         ),
       })),
     },
-    composition: counts(entries.map((e) => e.final.screenshot.composition)),
+    composition: counts(entries.map((e) => asCounted(e.final).screenshot.composition)),
     capturesPerImage: counts(
       entries.map((e) => {
-        const n = e.final.screenshot.captures.length;
+        const n = asCounted(e.final).screenshot.captures.length;
         return n >= 3 ? "3+" : String(n);
       }),
     ),

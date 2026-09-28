@@ -48,6 +48,7 @@ export function bottomLine(
       label: x.label,
       generatedAt: x.generatedAt ?? null,
       orderDates: [...x.orderDates.values()],
+      ours: entries.ours,
       analysedAt: [...entries.ours, ...entries.competitors].map(
         (e) => x.records.get(e.imageId)?.updatedAt ?? null,
       ),

@@ -186,22 +186,35 @@ export async function runReport(
       });
   const ai = stopped ? cachedAi(loaded) : paidAi(loaded, ctx, report, make);
   report("report", "Writing the report…");
+  // The limit can also be reached during the written parts: then the version says so too.
+  const textLimit = () => !stopped && budget - spent <= 0.01;
   const built = await buildCountryVersion(loaded, def, {
     ai,
-    partial: notes.join(" ") || null,
+    partial: () =>
+      [
+        ...notes,
+        ...(textLimit()
+          ? [
+              "Partial version: the spending limit of this batch was reached while the written parts were made. Press Review and approve on this report to write the rest.",
+            ]
+          : []),
+      ].join(" ") || null,
     planHash: plan.planHash,
     aiRunId: runId,
     research: () => researchSnapshot(loaded),
   });
   if (attempt) endAttempt(paths, SYNTHESIS, attempt, batchId, "finished", spent - before);
   for (const p of built.problems ?? []) fail(p, null, null);
-  report("done", stopped ? `Stopped: ${why}. Finished work is kept.` : "Finished.");
+  if (textLimit()) stoppedForBudget = true;
+  const ended = stopped || stoppedForBudget;
+  const reason = stopped ? why : "the spending limit of this batch was reached";
+  report("done", ended ? `Stopped: ${reason}. Finished work is kept.` : "Finished.");
   return {
     runId,
     cancelled,
     aborted,
     stoppedForBudget,
     report: built.ok ? built.versionId : "",
-    synthesisSkipped: stopped ? `the written parts were not made: ${why}` : null,
+    synthesisSkipped: ended ? `some written parts were not made: ${reason}` : null,
   };
 }

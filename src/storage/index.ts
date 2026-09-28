@@ -16,3 +16,4 @@ export function workspaceStorage(workspaceDir: string): LocalFsStorage {
   }
   return s;
 }
+export { flagSvg } from "./tool-assets.ts";

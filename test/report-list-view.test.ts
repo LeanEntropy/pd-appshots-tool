@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 import { runInNewContext } from "node:vm";
 import type { ReportSummary } from "../src/reports/list.ts";
+import { FLAG_SCRIPT } from "../src/view/flags.ts";
 import { NAV_SCRIPT } from "../src/view/gallery-nav.ts";
 import { REPORT_SCRIPT } from "../src/view/gallery-report.ts";
 import { REPORT_PARTS_SCRIPT } from "../src/view/gallery-report-parts.ts";
@@ -15,6 +16,7 @@ function page() {
     IMG: "../images/",
     API: "/p/x/api",
     esc: (s: unknown) => String(s).replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`),
+    actEsc: (s: unknown) => String(s).replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`),
     infoBtn: (id: string) => `<button class="info" data-info="${id}">i</button>`,
     storeTextHtml: () => "",
     localStorage: { getItem: () => null, setItem: () => {} },
@@ -22,12 +24,18 @@ function page() {
     location: { hash: "", protocol: "file:" },
   };
   runInNewContext(
-    `${REPORT_SCRIPT}\n${REPORT_PARTS_SCRIPT}\n${REPORT_SUMMARY_SCRIPT}\n${REPORT_LIST_SCRIPT}\nthis.renderReport = renderReport; this.card = reportCardHtml;`,
+    `${FLAG_SCRIPT}\n${REPORT_SCRIPT}\n${REPORT_PARTS_SCRIPT}\n${REPORT_SUMMARY_SCRIPT}\n${REPORT_LIST_SCRIPT}\nthis.renderReport = renderReport; this.card = reportCardHtml;`,
     ctx,
   );
+  // The words as read: the country flag markup (tested in flags.test.ts) is left out here.
+  const card = ctx.card as (r: ReportSummary) => string;
+  ctx.rawCard = card;
+  ctx.card = (r: ReportSummary) =>
+    card(r).replace(/<span class="cty">(?:<img[^>]*>)?([^<]*)<\/span>/g, "$1");
   return ctx as typeof ctx & {
     renderReport: (box: Box, d: unknown, rid: string, stage: string, research?: string) => void;
     card: (r: ReportSummary) => string;
+    rawCard: (r: ReportSummary) => string;
   };
 }
 
@@ -133,6 +141,21 @@ test("a report card is folded, shows its facts, and offers the right actions", (
     /<span class="rc-desc">Pilot \u00b7 United States \(English\) \u00b7 2 competitors: Archero 2, Capybara Go \u00b7 [^<]*2026[^<]*<\/span>/,
   );
   assert.match(pilot, />Newer data</);
+  // Flags in the card title only; the description names the countries without flags.
+  const cmp = p.rawCard(
+    summary({
+      name: "Japan and Korea",
+      type: "compare",
+      typeName: "Compare countries",
+      countries: "Japan, South Korea, Taiwan, Hong Kong",
+    }),
+  );
+  assert.match(cmp, /<span class="rc-name"><span class="cty">Japan<\/span> and /);
+  assert.match(
+    cmp,
+    /<span class="rc-desc">Compare countries · Japan, South Korea, Taiwan, Hong Kong ·/,
+  );
+  assert.doesNotMatch(cmp.split('class="rc-desc"')[1] ?? "", /class="cty"/);
   assert.match(pilot, /<option value="now">Now/);
   assert.match(
     pilot,

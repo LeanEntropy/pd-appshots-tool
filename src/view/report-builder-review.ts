@@ -49,7 +49,7 @@ function reviewHtml(p) {
   const items = p.items.filter((i) => i.tier !== "identical");
   const groups = new Map();
   for (const it of items) { const k = it.name + " \\u00b7 " + countryOf(it.country); groups.set(k, (groups.get(k) || []).concat([it])); }
-  const blocks = [...groups].map(([k, list]) => '<div class="agame"><strong>' + esc(k) + "</strong>: " + list.length + '<div class="athumbs">'
+  const blocks = [...groups].map(([k, list]) => '<div class="agame"><strong>' + flagText(k) + "</strong>: " + list.length + '<div class="athumbs">'
     + list.map((it) => '<figure class="' + esc(it.tier) + '" title="' + esc(it.reason) + '">' + (it.thumb ? '<img src="' + IMG + esc(it.thumb) + '" alt="' + esc(it.name + " position " + it.position) + '">' : "") + "<figcaption>#" + it.position + " " + esc(TIER_TEXT[it.tier]) + "</figcaption></figure>").join("") + "</div></div>").join("");
   return '<h3 id="approvalTitle">What this report would send to AI</h3><p class="big"><strong>' + items.length + " images</strong>: full analysis " + p.counts.full + ", text comparison " + p.counts.layerDiff + ". Already analysed (free): " + p.counts.identical + ". Estimated total " + usdRange(p.usd) + " (limit " + money(p.limitUsd) + ").</p>"
     + blocks + '<p class="warn">Running the paid steps of One country and Compare countries reports comes with the next update of the tool. Nothing has been sent and nothing is spent.</p><div class="actions"><button id="cancelApproval">Close</button></div>';

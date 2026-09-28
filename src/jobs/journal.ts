@@ -64,6 +64,8 @@ export const BatchSchema = z.object({
   firstApprovedPlanHash: z.string(),
   limitUsd: z.number(),
   runs: z.array(z.string()).default([]),
+  /** Every approval that started a run of this batch (an approval starts one job, ever). */
+  approvals: z.array(z.string()).default([]),
   /** Every image any run of this batch sent to AI (the attempts summed for its spend). */
   imageIds: z.array(z.string()).default([]),
   createdAt: z.string(),
