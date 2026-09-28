@@ -1,6 +1,11 @@
+import { PROMPT_VERSIONS } from "../analysis/prompts.ts";
 import type { ReportInputs } from "../analysis/report-data.ts";
+import { olderStyle } from "./bottom-line.ts";
 import type { VersionInputs } from "./types.ts";
 import { presetVersionInputs } from "./version.ts";
+
+const OLDER_REASON =
+  "Its AI parts are written in the older style (a text-only run, 0 images, rewrites them)";
 
 const MONTHS = "Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec".split(" ");
 /** "2026-09-30" -> "30 Sep" (the same on every machine). */
@@ -21,7 +26,8 @@ export function newerReason(
 ): string | null {
   if (inputs && (inputs.mainMarket.gl !== main.gl || inputs.mainMarket.hl !== main.hl))
     return "The main country changed.";
-  if (!savedHash || savedHash === x.dataHash) return null;
+  const older = !!inputs?.aiRunId && olderStyle(inputs.versions.prompts, PROMPT_VERSIONS);
+  if (!savedHash || savedHash === x.dataHash) return older ? `${OLDER_REASON}.` : null;
   if (!inputs) return "New or updated analyses since this version was made.";
   const reasons: string[] = [];
   const was = new Set(inputs.pick.map((g) => g.appId));
@@ -32,6 +38,7 @@ export function newerReason(
     reasons.push(`the pick changed (${[...added, ...removed].join(", ")})`);
   if (inputs.versions.taxonomy !== x.plan.versions.taxonomy)
     reasons.push("the screen-type list was updated");
+  if (older) reasons.push(OLDER_REASON.charAt(0).toLowerCase() + OLDER_REASON.slice(1));
   const current = presetVersionInputs(x, {
     reportId: inputs.reportId,
     stage: x.plan.stage,

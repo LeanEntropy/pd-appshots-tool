@@ -57,7 +57,10 @@ export function estimate(
   const usd: [number, number] = [0, 1].map((k) => {
     const fa = full * (e.fullAnalysisUsdPerImage[k] as number);
     const ld = diff * (e.layerDiffUsdPerImage[k] as number);
-    const syn = synthesis ? (e.synthesisUsd[k] as number) : 0;
+    // Synthesis covers the pattern wording, recommendations, check and revision; the A/B tests
+    // are one more call of about a quarter of that (a retry at most doubles it).
+    const s = e.synthesisUsd[k] as number;
+    const syn = synthesis ? s + (k === 0 ? s / 4 : s / 2) : 0;
     return (
       Math.round(((fa + ld) * allowance + disputes * e.adjudicationUsdPerDispute + syn) * 100) / 100
     );
@@ -116,6 +119,13 @@ export function estimate(
         calls: recReview ? 1 : 0,
         images: 0,
         note: recReview ? "cross-family review" : "turned off",
+      },
+      {
+        role: "A/B tests to run next",
+        model: modelName(config.options.models.abTests),
+        calls: 1,
+        images: 0,
+        note: "text only; one retry if a test fails the checks",
       },
     );
   }

@@ -58,6 +58,7 @@ export function defaultDeps(loaded: LoadedConfig, onProgress: (p: Progress) => v
     recommendationReviewer: secondOpinionOn(loaded.config, "recommendations")
       ? providerFor(m.recommendationReview, schemaDir)
       : null,
+    abWriter: providerFor(loaded.config.options.models.abTests, schemaDir),
     onProgress,
   };
 }

@@ -1,5 +1,9 @@
+import type { AbTestsPart, PlayContext } from "../reports/ab-section.ts";
+import { bottomLine, OLDER_STYLE, olderStyle } from "../reports/bottom-line.ts";
+import type { SummaryPart } from "../reports/summary.ts";
 import type { ImageDb } from "../store/imagedb.ts";
 import type { DeckManifest } from "../store/manifest.ts";
+import type { AbTestsOutput } from "./ab-tests-schema.ts";
 import { artWordingDeep } from "./art-wording.ts";
 import { batchEntries } from "./entries.ts";
 import { orientationOf } from "./image-facts.ts";
@@ -9,6 +13,7 @@ import { compareOurs, type OursVsPatterns } from "./ours-vs.ts";
 import { type FitSummary, patternFit } from "./pattern-fit.ts";
 import { findPatterns, type Patterns } from "./patterns.ts";
 import type { AnalysisPlan } from "./plan.ts";
+import { PROMPT_VERSIONS } from "./prompts.ts";
 import { type AnalysisRecord, isUsable, screenLabel } from "./records.ts";
 import type { StoreCountry } from "./store-compare.ts";
 import {
@@ -59,6 +64,10 @@ export interface AiPart {
   recommendations: Recommendations | null;
   review: Review | null;
   revised: boolean;
+  /** The AI's A/B tests as written (checked when the report is built); absent in older runs. */
+  abTests?: AbTestsOutput | null;
+  /** Prompt versions the AI parts were written with (older style detection). */
+  promptVersions?: Record<string, string> | null;
 }
 
 export interface ReportData {
@@ -83,6 +92,9 @@ export interface ReportData {
   leftOut: string[];
   /** Store text and derived keywords per country (absent in runs saved before it existed). */
   storeText?: StoreCountry[];
+  /** The bottom line and the A/B tests to run next (absent in reports saved before them). */
+  summary?: SummaryPart;
+  abTests?: AbTestsPart;
 }
 
 export interface ReportInputs {
@@ -103,6 +115,9 @@ export interface ReportInputs {
   /** Named competitors not on Google Play in the core country (left out of this check). */
   leftOut?: string[];
   storeText?: StoreCountry[];
+  /** Where A/B tests run (countries, traffic); without it, the main market only. */
+  play?: PlayContext;
+  generatedAt?: string;
 }
 
 function row(x: ReportInputs, slot: DeckManifest["slots"][number], excluded: string | null) {
@@ -209,7 +224,9 @@ export function buildReportData(x: ReportInputs): ReportData {
     fit = patternFit(entries.competitors, entries.ours, patterns, entries.ourDeckLength, x.label);
   }
   const l = x.latestAi;
-  const ai: AiPart | null = l ? { ...l, current: l.dataHash === x.dataHash } : null;
+  // AI parts written with older text prompts are out of date even when the analyses are not.
+  const older = !!l && olderStyle(l.promptVersions, PROMPT_VERSIONS);
+  const ai: AiPart | null = l ? { ...l, current: l.dataHash === x.dataHash && !older } : null;
   const cost = `about $${x.estimateUsd[0].toFixed(2)} to $${x.estimateUsd[1].toFixed(2)}`;
   const howTo = `Open the approval (Analysis page, Start analysis) and approve. Screenshots already analysed are not sent again; the cost shown there is ${cost}.`;
   let synthesis: ReportData["synthesis"];
@@ -225,6 +242,12 @@ export function buildReportData(x: ReportInputs): ReportData {
       state: ai ? "stale" : "missing",
       reason: `${coverage.missing.length} of ${total} screenshots have no usable analysis yet (${coverage.missing.join(", ")}). Patterns and recommendations are written once every screenshot is analysed.`,
       howTo,
+    };
+  else if (ai && older)
+    synthesis = {
+      state: "stale",
+      reason: OLDER_STYLE,
+      howTo: `To rewrite them: ${howTo} This run sends 0 images: only the pattern wording, the recommendations, their check (when on in Settings) and the A/B tests.`,
     };
   else if (ai)
     synthesis = {
@@ -264,5 +287,6 @@ export function buildReportData(x: ReportInputs): ReportData {
     labels: labelsFor(x.label, patterns, oursVs, ai?.recommendations ?? null),
     leftOut: x.leftOut ?? [],
     storeText: x.storeText ?? [],
+    ...bottomLine(x, entries, fit, patterns, ai),
   });
 }

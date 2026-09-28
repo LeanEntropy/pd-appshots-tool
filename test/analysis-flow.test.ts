@@ -115,15 +115,18 @@ test("patterns, ours vs patterns, recommendations, review and the final report",
   assert.equal(writer.calls.length, 2, "pattern summary + recommendations");
   const md = readFileSync(out.report, "utf8");
   for (const h of [
+    "## 1. Summary: the bottom line",
+    "### A/B tests to run next",
     "## Contents",
-    "## 1. Overview",
     "## 2. Patterns across competitors",
     "## 3. Position by position",
     "## 4. Recommendations",
-    "## 5. Store text and keywords",
-    "## 6. Detailed statistics",
+    "## 5. A/B test details",
+    "## 6. Store text and keywords",
+    "## 7. Detailed statistics",
   ])
     assert.ok(md.includes(h), h);
+  assert.ok(md.indexOf("## 1. Summary") < md.indexOf("## Contents"), "bottom line first");
   assert.match(md, /\*\*Verdict: our deck is /);
   assert.ok(md.indexOf("## 3. Position by position") < md.indexOf("## 4. Recommendations"));
   const dir = join(paths.reports, out.runId);

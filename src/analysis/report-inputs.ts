@@ -1,8 +1,10 @@
-﻿import { type LoadedConfig, loadTaxonomy, projectPaths } from "../config/load.ts";
+import { type LoadedConfig, loadTaxonomy, projectPaths } from "../config/load.ts";
 import { coreDeck, notInCoreMarket } from "../core/selection.ts";
 import { legacyAnalysisJob, readJournal } from "../jobs/journal.ts";
+import { playContextOf } from "../reports/play-context.ts";
 import { projectKey, workspaceStorage } from "../storage/index.ts";
 import { openImageDb } from "../store/imagedb.ts";
+import type { AbTestsOutput } from "./ab-tests-schema.ts";
 import { batchDataHash } from "./entries.ts";
 import { readLatest } from "./final-report.ts";
 import type { ImageIdentity } from "./identity.ts";
@@ -46,6 +48,16 @@ export function listRuns(loaded: LoadedConfig, stage: Stage): ReportRun[] {
 /** A saved report run's file (report.md, report-data.json, ...) as a storage key. */
 export function runFileKey(loaded: LoadedConfig, runId: string, name: string): string {
   return projectKey(projectPaths(loaded), "reports", runId, name);
+}
+
+/** Prompt versions a run's AI parts were written with: its version.json, else its run manifest. */
+function runPromptVersions(loaded: LoadedConfig, runId: string): Record<string, string> | null {
+  const paths = projectPaths(loaded);
+  const s = workspaceStorage(paths.workspace);
+  type V = { versions?: { prompts?: Record<string, string> } } | undefined;
+  const v = s.getJson(runFileKey(loaded, runId, "version.json")) as V;
+  const m = s.getJson(projectKey(paths, "runs", runId, "manifest.json")) as V;
+  return v?.versions?.prompts ?? m?.versions?.prompts ?? null;
 }
 
 /** Everything the pure report builder needs, read from disk (no AI). */
@@ -93,6 +105,8 @@ export function reportInputs(
         recommendations,
         review: read<Review>("review.json"),
         revised: !!read<Recommendations>("recommendations-draft.json"),
+        abTests: read<AbTestsOutput>("ab-tests.json"),
+        promptVersions: runPromptVersions(loaded, latest.runId),
       };
   }
   const status =
@@ -117,6 +131,7 @@ export function reportInputs(
     lastSkip: skip,
     estimateUsd: proposed.estimate.usd,
     leftOut: notInCoreMarket(loaded).map((c) => c.name),
+    play: playContextOf(loaded.config, [m]),
     storeText: compareStoreText(
       storage,
       loaded.config.markets,

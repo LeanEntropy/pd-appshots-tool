@@ -11,9 +11,12 @@ import { sha256 } from "../util/hash.ts";
 export const PROMPT_VERSIONS = {
   fullAnalysis: "full-analysis.v4",
   adjudicate: "adjudicate.v3",
-  patterns: "patterns.v2",
-  recommend: "recommend.v2",
-  recommendReview: "recommend-review.v1",
+  // 2026-09-28 (plan-reports 3B): the store-page CMO voice, the short answer and the A/B tests.
+  // Text steps only: the per-image prompts (and so every analysis key) are unchanged.
+  patterns: "patterns.v3",
+  recommend: "recommend.v3",
+  recommendReview: "recommend-review.v2",
+  abTests: "ab-tests.v1",
 } as const;
 export type PromptName = keyof typeof PROMPT_VERSIONS;
 
@@ -26,10 +29,14 @@ export type PromptName = keyof typeof PROMPT_VERSIONS;
 export const PROMPT_FILES: Record<PromptName, string> = {
   fullAnalysis: "full-analysis.v5",
   adjudicate: "adjudicate.v4",
-  patterns: "patterns.v3",
-  recommend: "recommend.v3",
-  recommendReview: "recommend-review.v2",
+  patterns: "patterns.v4",
+  recommend: "recommend.v4",
+  recommendReview: "recommend-review.v3",
+  abTests: "ab-tests.v1",
 };
+
+/** The one voice block of every synthesis prompt (plan-reports 3B.1), as {{VOICE}}. */
+export const VOICE_FILE = "voice-cmo.v1";
 
 export interface RenderedPrompt {
   text: string;
@@ -61,7 +68,13 @@ export function renderPrompt(
     "utf8",
   );
   const tx = taxonomyText(taxonomy);
-  const text = template.replace("{{TAXONOMY}}", tx.list).replace("{{DEFINITIONS}}", tx.definitions);
+  const voice = template.includes("{{VOICE}}")
+    ? readFileSync(join(root, "prompts", "analysis", `${VOICE_FILE}.md`), "utf8").trim()
+    : "";
+  const text = template
+    .replace("{{TAXONOMY}}", tx.list)
+    .replace("{{DEFINITIONS}}", tx.definitions)
+    .replace("{{VOICE}}", voice);
   const hash = sha256(text);
   const dir = join(objectsDir, "prompts");
   ensureDir(dir);

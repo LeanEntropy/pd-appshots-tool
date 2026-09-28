@@ -2,6 +2,7 @@ import { CSS } from "./gallery-css.ts";
 import { REPORT_SCRIPT } from "./gallery-report.ts";
 import { REPORT_PARTS_SCRIPT } from "./gallery-report-parts.ts";
 import { STORE_SCRIPT } from "./gallery-store.ts";
+import { REPORT_SUMMARY_CSS, REPORT_SUMMARY_SCRIPT } from "./report-summary.ts";
 import { escHtml } from "./shell.ts";
 
 /** What the print page shows: one report version, and the export options. */
@@ -95,7 +96,7 @@ export function reportPrintHtml(p: PrintPage): string {
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>${escHtml(p.title)}</title>
-<style>${CSS}</style>
+<style>${CSS}${REPORT_SUMMARY_CSS}</style>
 </head>
 <body class="printpage">
 <main class="pages">
@@ -112,6 +113,7 @@ const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&
 function infoBtn(id) { const c = id && PRINT.captions[id]; return c ? '<span class="pinfo">' + esc(c) + "</span>" : ""; }
 ${REPORT_SCRIPT}
 ${REPORT_PARTS_SCRIPT}
+${REPORT_SUMMARY_SCRIPT}
 ${STORE_SCRIPT}
 ${PRINT_SCRIPT}
 {

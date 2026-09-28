@@ -135,6 +135,54 @@ function keyPointsIn(prompt: string): unknown[] {
   }
 }
 
+/** One valid A/B test from the first gap in the prompt (the gaps JSON line), for the fake. */
+function abAnswer(prompt: string) {
+  const line = prompt.split("\n").find((l) => l.startsWith('[{"id":"E'));
+  const gaps = JSON.parse(line ?? "[]") as {
+    id: string;
+    n: number;
+    of: number;
+    countries: string[];
+    positions: number[] | string;
+    ourPositionsThatDiffer: number[];
+  }[];
+  const n = Number(/Our deck has (\d+) screenshots/.exec(prompt)?.[1] ?? 3);
+  const g = gaps[0];
+  if (!g) return { tests: [] };
+  const at = g.ourPositionsThatDiffer[0] ?? (Array.isArray(g.positions) ? g.positions[0] : 1) ?? 1;
+  const slot = (p: number) => ({
+    position: p,
+    fromOurPosition: p,
+    changes: p === at ? ["screen", "text"] : [],
+    orientation: "portrait",
+    composition: "single full capture",
+    screen: p === at ? "a boss fight in the middle" : "as today",
+    band: "yellow band #f7d704 at top",
+    headline: p === at ? "EPIC BOSSES" : "",
+    extras: "none",
+  });
+  const variant = {
+    summary: "one screenshot",
+    slots: Array.from({ length: n }, (_, i) => slot(i + 1)),
+  };
+  return {
+    tests: [
+      {
+        title: "Battle first",
+        hypothesis: "Showing battle first should lift installs.",
+        evidence: [{ id: g.id, n: g.n, of: g.of }],
+        variable: "screenshot",
+        countries: g.countries,
+        metric: "installs",
+        variant,
+        secondVariant: null,
+        impact: { size: "medium", reason: "position 1 is seen by every visitor" },
+        orderReason: "",
+      },
+    ],
+  };
+}
+
 /** A provider that answers from a lookup instead of calling a model. Records every call. */
 export function fakeProvider(o: FakeOptions): Provider & { calls: VisionCall[] } {
   const calls: VisionCall[] = [];
@@ -157,12 +205,14 @@ export function fakeProvider(o: FakeOptions): Provider & { calls: VisionCall[] }
           keyPatterns: [],
           oursSummary: "o",
           verdictText: "v",
+          shortAnswer: "s",
           keyPoints: keyPointsIn(c.prompt).map((_, i) => `point ${i + 1}`),
         });
       if (c.prompt.startsWith("Write the recommendations") || c.prompt.startsWith("Revise")) {
         const m = /between (\d+) and/.exec(c.prompt);
         return ok(recommendations(Number(m?.[1] ?? 3)));
       }
+      if (c.prompt.startsWith("Write the A/B tests")) return ok(abAnswer(c.prompt));
       if (c.prompt.startsWith("Review these")) {
         const findings = o.reviewSeverity
           ? [{ position: 1, severity: o.reviewSeverity, issue: "i", suggestion: "s" }]

@@ -68,7 +68,7 @@ function renderApproval(p) {
     + p.games.map((g) => gameBlock(p, g)).join("")
     + '<table class="passes"><tr><th>Step</th><th>Model</th><th>Calls</th><th>Images</th></tr>' + passes + "</table>"
     + '<p class="big">Estimated cost: <strong>' + money(p.estimate.usd[0]) + " to " + money(p.estimate.usd[1]) + "</strong> on Claude, plus about " + Math.round(p.estimate.gptTokens / 1000) + "k GPT tokens. Provisional.</p>"
-    + (p.synthesisNeeded ? '<p class="meta">Then: patterns across competitors, our game vs the patterns, recommendations, and the final report.</p>' : "")
+    + (p.synthesisNeeded ? '<p class="meta">Then: patterns across competitors, our game vs the patterns, recommendations, the A/B tests to run next, and the final report.</p>' : "")
     + blocked
     + '<div class="actions">' + (canRun ? '<button id="approve" class="primary">Approve and run</button>' : "<p>Nothing to run: everything is analysed and reported.</p>") + '<button id="cancelApproval">Cancel</button></div>';
   box.scrollTop = 0;
