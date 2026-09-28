@@ -1,6 +1,6 @@
 import type { AbTestCard, AbTestsPart } from "../reports/ab-section.ts";
 import type { SummaryPart } from "../reports/summary.ts";
-import type { Variant } from "./ab-tests-schema.ts";
+import { slotChanged, type Variant } from "./ab-tests-schema.ts";
 import { cell } from "./report-sections.ts";
 
 /**
@@ -55,7 +55,7 @@ function variantTable(v: Variant): string[] {
     "|---|---|---|---|---|---|---|---|---|",
     ...v.slots.map(
       (s) =>
-        `| ${s.position} | ${s.changed || s.fromOurPosition !== s.position ? "**yes**" : "no"} | ${s.fromOurPosition || "new"} | ${s.orientation} | ${cell(s.composition)} | ${cell(s.screen)} | ${cell(s.band)} | ${cell(s.headline)} | ${cell(s.extras)} |`,
+        `| ${s.position} | ${slotChanged(s) ? `**${s.changes.join(", ") || "moved"}**` : "no"} | ${s.fromOurPosition || "new"} | ${s.orientation} | ${cell(s.composition)} | ${cell(s.screen)} | ${cell(s.band)} | ${cell(s.headline)} | ${cell(s.extras)} |`,
     ),
     "",
   ];

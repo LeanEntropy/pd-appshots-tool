@@ -223,6 +223,7 @@ export async function runAnalysis(
           fit,
           ab: abFactsFor(config, plan.market, {
             fit,
+            ours: entries.ours,
             ourDeckLength: entries.ourDeckLength,
             deckLength: patterns.deckLength,
           }),

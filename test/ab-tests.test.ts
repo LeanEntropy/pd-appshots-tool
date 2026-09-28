@@ -50,7 +50,7 @@ function aiTest(over: Partial<AiTest> & { at?: number; n?: number } = {}): AiTes
   const slots = Array.from({ length: 3 }, (_, i) => ({
     position: i + 1,
     fromOurPosition: i + 1,
-    changed: i + 1 === at,
+    changes: i + 1 === at ? ["screen" as const] : [],
     orientation: "portrait" as const,
     composition: "full capture",
     screen: "battle",
@@ -90,9 +90,10 @@ test("candidates: our gaps with evidence ids, n and leverage, position 1 first",
 });
 
 test("validation: unknown gap, wrong n, two changes, a foreign country, low traffic past position 3", () => {
-  const { fit } = decks();
+  const { fit, ours } = decks();
   const { rules } = abEvidence({
     fit,
+    ours,
     ourDeckLength: 3,
     deckLength: { min: 3, max: 3 },
     market: US,
@@ -108,7 +109,7 @@ test("validation: unknown gap, wrong n, two changes, a foreign country, low traf
     /is 3 of 3 screenshots, not 2 of 3/,
   );
   const two = aiTest();
-  (two.variant.slots[1] as { changed: boolean }).changed = true;
+  (two.variant.slots[1] as { changes: string[] }).changes = ["screen"];
   assert.match(testProblems(two, rules).join(), /exactly one image/);
   assert.match(
     testProblems(aiTest({ countries: ["jp"] }), rules).join(),
@@ -118,8 +119,23 @@ test("validation: unknown gap, wrong n, two changes, a foreign country, low traf
     testProblems(aiTest({ metric: "opens" }), rules).join(),
     /Unique user install clicks/,
   );
+  // Declared changes and measured orientation: a text test may change only the text.
+  const text = aiTest({ variable: "text" });
+  (text.variant.slots[0] as { changes: string[] }).changes = ["text", "composition"];
+  assert.match(testProblems(text, rules).join(), /changes only that/);
+  const turned = aiTest();
+  (turned.variant.slots[2] as { orientation: string }).orientation = "landscape";
+  assert.match(testProblems(turned, rules).join(), /position 3: our image there is portrait/);
+  const lowRules = { ...rules, lowTraffic: () => true };
+  assert.match(
+    testProblems(aiTest({ secondVariant: aiTest().variant }), lowRules).join(),
+    /one variant only/,
+  );
   // A gap at position 1 does not support a test of position 2.
-  assert.match(testProblems(aiTest({ at: 2 }), rules).join(), /no cited gap covers position 2/);
+  assert.match(
+    testProblems(aiTest({ at: 2 }), rules).join(),
+    /no cited gap covers position 2 in country us/,
+  );
 });
 
 test("the report's tests: invalid ones left out, control from our deck, topped up to 2 by code", () => {
@@ -145,6 +161,9 @@ test("the report's tests: invalid ones left out, control from our deck, topped u
     ],
   );
   assert.equal(part.leftOut[0]?.title, "Wrong");
+  // Plain words for the page: the gap is named, never its internal id.
+  assert.match(part.leftOut[0]?.reason ?? "", /^the gap "Position 1 shows gameplay" is 3 of 3/);
+  assert.doesNotMatch(part.leftOut[0]?.reason ?? "", /\bE\d+\b/);
   assert.deepEqual(
     part.tests[0]?.control.map((c) => c.screen),
     ["title image", "gameplay", "character roster"],
@@ -183,26 +202,23 @@ test("never more than 5; fewer than 2 gaps are said, not invented", () => {
   });
   assert.equal(none.tests.length, 0);
   assert.match(none.note, /No gaps found/);
-  const one = decks(["character_roster", "gameplay", "gameplay"]);
-  const oneGap = abCandidates(one.fit, {
-    gl: "us",
+  const one = decks(["gameplay", "character_roster", "title_image"]);
+  const text = aiTest({ at: 3, title: "t2", variable: "text" });
+  (text.variant.slots[2] as { changes: string[] }).changes = ["text"];
+  const single = abTestsPart({
+    ...one,
     ourDeckLength: 3,
     deckLength: { min: 3, max: 3 },
-  }).length;
-  if (oneGap === 1)
-    assert.match(
-      abTestsPart({
-        ...one,
-        ourDeckLength: 3,
-        deckLength: { min: 3, max: 3 },
-        label,
-        market: US,
-        play: play(),
-        ai: null,
-        aiCurrent: false,
-      }).note,
-      /Only 1 gap found/,
-    );
+    label,
+    market: US,
+    play: play({ us: "high" }),
+    ai: { tests: [aiTest({ at: 3 }), text] },
+    aiCurrent: true,
+  });
+  assert.equal(single.gaps, 1);
+  assert.match(single.note, /Only 1 gap found/);
+  assert.equal(single.tests.length, 1, "never more tests than gaps");
+  assert.match(single.leftOut[0]?.reason ?? "", /more tests than gaps/);
 });
 
 test("Play setup: localised by language, custom listing when countries share one, traffic", () => {
@@ -221,7 +237,7 @@ test("Play setup: localised by language, custom listing when countries share one
   assert.equal(custom.kind, "custom");
   assert.match(custom.line, /custom store listing for Taiwan/);
   assert.deepEqual(allowedMetrics(false), ["installs"]);
-  assert.deepEqual(allowedMetrics(true), ["preRegistration", "installs"]);
+  assert.deepEqual(allowedMetrics(true), ["installs", "preRegistration"], "installs stay primary");
   assert.match(GUARDRAIL, /over-promise/);
 });
 

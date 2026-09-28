@@ -13,17 +13,16 @@ import type { FitSummary } from "../analysis/pattern-fit.ts";
 import type { DeckEntry } from "../analysis/patterns.ts";
 import {
   allowedMetrics,
-  GUARDRAIL,
   isLowTraffic,
   type MarketRef,
-  PLAY_METRICS,
   type PlaySetup,
-  playSetup,
   type TestVariable,
-  VARIABLE_NAMES,
 } from "../analysis/play-experiments.ts";
 import type { TrafficLevel } from "../settings/schema.ts";
-import { abCandidates, codeTestPositions, codeTestText, type Evidence } from "./ab-candidates.ts";
+import { abCandidates, codeTestPositions, type Evidence } from "./ab-candidates.ts";
+import { card, cleanVariant, codeCard, noIds, plainReason } from "./ab-cards.ts";
+
+export { noIds } from "./ab-cards.ts";
 
 /** Where the tests run: the report's countries, the project's, traffic per country. */
 export interface PlayContext {
@@ -83,7 +82,7 @@ export interface AbSectionInput {
 }
 
 /** The gaps and the checks for one report (the same for the AI call and the report). */
-export function abEvidence(x: Omit<AbSectionInput, "ai" | "aiCurrent" | "label" | "ours">): {
+export function abEvidence(x: Omit<AbSectionInput, "ai" | "aiCurrent" | "label">): {
   evidence: Evidence[];
   rules: TestRules;
 } {
@@ -103,98 +102,9 @@ export function abEvidence(x: Omit<AbSectionInput, "ai" | "aiCurrent" | "label" 
     },
     metrics: allowedMetrics(x.play.preRegistration),
     lowTraffic: (gl) => isLowTraffic(x.play.traffic[gl] ?? "unknown"),
+    ourOrientation: new Map(x.ours.map((e) => [e.position, e.canvas])),
   };
   return { evidence, rules };
-}
-
-function control(x: AbSectionInput): AbTestCard["control"] {
-  return [...x.ours]
-    .sort((a, b) => a.position - b.position)
-    .map((e) => {
-      const s = e.final.screenshot;
-      return {
-        position: e.position,
-        screen: `${x.label(s.screenType)}${s.subtype ? ` / ${x.label(s.subtype)}` : ""}`,
-        headline: e.final.headline,
-        orientation: e.canvas,
-      };
-    });
-}
-
-function card(
-  x: AbSectionInput,
-  base: Pick<
-    AbTestCard,
-    | "source"
-    | "title"
-    | "hypothesis"
-    | "variable"
-    | "positions"
-    | "variant"
-    | "variantText"
-    | "secondVariant"
-    | "impact"
-  >,
-  cited: readonly Evidence[],
-  countries: readonly string[],
-): AbTestCard {
-  const markets = x.play.reportMarkets.filter((m) => countries.includes(m.gl));
-  const traffic = (gl: string) => x.play.traffic[gl] ?? "unknown";
-  const setup = playSetup(
-    markets.length ? markets : [x.market],
-    x.play.reportMarkets,
-    x.play.projectMarkets,
-    traffic,
-    !!base.secondVariant,
-  );
-  const metric = PLAY_METRICS[allowedMetrics(x.play.preRegistration)[0] ?? "installs"];
-  return {
-    ...base,
-    secondVariant: setup.variants === 2 ? base.secondVariant : null,
-    priority: 0,
-    evidence: cited.map((e) => ({
-      id: e.id,
-      statement: e.statement,
-      n: e.n,
-      of: e.of,
-      unit: e.unit,
-      games: e.games,
-    })),
-    variableName: VARIABLE_NAMES[base.variable],
-    countries: (markets.length ? markets : [x.market]).map((m) => m.label),
-    control: control(x),
-    metric: { name: metric.name, meaning: metric.meaning },
-    guardrail: GUARDRAIL,
-    setup,
-  };
-}
-
-/** Gap ids are internal: removed from any text the user reads, e.g. "(E1)" or "(E2, E3)". */
-export const noIds = (s: string) =>
-  s
-    .replace(/\s*\((?:gaps? )?E\d+(?:\s*(?:,|and)\s*E\d+)*\)/g, "")
-    .replace(/\b(?:gaps? )?E\d+(?:(?:\s*,\s*|\s+and\s+)E\d+)*\b/g, (m) =>
-      /E\d+\D+E\d+/.test(m) ? "these gaps" : "the gap",
-    );
-
-function codeCard(x: AbSectionInput, e: Evidence): AbTestCard {
-  const t = codeTestText(e);
-  const positions = codeTestPositions(e);
-  return card(
-    x,
-    {
-      source: "code",
-      ...t,
-      variable: e.variable,
-      positions,
-      variant: null,
-      variantText: t.variant,
-      secondVariant: null,
-      impact: null,
-    },
-    [e],
-    e.countries,
-  );
 }
 
 /**
@@ -219,7 +129,7 @@ export function abTestsPart(x: AbSectionInput): AbTestsPart {
       if (!problems.length && low.length)
         problems.push(`at most 2 tests in a low-traffic country (${low.join(", ")})`);
       if (problems.length) {
-        leftOut.push({ title: t.title, reason: problems.join("; ") });
+        leftOut.push({ title: noIds(t.title), reason: plainReason(problems, rules, x.play) });
         continue;
       }
       seen.add(key);
@@ -228,8 +138,14 @@ export function abTestsPart(x: AbSectionInput): AbTestsPart {
     }
     if (orderProblems(kept, rules).length)
       kept = [...kept].sort((a, b) => testLeverage(b, rules) - testLeverage(a, rules));
-    for (const t of kept.slice(5)) leftOut.push({ title: t.title, reason: "more than 5 tests" });
-    kept = kept.slice(0, 5);
+    // Never more tests than gaps (evidence before the count), and at most 5.
+    const most = Math.min(5, evidence.length);
+    for (const t of kept.slice(most))
+      leftOut.push({
+        title: noIds(t.title),
+        reason: most < 5 ? `more tests than gaps found (${most})` : "more than 5 tests",
+      });
+    kept = kept.slice(0, most);
   }
   const tests = kept.map((t) =>
     card(
@@ -240,12 +156,9 @@ export function abTestsPart(x: AbSectionInput): AbTestsPart {
         hypothesis: noIds(t.hypothesis),
         variable: t.variable,
         positions: variantTargets(t.variant),
-        variant: { ...t.variant, summary: noIds(t.variant.summary) },
+        variant: cleanVariant(t.variant),
         variantText: noIds(t.variant.summary),
-        secondVariant: t.secondVariant && {
-          ...t.secondVariant,
-          summary: noIds(t.secondVariant.summary),
-        },
+        secondVariant: t.secondVariant && cleanVariant(t.secondVariant),
         impact: { ...t.impact, reason: noIds(t.impact.reason) },
       },
       t.evidence.flatMap((c) => rules.evidence.get(c.id) ?? []),

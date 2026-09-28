@@ -7,13 +7,19 @@ import {
   VARIABLE_NAMES,
 } from "./play-experiments.ts";
 
+export const SLOT_CHANGES = ["screen", "text", "composition"] as const;
+
 const slotSchema = z.strictObject({
   position: z.number().int(),
   fromOurPosition: z
     .number()
     .int()
     .describe("our current position this image is based on; 0 for an image we do not have yet"),
-  changed: z.boolean().describe("true when this image differs from our current image there"),
+  changes: z
+    .array(z.enum(SLOT_CHANGES))
+    .describe(
+      "what differs from our image at fromOurPosition: the in-game screen, the text on the image, or the composition (layout, orientation, band, colours, extras); empty when nothing",
+    ),
   orientation: z.enum(["portrait", "landscape"]),
   composition: z
     .string()
@@ -68,10 +74,14 @@ export interface TestRules {
   length: { min: number; max: number };
   metrics: readonly PlayMetric[];
   lowTraffic: (gl: string) => boolean;
+  /** Our current image's orientation per position (from the pixels). */
+  ourOrientation: ReadonlyMap<number, string>;
 }
 
-const changedSlots = (v: Variant) =>
-  v.slots.filter((s) => s.changed || s.fromOurPosition !== s.position);
+/** A slot differs from the control: moved, or something in it changed. */
+export const slotChanged = (s: VariantSlot) =>
+  s.changes.length > 0 || s.fromOurPosition !== s.position;
+const changedSlots = (v: Variant) => v.slots.filter(slotChanged);
 
 /** The positions a variant changes (by code, from its slots). */
 export const variantTargets = (v: Variant) => changedSlots(v).map((s) => s.position);
@@ -98,7 +108,7 @@ export function variantProblems(v: Variant, variable: AiTest["variable"], r: Tes
     const from = v.slots.map((s) => s.fromOurPosition);
     if (from.some((f) => f < 1 || f > ours) || new Set(from).size !== from.length)
       out.push("an order test only moves (or leaves out) our current screenshots, each once");
-    if (v.slots.some((s) => same(s) && s.changed))
+    if (v.slots.some((s) => s.changes.length))
       out.push("an order test does not change the images themselves");
     if (n > ours || (changed.length < 2 && n === ours))
       out.push("an order test moves at least two screenshots, or leaves some out");
@@ -107,6 +117,20 @@ export function variantProblems(v: Variant, variable: AiTest["variable"], r: Tes
     if (v.slots.some((s) => !same(s)))
       out.push(`a test of ${VARIABLE_NAMES[variable]} keeps every image in its place`);
     if (!changed.length) out.push("the variant changes nothing");
+    const kind = variable === "text" ? "text" : "composition";
+    if (v.slots.some((s) => s.changes.some((c) => c !== kind)))
+      out.push(`a test of ${VARIABLE_NAMES[variable]} changes only that, nothing else`);
+  }
+  if (variable === "screenshot" && v.slots.some((s) => !slotChanged(s) && s.changes.length))
+    out.push("a one-screenshot test changes nothing in the other images");
+  // Orientation is measured by code: an image that keeps its composition keeps our orientation.
+  for (const s of v.slots) {
+    const was = r.ourOrientation.get(s.fromOurPosition);
+    const free = s.changes.includes("composition") || (variable === "screenshot" && slotChanged(s));
+    if (!free && (was === "portrait" || was === "landscape") && s.orientation !== was)
+      out.push(
+        `position ${s.position}: our image there is ${was}; changing it is a composition change`,
+      );
   }
   return out;
 }
@@ -123,11 +147,8 @@ export function testProblems(t: AiTest, r: TestRules): string[] {
   }
   const known = cited.flatMap(({ e }) => (e ? [e] : []));
   if (!t.countries.length) out.push("name the countries the test runs in");
-  for (const gl of t.countries) {
+  for (const gl of t.countries)
     if (!r.countries.includes(gl)) out.push(`country ${gl} is not in this report`);
-    else if (known.length && !known.some((e) => e.countries.includes(gl)))
-      out.push(`no cited gap is from country ${gl}`);
-  }
   if (!r.metrics.includes(t.metric))
     out.push(
       `the target metric must be ${r.metrics.map((m) => PLAY_METRICS[m].name).join(" or ")}`,
@@ -135,13 +156,24 @@ export function testProblems(t: AiTest, r: TestRules): string[] {
   out.push(...variantProblems(t.variant, t.variable, r));
   if (t.secondVariant)
     out.push(...variantProblems(t.secondVariant, t.variable, r).map((p) => `second variant: ${p}`));
-  const targets = variantTargets(t.variant);
-  const covered = (p: number) =>
-    known.some((e) => e.positions.length === 0 || e.positions.includes(p) || e.ours.includes(p));
-  for (const p of targets)
-    if (known.length && !covered(p)) out.push(`no cited gap covers position ${p}`);
-  if (t.variable !== "order" && t.countries.some(r.lowTraffic) && targets.some((p) => p > 3))
+  const targets = [
+    ...new Set([
+      ...variantTargets(t.variant),
+      ...(t.secondVariant ? variantTargets(t.secondVariant) : []),
+    ]),
+  ];
+  // Each country and position the test changes is covered by one cited gap.
+  const covers = (e: Evidence, gl: string, p: number) =>
+    e.countries.includes(gl) &&
+    (e.positions.length === 0 || e.positions.includes(p) || e.ours.includes(p));
+  for (const gl of t.countries.filter((c) => r.countries.includes(c)))
+    for (const p of targets)
+      if (known.length && !known.some((e) => covers(e, gl, p)))
+        out.push(`no cited gap covers position ${p} in country ${gl}`);
+  const low = t.countries.some(r.lowTraffic);
+  if (low && t.variable !== "order" && targets.some((p) => p > 3))
     out.push("in a low-traffic country, test only positions 1 to 3 or the order of the set");
+  if (low && t.secondVariant) out.push("in a low-traffic country, use one variant only");
   return out;
 }
 

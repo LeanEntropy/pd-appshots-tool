@@ -66,7 +66,9 @@ export function abTestsTask(x: AbTestsInput): string {
 
 function problemList(v: AbTestsOutput, r: TestRules): string[] {
   const per = v.tests.flatMap((t, i) => testProblems(t, r).map((p) => `test ${i + 1}: ${p}`));
-  const count = v.tests.length > 5 ? [`write at most 5 tests (got ${v.tests.length})`] : [];
+  const most = Math.min(5, r.evidence.size);
+  const count =
+    v.tests.length > most ? [`write at most ${most} tests (got ${v.tests.length})`] : [];
   return [...count, ...per, ...orderProblems(v.tests, r)];
 }
 

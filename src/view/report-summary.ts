@@ -57,7 +57,7 @@ function summaryHtml(d) { return overviewHtml(d) + keyRecsHtml(d) + abCardsHtml(
 
 function variantHtml(v) {
   return "<p><em>" + esc(v.summary) + '</em></p><div class="tablewrap"><table class="rt"><tr><th>#</th><th>Changed</th><th>From our position</th><th>Orientation</th><th>Composition</th><th>Screen</th><th>Band</th><th>Headline</th><th>Extras</th></tr>'
-    + v.slots.map((s) => { const ch = s.changed || s.fromOurPosition !== s.position; return '<tr class="' + (ch ? "miss" : "") + '"><th>' + s.position + "</th><td>" + (ch ? pill("slightly", "changed") : "same") + "</td><td>" + (s.fromOurPosition || "new") + "</td><td>" + esc(s.orientation) + "</td><td>" + esc(s.composition) + "</td><td>" + esc(s.screen) + "</td><td>" + esc(s.band) + "</td><td><strong>" + esc(s.headline) + "</strong></td><td>" + esc(s.extras) + "</td></tr>"; }).join("") + "</table></div>";
+    + v.slots.map((s) => { const ch = (s.changes || []).length > 0 || s.fromOurPosition !== s.position; return '<tr class="' + (ch ? "miss" : "") + '"><th>' + s.position + "</th><td>" + (ch ? pill("slightly", (s.changes || []).join(", ") || "moved") : "same") + "</td><td>" + (s.fromOurPosition || "new") + "</td><td>" + esc(s.orientation) + "</td><td>" + esc(s.composition) + "</td><td>" + esc(s.screen) + "</td><td>" + esc(s.band) + "</td><td><strong>" + esc(s.headline) + "</strong></td><td>" + esc(s.extras) + "</td></tr>"; }).join("") + "</table></div>";
 }
 
 function abTestHtml(t) {

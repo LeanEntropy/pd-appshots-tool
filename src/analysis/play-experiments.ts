@@ -32,9 +32,12 @@ export const PLAY_METRICS = {
 } as const;
 export type PlayMetric = keyof typeof PLAY_METRICS;
 
-/** The target metric a test may use: install clicks, or pre-registration clicks before launch. */
+/**
+ * The target metrics a test may use: install clicks, the primary metric of every test (listed
+ * first); pre-registration clicks are offered only for a game in pre-registration.
+ */
 export const allowedMetrics = (preRegistration: boolean): PlayMetric[] =>
-  preRegistration ? ["preRegistration", "installs"] : ["installs"];
+  preRegistration ? ["installs", "preRegistration"] : ["installs"];
 
 /** The guardrail is a check for the user after the test; the tool never reads Play results. */
 export const GUARDRAIL = `After the test, compare ${PLAY_METRICS.opens.name.toLowerCase()} as well as installs for the winning variant in Play Console: more installs with fewer opens suggests the images over-promise.`;

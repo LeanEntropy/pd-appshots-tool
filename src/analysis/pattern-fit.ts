@@ -120,7 +120,8 @@ export function patternFit(
       );
       add({
         basis: {
-          ...basisOf(hits, both.length, both.length, "decks", []),
+          // n of all competitor decks (the share the pattern strength uses).
+          ...basisOf(hits, both.length, g, "decks", []),
           ours: ox !== undefined && oy !== undefined && ox > oy ? [oy, ox] : [],
         },
         id: `before-${x}-${y}`,

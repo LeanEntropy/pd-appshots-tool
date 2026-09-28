@@ -8,12 +8,17 @@ export const OLDER_STYLE =
   "Written in the older style: the insights and recommendations below come from before the store-page expert voice and the A/B tests.";
 const TEXT_STEPS = ["patterns", "recommend", "recommendReview", "abTests"];
 
-/** The AI parts were written with other text-prompt versions than today's. */
+/**
+ * The AI parts were written with other text-prompt versions than today's. null = looked up and
+ * not found: every run since the reports update records them, so such a run is older too.
+ * undefined = not given (built in memory with today's prompts).
+ */
 export function olderStyle(
   was: Record<string, string> | null | undefined,
   now: Record<string, string>,
 ) {
-  return !!was && TEXT_STEPS.some((k) => was[k] !== now[k]);
+  if (was === undefined) return false;
+  return was === null || TEXT_STEPS.some((k) => was[k] !== now[k]);
 }
 
 /** The summary (3C) and the A/B tests (3B) of the report, by code (AI wording when current). */

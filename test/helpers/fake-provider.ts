@@ -153,7 +153,7 @@ function abAnswer(prompt: string) {
   const slot = (p: number) => ({
     position: p,
     fromOurPosition: p,
-    changed: p === at,
+    changes: p === at ? ["screen", "text"] : [],
     orientation: "portrait",
     composition: "single full capture",
     screen: p === at ? "a boss fight in the middle" : "as today",
