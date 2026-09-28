@@ -78,9 +78,10 @@ test("the current prompts carry the rule and never make the claim themselves", (
 test("the reworded prompts keep their contract versions: saved analyses stay valid", () => {
   assert.equal(PROMPT_VERSIONS.fullAnalysis, "full-analysis.v4");
   assert.equal(PROMPT_VERSIONS.adjudicate, "adjudicate.v3");
-  // The text steps moved to the store-page CMO voice (plan-reports 3B.1): text only, no image.
-  assert.equal(PROMPT_VERSIONS.patterns, "patterns.v3");
-  assert.equal(PROMPT_VERSIONS.recommend, "recommend.v3");
+  // The text steps (2026-09-29: one full-screen art category, the logo decision per image):
+  // text only, no image, so every analysis key stays the same.
+  assert.equal(PROMPT_VERSIONS.patterns, "patterns.v4");
+  assert.equal(PROMPT_VERSIONS.recommend, "recommend.v4");
   for (const f of Object.values(PROMPT_FILES))
     assert.ok(existsSync(join(REPO, "prompts", "analysis", `${f}.md`)), f);
 });

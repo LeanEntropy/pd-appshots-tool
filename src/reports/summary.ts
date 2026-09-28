@@ -1,6 +1,6 @@
 import type { Labeler } from "../analysis/labels.ts";
 import type { FitSummary } from "../analysis/pattern-fit.ts";
-import type { Interpretation, Recommendations } from "../analysis/synthesis-schema.ts";
+import { type Interpretation, logoOf, type Recommendations } from "../analysis/synthesis-schema.ts";
 
 /**
  * The summary at the top of every report (plan-reports 3C): the short answer, the key
@@ -47,7 +47,7 @@ export function summaryPart(x: SummaryInput): SummaryPart {
   const worded = !!f && !!short && short.toLowerCase().includes(f.verdict);
   const code = f
     ? [
-        `Our store page is ${f.verdict} compared with ${x.competitors} ${x.competitors === 1 ? "competitor" : "competitors"} in ${x.market}${f.score !== null ? `: it fits ${Math.round(f.score * 100)}% of their weighted patterns` : ""}.`,
+        `Our store page is ${f.verdict} compared with ${x.competitors} ${x.competitors === 1 ? "competitor" : "competitors"} in ${x.market}${f.points ? `: it fits ${f.points.fit} of ${f.points.total} weighted pattern points` : f.score !== null ? `: it fits ${Math.round(f.score * 100)}% of their weighted patterns` : ""}.`,
         f.keyPoints[0]
           ? `The most important change: ${f.keyPoints[0]}`
           : "It already follows every competitor pattern found.",
@@ -59,9 +59,10 @@ export function summaryPart(x: SummaryInput): SummaryPart {
   const changes = recs.filter((p) => !KEEP.test(p.source));
   const keyRecommendations = changes.slice(0, 5).map((p) => {
     const headline = p.marketingLayer.present ? p.marketingLayer.texts[0]?.text : "";
+    const logo = logoOf(p);
     return {
       position: p.position,
-      text: `${x.label(p.screenType)}${p.subtype ? ` / ${x.label(p.subtype)}` : ""}${headline ? `, headline "${headline}"` : ""} (${p.source})`,
+      text: `${x.label(p.screenType)}${p.subtype ? ` / ${x.label(p.subtype)}` : ""}${headline ? `, headline "${headline}"` : ""}${logo ? `, ${logo.show ? "with" : "without"} the game logo` : ""} (${p.source})`,
     };
   });
   const dates = (xs: (string | null)[]) => xs.filter((d): d is string => !!d).sort();

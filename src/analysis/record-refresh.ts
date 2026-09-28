@@ -1,6 +1,6 @@
 import { type LoadedConfig, loadTaxonomy, projectPaths } from "../config/load.ts";
 import { type ImageDb, openImageDb } from "../store/imagedb.ts";
-import { normaliseText } from "./compare.ts";
+import { namesBrand } from "./brand.ts";
 import { type ImageIdentity, identityBuilder } from "./identity.ts";
 import { type ImageFacts, imageFacts } from "./image-facts.ts";
 import { type AnalysisRecord, readRecords, writeRecord } from "./records.ts";
@@ -11,7 +11,7 @@ import type { ImageAnalysis } from "./schema.ts";
  * readings become the user's terms when the evidence is clear, and a title image counts as the
  * in-game title screen (user, 2026-09-28), without any model call.
  */
-export const TAXONOMY_MAPPING = "key-art-title-screen.v3";
+export const TAXONOMY_MAPPING = "key-art-title-screen.v4";
 
 export interface MappedFrom {
   /** The model's original classification, kept so a newer mapping can start from it. */
@@ -32,9 +32,9 @@ export function mapKeyArt(
   if (s.screenType !== "key_art") return { final: a, mappedFrom: null };
   const noCapture = s.captures.length === 0 || s.composition === "pure_art";
   if (!noCapture) return { final: a, mappedFrom: null };
-  const title = normaliseText(game);
-  // Only the game's own logo or title counts (not a publisher or partner logo).
-  const names = (x: string) => !!title && normaliseText(x).includes(title);
+  // Only the game's own logo or name counts (not a publisher or partner logo), and only the
+  // brand part of a two-part store title (v4, user 2026-09-28: the rest is ASO keywords).
+  const names = (x: string) => namesBrand(x, game);
   const logo =
     s.subtype === "title_logo" ||
     m.elements.some(

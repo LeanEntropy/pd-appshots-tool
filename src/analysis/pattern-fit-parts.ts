@@ -48,10 +48,16 @@ export function summarise(patterns: PatternFit[], games: number): FitSummary {
             : score >= 0.4
               ? "relatively different"
               : "very different";
-  const keyPoints = patterns
-    .filter((x) => x.fits === false)
+  const misses = patterns.filter((x) => x.fits === false);
+  // Each finding once: "Uses X" adds nothing when a position already says X is missing there.
+  const atPosition = new Set(
+    misses.filter((x) => /^position-\d+$/.test(x.id)).flatMap((x) => x.categories ?? []),
+  );
+  const keyPoints = misses
+    .filter((x) => !(x.id.startsWith("uses-") && atPosition.has(x.id.slice(5))))
     .sort((a, b) => w(b) - w(a) || GROUP_RANK[a.group] - GROUP_RANK[b.group])
     .slice(0, 6)
-    .map((x) => `${x.text} (${x.evidence}); ${x.reason}.`);
-  return { patterns, verdict, score, keyPoints };
+    .map((x) => `${x.text}: ${x.evidence}; ${x.reason}.`);
+  const fit = judged.filter((x) => x.fits).reduce((n, x) => n + w(x), 0);
+  return { patterns, verdict, score, keyPoints, points: { fit, total } };
 }

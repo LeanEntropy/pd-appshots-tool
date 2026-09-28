@@ -1,3 +1,5 @@
+import { categoryOfType, reportLabeler } from "../analysis/categories.ts";
+import { plainLabel } from "../analysis/labels.ts";
 import { type LoadedConfig, projectPaths } from "../config/load.ts";
 import { analysedSlots } from "../core/selection.ts";
 import { settingsOf } from "../settings/access.ts";
@@ -22,8 +24,23 @@ interface SavedData {
       n: number;
       types: { key: string; n: number; share: number }[];
     }[];
+    tags?: { logoPerPosition?: { position: number; n: number; of: number }[] };
   };
-  labels?: Record<string, string>;
+}
+
+type Position = NonNullable<NonNullable<SavedData["patterns"]>["perPosition"]>[number];
+const label = (k: string) => reportLabeler(plainLabel)(k).toLowerCase();
+
+/**
+ * A position's screen types merged into the report categories: reports saved before the
+ * categories (2026-09-29) split title, feature, key and loading art, which are one category now.
+ */
+function byCategory(p: Position): Position["types"] {
+  const m = new Map<string, number>();
+  for (const t of p.types) m.set(categoryOfType(t.key), (m.get(categoryOfType(t.key)) ?? 0) + t.n);
+  return [...m.entries()]
+    .map(([key, n]) => ({ key, n, share: p.n ? n / p.n : 0 }))
+    .sort((a, b) => b.n - a.n || a.key.localeCompare(b.key));
 }
 
 /**
@@ -56,31 +73,33 @@ export function weakPatterns(
   } catch {
     return [];
   }
-  const weak = (d?.patterns?.perPosition ?? []).filter((p) => {
-    const top = p.types[0]?.share ?? 0;
-    return p.n < opts.weakN || (top >= opts.splitLow && top <= opts.splitHigh);
-  });
+  const split = (share: number) => share >= opts.splitLow && share <= opts.splitHigh;
+  const positions = (d?.patterns?.perPosition ?? []).map((p) => ({ ...p, types: byCategory(p) }));
+  const weakType = positions.filter((p) => p.n < opts.weakN || split(p.types[0]?.share ?? 0));
+  // The game logo split in the first 3 images (with vs without) is weak evidence too.
+  const weakLogo = (d?.patterns?.tags?.logoPerPosition ?? []).filter(
+    (l) => l.position <= 3 && l.of >= opts.weakN && split(Math.max(l.n, l.of - l.n) / l.of),
+  );
+  const weak = [...weakType.map((p) => p.position), ...weakLogo.map((l) => l.position)];
   if (!weak.length) return [];
   const settlers = config.competitors
     .filter((c) => {
       if (pickIds.includes(c.id)) return false;
       const deck = readDeck(paths.decks, { appId: c.id, gl: main.gl, hl: main.hl });
       const n = deck?.status === "ok" ? analysedSlots(config, deck).length : 0;
-      return n >= (weak[0]?.position ?? 1);
+      return n >= Math.min(...weak);
     })
     .slice(0, 3);
   if (!settlers.length) return [];
-  const label = (k: string) => (d?.labels?.[k] ?? k.replace(/_/g, " ")).toLowerCase();
-  const p = weak[0] as (typeof weak)[number];
-  const [a, b] = p.types;
-  const detail =
-    a && b && a.share <= opts.splitHigh
-      ? `is split between ${label(a.key)} and ${label(b.key)} (${a.n} vs ${b.n} games)`
-      : `rests on ${p.n} ${p.n === 1 ? "game" : "games"}`;
-  const nth = ["1st", "2nd", "3rd"][p.position - 1] ?? `${p.position}th`;
-  const more =
-    weak.length > 1
-      ? ` (and ${weak.length - 1} more ${weak.length === 2 ? "position" : "positions"})`
+  const p = weakType[0];
+  const l = weakLogo[0];
+  const [a, b] = p?.types ?? [];
+  const why = p
+    ? a && b && a.share <= opts.splitHigh
+      ? `Image ${p.position} is split between ${label(a.key)} (${a.n} games) and ${label(b.key)} (${b.n} games)`
+      : `Image ${p.position} rests on ${p.n} ${p.n === 1 ? "game" : "games"}`
+    : l
+      ? `Image ${l.position} is split on the game logo (${l.n} of ${l.of} competitors show it)`
       : "";
   const scope: ReportScope = {
     type: "country",
@@ -93,10 +112,10 @@ export function weakPatterns(
       key: `weak:${settlers.map((c) => c.id).join(",")}`,
       category: "weak",
       title: "Settle the weak patterns",
-      why: `The ${nth} image ${detail}${more}: analysing ${list(settlers.map((c) => c.name))} would settle it.`,
+      why: `${why}: analysing ${list(settlers.map((c) => c.name))} would settle it.`,
       what: `${mainName}: ${list(settlers.map((c) => c.name))} added to your pick`,
-      value: weak.reduce(
-        (n, x) => n + POINTS.weakPattern + (x.position <= 3 ? POINTS.weakPatternFirstThree : 0),
+      value: [...new Set(weak)].reduce(
+        (n, x) => n + POINTS.weakPattern + (x <= 3 ? POINTS.weakPatternFirstThree : 0),
         0,
       ),
       cost: planCost(loaded, scope, ctx),

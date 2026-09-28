@@ -1,5 +1,6 @@
 import { z } from "zod";
 import type { Evidence } from "../reports/ab-candidates.ts";
+import { isEventLine } from "./image-tags.ts";
 import {
   PLAY_METRICS,
   type PlayMetric,
@@ -98,6 +99,12 @@ export function variantProblems(v: Variant, variable: AiTest["variable"], r: Tes
   const ours = r.ourDeckLength;
   const changed = changedSlots(v);
   const same = (s: VariantSlot) => s.fromOurPosition === s.position;
+  // Event or offer lines are evidence only, never copied (they expire).
+  for (const s of changed)
+    if (isEventLine(s.headline))
+      out.push(
+        `image ${s.position}: "${s.headline}" is an event or offer line; use a lasting headline`,
+      );
   if (variable === "screenshot") {
     if (changed.length !== 1) out.push("a one-screenshot test changes exactly one image");
     const added = n === ours + 1;

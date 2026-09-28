@@ -1,3 +1,4 @@
+import { reportLabeler } from "../analysis/categories.ts";
 import { batchDataHash } from "../analysis/entries.ts";
 import { labeler } from "../analysis/labels.ts";
 import { PATTERN_FIT_VERSION } from "../analysis/pattern-fit.ts";
@@ -39,7 +40,7 @@ export function countrySlices(
   const paths = projectPaths(loaded);
   const { db, records } = ctx;
   const taxonomy = loadTaxonomy(loaded);
-  const label = labeler(taxonomy.taxonomy);
+  const label = reportLabeler(labeler(taxonomy.taxonomy));
   const storage = workspaceStorage(paths.workspace);
   const versions = {
     prompts: PROMPT_VERSIONS,

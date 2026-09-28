@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { reportLabeler } from "../analysis/categories.ts";
 import { labeler } from "../analysis/labels.ts";
 import { summaries } from "../analysis/records.ts";
 import { type LoadedConfig, loadTaxonomy, projectPaths } from "../config/load.ts";
@@ -139,7 +140,7 @@ export function reportSource(
     ],
     ["Pictures", options.images ? "Included" : "Left out"],
   ];
-  const label = labeler(loadTaxonomy(loaded).taxonomy);
+  const label = reportLabeler(labeler(loadTaxonomy(loaded).taxonomy));
   const captions: Record<string, string> = {};
   if (d && options.images)
     for (const [id, v] of summaries(paths, label))

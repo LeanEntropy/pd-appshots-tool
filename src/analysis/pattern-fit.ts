@@ -1,10 +1,12 @@
+import { hasDefinition } from "./categories.ts";
 import { colourFamily } from "./colours.ts";
 import type { Labeler } from "./labels.ts";
 import { basisOf, firstPositions, strengthOf, summarise } from "./pattern-fit-parts.ts";
+import { tagFits } from "./pattern-fit-tags.ts";
 import { counts, type DeckEntry, type Patterns, proportion, typeKey } from "./patterns.ts";
 
 /** Bump when the pattern check changes: the AI wording of its verdict is then rewritten. */
-export const PATTERN_FIT_VERSION = "pattern-fit.v1";
+export const PATTERN_FIT_VERSION = "pattern-fit.v2";
 
 export type FitGroup = "order" | "content" | "layer" | "format";
 
@@ -21,6 +23,8 @@ export interface PatternFit {
   reason: string;
   /** The numbers behind it, for the A/B test evidence (absent in reports saved before it). */
   basis?: FitBasis;
+  /** Screen categories and tags it is about: each needs a definition (categories.ts). */
+  categories?: string[];
 }
 
 /** n of `of` games, decks or screenshots; positions empty = the whole deck. */
@@ -50,9 +54,11 @@ export interface FitSummary {
   score: number | null;
   /** What to change first: the misfits, most important first. */
   keyPoints: string[];
+  /** The weighted points behind the score (absent in reports saved before 2026-09-29). */
+  points?: { fit: number; total: number };
 }
 
-const pct = (n: number) => `${Math.round(n * 100)}%`;
+export type AddFit = (x: Omit<PatternFit, "strength"> & { share: number; cap?: "partial" }) => void;
 
 /** Deterministic pattern check: which competitor patterns our deck follows, and a verdict. */
 export function patternFit(
@@ -65,10 +71,13 @@ export function patternFit(
   const out: PatternFit[] = [];
   const games = new Set(theirs.map((e) => e.appId));
   const g = games.size;
-  const add = (x: Omit<PatternFit, "strength"> & { share: number }) => {
-    const strength = strengthOf(x.share);
+  const add: AddFit = (x) => {
+    let strength = strengthOf(x.share);
     if (!strength) return;
-    const { share: _s, ...rest } = x;
+    // A category or tag without a definition never drives a finding (user rule, 2026-09-28).
+    if (x.categories && !x.categories.every(hasDefinition)) return;
+    if (x.cap === "partial") strength = "partial";
+    const { share: _s, cap: _c, ...rest } = x;
     out.push({ ...rest, strength });
   };
   const ourAt = (n: number) => ours.find((e) => e.position === n);
@@ -88,14 +97,15 @@ export function patternFit(
       id: `position-${at.position}`,
       group: "order",
       share: at.top.share,
-      text: `Position ${at.position} shows ${label(t)}`,
-      evidence: `${pct(at.top.share)} of ${at.n} competitor screenshots at position ${at.position}`,
+      categories: [t],
+      text: at.position === 1 ? `Opens with ${label(t)}` : `Image ${at.position} shows ${label(t)}`,
+      evidence: `${at.top.n} of ${at.n} competitors`,
       fits: mine ? typeKey(mine.final) === t : null,
       reason: mine
         ? typeKey(mine.final) === t
-          ? `ours is ${label(t)} too`
-          : `ours shows ${label(typeKey(mine.final))}`
-        : `our deck has no position ${at.position}`,
+          ? "ours too"
+          : `ours: ${label(typeKey(mine.final))}`
+        : `our deck has no image ${at.position}`,
     });
   }
   // Order: one screen type before another, in every competitor deck that has both.
@@ -127,14 +137,15 @@ export function patternFit(
         id: `before-${x}-${y}`,
         group: "order",
         share: both.length / g,
+        categories: [x, y],
         text: `${label(x)} comes before ${label(y)}`,
-        evidence: `in all ${both.length} competitor decks that have both`,
+        evidence: `${both.length} of ${g} competitors (every deck that has both)`,
         fits: ox !== undefined && oy !== undefined ? ox < oy : null,
         reason:
           ox !== undefined && oy !== undefined
             ? ox < oy
-              ? `ours: ${label(x)} at ${ox}, ${label(y)} at ${oy}`
-              : `ours has ${label(y)} first (position ${oy}), ${label(x)} at ${ox}`
+              ? `ours too (image ${ox}, then image ${oy})`
+              : `ours has ${label(y)} first (image ${oy}), ${label(x)} at image ${ox}`
             : `our deck does not have both`,
       });
     }
@@ -152,10 +163,11 @@ export function patternFit(
       id: `uses-${t.key}`,
       group: "content",
       share: t.gameShare,
+      categories: [t.key],
       text: `Uses ${label(t.key)}`,
-      evidence: `${t.games} of ${g} competitors, at positions ${t.positions.join(", ")}`,
+      evidence: `${t.games} of ${g} competitors`,
       fits: ourTypes.has(t.key),
-      reason: ourTypes.has(t.key) ? "we use it too" : `we have no ${label(t.key)}`,
+      reason: ourTypes.has(t.key) ? "ours too" : `ours has no ${label(t.key)}`,
     });
   // Layer and format: image-level shares, ours judged by our own majority.
   const top = <T extends { key: string; share: number }>(cs: readonly T[]) => cs[0];
@@ -181,7 +193,7 @@ export function patternFit(
       group,
       share: c.share,
       text: `${what}: ${name(c.key)}`,
-      evidence: `${pct(c.share)} of competitor screenshots`,
+      evidence: `${hits.length} of ${counted} competitor images`,
       fits: mine === null ? null : mine === c.key,
       reason:
         mine === null
@@ -211,10 +223,10 @@ export function patternFit(
     id: "layer",
     group: "layer",
     share: p.marketingLayer.share,
-    text: "A marketing layer on the screenshots",
-    evidence: `${pct(p.marketingLayer.share)} of competitor screenshots`,
+    text: "A marketing layer on the images",
+    evidence: `${layered.length} of ${theirs.length} competitor images`,
     fits: ours.length ? layerShare >= 0.5 : null,
-    reason: `ours: ${pct(layerShare)} of our screenshots`,
+    reason: `ours: ${ours.length - ours.filter((e) => !e.final.marketingLayer.present).length} of ${ours.length}`,
   });
   image(
     "layout",
@@ -258,7 +270,7 @@ export function patternFit(
       group: "layer",
       share: layered.length ? withOne / layered.length : 0,
       text: `Marketing layer colours: mostly ${theirColours.map((c) => c.key).join(" and ")}`,
-      evidence: `${withOne} of ${layered.length} competitor layers use one of them (${theirColours.map((c) => `${c.key} ${pct(c.share)}`).join(", ")} of layer colours)`,
+      evidence: `${withOne} of ${layered.length} competitor layers use one of them`,
       fits: mine.length ? hit : null,
       reason: mine.length
         ? `ours: mostly ${mine.map((m) => m.key).join(" and ")}`
@@ -278,5 +290,6 @@ export function patternFit(
       reason: `ours has ${ourDeckLength}`,
     });
   }
+  tagFits(theirs, ours, p, g, label, add);
   return summarise(out, g);
 }

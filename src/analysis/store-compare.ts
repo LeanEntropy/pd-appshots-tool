@@ -1,5 +1,6 @@
 import { latestStoreText, type StoreSnapshot } from "../library/store-text.ts";
 import type { Storage } from "../storage/index.ts";
+import { splitStoreTitle } from "./brand.ts";
 import { allKeys } from "./keywords.ts";
 
 /**
@@ -26,6 +27,11 @@ export interface StoreTextView {
   tags: string[];
   keywords: string[];
   title: string | null;
+  /**
+   * A two-part title's second part ("Game - ASO words"): keyword data, not the game's name
+   * (user, 2026-09-28). Absent in reports saved before 2026-09-29.
+   */
+  titleKeywords?: string | null;
   shortDescription: string | null;
   contentRating: string | null;
   /** Label of an earlier country with exactly the same store text (folded in the page). */
@@ -50,6 +56,7 @@ function view(s: StoreSnapshot, m: Market, sameAs: string | null): StoreTextView
     tags: o.chips.slice(firstIsCategory ? 1 : 0).map((c) => c.name),
     keywords: s.derived.keywords.slice(0, SHOWN).map((k) => k.term),
     title: o.title,
+    titleKeywords: o.title ? splitStoreTitle(o.title).keywords : null,
     shortDescription: o.shortDescription,
     contentRating: o.contentRating,
     sameAs,

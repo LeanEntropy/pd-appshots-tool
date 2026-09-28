@@ -7,7 +7,14 @@ import {
   keyRecommendationsMarkdown,
   summaryDates,
 } from "./report-md-summary.ts";
-import { cell, IMG, patternSection, recommendationSection } from "./report-sections.ts";
+import {
+  cell,
+  defineLine,
+  IMG,
+  patternSection,
+  recommendationSection,
+  sortingMarkdown,
+} from "./report-sections.ts";
 import { storeTextMarkdown } from "./report-store-md.ts";
 
 const img = (thumb: string | null, file: string | null, alt: string) =>
@@ -54,6 +61,24 @@ export function overviewText(d: ReportData): {
   };
 }
 
+/** " (fits 12 of 15 weighted pattern points)": counts, not a percentage. */
+export function fitsText(f: NonNullable<ReportData["fit"]>): string {
+  // Reports saved before the points existed: the same weights, from the saved patterns.
+  const w = (x: PatternFit) => (x.strength === "pattern" ? 2 : 1);
+  const judged = f.patterns.filter((x) => x.fits !== null);
+  const p = f.points ?? {
+    fit: judged.filter((x) => x.fits).reduce((n, x) => n + w(x), 0),
+    total: judged.reduce((n, x) => n + w(x), 0),
+  };
+  return p.total ? ` (fits ${p.fit} of ${p.total} weighted pattern points)` : "";
+}
+
+/** The definitions of the categories and tags a pattern is about, under its text. */
+const defined = (x: PatternFit) => {
+  const lines = [...new Set(x.categories ?? [])].map(defineLine).filter(Boolean);
+  return lines.length ? `<br>_${cell(lines.join(" "))}_` : "";
+};
+
 const fitMark = (x: PatternFit) =>
   x.fits === null ? "n/a" : x.fits ? "[V] fits" : "[X] different";
 
@@ -82,11 +107,7 @@ export function reportMarkdown(d: ReportData, label: Labeler, research?: string[
   const o = overviewText(d);
   const f = d.fit;
   out.push(head(0), "");
-  if (f)
-    out.push(
-      `**Verdict: our deck is ${f.verdict.toUpperCase()}**${f.score !== null ? ` (fits ${Math.round(f.score * 100)}% of the weighted competitor patterns)` : ""}.`,
-      "",
-    );
+  if (f) out.push(`**Verdict: our deck is ${f.verdict.toUpperCase()}**${fitsText(f)}.`, "");
   else out.push("**Verdict: not enough competitor data yet.**", "");
   if (d.summary) out.push(d.summary.shortAnswer, "");
   else if (o.verdict) out.push(o.verdict, "");
@@ -117,7 +138,7 @@ export function reportMarkdown(d: ReportData, label: Labeler, research?: string[
   // The contents follow the summary (plan-reports 3C).
   out.push("## Contents", "", ...titles.map((s, i) => `${i + 1}. [${s}](#${slug(i)})`), "");
 
-  out.push(head(1), "");
+  out.push(head(1), "", ...sortingMarkdown(d.sorting));
   out.push(
     `Computed from ${d.coverage.used} of ${d.coverage.total} screenshots in the batch${d.coverage.missing.length ? ` (missing: ${d.coverage.missing.join(", ")})` : ""}. A **pattern** holds for (nearly) every competitor; a **partial pattern** for at least half of them.`,
     "",
@@ -141,7 +162,7 @@ export function reportMarkdown(d: ReportData, label: Labeler, research?: string[
         "|---|---|---|---|---|",
         ...rows.map(
           (x) =>
-            `| ${fitMark(x)} | ${x.strength === "pattern" ? "pattern" : "partial"} | ${cell(x.text)} | ${cell(x.evidence)} | ${cell(x.reason)} |`,
+            `| ${fitMark(x)} | ${x.strength === "pattern" ? "pattern" : "partial"} | ${cell(x.text)}${defined(x)} | ${cell(x.evidence)} | ${cell(x.reason)} |`,
         ),
         "",
       );

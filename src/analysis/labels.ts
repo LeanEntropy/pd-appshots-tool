@@ -1,4 +1,5 @@
 import type { Taxonomy } from "../config/load.ts";
+import { definitionOf } from "./categories.ts";
 
 /** Display name for a screen type or subtype code. */
 export type Labeler = (code: string) => string;
@@ -9,11 +10,14 @@ export function humanise(code: string): string {
   return s.charAt(0).toUpperCase() + s.slice(1);
 }
 
-/** Display names from the taxonomy (type labels and subtype labels), humanised otherwise. */
+/**
+ * Display names: the report's defined screen categories and tags first (categories.ts), then the
+ * taxonomy (type labels and subtype labels), humanised otherwise.
+ */
 export function labeler(t?: Pick<Taxonomy, "screenTypes" | "subtypeLabels">): Labeler {
   const m = new Map<string, string>(Object.entries(t?.subtypeLabels ?? {}));
   for (const s of t?.screenTypes ?? []) m.set(s.id, s.label);
-  return (code) => m.get(code) ?? humanise(code);
+  return (code) => definitionOf(code)?.label ?? m.get(code) ?? humanise(code);
 }
 
 export const plainLabel: Labeler = labeler();

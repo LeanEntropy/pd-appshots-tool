@@ -5,6 +5,7 @@ import { playContextOf } from "../reports/play-context.ts";
 import { projectKey, workspaceStorage } from "../storage/index.ts";
 import { openImageDb } from "../store/imagedb.ts";
 import type { AbTestsOutput } from "./ab-tests-schema.ts";
+import { reportLabeler } from "./categories.ts";
 import { batchDataHash } from "./entries.ts";
 import { readLatest } from "./final-report.ts";
 import type { ImageIdentity } from "./identity.ts";
@@ -125,7 +126,7 @@ export function reportInputs(
     decks,
     db,
     orderDates,
-    label: labeler(loadTaxonomy(loaded).taxonomy),
+    label: reportLabeler(labeler(loadTaxonomy(loaded).taxonomy)),
     dataHash: batchDataHash(plan, records),
     latestAi,
     lastSkip: skip,

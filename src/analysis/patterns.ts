@@ -1,5 +1,7 @@
 import { ART_SCREEN } from "./art-wording.ts";
+import { categoryOf, FULL_SCREEN_ART } from "./categories.ts";
 import { colourFamily, textColourFamily } from "./colours.ts";
+import { type TagStats, tagStats } from "./image-tags.ts";
 import type { ImageAnalysis } from "./schema.ts";
 
 /** One analysed screenshot in store order. `canvas` comes from the image size, by code. */
@@ -70,6 +72,8 @@ export interface Patterns {
   textPositions: Count[];
   elementKinds: Count[];
   byScreenType: TypeStats[];
+  /** The game logo per position and deck, and what full-screen art says (absent before 2026-09-29). */
+  tags?: TagStats;
 }
 
 export const PROPORTION = {
@@ -80,8 +84,12 @@ export const PROPORTION = {
   art: ART_SCREEN,
 } as const;
 
-/** Layer vs screenshot proportion, from the capture area (percent of the whole image). */
+/**
+ * Layer vs screenshot proportion, from the capture area (percent of the whole image). Title
+ * screen / full-screen art is always the art layout, whichever form its analysis has.
+ */
 export function proportion(a: ImageAnalysis): string {
+  if (categoryOf(a) === FULL_SCREEN_ART) return PROPORTION.art;
   if (!a.marketingLayer.present) return PROPORTION.none;
   const c = a.screenshot.captureAreaPercent;
   if (c >= 80) return PROPORTION.small;
@@ -93,8 +101,9 @@ export function proportion(a: ImageAnalysis): string {
 export const portraitInLandscape = (e: DeckEntry) =>
   e.canvas === "landscape" && e.final.screenshot.captures.some((c) => c.orientation === "portrait");
 
+/** The screen category the patterns compare (categories.ts). */
 export function typeKey(a: ImageAnalysis): string {
-  return a.screenshot.screenType;
+  return categoryOf(a);
 }
 
 const round = (n: number) => Math.round(n * 100) / 100;
@@ -244,5 +253,6 @@ export function findPatterns(
         entries.filter((e) => typeKey(e.final) === t.key),
       ),
     ),
+    tags: tagStats(entries),
   };
 }

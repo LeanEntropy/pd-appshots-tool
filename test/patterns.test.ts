@@ -57,7 +57,7 @@ test("layer vs screenshot proportion buckets", () => {
 test("patterns per position, screen types used, layer share and co-occurrence", () => {
   const p = findPatterns(comp, decks);
   assert.equal(p.images, 8);
-  assert.deepEqual(p.perPosition[0]?.top, { key: "key_art", n: 2, share: 0.67 });
+  assert.deepEqual(p.perPosition[0]?.top, { key: "full_screen_art", n: 2, share: 0.67 });
   assert.equal(p.perPosition[1]?.top?.share, 1);
   const gp = p.screenTypes.find((t) => t.key === "gameplay");
   assert.deepEqual(gp && [gp.games, gp.images, gp.positions], [3, 5, [1, 2, 3]]);
@@ -81,7 +81,7 @@ test("our deck vs the patterns: following, slightly and very different, with rea
   );
   assert.ok(v.positions[2]?.reasons[0]?.includes("rare or unused"));
   assert.notEqual(v.overall.verdict, "following");
-  assert.ok(v.overall.reasons.some((r) => r.includes("Gameplay is used by 100%")));
+  assert.ok(v.overall.reasons.some((r) => r.includes("Gameplay is used by 3 of 3 competitors")));
 });
 
 test("store order snapshots: moves, new, removed and re-typed positions", () => {

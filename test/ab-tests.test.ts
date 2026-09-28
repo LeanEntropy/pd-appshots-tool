@@ -79,7 +79,7 @@ test("candidates: our gaps with evidence ids, n and leverage, position 1 first",
   assert.ok(ev.length >= 2);
   const first = ev[0];
   assert.equal(first?.id, "E1");
-  assert.match(first?.statement ?? "", /^Position 1 shows gameplay/);
+  assert.match(first?.statement ?? "", /^Opens with gameplay/);
   assert.deepEqual([first?.n, first?.of, first?.unit], [3, 3, "screenshots"]);
   assert.deepEqual(first?.ours, [1]);
   assert.equal(first?.variable, "screenshot");
@@ -162,11 +162,12 @@ test("the report's tests: invalid ones left out, control from our deck, topped u
   );
   assert.equal(part.leftOut[0]?.title, "Wrong");
   // Plain words for the page: the gap is named, never its internal id.
-  assert.match(part.leftOut[0]?.reason ?? "", /^the gap "Position 1 shows gameplay" is 3 of 3/);
+  assert.match(part.leftOut[0]?.reason ?? "", /^the gap "Opens with gameplay" is 3 of 3/);
   assert.doesNotMatch(part.leftOut[0]?.reason ?? "", /\bE\d+\b/);
   assert.deepEqual(
     part.tests[0]?.control.map((c) => c.screen),
-    ["title image", "gameplay", "character roster"],
+    // Our name is in our test headlines ("Ours 2"), so every image counts as showing the logo.
+    ["full screen art (logo only)", "gameplay (game logo)", "character roster (game logo)"],
   );
   assert.equal(part.tests[0]?.metric.name, "Unique user install clicks");
   assert.match(part.tests[0]?.guardrail ?? "", /open clicks/);

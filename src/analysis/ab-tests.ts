@@ -7,11 +7,15 @@ import {
   testProblems,
 } from "./ab-tests-schema.ts";
 import { type CallContext, validatedCall } from "./call.ts";
+import { reportLabeler } from "./categories.ts";
+import { plainLabel } from "./labels.ts";
 import type { DeckEntry } from "./patterns.ts";
 import { languageName, PLAY_METRICS, PLAY_SOURCE, VARIABLE_NAMES } from "./play-experiments.ts";
 import type { RenderedPrompt } from "./prompts.ts";
 import type { Provider } from "./providers.ts";
-import type { Recommendations } from "./synthesis-schema.ts";
+import { logoOf, type Recommendations } from "./synthesis-schema.ts";
+
+const L = reportLabeler(plainLabel);
 
 export interface AbTestsInput {
   evidence: readonly Evidence[];
@@ -46,7 +50,7 @@ export function abTestsTask(x: AbTestsInput): string {
         .sort((a, b) => a.position - b.position)
         .map(
           (p) =>
-            `#${p.position} ${p.screenType}${p.subtype ? `/${p.subtype}` : ""} (${p.source}), headline "${p.marketingLayer.texts[0]?.text ?? ""}": ${p.why}`,
+            `#${p.position} ${L(p.screenType)}${p.subtype ? ` / ${L(p.subtype)}` : ""} (${p.source}), headline "${p.marketingLayer.texts[0]?.text ?? ""}", game logo: ${logoOf(p)?.show ? "yes" : "no"}: ${p.why}`,
         )
         .join("\n")
     : "none written yet";

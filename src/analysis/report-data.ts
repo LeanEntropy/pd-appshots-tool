@@ -7,6 +7,7 @@ import type { AbTestsOutput } from "./ab-tests-schema.ts";
 import { artWordingDeep } from "./art-wording.ts";
 import { batchEntries } from "./entries.ts";
 import { orientationOf } from "./image-facts.ts";
+import type { ArtMessage } from "./image-tags.ts";
 import { COMPOSITION, captureLines } from "./info-text.ts";
 import type { Labeler } from "./labels.ts";
 import { compareOurs, type OursVsPatterns } from "./ours-vs.ts";
@@ -14,7 +15,14 @@ import { type FitSummary, patternFit } from "./pattern-fit.ts";
 import { findPatterns, type Patterns } from "./patterns.ts";
 import type { AnalysisPlan } from "./plan.ts";
 import { PROMPT_VERSIONS } from "./prompts.ts";
-import { type AnalysisRecord, isUsable, screenLabel } from "./records.ts";
+import { type AnalysisRecord, isUsable } from "./records.ts";
+import {
+  type Example,
+  recExamples,
+  rowTags,
+  type SortingPart,
+  sortingPart,
+} from "./report-sorting.ts";
 import type { StoreCountry } from "./store-compare.ts";
 import {
   type Interpretation,
@@ -31,6 +39,10 @@ export interface OrderRow {
   file: string | null;
   screen: string;
   screenType: string | null;
+  /** Report category (categories.ts) and tags; absent in reports saved before 2026-09-29. */
+  category?: string | null;
+  logo?: boolean | null;
+  message?: ArtMessage | null;
   headline: string;
   orientation: string;
   composition: string;
@@ -49,12 +61,7 @@ export interface GameOrder {
   rows: OrderRow[];
 }
 
-export interface Example {
-  name: string;
-  position: number;
-  imageId: string;
-  thumb: string | null;
-}
+export type { Example };
 
 export interface AiPart {
   runId: string;
@@ -95,6 +102,8 @@ export interface ReportData {
   /** The bottom line and the A/B tests to run next (absent in reports saved before them). */
   summary?: SummaryPart;
   abTests?: AbTestsPart;
+  /** "How we sort images": every category and tag used, defined, with an example. */
+  sorting?: SortingPart;
 }
 
 export interface ReportInputs {
@@ -120,7 +129,12 @@ export interface ReportInputs {
   generatedAt?: string;
 }
 
-function row(x: ReportInputs, slot: DeckManifest["slots"][number], excluded: string | null) {
+function row(
+  x: ReportInputs,
+  slot: DeckManifest["slots"][number],
+  excluded: string | null,
+  game: string,
+) {
   const id = slot.imageId;
   const img = id ? x.db.get(id) : undefined;
   const r = id ? x.records.get(id) : undefined;
@@ -132,13 +146,17 @@ function row(x: ReportInputs, slot: DeckManifest["slots"][number], excluded: str
         ? "not double-checked"
         : "analysed"
       : "not analysed";
+  const t = rowTags(f, game, x.label);
   const out: OrderRow = {
     position: slot.position,
     imageId: id,
     thumb: img?.thumb ?? null,
     file: img?.file ?? null,
-    screen: f ? screenLabel(f, x.label) : "",
+    screen: t.screen,
     screenType: f?.screenshot.screenType ?? null,
+    category: t.category,
+    logo: t.logo,
+    message: t.message,
     headline: f?.headline ?? "",
     orientation: orientationOf(slot.width, slot.height),
     composition: f
@@ -152,34 +170,16 @@ function row(x: ReportInputs, slot: DeckManifest["slots"][number], excluded: str
   return out;
 }
 
-function examples(recs: Recommendations | null, games: GameOrder[]): Record<string, Example[]> {
-  const out: Record<string, Example[]> = {};
-  if (!recs) return out;
-  const theirs = games.filter((g) => !g.ours);
-  for (const p of recs.positions) {
-    const all = theirs.flatMap((g) =>
-      g.rows
-        .filter((r) => r.screenType === p.screenType && r.imageId)
-        .map((r) => ({
-          name: g.name,
-          position: r.position,
-          imageId: r.imageId as string,
-          thumb: r.thumb,
-        })),
-    );
-    all.sort((a, b) => Math.abs(a.position - p.position) - Math.abs(b.position - p.position));
-    out[String(p.position)] = all.slice(0, 3);
-  }
-  return out;
-}
-
 function labelsFor(
   label: Labeler,
   p: Patterns | null,
   o: OursVsPatterns | null,
   r: Recommendations | null,
+  games: readonly GameOrder[] = [],
 ): Record<string, string> {
   const keys = new Set<string>();
+  for (const g of games)
+    for (const row of g.rows) for (const k of [row.category, row.message]) if (k) keys.add(k);
   for (const x of p?.perPosition ?? []) for (const t of x.types) keys.add(t.key);
   for (const t of p?.screenTypes ?? []) keys.add(t.key);
   for (const t of p?.byScreenType ?? []) keys.add(t.key);
@@ -202,7 +202,7 @@ export function buildReportData(x: ReportInputs): ReportData {
     const rows = (deck?.slots ?? []).map((s) => {
       const ex = plan.excluded.find((e) => e.name === g.name && e.position === s.position);
       const item = plan.items.find((i) => i.appId === g.appId && i.position === s.position);
-      return row(x, item ? { ...s, imageId: item.imageId } : s, ex ? ex.reason : null);
+      return row(x, item ? { ...s, imageId: item.imageId } : s, ex ? ex.reason : null, g.name);
     });
     return {
       appId: g.appId,
@@ -275,7 +275,8 @@ export function buildReportData(x: ReportInputs): ReportData {
     fit,
     ai,
     synthesis,
-    examples: examples(ai?.recommendations ?? null, games),
+    examples: recExamples(ai?.recommendations ?? null, games),
+    sorting: sortingPart(games, ai?.recommendations ?? null),
     recProblems: ai?.recommendations
       ? labelProblems(
           ai.recommendations,
@@ -284,7 +285,7 @@ export function buildReportData(x: ReportInputs): ReportData {
           ),
         )
       : [],
-    labels: labelsFor(x.label, patterns, oursVs, ai?.recommendations ?? null),
+    labels: labelsFor(x.label, patterns, oursVs, ai?.recommendations ?? null, games),
     leftOut: x.leftOut ?? [],
     storeText: x.storeText ?? [],
     ...bottomLine(x, entries, fit, patterns, ai),

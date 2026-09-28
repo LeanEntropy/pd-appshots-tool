@@ -6,6 +6,7 @@ import {
   playSetup,
   VARIABLE_NAMES,
 } from "../analysis/play-experiments.ts";
+import { rowTags } from "../analysis/report-sorting.ts";
 import { codeTestPositions, codeTestText, type Evidence } from "./ab-candidates.ts";
 import type { AbSectionInput, AbTestCard, PlayContext } from "./ab-section.ts";
 
@@ -15,10 +16,9 @@ import type { AbSectionInput, AbTestCard, PlayContext } from "./ab-section.ts";
   return [...x.ours]
     .sort((a, b) => a.position - b.position)
     .map((e) => {
-      const s = e.final.screenshot;
       return {
         position: e.position,
-        screen: `${x.label(s.screenType)}${s.subtype ? ` / ${x.label(s.subtype)}` : ""}`,
+        screen: rowTags(e.final, e.name, x.label).screen,
         headline: e.final.headline,
         orientation: e.canvas,
       };

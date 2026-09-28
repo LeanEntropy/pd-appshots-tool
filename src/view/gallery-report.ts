@@ -51,6 +51,14 @@ function sec(n, body, imgs, closed) {
     + '</summary><div class="sec-b">' + body + "</div></details>";
 }
 
+// "12 of 15 weighted pattern points"; reports saved before the points: from the saved patterns.
+function fitPoints(f) {
+  const w = (x) => (x.strength === "pattern" ? 2 : 1);
+  const judged = f.patterns.filter((x) => x.fits !== null);
+  const p = f.points || { fit: judged.filter((x) => x.fits).reduce((n, x) => n + w(x), 0), total: judged.reduce((n, x) => n + w(x), 0) };
+  return p.fit + " of " + p.total + " weighted pattern points";
+}
+
 const VERDICT_CLS = { optimised: "following", "on par": "following", "slightly different": "slightly", "relatively different": "slightly", "very different": "very", "not enough data": "none" };
 
 function overviewHtml(d) {
@@ -64,7 +72,7 @@ function overviewHtml(d) {
   const status = s.state === "current" ? ""
     : '<div class="banner ' + s.state + '"><p>' + pill(s.state, s.state === "stale" ? "AI parts out of date" : "AI parts not written yet") + " " + esc(s.reason) + "</p><p><strong>How to get them:</strong> " + esc(s.howTo) + '</p><p><button type="button" class="primary reportApprove" data-stage="' + esc(repStage) + '">Open the approval</button> <span class="meta">Shows the exact images and cost first; nothing runs until you approve.</span></p></div>';
   return '<div class="verdict ' + (f ? VERDICT_CLS[f.verdict] || "" : "none") + '"><div class="vlabel">Our deck is</div><div class="vword">' + esc(f ? f.verdict : "not enough data") + "</div>"
-    + (f && f.score !== null ? '<div class="meta">Fits ' + pc(f.score) + " of the weighted competitor patterns (" + f.patterns.filter((x) => x.fits === true).length + " fit, " + f.patterns.filter((x) => x.fits === false).length + " different).</div>" : "") + "</div>"
+    + (f && f.score !== null ? '<div class="meta">Fits ' + fitPoints(f) + " (" + f.patterns.filter((x) => x.fits === true).length + " fit, " + f.patterns.filter((x) => x.fits === false).length + " different).</div>" : "") + "</div>"
     + (d.summary ? shortAnswerHtml(d) : worded ? "<p>" + esc(ai.verdictText) + "</p>" : "")
     + "<h3>Key points to optimise, most important first</h3>"
     + (points.length ? '<ol class="keypoints">' + points.map((p) => "<li>" + esc(p) + "</li>").join("") + "</ol>" : "<p>None: our deck fits every competitor pattern found.</p>")

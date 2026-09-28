@@ -45,16 +45,16 @@ test("pattern check: order, sequence and content patterns, each with our fit and
   const f = patternFit(theirs, ours, p, 3, plainLabel);
   const byId = new Map(f.patterns.map((x) => [x.id, x]));
   assert.equal(byId.get("position-1")?.fits, false);
-  assert.match(byId.get("position-1")?.reason ?? "", /ours shows Gameplay/);
+  assert.match(byId.get("position-1")?.reason ?? "", /ours: Gameplay/);
   // One game each at position 3 is a tie, not a pattern.
   assert.equal(byId.get("position-3"), undefined);
-  assert.equal(byId.get("before-title_image-gameplay")?.fits, false);
-  assert.equal(byId.get("uses-title_image")?.fits, true);
+  assert.equal(byId.get("before-full_screen_art-gameplay")?.fits, false);
+  assert.equal(byId.get("uses-full_screen_art")?.fits, true);
   assert.equal(byId.get("uses-metagame")?.strength, "partial");
   assert.equal(byId.get("uses-metagame")?.fits, false);
   assert.notEqual(f.verdict, "optimised");
   assert.ok(f.keyPoints.length >= 2);
-  assert.match(f.keyPoints[0] ?? "", /Position 1 shows Title image|comes before/);
+  assert.match(f.keyPoints[0] ?? "", /Opens with Title screen \/ full-screen art|comes before/);
   const same = patternFit(
     theirs,
     [entry("o", 1, "title_image"), entry("o", 2, "gameplay"), entry("o", 3, "gameplay")],
@@ -65,7 +65,7 @@ test("pattern check: order, sequence and content patterns, each with our fit and
   assert.equal(same.verdict, "optimised");
   // Only the partial pattern we miss (no metagame screen) is left as a key point.
   assert.equal(same.keyPoints.length, 1);
-  assert.match(same.keyPoints[0] ?? "", /Metagame/);
+  assert.match(same.keyPoints[0] ?? "", /Menus and progression/);
 });
 
 test("a title image becomes the in-game title screen, without AI and idempotently", () => {

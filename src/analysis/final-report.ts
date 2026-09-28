@@ -10,6 +10,7 @@ import { recordPresetRun } from "../reports/version.ts";
 import type { ImageDb } from "../store/imagedb.ts";
 import { ensureDir, readJsonIfExists, writeJsonAtomic } from "../util/fsx.ts";
 import { artWording } from "./art-wording.ts";
+import { reportLabeler } from "./categories.ts";
 import { labeler } from "./labels.ts";
 import { compareOrders, orderHistory } from "./orders.ts";
 import type { AnalysisPlan, Stage } from "./plan.ts";
@@ -49,7 +50,7 @@ export function writeFinalReport(
   const paths = projectPaths(loaded);
   const dir = join(paths.reports, o.runId);
   ensureDir(dir);
-  const label = labeler(loadTaxonomy(loaded).taxonomy);
+  const label = reportLabeler(labeler(loadTaxonomy(loaded).taxonomy));
   const count = (s: string) => o.records.filter((r) => r.status === s).length;
   const s = o.synthesis;
   const lines = [

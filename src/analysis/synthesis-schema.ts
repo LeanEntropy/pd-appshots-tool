@@ -1,6 +1,7 @@
 import { z } from "zod";
 import type { Taxonomy } from "../config/load.ts";
 import { artWording } from "./art-wording.ts";
+import { isEventLine } from "./image-tags.ts";
 import { PROPORTION } from "./patterns.ts";
 
 /** Pattern interpretation (Opus): words only; every number comes from the computed patterns. */
@@ -77,12 +78,26 @@ export function recommendationSchema(taxonomy: Taxonomy) {
             }),
           ),
         }),
+        logo: z
+          .strictObject({
+            show: z.boolean().describe("true when this image should carry the game's logo"),
+            why: z
+              .string()
+              .describe("the logo evidence behind it (n of m competitors), in one sentence"),
+          })
+          .describe("whether this image carries the game's own logo, from the logo findings"),
         why: z.string().describe("which pattern this follows or deliberately breaks, and why"),
       }),
     ),
   });
 }
 export type Recommendations = z.infer<ReturnType<typeof recommendationSchema>>;
+type RecPosition = Recommendations["positions"][number];
+
+/** A slot's logo decision; null in recommendations saved before it existed (2026-09-29). */
+export function logoOf(p: RecPosition): RecPosition["logo"] | null {
+  return (p as Partial<RecPosition>).logo ?? null;
+}
 
 export const reviewSchema = z.strictObject({
   verdict: z.enum(["ok", "changes"]),
@@ -115,9 +130,16 @@ export function recommendationProblems(
   const want = Array.from({ length: n }, (_, i) => i + 1).join(",");
   if ([...pos].sort((a, b) => a - b).join(",") !== want)
     problems.push("positions must be 1, 2, 3 ... with no gaps or repeats");
-  for (const p of r.positions)
+  for (const p of r.positions) {
     if (p.marketingLayer.present && !p.marketingLayer.texts.length)
       problems.push(`position ${p.position}: a marketing layer needs at least one text`);
+    // Event or offer lines are reported, never recommended to copy (they expire).
+    for (const t of p.marketingLayer.texts)
+      if (isEventLine(t.text))
+        problems.push(
+          `position ${p.position}: "${t.text}" is an event or offer line; use a lasting headline or benefit instead`,
+        );
+  }
   return [...problems, ...labelProblems(r, ours)];
 }
 

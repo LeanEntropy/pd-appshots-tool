@@ -120,6 +120,7 @@ function recommendations(n: number) {
         ],
         elements: [],
       },
+      logo: { show: i === 0, why: "test" },
       why: "test",
     })),
   };

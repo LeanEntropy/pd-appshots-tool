@@ -1,6 +1,6 @@
 {
   "id": "mobile-rpg",
-  "version": "3.2.0-draft",
+  "version": "3.3.0-draft",
   "status": "draft: frozen after the core pilot rating",
   "screenTypes": [
     {
@@ -109,10 +109,10 @@
     "metagame.evolution_upgrade": "Upgrading, evolving, merging or ascending a hero, pet or item, outside of play.",
     "metagame.player_profile": "The player's own profile, account level, stats overview or avatar page.",
     "metagame.inventory": "Bag, item or equipment inventory lists (not a single item detail in gear).",
-    "title_image": "The game's title: usually the IN-GAME TITLE SCREEN shown when the game opens (logo over the game's own art): composition single_full_capture with one capture of type title_image, subtype title_screen. Full-screen title art with the logo is composition pure_art (full-screen art), subtype logo_with_art or logo_only; it may still be the game's own title screen, so never call it 'not from the game'.",
-    "feature_image": "PREFERRED for full-screen promotional art or a callout that highlights a feature (a character, a reward, a mode, a rating, a collaboration). If the logo is the main subject, use title_image; if it looks like a loading or splash screen, use loading_screen.",
-    "key_art": "Only for non-gameplay art that is neither a title image nor a feature image.",
-    "promo": "Only when promotional content sits on or beside a screenshot area; when the whole image is art, use feature_image.",
+    "title_image": "The game's title: usually the IN-GAME TITLE SCREEN shown when the game opens (logo over the game's own art): composition single_full_capture with one capture of type title_image, subtype title_screen. Full-screen art that shows the game's own logo or name, with or without a headline or callout, is composition pure_art (full-screen art), subtype logo_with_art or logo_only; it may still be the game's own title screen, so never call it 'not from the game'.",
+    "feature_image": "Full-screen promotional art or a callout that highlights a feature (a character, a reward, a mode, a rating, a collaboration) WITHOUT the game's own logo or name. If it shows the game's logo or name, use title_image; if it looks like a loading or splash screen, use loading_screen.",
+    "key_art": "Only for non-gameplay art that is none of title_image, feature_image or loading_screen.",
+    "promo": "Only when promotional content sits on or beside a screenshot area; when the whole image is art, use title_image (with the game's logo or name) or feature_image (without it).",
     "loading_screen": "A loading, splash or tips screen: full-screen art, often with the logo, a progress bar, a tip or a studio splash. Such screens are shown in the game; describe what is visible and never claim the image is not from the game."
   },
   "marketingLayer": {

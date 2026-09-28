@@ -1,3 +1,4 @@
+import { hasDefinition } from "../analysis/categories.ts";
 import type { FitSummary, PatternFit } from "../analysis/pattern-fit.ts";
 import { type TestVariable, VARIABLE_NAMES } from "../analysis/play-experiments.ts";
 
@@ -42,7 +43,9 @@ const GROUP_RANK: Record<PatternFit["group"], number> = {
 };
 
 function variableOf(x: PatternFit, ourDeckLength: number, maxLength: number): TestVariable {
-  if (x.id.startsWith("position-") || x.id.startsWith("uses-")) return "screenshot";
+  if (x.id.endsWith("-message")) return "text";
+  if (x.id.startsWith("position-") || x.id.startsWith("uses-") || x.id.startsWith("logo-"))
+    return "screenshot";
   if (x.id.startsWith("before-")) return "order";
   if (x.id === "deck-length") return ourDeckLength > maxLength ? "order" : "screenshot";
   if (x.id === "layer") return "text";
@@ -65,8 +68,17 @@ export function abCandidates(
   o: { gl: string; ourDeckLength: number; deckLength: { min: number; max: number } },
 ): Evidence[] {
   if (!fit) return [];
+  // Each gap once: "Uses X" is left out when a position already tests X.
+  const atPosition = new Set(
+    fit.patterns
+      .filter((x) => x.fits === false && /^position-\d+$/.test(x.id))
+      .flatMap((x) => x.categories ?? []),
+  );
   const rows = fit.patterns
     .filter((x) => x.fits === false && x.basis && x.basis.of > 0)
+    // A category or tag without a definition never becomes an A/B gap (user rule, 2026-09-28).
+    .filter((x) => (x.categories ?? []).every(hasDefinition))
+    .filter((x) => !(x.id.startsWith("uses-") && atPosition.has(x.id.slice(5))))
     .map((x) => {
       const b = x.basis as NonNullable<PatternFit["basis"]>;
       let ours = b.ours;

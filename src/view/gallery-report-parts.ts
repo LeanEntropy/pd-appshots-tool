@@ -4,24 +4,44 @@
  * competitor examples). Every value is escaped; numbers are shown as text next to each bar.
  */
 export const REPORT_PARTS_SCRIPT = `
+// Counts, never percentages (user rule): the bar shows the share, the text the count.
 function shares(cs, n, name) {
-  return (cs || []).slice(0, n || 4).map((c) => '<div>' + esc(name ? name(c.key) : L(c.key)) + " " + bar(c.share) + pc(c.share) + " <span class=\\"meta\\">(" + c.n + ")</span></div>").join("") || '<span class="meta">none</span>';
+  return (cs || []).slice(0, n || 4).map((c) => '<div>' + esc(name ? name(c.key) : L(c.key)) + " " + bar(c.share) + c.n + "</div>").join("") || '<span class="meta">none</span>';
+}
+const nOf = (share, total) => Math.round((share || 0) * total) + " of " + total;
+
+// "How we sort images": the intro, then every category and tag with its definition and an example.
+function sortingHtml(s) {
+  if (!s) return "";
+  return '<h3>How we sort images</h3>' + s.intro.map((l) => "<p>" + esc(l) + "</p>").join("")
+    + '<div class="tablewrap"><table class="rt"><tr><th>Name</th><th>What it is</th><th>What sets it apart</th><th>Example</th></tr>'
+    + s.items.map((i) => "<tr><td><strong>" + esc(i.label) + '</strong> <span class="meta">(' + esc(i.kind) + ")</span></td><td>" + esc(i.definition) + "</td><td>" + esc(i.unlike) + "</td><td>" + (i.example ? rthumb(i.example.imageId, i.example.thumb, i.example.file, i.example.name + " " + i.example.position) + '<div class="meta">' + esc(i.example.name + " #" + i.example.position) + "</div>" : "") + "</td></tr>").join("")
+    + "</table></div>";
+}
+// The one-line definitions of the categories and tags a pattern is about.
+function definedHtml(d, keys) {
+  const items = (d.sorting && d.sorting.items) || [];
+  const lines = [...new Set(keys || [])].map((k) => items.find((i) => i.key === k)).filter(Boolean).map((i) => i.label + ": " + i.definition);
+  return lines.length ? '<div class="meta">' + esc(lines.join(" ")) + "</div>" : "";
 }
 
 function patternsHtml(p) {
   if (!p) return "<p>Fewer than 2 competitor screenshots are analysed, so there are no patterns yet.</p>";
-  const pos = p.perPosition.map((x) => "<tr><th>" + x.position + "</th><td>" + x.n + "</td><td>" + shares(x.types, 3) + "</td><td>" + bar(x.layerShare) + pc(x.layerShare) + "</td><td>" + shares(x.proportions, 2, (k) => k) + "</td></tr>").join("");
-  const types = p.screenTypes.map((t) => "<tr><td>" + esc(L(t.key)) + "</td><td>" + t.games + " (" + pc(t.gameShare) + ")</td><td>" + t.images + "</td><td>" + esc(t.positions.join(", ")) + "</td></tr>").join("");
-  const byType = p.byScreenType.map((t) => "<tr><td>" + esc(L(t.key)) + "</td><td>" + t.n + "</td><td>" + pc(t.layerShare) + "</td><td>" + shares(t.maskColours, 3, (k) => k) + "</td><td>" + shares(t.maskShapes, 2) + "</td><td>" + shares(t.textColours, 3, (k) => k) + "</td><td>" + shares(t.elementKinds, 3) + "</td></tr>").join("");
+  const tg = p.tags;
+  const logoAt = (n) => { const x = tg && tg.logoPerPosition.find((l) => l.position === n); return x ? x.n + " of " + x.of : ""; };
+  const pos = p.perPosition.map((x) => "<tr><th>" + x.position + "</th><td>" + x.n + "</td><td>" + shares(x.types, 3) + "</td><td>" + bar(x.layerShare) + nOf(x.layerShare, x.n) + "</td><td>" + logoAt(x.position) + "</td><td>" + shares(x.proportions, 2, (k) => k) + "</td></tr>").join("");
+  const types = p.screenTypes.map((t) => "<tr><td>" + esc(L(t.key)) + "</td><td>" + t.games + " of " + p.games.length + "</td><td>" + t.images + "</td></tr>").join("");
+  const byType = p.byScreenType.map((t) => "<tr><td>" + esc(L(t.key)) + "</td><td>" + t.n + "</td><td>" + nOf(t.layerShare, t.n) + "</td><td>" + shares(t.maskColours, 3, (k) => k) + "</td><td>" + shares(t.maskShapes, 2) + "</td><td>" + shares(t.textColours, 3, (k) => k) + "</td><td>" + shares(t.elementKinds, 3) + "</td></tr>").join("");
   const fmt = [
     ["Image orientation (pixels)", p.orientation.canvas], ["In-game capture orientation", p.orientation.capture],
     ["Composition", p.composition], ["Screenshot areas per image (0 = full-screen art)", p.capturesPerImage], ["Layer vs screenshot", p.proportion],
     ["Whole-image colours (pixels)", p.colours.image], ["Marketing layer colours", p.colours.layer], ["Mask colours", p.colours.masks],
     ["Text colours", p.colours.texts], ["Mask shapes", p.maskShapes], ["Mask locations", p.maskLocations], ["Text positions", p.textPositions], ["Extra elements", p.elementKinds],
   ].map(([k, v]) => "<tr><th>" + esc(k) + "</th><td>" + shares(v, 5, (x) => x.replace(/_/g, " ")) + "</td></tr>").join("");
-  return '<p>From <strong>' + p.images + "</strong> competitor screenshots of " + p.games.length + " games (" + esc(p.games.map((g) => g.name).join(", ")) + "). Deck length " + p.deckLength.min + " to " + p.deckLength.max + " (median " + p.deckLength.median + "). Marketing layer on " + pc(p.marketingLayer.share) + " of images.</p>"
-    + '<h3>Screen type per position</h3><div class="tablewrap"><table class="rt"><tr><th>Position</th><th>n</th><th>Screen types</th><th>Marketing layer</th><th>Layout</th></tr>' + pos + "</table></div>"
-    + '<h3>Screen types used</h3><table class="rt"><tr><th>Screen type</th><th>Games</th><th>Screenshots</th><th>Positions</th></tr>' + types + "</table>"
+  const logoLines = tg ? "<p>Game logo on the image: " + esc(tg.logoPerGame.map((g) => g.name + " " + g.n + " of " + g.of).join(", ")) + ". In the first 3 images: " + tg.logoPerGame.filter((g) => g.firstThree).length + " of " + tg.logoPerGame.length + " competitors.</p><p>" + esc(L("full_screen_art")) + ": " + tg.art.n + " images, " + tg.art.withLogo + " with the game logo; their line: " + esc(tg.art.messages.map((m) => L(m.key).toLowerCase() + " " + m.n).join(", ") || "none") + ".</p>" : "";
+  return '<p>From <strong>' + p.images + "</strong> competitor screenshots of " + p.games.length + " games (" + esc(p.games.map((g) => g.name).join(", ")) + "). Deck length " + p.deckLength.min + " to " + p.deckLength.max + " (median " + p.deckLength.median + "). Marketing layer on " + nOf(p.marketingLayer.share, p.images) + " images.</p>" + logoLines
+    + '<h3>Screen type per image</h3><div class="tablewrap"><table class="rt"><tr><th>Image</th><th>Competitors</th><th>Screen types</th><th>Marketing layer</th><th>Game logo</th><th>Layout</th></tr>' + pos + "</table></div>"
+    + '<h3>Screen types used</h3><table class="rt"><tr><th>Screen type</th><th>Games</th><th>Images</th></tr>' + types + "</table>"
     + '<h3>Format, layers and colours</h3><table class="rt">' + fmt + "</table>"
     + '<h3>What goes with each screen type</h3><div class="tablewrap"><table class="rt"><tr><th>Screen type</th><th>n</th><th>Layer</th><th>Mask colours</th><th>Mask shapes</th><th>Text colours</th><th>Extra elements</th></tr>' + byType + "</table></div>";
 }
@@ -36,11 +56,11 @@ function fitHtml(d) {
   const i = d.ai && d.ai.interpretation;
   if (!f || !f.patterns.length) return cov + "<p>Fewer than 2 competitor screenshots are analysed, so there are no patterns yet.</p>";
   const mark = (x) => x.fits === null ? pill("none", "n/a") : x.fits ? pill("following", "[V] fits") : pill("very", "[X] different");
-  return cov + (i ? "<p>" + (d.ai.current ? "" : '<em class="warn">From run ' + esc(d.ai.runId) + ", written from older analyses:</em> ") + esc(i.summary) + "</p>" : "") + Object.keys(GROUPS).map((g) => {
+  return sortingHtml(d.sorting) + cov + (i ? "<p>" + (d.ai.current ? "" : '<em class="warn">From run ' + esc(d.ai.runId) + ", written from older analyses:</em> ") + esc(i.summary) + "</p>" : "") + Object.keys(GROUPS).map((g) => {
     const rows = f.patterns.filter((x) => x.group === g);
     if (!rows.length) return "";
     return "<h3>" + esc(GROUPS[g]) + '</h3><div class="tablewrap"><table class="rt fit"><tr><th>Our deck</th><th>Pattern</th><th>Evidence</th><th>Ours</th></tr>'
-      + rows.map((x) => '<tr class="' + (x.fits === false ? "miss" : "") + '"><td>' + mark(x) + "</td><td><strong>" + esc(x.text) + '</strong> <span class="meta">(' + (x.strength === "pattern" ? "pattern" : "partial pattern") + ")</span></td><td>" + esc(x.evidence) + "</td><td>" + esc(x.reason) + "</td></tr>").join("") + "</table></div>";
+      + rows.map((x) => '<tr class="' + (x.fits === false ? "miss" : "") + '"><td>' + mark(x) + "</td><td><strong>" + esc(x.text) + '</strong> <span class="meta">(' + (x.strength === "pattern" ? "pattern" : "partial pattern") + ")</span>" + definedHtml(d, x.categories) + "</td><td>" + esc(x.evidence) + "</td><td>" + esc(x.reason) + "</td></tr>").join("") + "</table></div>";
   }).join("");
 }
 
@@ -71,8 +91,9 @@ function slotHtml(d, p) {
       + '<table class="rt"><tr><th>Text</th><th>Role</th><th>Colour</th><th>Outline</th><th>Font style</th><th>Size</th><th>Position</th></tr>'
       + m.texts.map((t) => "<tr><td><strong>" + esc(t.text) + "</strong></td><td>" + esc(t.role) + "</td><td>" + esc(t.colour) + "</td><td>" + esc(t.strokeColour) + "</td><td>" + esc(t.fontStyle) + "</td><td>" + esc(t.size) + "</td><td>" + esc(String(t.position).replace(/_/g, " ")) + "</td></tr>").join("") + "</table>"
       + (m.elements.length ? "<ul>" + m.elements.map((e) => "<li><strong>Extra element:</strong> " + esc(e.what + ", at " + e.position + ", pose " + e.pose + ", " + e.colour) + "</li>").join("") + "</ul>" : "");
-  return '<div class="slot"><h4>Position ' + p.position + ": " + esc(L(p.screenType)) + (p.subtype ? " / " + esc(L(p.subtype)) : "") + "</h4>"
-    + "<dl><dt>Source</dt><dd>" + esc(p.source) + "</dd><dt>Screen to capture</dt><dd>" + esc(s.whatToCapture) + " (" + esc(s.orientation) + ")</dd><dt>Action</dt><dd>" + esc(s.action) + "</dd><dt>Atmosphere</dt><dd>" + esc(s.atmosphere) + "</dd><dt>Main colours</dt><dd>" + esc(s.mainColours) + "</dd></dl>"
+  const cat = ["title_image", "loading_screen", "key_art", "feature_image"].includes(p.screenType) ? "full_screen_art" : p.screenType;
+  return '<div class="slot"><h4>Position ' + p.position + ": " + esc(L(p.screenType)) + (p.subtype ? " / " + esc(L(p.subtype)) : "") + "</h4>" + definedHtml(d, [cat])
+    + "<dl><dt>Source</dt><dd>" + esc(p.source) + "</dd>" + (p.logo ? "<dt>Game logo</dt><dd>" + (p.logo.show ? "yes" : "no") + ". " + esc(p.logo.why) + "</dd>" : "") + "<dt>Screen to capture</dt><dd>" + esc(s.whatToCapture) + " (" + esc(s.orientation) + ")</dd><dt>Action</dt><dd>" + esc(s.action) + "</dd><dt>Atmosphere</dt><dd>" + esc(s.atmosphere) + "</dd><dt>Main colours</dt><dd>" + esc(s.mainColours) + "</dd></dl>"
     + layer + "<p><strong>Why:</strong> " + esc(p.why) + "</p>" + (ex ? '<p><strong>Competitor examples:</strong></p><div class="strip">' + ex + "</div>" : "") + "</div>";
 }
 

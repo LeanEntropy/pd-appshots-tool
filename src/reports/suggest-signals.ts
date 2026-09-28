@@ -17,7 +17,6 @@ import type { ReportScope } from "./types.ts";
 
 /** "a" or "an" before a country name. */
 const an = (w: string, cap = false) => (/^[AEIOU]/.test(w) ? (cap ? "An" : "an") : cap ? "A" : "a");
-const pct = (n: number) => `${Math.round(n * 100)}%`;
 const planCost = (loaded: LoadedConfig, scope: ReportScope, ctx: PlanContext) => {
   const p = buildScopePlan(loaded, scope, { proposeDrop: false, ctx });
   return p.counts.newImages || p.usd[1] > 0 ? { images: p.counts.newImages, usd: p.usd } : null;
@@ -153,7 +152,7 @@ export function signals(
         ...common,
         category: "same",
         title: `Skip ${the}`,
-        why: `Skip ${the}: ${pct(reused)} of the images are reused from ${mainName}, so a report would repeat the Full check.`,
+        why: `Skip ${the}: ${identical} of ${total} images are reused from ${mainName}, so a report would repeat the Full check.`,
         what: `${name}: ${pick.length} picked competitors`,
         value: 0,
         cost: null,
@@ -165,7 +164,7 @@ export function signals(
       ...common,
       category: "localise",
       title: `${an(name, true)} ${name} report`,
-      why: `Competitors change ${pct(changed)} of their images in ${the} (${pct(newText / total)} new text, ${pct((total - identical - newText) / total)} new pictures): ${an(name)} ${name} report is worth it.`,
+      why: `Competitors change ${total - identical} of ${total} images in ${the} (${newText} with new text, ${total - identical - newText} new pictures): ${an(name)} ${name} report is worth it.`,
       what: `${name}: our game and ${pick.length} picked competitors`,
       value:
         POINTS.localiseBase +

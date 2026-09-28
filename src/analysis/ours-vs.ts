@@ -19,7 +19,6 @@ export interface OursVsPatterns {
 
 /** At least this many competitor screenshots at a position before judging it. */
 export const MIN_AT_POSITION = 2;
-const pct = (n: number) => `${Math.round(n * 100)}%`;
 
 function positionVerdict(e: DeckEntry, p: Patterns, label: Labeler): PositionVerdict {
   const a = e.final;
@@ -47,7 +46,7 @@ function positionVerdict(e: DeckEntry, p: Patterns, label: Labeler): PositionVer
   if (at.top.key === type || (mine && mine.share >= 0.25)) {
     verdict = "following";
     reasons.push(
-      `${label(type)} is used at position ${e.position} by ${pct(mine?.share ?? 0)} of competitors (most common: ${label(at.top.key)}, ${pct(at.top.share)})`,
+      `${label(type)}: ${mine?.n ?? 0} of ${at.n} competitors at image ${e.position}${at.top.key === type ? "" : ` (most common: ${label(at.top.key)}, ${at.top.n} of ${at.n})`}`,
     );
   } else {
     const near = p.perPosition
@@ -57,14 +56,14 @@ function positionVerdict(e: DeckEntry, p: Patterns, label: Labeler): PositionVer
     const common = !!overall && overall.images / Math.max(1, p.images) >= 0.1;
     verdict = near || common ? "slightly different" : "very different";
     reasons.push(
-      `competitors mostly show ${label(at.top.key)} here (${pct(at.top.share)}); ${label(type)} ${near ? "appears at a neighbouring position" : common ? "appears elsewhere in their decks" : "is rare or unused in their decks"}`,
+      `competitors mostly show ${label(at.top.key)} here (${at.top.n} of ${at.n}); ${label(type)} ${near ? "appears at a neighbouring position" : common ? "appears elsewhere in their decks" : "is rare or unused in their decks"}`,
     );
   }
   let minor = 0;
   if (ours.layer !== at.layerShare >= 0.5) {
     minor++;
     reasons.push(
-      `marketing layer ${ours.layer ? "present" : "absent"}; ${pct(at.layerShare)} of competitors have one at this position`,
+      `marketing layer ${ours.layer ? "present" : "absent"}; ${Math.round(at.layerShare * at.n)} of ${at.n} competitors have one at this image`,
     );
   }
   const topProp = at.proportions[0];
@@ -111,7 +110,7 @@ export function compareOurs(
   if (canvas && theirCanvas && canvas.key !== theirCanvas.key) {
     very++;
     reasons.push(
-      `our images are ${canvas.key}; competitors mostly use ${theirCanvas.key} (${pct(theirCanvas.share)})`,
+      `our images are ${canvas.key}; competitors mostly use ${theirCanvas.key} (${theirCanvas.n} of ${p.images})`,
     );
   }
   const capture = counts(
@@ -121,7 +120,7 @@ export function compareOurs(
   if (capture && theirCapture && capture.key !== theirCapture.key) {
     slight++;
     reasons.push(
-      `our in-game captures are mostly ${label(capture.key)}; competitors' are mostly ${label(theirCapture.key)} (${pct(theirCapture.share)})`,
+      `our in-game captures are mostly ${label(capture.key)}; competitors' are mostly ${label(theirCapture.key)} (${theirCapture.n} of ${p.orientation.capture.reduce((n, c) => n + c.n, 0)})`,
     );
   }
   const ourComp = counts(ours.map((e) => e.final.screenshot.composition))[0];
@@ -129,7 +128,7 @@ export function compareOurs(
   if (ourComp && theirComp && ourComp.key !== theirComp.key) {
     slight++;
     reasons.push(
-      `our images are mostly "${label(ourComp.key)}"; competitors' are mostly "${label(theirComp.key)}" (${pct(theirComp.share)})`,
+      `our images are mostly "${label(ourComp.key)}"; competitors' are mostly "${label(theirComp.key)}" (${theirComp.n} of ${p.images})`,
     );
   }
   const layerShare = ours.length
@@ -140,7 +139,7 @@ export function compareOurs(
     if (gap > 0.3) very++;
     else slight++;
     reasons.push(
-      `${pct(layerShare)} of our images have a marketing layer vs ${pct(p.marketingLayer.share)} of competitors'`,
+      `${ours.filter((e) => e.final.marketingLayer.present).length} of our ${ours.length} images have a marketing layer vs ${Math.round(p.marketingLayer.share * p.images)} of ${p.images} competitor images`,
     );
   }
   const ourProp = counts(ours.map((e) => proportion(e.final)))[0];
@@ -160,7 +159,9 @@ export function compareOurs(
   const used = new Set(ours.map((e) => typeKey(e.final)));
   for (const t of p.screenTypes.filter((x) => x.gameShare >= 0.5 && !used.has(x.key))) {
     slight++;
-    reasons.push(`${label(t.key)} is used by ${pct(t.gameShare)} of competitors but not by us`);
+    reasons.push(
+      `${label(t.key)} is used by ${t.games} of ${p.games.length} competitors but not by us`,
+    );
   }
   const ourLayer = counts(
     ours.flatMap((e) =>

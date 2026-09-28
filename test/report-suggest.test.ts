@@ -48,14 +48,14 @@ test("suggestions: Full check first, localising countries, skipped countries, ch
   assert.equal(top?.category, "full-check");
   const jp = v.suggestions.find((s) => s.title === "A Japan report");
   assert.ok(jp);
-  assert.match(jp.why, /change 100% of their images in Japan/);
+  assert.match(jp.why, /change 5 of 5 images in Japan/);
   // The cost shown is the builder's own plan for the same scope.
   const plan = buildScopePlan(loaded, jp.action?.scope as never, { proposeDrop: false });
   assert.deepEqual(jp.cost?.usd, plan.usd);
   const ph = v.suggestions.find((s) => s.category === "same");
   assert.match(
     ph?.why ?? "",
-    /^Skip the Philippines: 100% of the images are reused from the United States/,
+    /^Skip the Philippines: 5 of 5 images are reused from the United States/,
   );
   const chart = v.suggestions.find((s) => s.category === "charts");
   assert.match(chart?.why ?? "", /is #10 grossing in Indonesia/);

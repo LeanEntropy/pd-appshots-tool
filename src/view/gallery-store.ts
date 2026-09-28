@@ -46,12 +46,12 @@ function storeTextHtml(d) {
   let h = '<p class="meta">' + esc(DERIVED_NOTE) + " Matching is by exact words: other word forms and translations are not matched. Korean words keep their endings, so Korean counts are rougher.</p>";
   for (const c of cs) {
     const rows = c.rows.map((r) => "<tr" + (r.ours ? ' class="ours"' : "") + "><th>" + esc(r.name) + (r.ours ? " (ours)" : "") + "</th>"
-      + (r.store ? "<td>" + esc([r.store.title, r.store.shortDescription].filter(Boolean).join(": ")) + "</td><td>" + categoryText(r.store) + "</td><td>" + chipList(r.store.tags) + "</td><td>" + chipList(r.store.keywords) + '</td><td class="meta">' + esc(r.store.date) + "</td>"
-        : '<td colspan="5" class="meta">Not saved for this country</td>') + "</tr>").join("");
+      + (r.store ? "<td>" + esc([r.store.title, r.store.shortDescription].filter(Boolean).join(": ")) + "</td><td>" + esc(r.store.titleKeywords || "none") + "</td><td>" + categoryText(r.store) + "</td><td>" + chipList(r.store.tags) + "</td><td>" + chipList(r.store.keywords) + '</td><td class="meta">' + esc(r.store.date) + "</td>"
+        : '<td colspan="6" class="meta">Not saved for this country</td>') + "</tr>").join("");
     const miss = !c.oursSaved ? '<p class="meta">Our store text is not saved for this country, so there is nothing to compare.</p>'
       : c.missing.length ? "<p><strong>Competitor keywords not found in our store text</strong> (used by 2 or more competitors):</p><ul>" + c.missing.map((m) => "<li>" + esc(m.term) + ' <span class="meta">(' + esc(m.games.join(", ")) + ")</span></li>").join("") + "</ul>"
       : "<p>Every keyword that 2 or more competitors use also appears in our store text.</p>";
-    h += '<details class="subsec"' + (c === cs[0] ? " open" : "") + "><summary>" + esc(c.label) + '</summary><div class="tablewrap"><table class="rt"><tr><th>Game</th><th>Title and short description</th><th>Category</th><th>Tags</th><th>Top keywords (derived)</th><th>Read</th></tr>' + rows + "</table></div>" + miss + "</details>";
+    h += '<details class="subsec"' + (c === cs[0] ? " open" : "") + "><summary>" + esc(c.label) + '</summary><div class="tablewrap"><table class="rt"><tr><th>Game</th><th>Title and short description</th><th>Title keywords (after the name)</th><th>Category</th><th>Tags</th><th>Top keywords (derived)</th><th>Read</th></tr>' + rows + "</table></div>" + miss + "</details>";
   }
   return h;
 }

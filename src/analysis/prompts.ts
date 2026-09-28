@@ -11,12 +11,14 @@ import { sha256 } from "../util/hash.ts";
 export const PROMPT_VERSIONS = {
   fullAnalysis: "full-analysis.v4",
   adjudicate: "adjudicate.v3",
-  // 2026-09-28 (plan-reports 3B): the store-page CMO voice, the short answer and the A/B tests.
-  // Text steps only: the per-image prompts (and so every analysis key) are unchanged.
-  patterns: "patterns.v3",
-  recommend: "recommend.v3",
-  recommendReview: "recommend-review.v2",
-  abTests: "ab-tests.v1",
+  // 2026-09-29: one "Title screen / full-screen art" category, the game-logo and art-message
+  // tags, counts not percentages, event lines never copied, and a logo decision per recommended
+  // image (a new recommendation field). Text steps only: the per-image prompts (and so every
+  // analysis key) are unchanged.
+  patterns: "patterns.v4",
+  recommend: "recommend.v4",
+  recommendReview: "recommend-review.v3",
+  abTests: "ab-tests.v2",
 } as const;
 export type PromptName = keyof typeof PROMPT_VERSIONS;
 
@@ -24,15 +26,17 @@ export type PromptName = keyof typeof PROMPT_VERSIONS;
  * The file each prompt is rendered from (prompts/analysis/<file>.md; a changed file gets a new
  * name). A wording-only revision that keeps the output contract gets a new file under the same
  * contract version, so existing analyses and approvals stay valid. The 2026-09-28 revision only
- * forbids claiming that an art screen is not from the game.
+ * forbids claiming that an art screen is not from the game. full-analysis.v6 (2026-09-29) removes
+ * the title vs feature contradiction with the taxonomy (the game's logo decides; a publisher's
+ * logo does not count), wording only, so no analysis is redone.
  */
 export const PROMPT_FILES: Record<PromptName, string> = {
-  fullAnalysis: "full-analysis.v5",
+  fullAnalysis: "full-analysis.v6",
   adjudicate: "adjudicate.v4",
-  patterns: "patterns.v4",
-  recommend: "recommend.v4",
-  recommendReview: "recommend-review.v3",
-  abTests: "ab-tests.v1",
+  patterns: "patterns.v5",
+  recommend: "recommend.v5",
+  recommendReview: "recommend-review.v4",
+  abTests: "ab-tests.v2",
 };
 
 /** The one voice block of every synthesis prompt (plan-reports 3B.1), as {{VOICE}}. */

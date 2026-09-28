@@ -2,6 +2,17 @@ import type { Taxonomy } from "../config/load.ts";
 import { type AbTestsInput, writeAbTests } from "./ab-tests.ts";
 import type { AbTestsOutput } from "./ab-tests-schema.ts";
 import { type CallContext, validatedCall } from "./call.ts";
+import {
+  CATEGORIES,
+  categoryOf,
+  categoryOfType,
+  FULL_SCREEN_ART,
+  HOW_WE_SORT,
+  reportLabeler,
+  TAGS,
+} from "./categories.ts";
+import { artMessage, showsLogo } from "./image-tags.ts";
+import { plainLabel } from "./labels.ts";
 import type { OursVsPatterns } from "./ours-vs.ts";
 import type { FitSummary } from "./pattern-fit.ts";
 import { type DeckEntry, type Patterns, proportion } from "./patterns.ts";
@@ -38,7 +49,12 @@ export interface SynthesisResult {
   problems: string[];
 }
 
-/** One line per screenshot, both layers, for text-only prompts. */
+const L = reportLabeler(plainLabel);
+
+/**
+ * One line per screenshot, both layers, for text-only prompts. Screen types are the report's
+ * plain category names (never taxonomy codes), with the logo and art-message tags.
+ */
 export function brief(e: DeckEntry): string {
   const s = e.final.screenshot;
   const m = e.final.marketingLayer;
@@ -59,7 +75,22 @@ export function brief(e: DeckEntry): string {
         ),
       ].join("; ")
     : "no marketing layer";
-  return `${e.name} #${e.position}: ${s.screenType}${s.subtype ? `/${s.subtype}` : ""}, ${e.canvas} image, ${s.composition}, captures: ${s.captures.map((c) => `${c.orientation} ${c.screenType}${c.subtype ? `/${c.subtype}` : ""} ${c.framing} ${c.areaPercent}%`).join(" + ") || "none"}, ${s.description} Action: ${s.action} Mood: ${s.atmosphere}. Colours: ${colours(s.mainColours)}. ${layer}`;
+  const cat = categoryOf(e.final);
+  const sub = s.subtype && cat !== FULL_SCREEN_ART ? ` / ${L(s.subtype)}` : "";
+  const tags = [
+    `game logo: ${showsLogo(e.final, e.name) ? "yes" : "no"}`,
+    ...(cat === FULL_SCREEN_ART ? [`line: ${L(artMessage(e.final, e.name))}`] : []),
+  ].join(", ");
+  const caps =
+    cat === FULL_SCREEN_ART
+      ? "one full picture"
+      : s.captures
+          .map(
+            (c) =>
+              `${c.orientation} ${L(categoryOfType(c.screenType))}${c.subtype ? ` / ${L(c.subtype)}` : ""} ${c.framing} ${c.areaPercent}%`,
+          )
+          .join(" + ") || "none";
+  return `${e.name} #${e.position}: ${L(cat)}${sub} (${tags}), ${e.canvas} image, captures: ${caps}, ${s.description} Action: ${s.action} Mood: ${s.atmosphere}. Colours: ${colours(s.mainColours)}. ${layer}`;
 }
 
 /**
@@ -111,6 +142,7 @@ async function writeAndReview(
     problems: [],
   };
   const facts = [
+    `How we sort images, and the plain name and definition of every screen category and tag code below (write the plain names, never the codes):\n${HOW_WE_SORT.join(" ")}\n${JSON.stringify(Object.values({ ...CATEGORIES, ...TAGS }))}`,
     `Computed patterns (JSON):\n${JSON.stringify(input.patterns)}`,
     `Our deck vs the patterns, computed (JSON):\n${JSON.stringify(input.oursVs)}`,
     `Pattern check, computed (JSON): verdict, key points in priority order, and every pattern with whether we fit:\n${JSON.stringify(input.fit, (k, v) => (k === "basis" ? undefined : v))}`,
