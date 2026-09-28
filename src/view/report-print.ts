@@ -114,7 +114,13 @@ ${REPORT_SCRIPT}
 ${REPORT_PARTS_SCRIPT}
 ${STORE_SCRIPT}
 ${PRINT_SCRIPT}
-{ const box = document.getElementById("report"); printRender(box); printMode(box); printWait(box); }
+{
+  const box = document.getElementById("report");
+  printRender(box);
+  printMode(box);
+  // Opened from the page's "Print or save as PDF" (no Chrome or Edge): the print dialog once ready.
+  printWait(box).then(() => { if (location.hash === "#autoprint") window.print(); });
+}
 </script>
 </body>
 </html>

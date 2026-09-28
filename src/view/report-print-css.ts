@@ -14,10 +14,9 @@ export const PRINT_CSS = `
   #runbar, .appbar, ol.steps, header.top, .noprint, #infoPop, dialog, #act-toasts, #expansion { display: none !important; }
   main.pages { padding: 0; max-width: none; }
   button.imgbtn, button.info, button.reportApprove, .banner button { display: none !important; }
-  /* The report list: only the report bodies print (one card when it was printed on its own). */
+  /* The report list: only the report bodies print. */
   .rc-bar, .rc-edit, .rcard .act-msg, .rc-pdfres, #toggleArchived { display: none !important; }
   .rcard { border: none; } .rcard > summary { list-style: none; }
-  body.pdf-one .rcard:not(.pdf-target), body.pdf-one #reportList > p { display: none !important; }
   button.linkbtn { color: var(--accent); }
   details > summary { list-style: none; } details > summary::-webkit-details-marker { display: none; }
   details.sec { break-before: page; border-radius: 6px; }

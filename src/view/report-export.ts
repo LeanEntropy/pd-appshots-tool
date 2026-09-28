@@ -3,9 +3,8 @@
  * of the report list (report-list.ts) calls it for the version picked in that card. It asks with
  * or without pictures, the paper and the orientation (defaults from the Settings page, sent with
  * the report list), runs the export job with live progress and Stop, then offers Download, Open
- * and Show in folder. With no Chrome or Edge it offers the browser's own "Print or save as PDF"
- * for that card, which uses the same print stylesheet after opening every section and loading
- * every picture.
+ * and Show in folder. With no Chrome or Edge it offers the browser's own "Print or save as PDF":
+ * the same print page of the same version and choices, in a new tab, with the print dialog.
  *   ref: { report: <report id>, version: "now" | <version id> }
  *   o:   { button, status (element or id), result (element or id), images, hiddenSections }
  */
@@ -65,8 +64,15 @@ function pdfResultHtml(job) {
     + '<button type="button" data-pdf-open="' + actEsc(job.id) + '">Open</button><button type="button" data-pdf-reveal="' + actEsc(job.id) + '">Show in folder</button></div>';
 }
 
-function pdfFallbackHtml(reason, rid) {
-  return '<div class="banner stale" role="alert"><p>' + actEsc(reason) + '</p><p><button type="button" class="primary" data-pdf-print="' + actEsc(rid) + '">Print or save as PDF</button> <span class="meta">In the print dialog, choose "Save as PDF".</span></p></div>';
+// The print page of exactly this version and these choices (served next to this page), in a new
+// tab that opens the browser's print dialog once every picture has loaded.
+function pdfPrintUrl(ref, opts) {
+  const q = new URLSearchParams({ report: ref.report, version: ref.version, images: opts.images ? "1" : "0", hidden: (opts.hiddenSections || []).join(",") });
+  return "report-print.html?" + q.toString() + "#autoprint";
+}
+
+function pdfFallbackHtml(reason, url) {
+  return '<div class="banner stale" role="alert"><p>' + actEsc(reason) + '</p><p><a class="pdfdl" href="' + actEsc(url) + '" target="_blank" rel="noopener">Print or save as PDF</a> <span class="meta">Opens the report in a new tab with the print dialog. Choose "Save as PDF" there.</span></p></div>';
 }
 
 /** Exports one report to PDF with live progress; resolves the finished job, or undefined. */
@@ -93,13 +99,13 @@ async function exportReportPdf(ref, o) {
       return j;
     },
     done: (j) => (j.existing ? "This PDF was saved before: it is ready." : "PDF saved (" + pdfSize(j.sizeBytes) + ")."),
-    fail: (e) => { if (box) box.innerHTML = failed && failed.noBrowser ? pdfFallbackHtml(actReason(e), ref.report) : ""; },
+    fail: (e) => { if (box) box.innerHTML = failed && failed.noBrowser ? pdfFallbackHtml(actReason(e), pdfPrintUrl(ref, opts)) : ""; },
   });
   if (job && box) box.innerHTML = pdfResultHtml(job);
   return job;
 }
 
-// Browser print (the fallback): every section open, every picture loaded, then the print dialog.
+// The browser's own print of this page (Ctrl+P): the open reports print with every section open.
 // Only report bodies are opened (opening a folded report card would load it).
 let pdfReopen = null;
 function pdfPrepare(roots) {
@@ -110,44 +116,14 @@ function pdfPrepare(roots) {
   }
   return closed;
 }
-// Prints one report card on its own (the other cards are hidden while printing).
-async function printReportFallback(btn, rid) {
-  const root = document.getElementById("rb-" + rid);
-  const card = document.getElementById("rc-" + rid);
-  if (!root || !card) return;
-  await act(btn, {
-    busy: "Preparing the pages for printing...",
-    run: async (progress) => {
-      pdfReopen = pdfPrepare([root]);
-      document.body.classList.add("pdf-one");
-      card.classList.add("pdf-target");
-      const imgs = [...root.querySelectorAll("img")];
-      const until = Date.now() + 20000;
-      while (Date.now() < until) {
-        const n = imgs.filter((i) => i.complete).length;
-        if (n >= imgs.length) break;
-        progress("Loading pictures", n, imgs.length);
-        await new Promise((r) => setTimeout(r, 300));
-      }
-      window.print();
-    },
-    done: "",
-  });
-}
 window.addEventListener("beforeprint", () => { if (!pdfReopen) pdfReopen = pdfPrepare([...document.querySelectorAll(".rcard[open] .rbox")]); });
-window.addEventListener("afterprint", () => {
-  for (const d of pdfReopen || []) d.open = false;
-  pdfReopen = null;
-  document.body.classList.remove("pdf-one");
-  for (const c of document.querySelectorAll(".rcard.pdf-target")) c.classList.remove("pdf-target");
-});
+window.addEventListener("afterprint", () => { for (const d of pdfReopen || []) d.open = false; pdfReopen = null; });
 
 document.addEventListener("click", (e) => {
-  const b = e.target.closest && e.target.closest("[data-pdf-open], [data-pdf-reveal], [data-pdf-stop], [data-pdf-print]");
+  const b = e.target.closest && e.target.closest("[data-pdf-open], [data-pdf-reveal], [data-pdf-stop]");
   if (!b) return;
   e.preventDefault();
-  if (b.dataset.pdfPrint) printReportFallback(b, b.dataset.pdfPrint);
-  else if (b.dataset.pdfStop) act(b, { busy: "Stopping...", run: () => send(API + "/export/pdf/stop", { job: b.dataset.pdfStop }), done: "Stopping the export." });
+  if (b.dataset.pdfStop) act(b, { busy: "Stopping...", run: () => send(API + "/export/pdf/stop", { job: b.dataset.pdfStop }), done: "Stopping the export." });
   else {
     const reveal = !!b.dataset.pdfReveal;
     act(b, { busy: "Opening...", run: () => send(API + "/export/pdf/open", { job: b.dataset.pdfReveal || b.dataset.pdfOpen, reveal }), done: reveal ? "Shown in its folder." : "Opened in your PDF viewer." });

@@ -185,8 +185,9 @@ export function parsePrintQuery(
   const ref = ReportRefSchema.safeParse({ report: q.get("report"), version: q.get("version") });
   const hidden = (q.get("hidden") ?? "").split(",").filter(Boolean);
   const images = q.get("images");
+  if (images !== null && images !== "0" && images !== "1") return null;
   const options = ExportOptionsSchema.safeParse({
-    images: images === null ? undefined : images !== "0",
+    images: images === null ? undefined : images === "1",
     hiddenSections: hidden,
   });
   return ref.success && options.success
