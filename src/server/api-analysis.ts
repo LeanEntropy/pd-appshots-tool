@@ -95,15 +95,23 @@ export function postAnalysisPlan(
 export function postAnalysisRun(
   loaded: LoadedConfig,
   raw: unknown,
-  opts: RunnerOptions & { names?: Names } = {},
+  opts: RunnerOptions & { names?: Names; onEnd?: () => void } = {},
 ): ApiResponse {
   const parsed = RunBody.safeParse(raw);
   if (!parsed.success)
     return { status: 400, body: { problems: ["The approval could not be read."] } };
   const r = enqueue(loaded, "analysis", parsed.data, opts);
   if (!r.ok) return { status: r.status, body: { problems: [r.problem] } };
-  // A crash of the run itself is recorded in the journal; nothing waits for it here.
-  r.done.catch(() => {});
+  // A crash of the run itself is recorded in the journal; nothing waits for it here. When it
+  // ends (finished, stopped or failed), the caller refreshes what depends on it (the home card).
+  const ended = () => {
+    try {
+      opts.onEnd?.();
+    } catch {
+      // The next page load refreshes it.
+    }
+  };
+  r.done.then(ended, ended);
   return { status: 202, body: { started: true, jobId: r.jobId } };
 }
 

@@ -58,7 +58,7 @@ ${served ? appBar(served.name) + stepBar(served.steps) : ""}
 <button id="startAnalysis" class="primary">Start analysis</button>
 <p class="meta">Shows the image count, model passes and estimated cost first. Nothing is sent to an AI model until you press Approve and run. Screenshots already analysed are never sent again.</p>
 </div></div></div></section>
-<section data-page="report" hidden><h2 class="ph" tabindex="-1">Report</h2>
+<section data-page="report" hidden><h2 class="ph" tabindex="-1">Reports</h2>
 <div class="card"><label><input type="checkbox" id="showImages" checked> Show images</label>
 <span class="meta">All reports of this project, newest first. Each one is folded: open it to read it.</span><p id="reportStatus" class="act-msg" hidden></p></div>
 <div id="reportList"></div><div id="expansion"></div></section>

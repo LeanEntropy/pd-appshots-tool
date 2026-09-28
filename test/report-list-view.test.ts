@@ -45,11 +45,12 @@ const data = {
 
 const summary = (o: Partial<ReportSummary>): ReportSummary => ({
   id: "r-pilot",
-  name: "Pilot (United States, English)",
+  name: "Pilot report",
   type: "pilot",
   typeName: "Pilot",
   countries: "United States (English)",
-  competitors: 3,
+  competitors: 2,
+  competitorNames: ["Archero 2", "Capybara Go"],
   generatedAt: "2026-09-27T22:29:48.097Z",
   status: { kind: "ready", text: "Ready" },
   newer: null,
@@ -104,9 +105,11 @@ test("a report card is folded, shows its facts, and offers the right actions", (
   const pilot = p.card(summary({ newer: "New or updated analyses since this version was made." }));
   assert.match(pilot, /^<details class="rcard t-pilot"/);
   assert.doesNotMatch(pilot, /<details class="rcard[^>]*\bopen\b/, "folded");
-  assert.match(pilot, /Pilot \(United States, English\)/);
-  assert.match(pilot, /3 competitors/);
-  assert.match(pilot, /Generated /);
+  assert.match(pilot, /<span class="rc-name">Pilot report<\/span>/);
+  assert.match(
+    pilot,
+    /<span class="rc-desc">Pilot \u00b7 United States \(English\) \u00b7 2 competitors: Archero 2, Capybara Go \u00b7 [^<]*2026[^<]*<\/span>/,
+  );
   assert.match(pilot, />Newer data</);
   assert.match(pilot, /<option value="now">Now/);
   assert.match(
@@ -130,6 +133,31 @@ test("a report card is folded, shows its facts, and offers the right actions", (
   assert.match(mine, />Restore</);
   assert.doesNotMatch(mine, /<img src=x>/);
   assert.doesNotMatch(mine, /value="now"/);
+});
+
+test("the open page's step bar follows the saved reports without a reload", async () => {
+  const bar = { innerHTML: "<li>old</li>" };
+  const ctx: Record<string, unknown> = {
+    API: "/p/x/api",
+    esc: (s: unknown) => String(s),
+    localStorage: { getItem: () => null, setItem: () => {} },
+    document: { addEventListener: () => {}, getElementById: () => null, querySelector: () => bar },
+    getJson: async (url: string) => {
+      assert.equal(url, "/p/x/api/state");
+      return {
+        steps: [
+          { label: "Core check", state: "done" },
+          { label: "Recommendations", state: "done" },
+        ],
+      };
+    },
+  };
+  runInNewContext(`${REPORT_SCRIPT}\n${REPORT_LIST_SCRIPT}\nthis.refresh = refreshSteps;`, ctx);
+  await (ctx.refresh as () => Promise<void>)();
+  assert.equal(
+    bar.innerHTML,
+    '<li class="done">Core check<span class="sr"> (done)</span></li><li class="done">Recommendations<span class="sr"> (done)</span></li>',
+  );
 });
 
 test("the menu keeps #report/<id> deep links on the Report page", () => {

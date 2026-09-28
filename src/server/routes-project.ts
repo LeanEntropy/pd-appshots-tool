@@ -44,7 +44,9 @@ const GETS: Record<string, Get> = {
 const POSTS: Record<string, Post> = {
   "/api/selection": (l, b) => postSelection(l, b),
   "/api/analysis/plan": (l, b, a) => postAnalysisPlan(l, b, a.names),
-  "/api/analysis/run": (l, b, a) => postAnalysisRun(l, b, { ...a.runner, names: a.names }),
+  // When the run ends, the home card's cached summary is refreshed (it holds the new report).
+  "/api/analysis/run": (l, b, a) =>
+    postAnalysisRun(l, b, { ...a.runner, names: a.names, onEnd: () => stateFor(a, l) }),
   "/api/analysis/stop": (l) => postAnalysisStop(l),
   "/api/overview": (l) => postOverview(l),
   "/api/expansion": (l, b) => postExpansion(l, b),

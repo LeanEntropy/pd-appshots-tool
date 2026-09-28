@@ -82,8 +82,9 @@ test("migration lists every pilot and core run as versions; no existing file cha
   const list = getReports(loaded).body as { reports: ReturnType<typeof listReports> };
   const pilot = list.reports.find((r) => r.id === "r-pilot");
   const core = list.reports.find((r) => r.id === "r-core");
-  assert.equal(pilot?.name, "Pilot (United States, English)");
-  assert.equal(core?.name, "Full check (United States, English)");
+  assert.equal(pilot?.name, "Pilot report");
+  assert.equal(core?.name, "Full check report");
+  assert.deepEqual(pilot?.competitorNames, ["Capybara Go", "Mini Tales"]);
   assert.deepEqual(
     pilot?.versions.map((v) => v.id),
     [RUNS.partial, RUNS.broken, RUNS.report, RUNS.md],
@@ -117,7 +118,7 @@ test("an interrupted migration run again gives the same result, with no duplicat
   // Interrupted after the first def was written, with only one version in it.
   s.putJson(defKey(paths, "r-pilot"), {
     id: "r-pilot",
-    name: "Pilot (United States, English)",
+    name: "Pilot report",
     type: "pilot",
     scope: { type: "pilot", markets: [US], competitors: [], includeCharts: [] },
     createdAt: "2026-09-28T00:00:00.000Z",

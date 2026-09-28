@@ -49,7 +49,8 @@ export function syncPresetReports(
     if (!readDef(s, c, id)) {
       const def: ReportDef = {
         id,
-        name: `${TYPE_NAMES[stage]} (${marketName(main)})`,
+        // "Pilot report"; one made after a main-country change also names its country.
+        name: `${TYPE_NAMES[stage]} report${id === `r-${stage}` ? "" : ` (${marketName(main)})`}`,
         type: stage,
         scope: { type: stage, markets: [main], competitors: [], includeCharts: [] },
         createdAt: now.toISOString(),

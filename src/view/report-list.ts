@@ -11,6 +11,7 @@ export const REPORT_LIST_CSS = `
 .rcard.t-core { border-left-color: var(--ok); } .rcard.t-country { border-left-color: var(--mid); } .rcard.t-compare { border-left-color: var(--accent-2); }
 .rcard > summary { cursor: pointer; padding: 10px 14px; display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: center; }
 .rcard > summary .rc-name { font-size: 17px; font-weight: 700; }
+.rcard > summary .rc-desc { flex-basis: 100%; color: var(--muted); font-size: 13px; }
 .rcard > .rc-b { padding: 4px 14px 12px; border-top: 1px solid var(--line); }
 .rc-bar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 8px 0; }
 .pill.t-pilot { background: var(--accent); } .pill.t-core { background: var(--ok); } .pill.t-country { background: var(--mid); } .pill.t-compare { background: var(--accent-2); }
@@ -50,16 +51,21 @@ function versionOptions(r) {
     + (old.length ? '<optgroup label="Earlier versions (archived)">' + old.map(opt).join("") + "</optgroup>" : "");
 }
 
+// "Pilot · United States (English) · 2 competitors: Archero 2, Capybara Go · 27 Sep 2026", from the report's own inputs.
+function reportDescription(r) {
+  const n = r.competitors;
+  const who = n === null || n === undefined ? "" : n + (n === 1 ? " competitor" : " competitors") + ((r.competitorNames || []).length ? ": " + r.competitorNames.join(", ") : "");
+  return [r.typeName, r.countries, who, r.generatedAt ? fmtDate(r.generatedAt) : "not generated yet"].filter(Boolean).join(" \\u00b7 ");
+}
+
 function reportCardHtml(r) {
   const id = rsafe(r.id);
-  const n = r.competitors;
   const summary = '<span class="rc-name">' + esc(r.name) + "</span>" + pill(TYPE_CLS[r.type] || "", r.typeName)
-    + '<span class="meta">' + esc(r.countries) + (n === null || n === undefined ? "" : " \\u00b7 " + n + (n === 1 ? " competitor" : " competitors")) + "</span>"
-    + '<span class="meta">' + (r.generatedAt ? "Generated " + esc(fmtDate(r.generatedAt)) : "Not generated yet") + "</span>"
     + pill(STATUS_CLS[r.status.kind] || "none", r.status.text)
     + (r.newer ? '<span class="pill newer" title="' + esc(r.newer) + '">Newer data</span>' : "")
-    + (r.archived ? pill("none", "Archived") : "");
-  const b = (cls, label, extra) => '<button type="button" class="' + cls + '" data-rid="' + id + '" data-act-key="' + cls + "-" + id + '"' + (extra || "") + ">" + label + "</button>";
+    + (r.archived ? pill("none", "Archived") : "")
+    + '<span class="rc-desc">' + esc(reportDescription(r)) + "</span>";
+  const b =(cls, label, extra) => '<button type="button" class="' + cls + '" data-rid="' + id + '" data-act-key="' + cls.split(" ")[0] + "-" + id + '"' + (extra || "") + ">" + label + "</button>";
   return '<details class="rcard ' + (TYPE_CLS[r.type] || "") + '" data-rid="' + id + '" id="rc-' + id + '"><summary>' + summary + '</summary><div class="rc-b">'
     + (r.newer ? '<div class="banner stale"><p>' + pill("stale", "Newer data") + " " + esc(r.newer) + (r.canNow ? " Choose \\u201cNow\\u201d to see the report with the current data." : "") + "</p></div>" : "")
     + '<div class="rc-bar"><label>Version: <select class="rc-ver" data-rid="' + id + '">' + versionOptions(r) + "</select></label>"
@@ -88,10 +94,22 @@ function renderReportList() {
   }
 }
 
-// Called when the Report tab is shown and after a batch changes: reloads the list.
+// The project step bar follows the saved reports (a finished run completes its step), without a reload.
+async function refreshSteps() {
+  const bar = document.querySelector("ol.steps");
+  if (!bar) return;
+  try {
+    const s = await getJson(API + "/state");
+    if (!s || !Array.isArray(s.steps)) return;
+    bar.innerHTML = s.steps.map((x) => '<li class="' + esc(x.state) + '"' + (x.state === "current" ? ' aria-current="step"' : "") + ">" + esc(x.label) + (x.state === "done" ? '<span class="sr"> (done)</span>' : "") + "</li>").join("");
+  } catch {}
+}
+
+// Called when the Report tab is shown and after a batch changes or ends: reloads the list.
 async function loadReport() {
   const box = document.getElementById("reportList");
   if (!box || !location.protocol.startsWith("http")) return;
+  refreshSteps();
   const page = box.closest ? box.closest("section") : null;
   if (page && page.hidden) return;
   const line = document.getElementById("reportStatus");

@@ -112,17 +112,17 @@ test("each finished Pilot run is the newest version; the previous one is archive
   };
   assert.ok(old.data);
   assert.equal(old.archived, true);
-  // npm run report -- "Pilot (United States, English)": a new version, no AI.
+  // npm run report -- "Pilot report": a new version, no AI.
   const lines: string[] = [];
   assert.equal(
-    reportCommand(loaded, "pilot (united states, english)", (l) => lines.push(l)),
+    reportCommand(loaded, "pilot REPORT", (l) => lines.push(l)),
     0,
   );
   assert.deepEqual(
     readDef(s, paths, "r-pilot")?.versions.map((x) => x.archived),
     [true, true, false],
   );
-  assert.match(lines.join("\n"), /New version of "Pilot \(United States, English\)"/);
+  assert.match(lines.join("\n"), /New version of "Pilot report"/);
   assert.equal(
     reportCommand(loaded, "nothing like this", (l) => lines.push(l)),
     1,

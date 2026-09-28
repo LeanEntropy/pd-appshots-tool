@@ -24,6 +24,8 @@ export interface ReportSummary {
   typeName: string;
   countries: string;
   competitors: number | null;
+  /** The competitors the newest version was built from (for the Pilot and Full check, the pick). */
+  competitorNames: string[];
   /** Generation date of the newest version, null when none. */
   generatedAt: string | null;
   status: { kind: "ready" | "partial" | "running" | "none" | "draft"; text: string };
@@ -102,7 +104,14 @@ export function listReports(loaded: LoadedConfig): ReportSummary[] {
     const files = newest ? folders.get(newest.id) : undefined;
     const inputs =
       newest && files?.has("version.json") ? readVersionInputs(s, paths, newest.id) : null;
-    let competitors = inputs ? inputs.scope.competitors.length : null;
+    // The report's own inputs first (version.json, then the saved report data), else the pick now.
+    const saved = newest && files?.has("report-data.json") ? savedData(s, paths, newest.id) : null;
+    const ours = loaded.config.ourApp.id;
+    let names: string[] | null = inputs
+      ? inputs.pick.filter((g) => g.appId !== ours).map((g) => g.name)
+      : saved?.competitorNames?.length
+        ? saved.competitorNames
+        : null;
     let status: ReportSummary["status"] = newest
       ? { kind: "ready", text: "Ready" }
       : isPreset(d.type)
@@ -111,17 +120,16 @@ export function listReports(loaded: LoadedConfig): ReportSummary[] {
     let newer: string | null = null;
     if (isPreset(d.type)) {
       const x = current(d.type);
-      if (competitors === null)
-        competitors = x.plan.games.filter((g) => g.appId !== x.ourAppId).length;
-      if (newest && !files?.has("recommendations.json") && !hasRecommendations(s, paths, newest.id))
+      names ??= x.plan.games.filter((g) => g.appId !== x.ourAppId).map((g) => g.name);
+      if (newest && !files?.has("recommendations.json") && !saved?.hasRecommendations)
         status = { kind: "partial", text: "Partial: no recommendations written" };
       if (job?.state === "running" && job.stage === d.type)
         status = {
           kind: "running",
           text: `Analysing ${job.progress.done} of ${job.progress.total}`,
         };
-      const saved = inputs?.dataHash ?? readLatest(paths, d.type)?.dataHash ?? null;
-      if (newest) newer = newerReason(x, main, inputs, saved);
+      const hash = inputs?.dataHash ?? readLatest(paths, d.type)?.dataHash ?? null;
+      if (newest) newer = newerReason(x, main, inputs, hash);
     }
     return {
       id: d.id,
@@ -129,7 +137,8 @@ export function listReports(loaded: LoadedConfig): ReportSummary[] {
       type: d.type,
       typeName: TYPE_NAMES[d.type],
       countries: countriesOf(d),
-      competitors,
+      competitors: names ? names.length : null,
+      competitorNames: names ?? [],
       generatedAt: newest?.generatedAt ?? null,
       status,
       newer,
@@ -149,18 +158,30 @@ export function listReports(loaded: LoadedConfig): ReportSummary[] {
   );
 }
 
-/** A version whose saved report data carries recommendations (newer runs keep them there too). */
-function hasRecommendations(
+/**
+ * From a version's saved report data: its competitors (the games that are not ours) and whether it
+ * carries recommendations. Null when the file is unreadable or not in the expected shape.
+ */
+function savedData(
   s: ReturnType<typeof workspaceStorage>,
   c: { projectId: string },
   versionId: string,
-): boolean {
+): { competitorNames: string[] | null; hasRecommendations: boolean } | null {
   try {
-    const d = s.getJson(versionFileKey(c, versionId, "report-data.json")) as
-      | { ai?: { recommendations?: unknown } | null }
-      | undefined;
-    return !!d?.ai?.recommendations;
+    const d = s.getJson(versionFileKey(c, versionId, "report-data.json")) as {
+      games?: unknown;
+      ai?: { recommendations?: unknown } | null;
+    };
+    const games = Array.isArray(d?.games)
+      ? (d.games as { name?: unknown; ours?: unknown }[])
+      : null;
+    return {
+      competitorNames: games
+        ? games.filter((g) => !g.ours && typeof g.name === "string").map((g) => String(g.name))
+        : null,
+      hasRecommendations: !!d?.ai?.recommendations,
+    };
   } catch {
-    return false;
+    return null;
   }
 }
