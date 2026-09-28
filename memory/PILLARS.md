@@ -128,7 +128,14 @@ Output per locale:
   - a position table: row N = everyone's Nth image, ours first;
   - recommendations.
 - A title image is usually an in-game screenshot (the title screen).
+- NEVER claim an image is "not from the game" or has "no in-game screenshot". Any art screen may be the game's title, loading or splash screen. Describe what is visible instead.
 - The report ALWAYS includes the deterministic content (exact store order per game, position-by-position comparison, pattern stats with n, ours vs patterns), even if AI synthesis is missing.
+- EVERY button or action gives immediate on-screen feedback:
+  - a busy state (disabled button, spinner, "Working…" text);
+  - progress for anything longer than a second;
+  - a clear success or error message;
+  - the view updates when it's done;
+  - never silent.
 - UX rules:
   - always show live progress ("Analyzing image 5 / 80");
   - runs are resumable and never re-analyse;
@@ -136,6 +143,11 @@ Output per locale:
   - an (i) icon with hover details on every analysed image.
 - The image and analysis database is SHARED ACROSS PROJECTS: the same image is never downloaded or analysed twice, even for different games' projects.
 - Project-setup plan approved on 2026-09-27 (`docs/plan-project-setup.md`, D1–D6 as proposed).
+- Store history per game (future):
+  - When a game's store images or order change, keep the old images in an ARCHIVED state with all their analysis data, their position, and the deck they belonged to (the other image IDs, in order).
+  - Update to the new images and order, and keep a CHANGE LOG per game (added / removed / moved / replaced, with dates).
+  - Store data is refreshed ONLY inside a user-triggered project action. Never automatically or in the background.
+- Sharing without a website (planned milestone 3b): "Share project" exports one zip (Full / Core only / Light / Report only, with the size shown first; Light carries analysis-sized copies, D7 decided 2026-09-28), and the friend uses "Import project" (incremental). No live shared sync folders.
 - Web-readiness rule (not building web now): keep AI providers, storage and jobs each behind one interface, so a hosted website is cheap later. No direct filesystem calls from feature code.
 - Multi-project: the user creates projects in the UI (own game plus competitors, Google Play only in V1), can work on several games, and can resume any project mid-work.
 - The tool must never make the user move or handle files. Every choice made in its UI is saved by the tool automatically (e.g. a local server with autosave).

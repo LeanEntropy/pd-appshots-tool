@@ -509,8 +509,10 @@ Each milestone: implement (Opus dev agent), tests + typecheck + Biome, cross-fam
 | 1 | Settings split (`defaults.json`, `project.json`, `loadProject` with explicit root), registry, storage module with the local file-system implementation and the `node:fs` allow-list test (12B), shared library (section 12A) on it with the `ImageDb` facade and refs, providers take `ModelImage` inputs (12B), Import with both equivalence gates (settings and library), CLI `--project`. Built in two halves with one checkpoint: 1a settings, registry and storage; 1b library and Import. Tests include content-hash checks, an import interrupted at each step and re-run, and old-format loading | Dry run shown; user approves the migration. Then: `npm run gallery` shows Rogue Legend exactly as before, and the pilot approval still says 17 images with the same cost |
 | 2 | One server for all projects: router split, route inventory with redirects for old paths, `/p/:id` routes, `API_BASE`, projects home (with the Import offer), project shell and step bar, derived state and landing screens, the jobs module (12B) with the in-process runner, Stop and Resume for analysis, the cross-project record lock and attempt log (12A, A3 and A4; moved here from milestone 1 because the first paid call happens here), the single job journal, locks with nonces, single-instance check, job-state isolation, fit guard on the analysis endpoints, analysis Continue, the saved expansion question after the core | User opens the home, sees Rogue Legend's status and next step, opens it and lands on the workspace. Optional: stop and continue the pilot, and check that the Continue panel shows what was already spent |
 | 3 | Play lookup and search (queue, cache, errors), country catalogue, new project wizard with autosave, settings page | User creates a second project through the wizard (no download yet), closes the browser mid-way and resumes it |
-| 4 | Download inside the page, as jobs-module kinds (12B): store check job with checkpoints and progress, approval screen, immutable approved copy, download with progress, resume, automatic deck views, landing on the pick | User approves a real download for the new project, interrupts it once, resumes it |
+| 3b | Share and import a project (section 12C): Share dialog with exact sizes, package export and import jobs, integrity and security checks, merge, incremental updates | User shares Rogue Legend as Light, imports it into a second workspace as a copy, sees the same screens and 0 images to analyse again, then imports an update |
+| 4 | Download inside the page, as jobs-module kinds (12B), including "Fetch full-size images" for shared Light and Core-only projects (12C, C6): store check job with checkpoints and progress, approval screen, immutable approved copy, download with progress, resume, automatic deck views, landing on the pick | User approves a real download for the new project, interrupts it once, resumes it |
 | 5 | Editing and incremental downloads: "new items" notice, incremental preview and merged manifests, removals | User adds a competitor or country to a project; the approval screen shows only the new items and "0 downloaded again" |
+| 6 (future) | Store history and change log per game (section 12D): Refresh store data, shared snapshots, archive by state, change detection, history view, grid and report highlights | User refreshes Rogue Legend's store data, sees the changes before approving, then the history and the highlights; a second project sharing a game keeps its own view until it chooses "Use it" |
 
 ## 12A. Shared image and analysis library (added requirement, 2026-09-27)
 
@@ -645,6 +647,287 @@ We are **not** building web features. We keep three internal boundaries clean, s
 - **Cross-user library**: the shared library could become shared across users, so a competitor image analysed for one customer is free for the next. It would then need a rule on what one user may learn about another (for example, not "also used in Other Company's project"), and a cost-sharing policy.
 - Also: user accounts, API-key storage, and spending limits per user.
 
+## 12C. Milestone 3b: share and import a project (added, approved by the user 2026-09-28)
+
+Goal: the user shares a project with a friend without a website. The friend gets the project, its images and all results on their own computer, and keeps working. Written against the code merged to master after milestones 1 and 2: `src/storage/` (synchronous `Storage` with logical keys, `putBlob` with hash check, `readStream`, `localPath`; `leases.ts` with the ai, store, library and server locks; `import-ops.ts` as the only place that links or moves files), `src/jobs/` (enqueue/status/resume/cancel, the in-process runner, `state/job.json`), `src/library/` (layout, refs, facts, Google-ID files, records per analysis key), and the projects home (`routes-home.ts`, `home-script.ts`, with the legacy-project Import).
+
+**Not recommended:** a live shared sync folder (Dropbox, OneDrive, a network drive) for the workspace. Locks, hardlinks and atomic renames do not survive sync, and two computers would write the same records. Sharing is always a package file.
+
+### C1. User flow
+
+**Sender: "Share project"** (button in the project header, next to Settings)
+
+```
+Share "Rogue Legend"
+ ( ) Everything             1,418 images at full size, all results          2.63 GB
+ (o) Core only              ours + 8 picked competitors at full size,        412 MB
+                            thumbnails for the other 1,040 images, all results
+ ( ) Light                  thumbnails for all images, analysis-sized copies  41 MB
+                            of the 85 analysed images, all results
+ ( ) Report only            the report as a web page with the pictures it     18 MB
+                            shows; opens in any browser, no tool needed
+ [x] Only what changed since my last share (28 Sep, Light)                   6 MB
+                                                          [Build the file]
+```
+- The sizes and counts are **computed exactly from the files before anything is built** (sum of the chosen files; pictures are stored without re-compression, so the file is within about 1% of the shown size; JSON is compressed, so it can only be smaller). The current measurements (originals 2.6 GB, thumbnails 26 MB, analysis-sized copies 4.7 MB, project data 9.4 MB) are what the options add up from.
+- "Build the file" runs as a job with a progress line ("Adding image 812 of 1,418"), in the "Working now" strip too. The finished file appears with **Save the file** (a normal browser download) and a plain hint: "Send this file to your friend, for example with a file-transfer service. It contains competitors' store screenshots: share it only with people working on your game."
+- Sharing is the one case where the user handles a file, because a file is the thing being shared. Nothing else changes.
+- "Only what changed since my last share" appears when the tool has a record of an earlier share of this project (C4).
+
+**Friend: "Open a shared project"** (button on the projects home, next to New project)
+1. Gets repo access, runs `npm install` and `npm start` (README gets a "Receiving a shared project" section).
+2. Presses Open a shared project and picks the file. Upload progress is shown ("Reading the file: 1.2 of 2.6 GB").
+3. The tool checks the file without importing anything and shows a summary: project name and game, who shared it and when, what it contains (images at full size, thumbnails only, analyses, reports), the size on disk after import, what is new compared with what the friend already has, and any problems.
+4. The friend picks, when a project with the same origin already exists: **Update my copy** or **Import as a separate copy**. Otherwise just **Import**.
+5. Import runs as a job with progress ("Checking image 812 of 1,418"), then opens the project on its current step.
+
+**Report only:** the file is a zip of a folder with `index.html` and an `images/` folder. The recipient unzips it and opens `index.html`; no tool needed. It is an **export-only view**: generated by the tool's own deterministic template from the report data (the escaping markdown renderer, fixed CSS, **no script**, a restrictive `Content-Security-Policy` meta tag, image paths only to its own `images/` folder). It carries no data the tool can import, and "Open a shared project" refuses it with "This is a report to read in a browser, not a project to import."
+
+### C2. Package format
+
+One zip file named `<project id>-<date>-<kind>.recipe.zip`. Entries use the storage's logical keys, below a fixed top-level folder per kind of content:
+
+```
+manifest.json                         always the first entry
+project/project.json, run-config.json, decks/**, orders/**, reports/**, runs/**, own/*.json, icons/**, state/history.json
+library/images/orig/<sha>.<ext>       per option
+library/images/thumb/<sha>.webp
+library/images/model/<sha>-<edge>.jpg
+library/images/facts/<sha>.json, library/images/pixels/<sha>.<v>.json
+library/google/<hash>.json            only the Google-ID entries of included images
+library/analysis/<sha>/<key>.json     analysis records of this project's images
+library/objects/<step>/<key>.json     the per-image model answers those records cite
+```
+
+Not included: the job journal's live state (no running or stopped job travels), caches, views (rebuilt), `_before-library`, the local own-assets folder and PSD (only the facts read from them in `own/`), anything from other projects.
+
+**Manifest** (`PackageManifestSchema`, Zod, strict):
+- `format: "store-screenshot-recipe/project"`, `formatVersion: 1`, `tool: { version, commit }` (package.json version and git commit), `createdAt`, `packageId` (random), `kind: "full"|"core"|"light"|"report"`.
+- `sender: { label }`: a display name the sender may type (default: empty). No email, no user name, no machine paths.
+- `project: { originId, id, name, ourAppId, revision, baseRevision, stateHash }`. `originId` is a random ID given to a project once, at its first share (stored in `project.json`), so copies of the same project are recognised whatever their folder ID. `revision` is a counter the project increases on every share and every import; `stateHash` is the hash of the canonical, sorted file index; `baseRevision` is the revision an update package was built on.
+- `dependencies`: the **closure** of what the project needs, computed from refs → images (facts, thumbnail, analysis-sized copy, original) → analysis records → the model answers and pixel facts each record cites. Each dependency is listed by content hash with its state: `included`, `earlier-package`, or `deferred-original` (only full-size originals may be deferred).
+- `digest`: the SHA-256 of the canonical manifest (without this field). The inspect summary shows its first 12 characters, so sender and friend can compare it by message if they want to.
+- `analysis: [{ key, pipeline }]`: every analysis key used by included records, with its full pipeline spec (schema, prompt versions, models, preprocessing), so the receiver can recompute and check each key.
+- `files: [{ path, sha256, bytes, included }]`: **the complete index of the project's data at export time**, including files left out of this package (`included: false`). Left-out files are either full-size originals (Core only, Light) or files an earlier package already carried (C4).
+- `images: [{ sha256, googleIds, parts: { orig, thumb, model } }]` with each part `"included"|"earlier-package"|"absent"`.
+- `basedOn: { packageId, createdAt } | null` for an update package.
+
+### C3. Integrity checks on import (before anything is written to the library or the project)
+
+1. Zip structure is read with **yauzl** (reading) and written with **yazl** (writing): mature, streaming, ZIP64-capable libraries from the same author (MIT), with no native parts. yauzl reads entries one at a time from the file on disk (random access via the central directory), rejects invalid file names by default, and reports sizes before decompressing. Pictures are stored without compression (they are compressed already), JSON with deflate.
+2. `manifest.json` must be the first entry, at most 50 MB, pass `PackageManifestSchema`, and hash to its own `digest`; `formatVersion` must be one this tool reads.
+3. **Zip-level rules:** compression method stored or deflate only; encrypted entries refused; the central directory and each local header must agree on name and sizes; the CRC-32 is checked (yauzl's `validateEntrySizes` plus our own CRC check) in addition to the SHA-256; totals are computed from the validated entries, never taken from a declaration.
+4. **The zip's entries and the manifest's `included: true` files must match exactly**: no extra entry, no missing entry, no duplicate name.
+5. Each entry's bytes must hash to its manifest `sha256`. Originals additionally go through `putBlob(key, bytes, sha256)`, which checks the name hash.
+6. Every JSON file passes its existing schema (settings, refs, decks, records, facts, Google-ID files, journal history). Analysis records must sit under the key that the manifest's pipeline spec for that key hashes to.
+7. **Dependency closure:** every dependency in the manifest must be included, already present locally with the same content hash, or a `deferred-original` (fetchable later, C6). Anything else ("import the earlier package first: Light, 28 Sep") stops the import before writing.
+
+**Inspect vs import.** "Inspect" (the summary before the friend chooses) runs **all** checks above by streaming the uploaded file once; it writes nothing to the library or any project (the upload itself is already on disk). Its result is saved as `shared/incoming/<upload id>.verified.json`, bound to the upload's SHA-256. The import accepts only an upload with a matching verification result, and still re-hashes each entry as it writes it (a changed file on disk fails).
+
+### C4. Updates and incremental re-sharing
+
+- After each share, the sender's project keeps `state/shares.json`: `{ packageId, createdAt, kind, files: [{ path, sha256 }] }` for its last few packages.
+- "Only what changed since my last share" builds a package whose manifest still indexes **every** file, but includes only files that were not in the previous package of the same or a larger kind (by path and hash). `basedOn` names that package.
+- The receiver needs no special mode: every import is a merge that skips files it already has with the same hash (C5). An update package just leaves those out, and check 6 in C3 confirms they are really there.
+- Analysis records the friend already has are never replaced by a paid re-run: images analysed by either side are "already analysed, free" on the other side after an import (same analysis key). Nothing is ever re-paid because of sharing.
+
+### C5. Merge semantics
+
+**Which project receives the data**
+- No local project with the same `originId`: import as a new project. The folder ID is the sender's ID, or `<id>-2` when that ID is taken by an unrelated project.
+- Same `originId` exists: the friend chooses **Update my copy** (merge below) or **Import as a separate copy** (new ID, new `originId`, merged into nothing).
+
+**Library content** (shared by all the friend's projects)
+- Images, thumbnails, model copies, facts, pixel facts: content-addressed; an existing file with the same hash is kept; a different hash under the same name is impossible for originals (name = hash) and refused for other files.
+- Google-ID files: append-only merge of entries (the 12A rule).
+- Analysis records at the same image and key, under the record lock:
+  - only one side has it: take it;
+  - one side usable, the other failed or outdated: keep the usable one;
+  - both usable: **keep the local one**, and keep the incoming one as an immutable **variant** at `analysis/<sha>/<key>.variants/<record content hash>.json`. The record at `<key>.json` stays the selected one used for statistics; variants go through the same privacy rewrite, are exported with their record, count as reachable (never deleted), and can be chosen instead in the (i) details ("Use the sender's analysis"). Listed in the import summary as "2 images were analysed by both of you; your own analysis is kept";
+  - attempts are unioned by `attemptId`; `paidBy` keeps the earliest. Attempts from the package are tagged with the sender's label, so the friend's ledger and reports show "paid by <sender>" and never count them against the friend's batches.
+- Per-image model answers: content-keyed; union.
+
+**Project data (Update my copy)**
+- Settings: competitors and countries the sender added are added (additions never lose data); removals, tier changes, order and chart changes from the sender are **not** applied automatically but listed as "The sender also changed: ..." with one button each to adopt. Advanced `overrides` from a package are never applied silently (a package cannot change the friend's models or spending limits); differences are listed.
+- Core pick (`run-config.json`): the local pick is kept; the sender's pick is saved as "Sender's pick" and offered with Use this pick.
+- Decks: per store page, the newer `fetchedAt` wins; the older stays in its run manifest.
+- Orders (dated), runs and reports: unioned by file name; the same name with different content keeps the local file and lists the conflict.
+- Feedback and corrections (plan v2: append-only typed corrections with IDs): unioned by ID; two corrections of the same item that disagree are held as "unresolved" and shown to the user, the rule plan v2 already has.
+- Job history: the sender's finished batches go into `state/history.json` (read-only, for "what was spent where"); live jobs never travel.
+- Refs: union of image references for this project.
+- **Divergence:** if the local project's revision is not the package's `baseRevision` (both sides changed since the last exchange), the summary says "You both changed this project since your last exchange" and lists the conflicts from the rules above before the friend presses Update. An update package whose base the friend never imported fails the closure check (C3, step 7).
+
+### C6. Light and Core-only imports: full-size images later
+
+- Images whose original was left out are imported with facts, thumbnail and (if analysed) the analysis-sized copy. The library marks them "full size not downloaded" simply by the absent original; `ImageDb.get` keeps working for views.
+- Everything that only views works immediately: gallery, comparison grid, (i) details, reports.
+- Anything that needs the original (a new analysis of an image with no analysis-sized copy, layer-diff crops at native resolution, Free up space checks) sees it missing. The analysis approval screen then shows "34 images need their full-size picture first (free, from Google Play) [Fetch them]" and cannot start until they are fetched.
+- "Fetch them" is a download job in the store lane (milestone 4 builds that kind): it downloads by Google image ID and compares the hash. Three outcomes per image, shown in plain words:
+  - **recovered:** same hash; the original is filled in;
+  - **changed on Google Play:** different bytes. The old image keeps its references, deck position and analysis (and stays viewable by its thumbnail and analysis-sized copy); the new picture is stored as a new library image but **not** linked into the project. The user sees "3 pictures changed on Google Play since this project was shared" and can refresh the store data (section 12D) to adopt the current pictures deliberately;
+  - **no longer on Google Play:** recorded as unavailable; views keep working; only a new full analysis of that image is impossible (its analysis-sized copy still allows a re-analysis if one is needed).
+- Until milestone 4 lands, the missing originals are shown but not fetchable; analysis of those images waits.
+
+### C7. Security (the package comes from another person and is untrusted input)
+
+- **Zip-slip:** entry names are never used as paths. Each name must be in the manifest and map to a storage key through `key()` (segment pattern, no `.` or `..`, no drive letters or backslashes) under the allowed prefixes of C2; anything else is refused. Writes go through `Storage` only. Symlink entries (by their external attributes) and directory entries are refused or ignored.
+- **Size limits:** upload capped (default 20 GB, and never more than free disk minus 5 GB); manifest ≤ 50 MB; per entry ≤ 100 MB for originals and ≤ 20 MB for JSON; total uncompressed ≤ the manifest's declared total (and the file's own size for stored entries); deflated entries with a ratio above 100:1 refused (zip bomb); entry count ≤ 200,000. The declared sizes are checked before extraction and enforced while streaming.
+- **Never executing content:** the tool never runs, requires or serves as a page anything from a package. The server's static rules already refuse HTML, SVG and JS files; imported reports are markdown rendered by the existing escaping renderer, whose image sources are limited to the project's own image paths; names and text are escaped in every page. Settings from a package pass `ProjectSettingsSchema`; overrides are not applied (C5).
+- **Privacy on export:** records' identity blocks are rewritten for the package: no absolute paths (they are rebuilt on import by `refresh-records`), appearances limited to this project, other projects' names and IDs in attempts replaced by "another project". The sender label is optional.
+- **Upload endpoint:** same token and same-origin rules; the only route allowed a large body, streamed to disk (`shared/incoming/<upload id>.zip`) with the cap enforced while streaming; deleted after import or after 7 days.
+- **No signing:** the friend trusts the sender, as with any file they receive. The manifest's hashes protect against damage in transfer, not against a hostile sender; the checks above limit what a hostile file can do.
+
+### C8. Through storage and jobs
+
+- New storage capabilities, both local-disk only and outside the general interface (like `localPath`): `openWrite(key)` returning a write stream with `commit()` (rename into place) and `abort()`, used by the zip writer; and yauzl opens the package through `localPath(key)`. All other reads and writes use the existing `Storage` methods; `import-ops.ts` is not used (no hardlinks from a package).
+- New job kinds in `src/jobs/`: `share-export` and `share-import`, both in the **store lane** (one file-heavy job at a time across all projects, never together with a download), with the same-project rule (no export or import while that project's analysis or download runs: "Wait until the analysis finishes"). Their frozen inputs: the export choice with the file list computed at the estimate, or the uploaded file's manifest.
+- **Import as a transaction.** (1) Library content (content-addressed files, variants) is written first; these writes are idempotent, and unreferenced until step 3. (2) The **complete merged project tree** (new project, or the existing one plus the merge) is built in `projects/<id>.importing/` from a snapshot of the current project, and validated with the same schemas and the state derivation. (3) Under `library.lock` and the project's exclusivity, the selected-record and attempt merges are applied, then the staged tree is swapped in by rename (the old tree kept as `projects/<id>.before-import/` until the next start), the registry updated, and a commit marker written to the import journal. A stop before the marker leaves the project exactly as it was; resume rebuilds the staging from scratch. Conflict file names are deterministic (by content hash), so a re-run creates no duplicates.
+- Export writes to `shared/exports/<export id>.partial` and renames on completion; a stopped export is rebuilt from the start (minutes, no cost). Old export files are removed after they are saved, or after 7 days.
+
+### C9. Progress (PILLARS UI rule)
+
+Every step shows live progress with counts in the project page and the "Working now" strip: "Counting files", "Adding image 812 of 1,418 (1.1 of 2.6 GB)", "Reading the file: 1.2 of 2.6 GB", "Checking image 812 of 1,418", "Adding analyses 40 of 85", "Merging project data". A failure shows the file or step it stopped at in plain words, and Continue.
+
+### C10. Endpoints
+
+| Method | Path | Purpose |
+|---|---|---|
+| GET | `/p/:id/api/share/estimate` | Exact counts and sizes of each option, and of "only what changed" |
+| POST | `/p/:id/api/share/export` | `{ kind, onlyChanges }` → export job |
+| GET | `/p/:id/api/share/exports/:exportId` | The finished file (streamed) |
+| POST | `/api/share/upload` | Streamed upload of a package → `{ uploadId }` |
+| POST | `/api/share/inspect` | `{ uploadId }` → the checked summary (C1 step 3); writes nothing |
+| POST | `/api/share/import` | `{ uploadId, mode: "new"|"update"|"copy" }` → import job |
+
+Job progress and Stop go through the existing jobs endpoints.
+
+### C11. Tests
+
+- Round trip per kind in temp workspaces (two storages = two computers): export, import as new, same screens, same approval numbers, and **0 images to analyse again** for everything analysed.
+- Core only and Light: views work; missing originals reported; approval blocked with the fetch line; a fetch with a matching hash fills in; a changed picture becomes a new image.
+- Incremental: second export contains only new files; importing it without the first package fails check 6 with the plain message; importing both in order equals one full import.
+- Merge: same `originId` update vs copy; both-usable records keep local and store the incoming one beside it; attempts union and "paid by sender" in the ledger; settings additions applied and removals listed; pick kept with "Sender's pick"; corrections union and unresolved conflicts.
+- Integrity: tampered byte, extra entry, missing entry, duplicate name, wrong record key, unknown format version, manifest not first, wrong manifest digest, encrypted entry, unsupported compression method, header/central-directory mismatch, missing dependency in the closure, upload changed between inspect and import.
+- Transaction: stop at each import step; the project is unchanged before the commit marker and fully merged after it; re-run creates no duplicate conflict files.
+- Divergence: both sides changed since the last exchange → summary lists the conflicts.
+- Security: `../` and absolute and drive-letter names, backslashes, symlink entries, zip bomb ratio, oversize entry, upload over cap, HTML file in a report path (stored, never served as a page), overrides in the package not applied.
+- Privacy: no absolute path, user name or other project's name in the exported bytes.
+- Jobs: store-lane exclusivity with a download, same-project refusal during analysis, stop and resume of an import leaves no half-merged project.
+- Report only: the HTML has no script and its image paths resolve inside the zip.
+
+### C12. Risks
+
+| Risk | Mitigation |
+|---|---|
+| Re-sharing competitor screenshots (copyright, Google Play terms) | Private sharing with people on the same game only; stated in the Share dialog; no public hosting; the package notes the source of every image |
+| Different tool versions on the two computers | Manifest carries the tool version and commit; if the friend's analysis key differs, the summary says "Update the tool (git pull) to reuse all analyses; otherwise N analyses show as made with other settings"; the import still works |
+| Very large files (2.6 GB) are hard to send | Light is the default choice; Core only as the middle ground; "only what changed" for updates |
+| A hostile or damaged file | C3 and C7 checks; nothing executed; staging before switch |
+| Both users analyse the same image before syncing | Both analyses kept (local one used); both payers recorded; unavoidable double spend is visible |
+| Leaking the sender's private data | Identity rewrite, no paths, optional sender label, no other projects |
+| Zip over 4 GB later (more countries) | yazl and yauzl support ZIP64 |
+| Antivirus scanning slows import of big zips | Progress shows it is working; nothing to fix in the tool |
+
+### C13. Milestone placement
+
+Milestone **3b**, after milestone 3 (wizard) and before 4 (downloads in the page). It adds `yazl` and `yauzl` as dependencies (the only new ones in this plan; `@types` for both as dev dependencies). The "Fetch full-size images" action lands with milestone 4's download job. User checkpoint: the user shares Rogue Legend as Light, imports it on a second workspace (or a friend's computer) as a copy, sees the same screens and "0 images to analyse again", then re-shares after a change and imports the update.
+
+## 12D. Milestone 6: store history and change log per game (future work, added 2026-09-28)
+
+User requirement: when a game changes its store images or their order, the old images are kept, archived, with all their analysis, their position, their country and language, and the deck they belonged to (the other images in that deck, in order, with dates). The current state moves to the new images and order. Each game gets a change log (added, removed, moved, replaced; date seen; before and after; per country and language), shown in the page: a per-game history, and "what changed since the last refresh" highlighted in the grid and the report. **Store data is never refreshed automatically or in the background**, only by a user action with the usual preview, approval and progress.
+
+### D1. Placement: its own milestone 6, after milestone 5
+
+- Milestone 5 adds competitors and countries and, by design, **never re-reads a store page it already has**; nothing can change there, so no change log arises. A refresh is the opposite: it re-reads every page, and needs the archive model, change detection, the shared history, a history view and report sections. Folding it into 5 would double that milestone and mix a low-risk change with a data-model change behind one checkpoint.
+- It reuses what 4 and 5 build (the store-check and download jobs, the incremental preview, the deck integrity check) and what 3b introduces (a picture changed on Google Play, C6). So it comes last.
+
+### D2. Archive model: references plus a state, no copies
+
+Built on the content-addressed library (images and analyses are never deleted), the run manifests and the dated order files.
+
+- **Shared per game and store page, in the library** (one history per game, whoever observed it):
+  - `library/store/<appId>/<gl>-<hl>/snapshots/<snapshot id>.json`, write-once: `{ id (ULID), parentId, observedBy, fetchedAt, appId, gl, hl, status: "ok"|"unavailable", title, occurrences: [{ position, sha256, googleId, device }], visualHash }`. `visualHash` = hash of status plus the ordered image hashes. **A snapshot is written only when `visualHash` differs from the latest one**; otherwise the check is appended to `confirmations.json` (`{ snapshotId, checkedAt, by, metadata changes }`, append-only), where metadata changes (a new Google ID for the same picture, a device guess, the title) are recorded, so nothing observed is lost and "unchanged" costs one line.
+  - `parentId` is the latest snapshot in the library at commit time (refreshes are serialised in the store lane, so locally there is one line). Snapshots arriving from a shared package (3b) can create a second line from the same parent; the timeline is ordered by `fetchedAt`, and parallel observations are shown side by side ("seen by you" / "seen by the sender"), never merged into one.
+  - `changes/<parent id>--<child id>.json`: the change set of one edge (parent → child). Derived by the rules in D4 (versioned), so it can always be recomputed; stored for speed.
+  - A snapshot **is** the deck and the historical source of truth: its occurrences list every image of that page in order with the date, which answers "which deck did this image belong to, and what else was in it", including an image that appears twice or comes back later.
+- **Per project** (its own view):
+  - each deck manifest in `decks/` gains `snapshotId`: the project's current state of that page = the snapshot of its own last refresh (or one it adopted, D6);
+  - **current membership is derived** from the project's selected snapshots; **archived** = an image that occurs in an earlier snapshot of one of the project's pages but not in the selected one ("used until 27 Sep", from the snapshot dates). No image is copied or moved; archiving is only this derived state;
+  - `refs.json` stays the reachability list (the images this project needs kept): it gains an `archived: true` flag for images only in earlier snapshots, and is never the source of history;
+  - `state/refreshes.json`: each refresh `{ id, at, decks: { <deck key>: { before, after } } }`, which defines "since the last refresh" for this project;
+  - the dated `orders/<app>/<gl-hl>/<date>.json` files stay as the project's analysed view of a snapshot (with screen types), written for the new snapshot as today.
+- **Reachability** (12A, A7): archived references count as references, so archived images are kept by Free up space. A later option may drop archived *originals* only, keeping thumbnail, analysis-sized copy and analysis.
+- **Backfill without network:** the first snapshot of each page is built from the latest setup run manifest (full deck lists) and the existing order files, so Rogue Legend's history starts at 27 Sep with no store read.
+
+### D3. Refresh flow (user-triggered only)
+
+1. The user presses **Refresh store data** (project header). Options: all games, or selected games; charts yes/no.
+2. A store-check job re-reads those store pages (pacing as always; the metadata cache is bypassed except for pages read in the last hour, which protects against double reads). Progress: "Checking store page 120 of 271".
+3. The approval screen shows, before anything is downloaded, what the store page data alone can tell (Google image IDs and order): "271 store pages checked: 12 changed in 5 games; 38 new pictures to download (about 41 MB); 0 images sent to AI", and a **provisional** list of changes ("Capybara Go, United States: new picture at position 1; positions 3 and 4 swapped"). It says plainly that the exact classification (for example "replaced by a nearly identical picture", or "same picture under a new Google ID") follows the download, since it needs the picture's bytes. The download costs nothing but time and disk, which is what this approval covers.
+4. **Approve** runs the download job for the new pictures, computes the final change sets, and commits as a **transaction**: (a) new pictures go into the library (content-addressed, idempotent); (b) snapshots, change sets and order files are staged and validated; (c) under `library.lock`, the snapshots and change sets are published write-once, then the project's decks, refs and refresh record are switched by one staged rename, and a commit marker is written. **A project's `snapshotId` moves only after every file it points to is durable.** A stop before the marker leaves the project on its old store state; resume redoes the staging; unreferenced pictures from an abandoned refresh are ordinary Free up space candidates. The final change list is shown after the refresh.
+5. **Never automatic:** no timer, no refresh on start or on opening a project, no background job. Wizard lookups and the Play cache never touch decks. A test asserts that no store page is read without a user-started job.
+6. Charts: games entering or leaving a chart are logged as chart changes ("entered the top 10 in Japan"). New chart games become new targets offered in the approval list; games that left keep their decks, labelled "no longer in the top 10 since 28 Sep".
+
+### D4. Change detection (deterministic)
+
+Between the previous snapshot P and the new snapshot N of one page (same game, country and language):
+
+| Event | Rule |
+|---|---|
+Matching works on **occurrences** (an image may appear twice in one deck), in this fixed order; each step only uses occurrences not matched by an earlier step:
+
+1. **Exact:** occurrences with the same hash are matched between P and N. For a hash that occurs more than once, pairs are chosen to minimise the total position distance, ties broken by lower position. Same position = unchanged (no event); different position = **moved** ("moved from 3 to 5").
+2. **Same Google image ID, different bytes:** **replaced**, sub-labelled "updated under the same Google image ID".
+3. **Same position:** an unmatched occurrence at position k in P and one at k in N = **replaced**, sub-labelled by the existing `classifyPair`: "replaced by a nearly identical picture" (perceptual hash within 6 bits, e.g. re-encoded) or "replaced".
+4. **Nearly identical elsewhere:** an unmatched P occurrence and an unmatched N occurrence at different positions within 6 bits = **replaced and moved**, closest first, ties by lower position.
+5. Whatever remains: **added** (N) or **removed** (P).
+6. Page status: **became unavailable / available again**. Same picture under a new Google ID is not a change (recorded in the confirmation's metadata and the Google-ID file).
+
+- Inputs are canonicalised (sorted by position) and every tie has a rule, so the same two snapshots always give the same change set. The algorithm is versioned (`changeRules: 1`).
+- Two views of "since the last refresh", both defined: **net change** (P → N, used by the grid highlights: what is different now) and **event timeline** (every edge between P and N in order, used by the history view and the report, so a picture that was removed and came back is visible).
+- The existing `compareOrders` in `analysis/orders.ts` is generalised into `store/changes.ts` returning events; `compareOrders` becomes its text formatter, so the wording stays as today. When analyses exist, the text adds screen types ("title image replaced by a gameplay battle screen").
+- A project that skipped intermediate snapshots (it adopts N while at P, with M between) sees the combined change set P→N computed on the fly, and the history view lists M as well.
+
+### D5. Analyses of archived images
+
+- Analysis records are keyed by image hash (12A), so archived images keep their analyses, free. Nothing is re-analysed because of a refresh; the next analysis plan contains **only the new images** (with the usual approval).
+- Patterns, the comparison grid and recommendations use the **current** decks. Reports built on older decks become "not current" through the existing data hash and are labelled "Based on the store as of 27 Sep", kept as history.
+- New report parts: **"What changed since the last refresh"** per game (events with before/after thumbnails and screen types), and per game **"What they used before"**, the previous deck with its analyses.
+- Provenance for old decks: "What they used before" uses, for each image, the analysis under the project's analysis key if there is one, otherwise the newest usable record under an older key, labelled with its date and "analysed with earlier settings". An analysis made after the image was archived is labelled "analysed on <date>, after it left the store". A toggle "Include earlier decks in the patterns" (off by default) lets the user see whether trends shifted.
+
+### D6. Shared history across projects
+
+- Snapshots and change sets are **shared per game** in the library: one timeline, whichever project observed it (`observedBy` shows the project name locally; in a shared package it becomes "another project", 3b C7).
+- **Each project's current view is its own last refresh** (its decks' `snapshotId`). When project B refreshes Capybara Go, project A's view does not change. A's page shows a notice: "Newer store data for Capybara Go exists (seen 28 Sep in Other Game): 2 changes. [Use it]". Using it is a user action with a short preview; it costs nothing (no store read, the images are already in the library), and it is recorded as a refresh of those decks in A.
+- Writes are safe: refreshes run in the store lane, one at a time across all projects; snapshots are write-once; `confirmations.json` is append-only.
+- Share packages (3b) include the library snapshots and change sets of the project's games, so the friend receives the history too; merging is a union of write-once files.
+
+### D7. UI
+
+- **History view per game** (a tab on the game in the workspace): one row per date and country-language, with the deck as a strip of thumbnails; badges for added, removed, moved, replaced; archived images greyed with "Used until 27 Sep" and their (i) analysis. Filter by country.
+- **Grid highlight:** after a refresh, changed cells carry a badge ("new", "moved from 3", "replaced"; hover shows the old picture), with a "Show only changes" toggle.
+- **Home card:** "Store data from 27 Sep · 12 changes found on 28 Sep".
+
+### D8. Tests
+
+- Change detection table: each event, the near-identical sub-label, same picture under a new Google ID (no event, metadata recorded), duplicate occurrences of one image, reorder combined with insertion and removal, unavailable and back, length changes, flip-flop A→B→A (net change empty, timeline shows both edges), determinism under shuffled inputs.
+- Branches: a shared package's snapshot with the same parent as a local one shows as a parallel observation.
+- Refresh transaction: stop at each step; the project's store state is unchanged before the commit marker.
+- No automatic store reads (a spy on the Play client over start, open, wizard and idle time).
+- Refresh commit: snapshots written only on change, confirmations otherwise; refs archived and current; decks updated; order file written; archived images kept by Free up space.
+- Two projects sharing a game: B's refresh leaves A's view unchanged; A's "Use it" adopts at no cost; combined P→N change set.
+- Analyses of archived images reused; next plan contains only new images; the old report labelled with its store date.
+- Backfill from Rogue Legend's run manifest and order files without network.
+
+### D9. Risks
+
+| Risk | Mitigation |
+|---|---|
+| Google tests different screenshots with different visitors, so decks flip between refreshes | Each change is "seen on this date"; flip-flops are shown as such; a "Check again" action re-reads one page before the user acts on a change |
+| Disk grows with archived originals | Shown in the approval screen; a later option keeps only thumbnails and analysis-sized copies of archived images |
+| A full refresh takes minutes (about 4 minutes for 271 pages at the store pacing) | Refresh per game or per selection; live progress |
+| Confusion between projects that refreshed at different times | Each project states its store date; the "Newer store data exists" notice |
+
 ## 13. Decisions for the user
 
 - **D1** Default ticked countries for a new project: the current Asia set (proposed), or none, or the last project's set.
@@ -653,6 +936,8 @@ We are **not** building web features. We keep three internal boundaries clean, s
 - **D4** Our game is fixed once a project is created (proposed); changing it means a new project.
 - **D5** Deleting a project's files from the page is left out of this stage; Archive only (proposed).
 - **D6** Scope of expansions in this stage: the state model and the expansion question are built now, and choices are saved; running expansion increments is the next stage (proposed). The alternative is to add the expansion step to this stage, which roughly doubles it.
+
+- **D7** (share, 12C) The "Light" package carries the **analysis-sized copies** of analysed images rather than their full-size originals (decided by the user, 2026-09-28). This keeps Light near the expected 40–50 MB: full-size originals of about 85 analysed images would add roughly 150 MB after the core check. The analysis-sized copies are enough for viewing and for re-analysis; the originals can be fetched later (C6).
 
 ## Review outcome
 
@@ -711,3 +996,33 @@ Reviewer: gpt-5.6-terra, 2026-09-27. 6 findings: 3 accepted, 3 partly accepted, 
 | 4 | Job contract underspecified | Accepted | Versioned job record with frozen input, checkpoint, result, idempotent enqueue by plan fingerprint, defined transitions |
 | 5 | Milestone 1 too large; verification narrow | Accepted | Split into 1a and 1b with one checkpoint, interrupted-import and hash tests added, record lock moved to milestone 2 |
 | 6 | Retention and reachability rules missing | Partly accepted | Reachability roots added (refs, approved copies, job checkpoints); the scan-based procedure in A7 already existed |
+
+### Delta review 3: share and import (section 12C)
+
+Reviewer: gpt-5.6-terra, 2026-09-28. 8 findings: 5 accepted, 3 partly accepted, 0 declined.
+
+| # | Finding | Outcome | Reason |
+|---|---|---|---|
+| 1 | Report-only HTML contradicts "never serve package content" | Accepted | Report-only is an export-only view from the tool's own template (no script, restrictive CSP); never importable |
+| 2 | File list is not a dependency closure | Accepted | Manifest carries the closure (refs → images → records → cited answers) by content hash; only originals may be deferred |
+| 3 | Update import not atomic | Accepted | The whole merged tree is built in staging, validated, then swapped under the locks with a commit marker; deterministic conflict names |
+| 4 | Inspect cannot validate without writing | Accepted | Inspect streams and checks everything, writing only a verification result bound to the upload's hash; import re-hashes |
+| 5 | No project revision; divergence undetected | Partly accepted | Added revision, base revision and state hash, and a "you both changed it" summary; no full three-way merge, because the union rules already decide each conflict |
+| 6 | Conflict record files break the key model | Partly accepted | Incoming records become immutable variants beside the selected record, exported, reachable and selectable; the `<key>.json` layout stays |
+| 7 | Zip validation incomplete | Accepted | Stored/deflate only, no encryption, header agreement, CRC plus SHA-256, totals from validated entries, manifest digest |
+| 8 | Refetching originals assumes identical bytes | Partly accepted | Three outcomes (recovered, changed on Google Play, gone); old references and analyses are kept; adopting new pictures is left to a deliberate store refresh (12D) |
+
+### Delta review 4: store history (section 12D)
+
+Reviewer: gpt-5.6-terra, 2026-09-28. 8 findings: 5 accepted, 3 partly accepted, 0 declined.
+
+| # | Finding | Outcome | Reason |
+|---|---|---|---|
+| 1 | Preview cannot know hash-level changes before downloading | Partly accepted | The preview is by Google image ID and marked provisional; the exact classification follows the free download. No pre-approval download, because approval must come before downloading |
+| 2 | Snapshot identity, parentage and branches undefined | Accepted | ULID, parent pointer, observer, edges keyed by parent and child; branches from shared packages shown as parallel observations |
+| 3 | Refs cannot hold history | Accepted | Snapshots with occurrences are the history; current and archived membership are derived; refs only mark reachability |
+| 4 | Duplicates and mixed reorders ambiguous | Accepted | Occurrence matching in a fixed order with minimal-distance pairing and tie rules |
+| 5 | Visual hash drops metadata | Partly accepted | Metadata changes are recorded in the confirmation entry; no separate full-state snapshot |
+| 6 | "Combined P→N" semantics unclear | Accepted | Net change for the grid, event timeline for history and report |
+| 7 | Refresh commit not atomic | Accepted | Staged transaction; a project's snapshot moves only after its files are durable; commit marker |
+| 8 | Old decks may show later analyses | Partly accepted | Old decks prefer the current-key record, otherwise an older key's, labelled with date and "after it left the store"; no per-snapshot analysis freeze |

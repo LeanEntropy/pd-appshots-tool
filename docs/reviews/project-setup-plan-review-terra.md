@@ -131,3 +131,61 @@ Date: 2026-09-27, gpt-5.6-terra, same invocation, section 12B plus the milestone
 6. **Medium — lifecycle and retention rules are missing.**  
    Write-once content-addressed blobs plus `delete`/“Free up space” needs a defined reachability model. Otherwise a cleanup can remove an image still referenced by a record, job checkpoint, immutable approval, or another project.  
    **Fix:** specify reference ownership and an explicit mark-and-sweep/retention procedure; make deletion of blobs internal to that procedure, not a general feature-level operation.
+---
+
+## Delta review 3: share and import a project (section 12C)
+
+Date: 2026-09-28, gpt-5.6-terra, same invocation, section 12C plus the Storage interface inlined. Raw output:
+
+1. **High — “Report only” contradicts the security model.** It says recipients open packaged `index.html` directly, while C7 says imported content is never served as a page and static rules refuse HTML. Directly opening HTML bypasses the local server’s token/same-origin protections and cannot enforce safe image handling.  
+   **Fix:** make Report-only a deliberately self-contained, sanitised static export with a tightly specified generated template and only generated asset paths; do not accept arbitrary report HTML on import. State that it is not importable, or import only its underlying data—not its HTML.
+
+2. **High — `files` is not a sufficient dependency closure for incremental packages.** Check 6 permits absent full-size originals, but not thumbnails/model copies/analysis objects that a referenced record may require. “Earlier package” is tracked by path+hash, while shared library objects may be reachable under changed paths or indirectly referenced by records.  
+   **Fix:** define export closure from project refs → images → analysis records → cited model objects/facts, and include a per-object availability/dependency graph in the manifest. Validate that every required dependency is included, already present by content hash, or explicitly deferred as an eligible original.
+
+3. **High — update import is not atomic for an existing project.** Staging `projects/<id>.importing/` helps new imports, but C5 merges settings, history, refs, conflict artifacts, and project files into an existing project. A crash or Stop during the merge can leave a partially updated project; “resume re-runs” does not make non-idempotent unions/conflict creation safe.  
+   **Fix:** build the complete merged project tree in staging from a snapshot, validate it, then swap it under the project/registry lock. Use an import transaction journal with deterministic conflict filenames and a commit marker for library-side mutations.
+
+4. **High — the inspection endpoint’s “writes nothing” claim conflicts with the proposed validation path.** C3 says entries hash while streaming into temporary storage keys, but `/api/share/inspect` must perform that same integrity validation before the import choice. This either writes temporary data or leaves inspect weaker than import.  
+   **Fix:** explicitly separate inspection from import: inspect streams and hashes without persistent library/project writes (temporary OS file space is acceptable and cleaned), then import revalidates or consumes a verified immutable upload plus a stored verification result bound to its hash.
+
+5. **Medium — package identity/versioning is underspecified for safe merge.** `originId` is assigned only on first share and stored in `project.json`, but there is no project revision/base revision, canonical ordering, or clear definition of which local state an incremental package was based on. `basedOn.packageId` alone cannot detect importing an update onto a divergent local project.  
+   **Fix:** add `projectRevision`, `baseProjectRevision`, and a canonical exported-state hash. On update, detect divergence and present a three-way merge/conflict summary; reject incremental packages whose declared base is unavailable or incompatible.
+
+6. **Medium — analysis conflict storage breaks the stated content/key model.** Incoming usable records are stored as `analysis/<sha>/<key>.from-<packageId>.json`, but manifest paths and analysis validation define records under `library/analysis/<sha>/<key>.json`; the variant is neither clearly content-addressed nor covered by lookup, retention, privacy rewrite, or future exports.  
+   **Fix:** define a first-class immutable analysis-attempt/record variant layout keyed by record-content hash, with a separate “selected record” pointer. Export/import all variants through that model rather than inventing suffix files during merge.
+
+7. **Medium — hash coverage and ZIP validation are incomplete.** The manifest has individual file hashes, but no canonical manifest hash/signature relationship, declared total field definition, compression-method allowlist, CRC handling policy, or prevention of central-directory/local-header inconsistencies. “Manifest first” is not enough when it is itself untrusted.  
+   **Fix:** specify allowed ZIP methods (stored/deflate only), verify CRC and streamed byte counts, reject encrypted entries and mismatched headers, calculate total uncompressed bytes from validated entries rather than trusting a declaration, and bind package metadata to a canonical manifest digest.
+
+8. **Medium — full-size recovery assumes Google IDs can reproduce exact bytes.** Google Play screenshots may disappear, vary by locale/device, be re-encoded, or change; requiring the old SHA-256 means a normal source change permanently blocks the old original. The proposed “new image” outcome also needs project refs, deck provenance, and analysis selection rules.  
+   **Fix:** model fetch as recovery of a missing historical asset with explicit outcomes: exact recovery, changed replacement requiring user approval/relinking, or unavailable. Preserve old references and analyses; never silently substitute the new hash into the shared project.
+---
+
+## Delta review 4: store history and change log (section 12D)
+
+Date: 2026-09-28, gpt-5.6-terra, same invocation, section 12D plus compareOrders and the refs schema inlined. Raw output:
+
+1. **High — Preview cannot know hash-based changes before downloads.** D3 promises an approval preview of changed pages/new image count, but D4 requires downloaded bytes (`sha256`, perceptual hash) to distinguish unchanged, replaced, and same-ID updates.  
+   **Fix:** split refresh into an explicitly user-started staging phase that fetches candidate image bytes into a temporary/quarantined cache before approval, computes hashes and diffs, then promotes them only on approval. Or make the preview explicitly provisional and defer hash-level classification until post-approval.
+
+2. **High — Snapshot identity, parentage, and concurrent merge rules are undefined.** “Write-once” files and union merges are unsafe without a collision-resistant snapshot ID, immutable parent pointer, observer identity, and ordering rule. Two projects can observe different states from the same latest snapshot, creating branches; a single “consecutive snapshots” timeline then becomes ambiguous.  
+   **Fix:** give snapshots UUID/ULID IDs plus `parentSnapshotId`, `observedAt`, and a stable observer/project ID; define canonical timeline ordering and branch handling. Store changes as edges keyed by parent/child IDs, not assumed adjacent filenames.
+
+3. **High — `refs.json` cannot represent historical membership correctly.** Adding `from`/`until` to the existing `ImageSourceSchema` does not identify a deck occurrence: an image may recur, move, be removed and re-added, or appear at multiple positions. A `position` with an interval loses those separate uses.  
+   **Fix:** migrate to immutable occurrence records, e.g. `{ snapshotId, appId, gl, hl, position, sha256, googleId }`, with current membership derived from the project’s selected snapshot. Use refs only for reachability, not as the archive’s historical source of truth.
+
+4. **High — Change detection is underspecified for duplicate images and mixed reorder/replacement cases.** “Same hash in both” and `pos(...)` are ambiguous when a deck contains the same image twice. Position-first replacement pairing can also incorrectly classify a reorder plus insertion/removal as replacements.  
+   **Fix:** define a canonical occurrence-matching algorithm: match exact `(hash, occurrence)` instances first using a deterministic minimum-cost assignment, then same-Google-ID byte changes, then eligible perceptual replacements with explicit thresholds/tie-breakers, then emit moves/adds/removals from unmatched occurrences.
+
+5. **Medium — The snapshot’s `deckHash` omits fields that the snapshot claims to preserve.** It only hashes status and ordered image hashes, despite snapshots containing `googleId`, `device`, and title. Thus changed Google IDs/device/title are silently discarded when the visual deck is unchanged, while D4 says Google-ID changes are recorded somewhere unspecified.  
+   **Fix:** separate a visual-deck hash from a full canonical snapshot hash; always retain observed metadata, and define a write-once observation/metadata record for Google-ID and device changes even when no visual snapshot is created.
+
+6. **Medium — “Combined P→N” needs a defined semantic.** Computing only a net diff hides intermediate remove/re-add and flip-flop events, while the UI also lists M. The report/grid requirement could therefore show materially different results depending on whether “since last refresh” means net state or all observed events.  
+   **Fix:** define both outputs: `netDiff(P,N)` for the current-state grid and `eventTimeline(P..N)` for history/report, with explicit wording and stable ordering.
+
+7. **Medium — Atomicity and recovery across library and project files are not designed.** “Commits in one step” spans downloaded files, immutable library snapshots, change files, refs, manifests, orders, and refresh state. A crash can leave a project pointing at incomplete library data or create orphaned staged images.  
+   **Fix:** use a transaction manifest/journal with staged files, validation, ordered promotion, and startup recovery. Advance the project’s `snapshotId` only after all referenced library artifacts are durable.
+
+8. **Low — Historical analyses need snapshot-bound provenance.** Hash-keyed analysis preserves the result, but “What they used before” can misleadingly show a later analysis/version, model, or classification for an old deck.  
+   **Fix:** report archived decks using the analysis record/version available at the relevant report or snapshot time, and label any later re-analysis as newer than the archived observation.
