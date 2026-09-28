@@ -1,0 +1,784 @@
+{
+  "imageSha256": "9890be41062c557eb4ac1b6261516a3d47acc9c41009f68aca3302b930c01ce7",
+  "width": 1242,
+  "height": 2208,
+  "source": {
+    "appId": "com.dxx.firenow",
+    "appName": "Survivor.io",
+    "gl": "jp",
+    "hl": "ja",
+    "position": 4,
+    "file": "workspace/_library/images/orig/9890be41062c557eb4ac1b6261516a3d47acc9c41009f68aca3302b930c01ce7.jpg"
+  },
+  "units": "bbox = [x, y, w, h] in % of full image, origin top-left; z = draw order within the layer (higher = on top)",
+  "layers": {
+    "screenshot": [
+      {
+        "id": "S1",
+        "name": "Wall backdrop (zoomed talent screen)",
+        "role": "container",
+        "z": 0,
+        "note": "Full-width backdrop of the talent screen, captured at roughly 2.5x zoom. Its bottom is not horizontal: it is cut along the tilted ledge line (M2), from y 82.5 at the left edge to y 75.0 at the right edge.",
+        "bbox": [
+          0.0,
+          0.0,
+          100.0,
+          82.5
+        ]
+      },
+      {
+        "id": "S1.1",
+        "name": "Upper wall (dark slate, silhouette motifs)",
+        "role": "element",
+        "z": 1,
+        "note": "Dark slate strip with faint skull/ninja silhouettes. Ends at the horizontal seam S1.4.",
+        "bbox": [
+          0.0,
+          0.0,
+          100.0,
+          19.6
+        ]
+      },
+      {
+        "id": "S1.2",
+        "name": "Diagonal plate seam",
+        "role": "element",
+        "z": 2,
+        "note": "Black line from (0, 8.2) to (59.6, 0); slope -13.7 deg. In-game art, not overlay.",
+        "bbox": [
+          0.0,
+          0.0,
+          59.6,
+          8.2
+        ]
+      },
+      {
+        "id": "S1.3",
+        "name": "Vertical strut",
+        "role": "element",
+        "z": 2,
+        "note": "Dark vertical pillar, 4.3% wide, from the top edge down to the seam.",
+        "bbox": [
+          73.4,
+          0.0,
+          4.3,
+          19.6
+        ]
+      },
+      {
+        "id": "S1.4",
+        "name": "Horizontal seam",
+        "role": "element",
+        "z": 2,
+        "note": "Black rule at y 19.6-20.0 across the full width; splits dark upper wall from blue lower wall.",
+        "bbox": [
+          0.0,
+          19.6,
+          100.0,
+          0.4
+        ]
+      },
+      {
+        "id": "S1.5",
+        "name": "Lower wall (blue, halftone lower-left)",
+        "role": "element",
+        "z": 1,
+        "note": "Steel-blue wall with darker silhouette motifs and a halftone dot texture that fades in toward the lower-left. Cut at the ledge line.",
+        "bbox": [
+          0.0,
+          20.0,
+          100.0,
+          62.5
+        ]
+      },
+      {
+        "id": "S1.6",
+        "name": "Faint panel seam",
+        "role": "detail",
+        "z": 2,
+        "note": "Barely visible horizontal line at y ~51.6-52.2, mostly readable left of the tree column.",
+        "bbox": [
+          0.0,
+          51.6,
+          100.0,
+          0.5
+        ]
+      },
+      {
+        "id": "S2",
+        "name": "Talent tree column (5 nodes + connector)",
+        "role": "container",
+        "z": 3,
+        "note": "Single vertical chain of square nodes, centre x = 25.1. Pitch between node tops ~15-16% (320-345 px). Two locked grey nodes, one clipped grey node, two unlocked blue nodes.",
+        "bbox": [
+          17.2,
+          2.2,
+          15.8,
+          68.7
+        ]
+      },
+      {
+        "id": "S2.0",
+        "name": "Connector rail",
+        "role": "element",
+        "z": 3,
+        "note": "2-3.5% wide vertical bar behind the nodes. Dark slate between N1-N2 and N2-N3 (locked), bright green between N3-N4 and N4-N5 (unlocked).",
+        "bbox": [
+          23.4,
+          2.2,
+          3.5,
+          68.7
+        ]
+      },
+      {
+        "id": "S2.1",
+        "name": "Node N1 (locked, cross icon) - clipped",
+        "role": "element",
+        "z": 4,
+        "note": "Top ~70% hidden under the logo M1; only y 6.9-8.8 is visible. Grey tile, black outline.",
+        "bbox": [
+          18.8,
+          2.2,
+          11.9,
+          6.7
+        ]
+      },
+      {
+        "id": "S2.2",
+        "name": "Node N2 (locked, skull + plus icon)",
+        "role": "element",
+        "z": 4,
+        "note": "Grey 12.0 x 6.7 tile with dark inset and a grey skull-with-plus glyph (attack talent).",
+        "bbox": [
+          18.8,
+          17.2,
+          11.9,
+          6.6
+        ]
+      },
+      {
+        "id": "S2.3",
+        "name": "Node N3 (locked, shield icon)",
+        "role": "element",
+        "z": 4,
+        "note": "Grey tile, shield glyph (defence talent). Same size as N2.",
+        "bbox": [
+          19.3,
+          31.7,
+          11.2,
+          6.7
+        ]
+      },
+      {
+        "id": "S2.4",
+        "name": "Node N4 (unlocked, refresh-arrow icon)",
+        "role": "element",
+        "z": 5,
+        "note": "Blue frame with lighter glow ring (outer 15.9 x 8.5), inner tile 18.8/48.1/13.0/6.2 holds a yellow card-with-arrow glyph and white sparkles.",
+        "bbox": [
+          17.2,
+          46.8,
+          15.8,
+          8.4
+        ]
+      },
+      {
+        "id": "S2.5",
+        "name": "Node N5 (unlocked, lightbulb icon)",
+        "role": "element",
+        "z": 5,
+        "note": "Same blue frame as N4; inner tile 20.0/63.7/10.3/5.6 with a yellow lightbulb glyph and sparkles. Lowest node; its glow touches the ledge cut.",
+        "bbox": [
+          17.2,
+          62.4,
+          15.8,
+          8.4
+        ]
+      },
+      {
+        "id": "S3",
+        "name": "Talent tooltip (callout box)",
+        "role": "container",
+        "z": 6,
+        "note": "Rounded rectangle, black 1.5% outline, right edge 1.8% from the frame edge. Two stacked panels plus a downward tail. Widest text block in the image.",
+        "covers": "Sits over the wall only (S1.1 top-right corner and S1.5).",
+        "bbox": [
+          54.4,
+          17.3,
+          43.7,
+          26.5
+        ]
+      },
+      {
+        "id": "S3.1",
+        "name": "Tooltip header bar",
+        "role": "element",
+        "z": 7,
+        "note": "Pale steel-blue bar with a halftone fade on the right; holds the talent name.",
+        "text": {
+          "orig": "ラッキードッグ",
+          "en": "Lucky Dog",
+          "lines": 1,
+          "glyph_h_pct": 3.3
+        },
+        "bbox": [
+          54.4,
+          17.3,
+          43.7,
+          5.8
+        ],
+        "textBbox": [
+          56.4,
+          18.2,
+          35.0,
+          3.3
+        ]
+      },
+      {
+        "id": "S3.2",
+        "name": "Tooltip body panel",
+        "role": "element",
+        "z": 7,
+        "note": "Dark slate panel (same colour as the upper wall) with a black rule under the header.",
+        "bbox": [
+          54.9,
+          23.1,
+          41.1,
+          20.6
+        ]
+      },
+      {
+        "id": "S3.3",
+        "name": "Tooltip body text (3 lines)",
+        "role": "text",
+        "z": 8,
+        "note": "Bold white, 3 lines, line pitch ~3.0%, glyph height ~2.4%. Left-aligned at x 59.5.",
+        "text": {
+          "orig": "戦闘開始時に1個のスキルを獲得",
+          "en": "Gain 1 skill at the start of battle",
+          "lines": 3,
+          "glyph_h_pct": 2.4
+        },
+        "bbox": [
+          59.5,
+          25.0,
+          34.6,
+          9.0
+        ]
+      },
+      {
+        "id": "S3.4",
+        "name": "Tooltip flavour subtext (2 lines)",
+        "role": "text",
+        "z": 8,
+        "note": "Smaller white text, 2 lines, glyph height ~1.4%. Same left edge as S3.3.",
+        "text": {
+          "orig": "すべてのサバイバーは神のお気に入り",
+          "en": "All survivors are the favourites of the gods",
+          "lines": 2,
+          "glyph_h_pct": 1.4
+        },
+        "bbox": [
+          59.5,
+          36.1,
+          27.1,
+          3.2
+        ]
+      },
+      {
+        "id": "S3.5",
+        "name": "Tooltip tail",
+        "role": "element",
+        "z": 6,
+        "note": "Downward triangle, tip at (75.7, 45.2), pointing at the mascot below. Its tip is overlapped by the mascot bulbs (M4.1).",
+        "bbox": [
+          70.2,
+          42.2,
+          15.7,
+          3.1
+        ]
+      },
+      {
+        "id": "S4",
+        "name": "Level badge (diamond) \"2\"",
+        "role": "element",
+        "z": 7,
+        "note": "Dark diamond docked to the tooltip header left edge, white numeral 2.2 x 1.7. Reads as the talent tier.",
+        "text": {
+          "orig": "2",
+          "en": "2 (talent level / tier)",
+          "lines": 1,
+          "glyph_h_pct": 1.7
+        },
+        "bbox": [
+          45.7,
+          17.7,
+          10.5,
+          5.2
+        ],
+        "textBbox": [
+          49.3,
+          19.5,
+          2.2,
+          1.6
+        ]
+      }
+    ],
+    "marketing": [
+      {
+        "id": "M1",
+        "name": "Game logo (JP title)",
+        "role": "text",
+        "z": 5,
+        "note": "Yellow italic display type, black outline and drop shadow, baseline horizontal (0 deg). Top-left corner, 3.8% inset. Covers the top of node N1.",
+        "text": {
+          "orig": "ダダサバイバー",
+          "en": "Dada Survivor (Survivor.io Japanese title)",
+          "lines": 1,
+          "glyph_h_pct": 3.9
+        },
+        "covers": "Node N1 (S2.1) top ~70% and the diagonal seam S1.2.",
+        "bbox": [
+          3.8,
+          1.4,
+          48.8,
+          5.6
+        ]
+      },
+      {
+        "id": "M2",
+        "name": "Ledge / cut edge (dark slab with white rim)",
+        "role": "container",
+        "z": 1,
+        "note": "Polygon (0,82.5)-(100,75.0)-(100,77.9)-(0,89.0). Top rim: 0.6% white line + 0.9% black line, slope -7.7 deg. Slab colour = dark slate. The screenshot is clipped along this line; the mascot stalk goes behind it.",
+        "covers": "Bottom of the blue wall S1.5 and the base of the mascot stalk.",
+        "bbox": [
+          0.0,
+          75.0,
+          100.0,
+          14.1
+        ]
+      },
+      {
+        "id": "M3",
+        "name": "Purple headline band",
+        "role": "container",
+        "z": 2,
+        "note": "Polygon (0,89.0)-(100,77.9)-(100,100)-(0,100). 0.9% black outline on its top edge, slope -11.2 deg rising to the right. Magenta halftone dots that get denser toward the right (~4% ink at left, ~100% at right).",
+        "covers": "Nothing of the screenshot (it sits below the ledge). Occupies 16.5% of the frame.",
+        "bbox": [
+          0.0,
+          77.9,
+          100.0,
+          22.1
+        ]
+      },
+      {
+        "id": "M4",
+        "name": "Mascot cut-out (purple plant creature)",
+        "role": "container",
+        "z": 3,
+        "note": "Large chibi character: two pale bulbs on top, purple spherical head with one giant black-ringed eye, green fin on the right (bleeds off the frame), olive stalk down to the ledge. Head centre ~(74.6, 57). Drawn over the tooltip tail and over the wall, behind the ledge slab.",
+        "covers": "Tooltip tail tip (S3.5), the lower-right wall (S1.5) and node N5 glow is not touched. Roughly 10% of the frame.",
+        "bbox": [
+          51.6,
+          42.6,
+          48.4,
+          36.2
+        ]
+      },
+      {
+        "id": "M4.1",
+        "name": "  Bulbs (2 pale spheres)",
+        "role": "element",
+        "z": 4,
+        "note": "Left bulb ~(700-820, 960-1080), right bulb ~(830-1000, 940-1120) px; pale cyan with black outline; overlap the tooltip tail.",
+        "bbox": [
+          52.4,
+          42.8,
+          36.2,
+          9.3
+        ]
+      },
+      {
+        "id": "M4.2",
+        "name": "  Head (purple sphere)",
+        "role": "element",
+        "z": 4,
+        "note": "Purple 34.3 x 21.6 disc, black outline; pink cheek blush lower-right.",
+        "bbox": [
+          57.5,
+          46.1,
+          34.3,
+          21.6
+        ]
+      },
+      {
+        "id": "M4.3",
+        "name": "  Eye (black ring, dark iris)",
+        "role": "element",
+        "z": 5,
+        "note": "Tall ellipse 13.7 x 13.6 on the left of the head, at (55.6-69.3, 50.7-64.3). Highest-contrast spot in the image: focal point.",
+        "bbox": [
+          55.6,
+          50.7,
+          13.7,
+          13.6
+        ]
+      },
+      {
+        "id": "M4.4",
+        "name": "  Right fin (green)",
+        "role": "element",
+        "z": 4,
+        "note": "Green leaf/fin, bleeds off the right edge.",
+        "bbox": [
+          92.6,
+          51.0,
+          7.4,
+          12.5
+        ]
+      },
+      {
+        "id": "M4.5",
+        "name": "  Stalk (olive)",
+        "role": "element",
+        "z": 3,
+        "note": "Olive-green stem, 24% wide, disappears behind the ledge slab M2 at y ~75-78.",
+        "bbox": [
+          64.4,
+          67.4,
+          24.2,
+          10.6
+        ]
+      },
+      {
+        "id": "M5",
+        "name": "Headline",
+        "role": "text",
+        "z": 4,
+        "note": "White display type with thick black outline, rotated -9.7 deg (measured on glyph tops and bottoms). Glyph height ~118 px (5.3%). 11 glyphs incl. \"!\". Starts 1.6% from the left edge and ends 3.9% from the right.",
+        "text": {
+          "orig": "タレントを進化させて!",
+          "en": "Evolve your talents!",
+          "lines": 1,
+          "glyph_h_pct": 5.3
+        },
+        "covers": "Only the band M3.",
+        "bbox": [
+          1.6,
+          84.2,
+          96.1,
+          14.4
+        ]
+      }
+    ]
+  },
+  "composition": {
+    "aspect": "9:16 portrait (1242 x 2208)",
+    "screenType": "metagame / talent tree (zoomed capture, ~2.5x)",
+    "focalPoint": {
+      "x": 62.4,
+      "y": 57.5,
+      "what": "mascot eye (M4.3), black ring on purple, largest contrast spot"
+    },
+    "secondaryFocal": {
+      "x": 48.8,
+      "y": 91.4,
+      "what": "headline M5 centre"
+    },
+    "overlaySharePct": 33.9,
+    "overlayBreakdownPct": {
+      "band": 16.5,
+      "ledgeSlab": 4.7,
+      "mascot": 9.9,
+      "logo": 2.7
+    },
+    "screenshotVisiblePct": 66.1,
+    "zones": [
+      {
+        "name": "screenshot-only",
+        "region": "y 0-~75 (right) / 0-~82 (left), minus logo corner and mascot",
+        "sharePct": 66.1
+      },
+      {
+        "name": "mixed",
+        "region": "x 52-100, y 43-78: mascot over wall/tooltip tail"
+      },
+      {
+        "name": "marketing-dominant",
+        "region": "y 75-100: ledge slab + band + headline"
+      }
+    ],
+    "layerSeparation": [
+      "Angle: all in-game UI is at 0 deg; every overlay element except the logo is tilted (-7.7 / -9.7 / -11.2 deg).",
+      "Colour: screenshot is slate/steel-blue; overlay is saturated purple, yellow and white with thick black outlines.",
+      "Outline weight: overlay shapes carry 1-1.5% black outlines; the UI uses thin outlines.",
+      "Occlusion: overlay covers the empty wall and the repetitive tree base, never the tooltip text."
+    ],
+    "readingOrder": [
+      {
+        "step": 1,
+        "id": "M5",
+        "why": "largest type (94% wide, 13% tall), white on purple"
+      },
+      {
+        "step": 2,
+        "id": "M4.3",
+        "why": "mascot eye, near the lower-right thirds point"
+      },
+      {
+        "step": 3,
+        "id": "S3",
+        "why": "tooltip: the only in-game copy, framed by the black box on the upper-right third"
+      },
+      {
+        "step": 4,
+        "id": "S2",
+        "why": "node chain on the left, read top-down along the green rail"
+      },
+      {
+        "step": 5,
+        "id": "M1",
+        "why": "logo, top-left corner, last because it is small and low-contrast yellow on slate"
+      }
+    ],
+    "balance": "Left column (tree) vs right block (tooltip + mascot) - a two-column split at x ~45%. Bottom third is one full-width purple slab; the headline starts at the far left to counter the mascot on the right.",
+    "angles": {
+      "ui": 0,
+      "logo": 0,
+      "upperWallDiagonal": -13.7,
+      "ledge": -7.7,
+      "headline": -9.7,
+      "bandEdge": -11.2,
+      "note": "The three overlay tilts fan out (7.7 / 9.7 / 11.2) so the ledge slab narrows toward the right: a perspective wedge, not parallel bands."
+    }
+  },
+  "measured": {
+    "ledgeLinePx": {
+      "formula": "y = 1822 - 0.134*x",
+      "y_at_x0": 1822,
+      "y_at_xW": 1655,
+      "angleDeg": -7.7,
+      "whiteRimPx": 14,
+      "blackLinePx": 20
+    },
+    "bandOutlinePx": {
+      "formula": "y = 1966 - 0.198*x",
+      "y_at_x0": 1966,
+      "y_at_xW": 1720,
+      "angleDeg": -11.2,
+      "outlinePx": 19
+    },
+    "bandFillPx": {
+      "formula": "y = 1985 - 0.198*x",
+      "y_at_x0": 1985,
+      "y_at_xW": 1739
+    },
+    "ledgeSlabThicknessPx": {
+      "left": 144,
+      "right": 65
+    },
+    "headline": {
+      "angleDeg": -9.7,
+      "method": "linear fit of glyph tops and bottoms (both -9.67)",
+      "glyphHeightPx": 118,
+      "glyphCount": 11,
+      "whiteBboxPx": [
+        35,
+        1875,
+        1162,
+        288
+      ],
+      "outlineBboxPx": [
+        20,
+        1860,
+        1194,
+        319
+      ]
+    },
+    "logo": {
+      "angleDeg": 0.0,
+      "yellowBboxPx": [
+        57,
+        40,
+        590,
+        86
+      ],
+      "outlineBboxPx": [
+        47,
+        30,
+        606,
+        123
+      ]
+    },
+    "upperWallDiagonal": {
+      "from_px": [
+        0,
+        180
+      ],
+      "to_px": [
+        740,
+        0
+      ],
+      "angleDeg": -13.7
+    },
+    "seams": {
+      "horizontalSeamPx": [
+        433,
+        441
+      ],
+      "verticalStrutPx": [
+        912,
+        966
+      ],
+      "faintSeamPx": 1146
+    },
+    "nodes": {
+      "sizePx": [
+        148,
+        147
+      ],
+      "outerGlowPx": [
+        196,
+        186
+      ],
+      "topsPx": [
+        48,
+        379,
+        699,
+        1033,
+        1378
+      ],
+      "pitchPx": [
+        331,
+        320,
+        334,
+        345
+      ],
+      "railXPx": [
+        291,
+        334
+      ],
+      "greenSegmentsPx": [
+        [
+          848,
+          1033
+        ],
+        [
+          1219,
+          1378
+        ]
+      ]
+    },
+    "tooltip": {
+      "boxPx": [
+        676,
+        381,
+        543,
+        586
+      ],
+      "headerPx": [
+        676,
+        381,
+        543,
+        128
+      ],
+      "bodyPanelPx": [
+        682,
+        511,
+        511,
+        454
+      ],
+      "tailTipPx": [
+        940,
+        999
+      ],
+      "headerTextPx": [
+        701,
+        402,
+        435,
+        72
+      ],
+      "bodyTextPx": [
+        739,
+        552,
+        430,
+        199
+      ],
+      "subtextPx": [
+        739,
+        796,
+        336,
+        71
+      ]
+    },
+    "badgePx": [
+      568,
+      391,
+      131,
+      114
+    ],
+    "mascot": {
+      "bulbsPx": [
+        651,
+        945,
+        449,
+        205
+      ],
+      "headPx": [
+        714,
+        1018,
+        426,
+        478
+      ],
+      "eyePx": [
+        690,
+        1120,
+        170,
+        300
+      ],
+      "finPx": [
+        1150,
+        1126,
+        92,
+        277
+      ],
+      "stalkPx": [
+        800,
+        1488,
+        300,
+        235
+      ]
+    },
+    "bandHalftoneDensityPer100pxCol": [
+      386,
+      1022,
+      3169,
+      5978,
+      9115,
+      11681,
+      13487,
+      17723,
+      22091,
+      26449,
+      31447,
+      31269,
+      18047
+    ],
+    "coloursHex": {
+      "upperWall": "#384152",
+      "lowerWall": "#2b5b81",
+      "slab": "#353c4f",
+      "bandDot": "#771190",
+      "bandBase": "#813bab",
+      "logoYellow": "#ffb701",
+      "nodeGrey": "#9b9aa2",
+      "railGreen": "#069a42",
+      "mascotPurple": "#813bab",
+      "fin": "#96cf42",
+      "stalk": "#89962d"
+    },
+    "method": "colour-threshold masks + scipy connected components on the 1242x2208 original; line angles from least-squares fits over 20+ columns; expect +/-1% on bboxes"
+  }
+}

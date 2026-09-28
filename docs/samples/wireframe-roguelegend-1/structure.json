@@ -1,0 +1,962 @@
+{
+ "imageSha256": "ddd7f0710af668e6ed7d088a2e010a8704b1b3a34b6500f2de30c5f9a8dea732",
+ "width": 1080,
+ "height": 1920,
+ "aspect": "9:16",
+ "format": "png",
+ "source": {
+  "appId": "com.pockethaven.roguelegend",
+  "gl": "us",
+  "hl": "en",
+  "position": 1,
+  "kind": "key-art (no in-game UI); also position 1 in th/id/ph"
+ },
+ "units": "percent of full image, origin top-left; z = draw order within layer (higher on top)",
+ "layers": {
+  "screenshot": [
+   {
+    "id": "S1",
+    "name": "Cave environment (scene container)",
+    "role": "container",
+    "bbox": {
+     "x": 0,
+     "y": 0,
+     "w": 100,
+     "h": 100
+    },
+    "z": 0,
+    "note": "Full-bleed painted cave, dark navy. Hosts every scene element; no HUD exists anywhere in the frame."
+   },
+   {
+    "id": "S1.1",
+    "name": "Left cave wall + vignette",
+    "role": "element",
+    "bbox": {
+     "x": 0,
+     "y": 0,
+     "w": 16,
+     "h": 100
+    },
+    "z": 1,
+    "note": "Mean luminance 21/255 vs 63 in the centre 40%. Frames the scene, pushes the eye inward.",
+    "parent": "S1"
+   },
+   {
+    "id": "S1.2",
+    "name": "Right cave wall + vignette",
+    "role": "element",
+    "bbox": {
+     "x": 84,
+     "y": 0,
+     "w": 16,
+     "h": 100
+    },
+    "z": 1,
+    "note": "Mirror of S1.1 (lum 22/255). Symmetric frame.",
+    "parent": "S1"
+   },
+   {
+    "id": "S1.3",
+    "name": "Ceiling rock / top dark band",
+    "role": "element",
+    "bbox": {
+     "x": 0,
+     "y": 0,
+     "w": 100,
+     "h": 7
+    },
+    "z": 1,
+    "note": "Rows above y 6.9 average lum < 30; the logo plate starts right below it.",
+    "parent": "S1"
+   },
+   {
+    "id": "S1.4",
+    "name": "Bottom dark vignette",
+    "role": "element",
+    "bbox": {
+     "x": 0,
+     "y": 90,
+     "w": 100,
+     "h": 10
+    },
+    "z": 1,
+    "note": "Rows below y 90.2 fall under lum 30; fades the floor out.",
+    "parent": "S1"
+   },
+   {
+    "id": "S1.5",
+    "name": "Lit mist / cave depth",
+    "role": "element",
+    "bbox": {
+     "x": 22,
+     "y": 25,
+     "w": 56,
+     "h": 30
+    },
+    "z": 1,
+    "note": "Lightest part of the scene (lum 47-78): the pale blue fog that back-lights the monster silhouettes and the golem's head.",
+    "parent": "S1"
+   },
+   {
+    "id": "S1.6",
+    "name": "Left rock ledge",
+    "role": "element",
+    "bbox": {
+     "x": 5,
+     "y": 38,
+     "w": 35,
+     "h": 8
+    },
+    "z": 2,
+    "note": "Mid-ground shelf the spider and eye-monster stand on.",
+    "parent": "S1"
+   },
+   {
+    "id": "S1.7",
+    "name": "Right rock ledge",
+    "role": "element",
+    "bbox": {
+     "x": 62,
+     "y": 35,
+     "w": 33,
+     "h": 9
+    },
+    "z": 2,
+    "note": "Shelf under the werewolf; slightly higher than S1.6.",
+    "parent": "S1"
+   },
+   {
+    "id": "S1.8",
+    "name": "Lit floor (warm ground plane)",
+    "role": "element",
+    "bbox": {
+     "x": 8,
+     "y": 70,
+     "w": 62,
+     "h": 24
+    },
+    "z": 2,
+    "note": "Only warm-toned area (R > B); brown earth lit from the crystals. Brightest floor cell is under the hero (x 30-40 / y 70-80, lum 117).",
+    "parent": "S1"
+   },
+   {
+    "id": "S1.9",
+    "name": "Glowing crack in floor",
+    "role": "element",
+    "bbox": {
+     "x": 47,
+     "y": 84,
+     "w": 13,
+     "h": 7
+    },
+    "z": 3,
+    "note": "Green-cyan fissure running diagonally down-right from the hero's feet toward the crystals.",
+    "parent": "S1"
+   },
+   {
+    "id": "S2",
+    "name": "Monster crowd (7 silhouettes)",
+    "role": "container",
+    "bbox": {
+     "x": 6,
+     "y": 25,
+     "w": 81,
+     "h": 30
+    },
+    "z": 2,
+    "note": "Dark shapes with red eye pairs; five of the seven eye pairs sit on one line at y 34-36."
+   },
+   {
+    "id": "S2.1",
+    "name": "Spider (left)",
+    "role": "element",
+    "bbox": {
+     "x": 6,
+     "y": 29,
+     "w": 23,
+     "h": 12
+    },
+    "z": 3,
+    "note": "Eyes at (16.4, 35.5) and (19.5, 35.6). Largest silhouette of the crowd.",
+    "parent": "S2"
+   },
+   {
+    "id": "S2.2",
+    "name": "Eye-monster (centre-left)",
+    "role": "element",
+    "bbox": {
+     "x": 28,
+     "y": 31,
+     "w": 14,
+     "h": 9
+    },
+    "z": 3,
+    "note": "Eyes at (35.2, 35.0) / (37.0, 35.0).",
+    "parent": "S2"
+   },
+   {
+    "id": "S2.3",
+    "name": "Bat (upper)",
+    "role": "element",
+    "bbox": {
+     "x": 48.7,
+     "y": 26.2,
+     "w": 13.1,
+     "h": 6
+    },
+    "z": 3,
+    "note": "Measured dark blob; highest creature, just under the logo plate.",
+    "parent": "S2"
+   },
+   {
+    "id": "S2.4",
+    "name": "Bat (lower)",
+    "role": "element",
+    "bbox": {
+     "x": 41.5,
+     "y": 35.5,
+     "w": 15.9,
+     "h": 4
+    },
+    "z": 3,
+    "note": "Measured dark blob, wings spread across the vertical centre axis.",
+    "parent": "S2"
+   },
+   {
+    "id": "S2.5",
+    "name": "Werewolf (right)",
+    "role": "element",
+    "bbox": {
+     "x": 62,
+     "y": 28,
+     "w": 25,
+     "h": 13
+    },
+    "z": 3,
+    "note": "Eyes at (65.7, 34.4) / (68.3, 34.1). Right-hand counterpart to S2.1.",
+    "parent": "S2"
+   },
+   {
+    "id": "S2.6",
+    "name": "Shambler (centre, deep)",
+    "role": "element",
+    "bbox": {
+     "x": 35,
+     "y": 46,
+     "w": 11,
+     "h": 9
+    },
+    "z": 3,
+    "note": "Eyes at (40.7, 49.1) / (42.3, 49.3). Sits between the crowd and the golem, adds depth.",
+    "parent": "S2"
+   },
+   {
+    "id": "S2.7",
+    "name": "Small creature (right, deep)",
+    "role": "element",
+    "bbox": {
+     "x": 65,
+     "y": 45,
+     "w": 11,
+     "h": 8
+    },
+    "z": 3,
+    "note": "Eyes at (68.0, 47.4) / (69.7, 47.2).",
+    "parent": "S2"
+   },
+   {
+    "id": "S3",
+    "name": "Boss golem (stone brute)",
+    "role": "container",
+    "bbox": {
+     "x": 32,
+     "y": 50.5,
+     "w": 55,
+     "h": 26.5
+    },
+    "z": 4,
+    "note": "Dark slate silhouette (body lum ~13-45) read against the lighter mist; cyan runes and red eyes carry the shape. Largest single figure: bbox ~14.6% of the frame."
+   },
+   {
+    "id": "S3.1",
+    "name": "Head (helmet-shaped block)",
+    "role": "element",
+    "bbox": {
+     "x": 44,
+     "y": 50.5,
+     "w": 26,
+     "h": 16.5
+    },
+    "z": 5,
+    "note": "Top rune at (53, 54). Jaw ends ~y 67.",
+    "parent": "S3"
+   },
+   {
+    "id": "S3.2",
+    "name": "Eyes (red glow)",
+    "role": "element",
+    "bbox": {
+     "x": 50.8,
+     "y": 61.5,
+     "w": 11,
+     "h": 2.2
+    },
+    "z": 6,
+    "note": "Two blobs at (52.1, 62.7) and (59.5, 62.3); the brightest warm accent in the lower half.",
+    "parent": "S3"
+   },
+   {
+    "id": "S3.3",
+    "name": "Left arm + fist",
+    "role": "element",
+    "bbox": {
+     "x": 30,
+     "y": 59,
+     "w": 17,
+     "h": 14
+    },
+    "z": 5,
+    "note": "Fist planted on the floor at x 30-33 / y 63-72; rune at (37, 65).",
+    "parent": "S3"
+   },
+   {
+    "id": "S3.4",
+    "name": "Right shoulder + arm + fist",
+    "role": "element",
+    "bbox": {
+     "x": 68,
+     "y": 52,
+     "w": 19,
+     "h": 25
+    },
+    "z": 5,
+    "note": "Runes at (74.6, 58) and (83, 68). Fist reaches y 77, the lowest point of the golem.",
+    "parent": "S3"
+   },
+   {
+    "id": "S3.5",
+    "name": "Chest with magenta cracks",
+    "role": "element",
+    "bbox": {
+     "x": 46,
+     "y": 66,
+     "w": 20,
+     "h": 9
+    },
+    "z": 5,
+    "note": "Magenta veins at (64, 69), (61, 70), (54, 71.5): a second accent colour unique to the boss.",
+    "parent": "S3"
+   },
+   {
+    "id": "S3.c",
+    "name": "Rune anatomy",
+    "role": "detail",
+    "bbox": null,
+    "z": 6,
+    "note": "Seven cyan glyph groups: 53/52/8/4, 44/55/8/6, 74.6/56/8/5, 54/56/6/5, 37/62/12/7, 72/66/3/4, 83/66/6/4 (x/y/w/h).",
+    "parent": "S3"
+   },
+   {
+    "id": "S4",
+    "name": "Hero (elf swordsman)",
+    "role": "container",
+    "bbox": {
+     "x": 25,
+     "y": 72,
+     "w": 25,
+     "h": 17
+    },
+    "z": 6,
+    "note": "Small (bbox ~4.3% of the frame) but placed on the brightest floor patch; faces right toward the golem."
+   },
+   {
+    "id": "S4.1",
+    "name": "Hair (white ponytail)",
+    "role": "element",
+    "bbox": {
+     "x": 25.5,
+     "y": 72.5,
+     "w": 16,
+     "h": 8
+    },
+    "z": 7,
+    "note": "Pure white: highest-luminance pixels below the logo.",
+    "parent": "S4"
+   },
+   {
+    "id": "S4.2",
+    "name": "Head / face",
+    "role": "element",
+    "bbox": {
+     "x": 30,
+     "y": 74,
+     "w": 15,
+     "h": 8
+    },
+    "z": 7,
+    "note": "Skin bbox measured x 30.1-44.7 / y 74.3-82.0.",
+    "parent": "S4"
+   },
+   {
+    "id": "S4.3",
+    "name": "Round shield (blue)",
+    "role": "element",
+    "bbox": {
+     "x": 24,
+     "y": 79,
+     "w": 9,
+     "h": 8
+    },
+    "z": 8,
+    "note": "Left of the body, overlapping the hair's tail.",
+    "parent": "S4"
+   },
+   {
+    "id": "S4.4",
+    "name": "Tunic + legs",
+    "role": "element",
+    "bbox": {
+     "x": 29,
+     "y": 80,
+     "w": 14,
+     "h": 9
+    },
+    "z": 7,
+    "note": "Orange tunic (measured 30-46 / 77-83), dark boots end ~y 89.",
+    "parent": "S4"
+   },
+   {
+    "id": "S4.5",
+    "name": "Sword (cyan blade, raised)",
+    "role": "element",
+    "bbox": {
+     "x": 43,
+     "y": 75.5,
+     "w": 7,
+     "h": 7
+    },
+    "z": 8,
+    "note": "Blade tip at (49, 77); the only strong diagonal in the frame (~ -35 deg).",
+    "parent": "S4"
+   },
+   {
+    "id": "S5",
+    "name": "Set dressing (stones + crystals)",
+    "role": "container",
+    "bbox": {
+     "x": 2,
+     "y": 38,
+     "w": 96,
+     "h": 50
+    },
+    "z": 3,
+    "note": "Glowing props that ring the arena and light the floor."
+   },
+   {
+    "id": "S5.1",
+    "name": "Left standing stone (rune slab)",
+    "role": "element",
+    "bbox": {
+     "x": 2.6,
+     "y": 56.2,
+     "w": 19.3,
+     "h": 20.2
+    },
+    "z": 3,
+    "note": "Measured bbox. Cyan glyphs at (10.5, 61) and (12.6, 64).",
+    "parent": "S5"
+   },
+   {
+    "id": "S5.2",
+    "name": "Right standing stone",
+    "role": "element",
+    "bbox": {
+     "x": 84,
+     "y": 55,
+     "w": 11,
+     "h": 17
+    },
+    "z": 3,
+    "note": "Partly lost in the right vignette; measured lit part 84-93.6 / 66.3-72.",
+    "parent": "S5"
+   },
+   {
+    "id": "S5.3",
+    "name": "Cyan crystal cluster (bottom-left)",
+    "role": "element",
+    "bbox": {
+     "x": 10,
+     "y": 77,
+     "w": 9,
+     "h": 9
+    },
+    "z": 7,
+    "note": "Largest cyan blob in the image (3247 px at 13.3, 80.8).",
+    "parent": "S5"
+   },
+   {
+    "id": "S5.4",
+    "name": "Cyan crystal cluster (bottom-right)",
+    "role": "element",
+    "bbox": {
+     "x": 61,
+     "y": 79,
+     "w": 25,
+     "h": 9
+    },
+    "z": 7,
+    "note": "Blobs at (62.5, 83), (70.8, 83.4), (82.5, 83.4); counterweights the hero.",
+    "parent": "S5"
+   },
+   {
+    "id": "S5.5",
+    "name": "Green crystal cluster (right wall)",
+    "role": "element",
+    "bbox": {
+     "x": 87,
+     "y": 69,
+     "w": 10,
+     "h": 8
+    },
+    "z": 5,
+    "note": "Only green accent besides the floor crack; blobs at (90, 71-74).",
+    "parent": "S5"
+   },
+   {
+    "id": "S5.6",
+    "name": "Wall sprites (cyan dots)",
+    "role": "detail",
+    "bbox": null,
+    "z": 4,
+    "note": "Tiny cyan crystals at (9.4, 38) and (92.2, 40.4) plus green sparks along both walls.",
+    "parent": "S5"
+   }
+  ],
+  "marketing": [
+   {
+    "id": "M1",
+    "name": "Logo plate (dark navy outline / drop shadow)",
+    "role": "container",
+    "bbox": {
+     "x": 18.5,
+     "y": 6.6,
+     "w": 64.5,
+     "h": 18.9
+    },
+    "z": 1,
+    "note": "Thick dark outline (~2% of width at the sides, ~1% top/bottom) hugging both words; separates the wordmark from the cave. Only marketing element that touches the scene.",
+    "covers": [
+     "S1.3 (bottom edge, y 6.6-7)",
+     "S1.5 top edge",
+     "upper cave wall texture x 18.5-83 / y 6.6-25.5"
+    ]
+   },
+   {
+    "id": "M2",
+    "name": "Wordmark line 1: 'ROGUE' (white)",
+    "role": "container",
+    "bbox": {
+     "x": 20.6,
+     "y": 7.7,
+     "w": 59.3,
+     "h": 8.9
+    },
+    "z": 2,
+    "note": "Measured white pixel bbox. Centre x 50.3. 0 deg (fitted tilt -0.9 deg, within letterform noise).",
+    "covers": [
+     "cave ceiling rock (no scene element of interest)"
+    ]
+   },
+   {
+    "id": "M3",
+    "name": "Wordmark line 2: 'LEGEND' (yellow)",
+    "role": "container",
+    "bbox": {
+     "x": 20.3,
+     "y": 16.7,
+     "w": 60.8,
+     "h": 7.2
+    },
+    "z": 2,
+    "note": "Measured yellow pixel bbox. Centre x 50.8. Slightly wider than line 1; no gap between lines.",
+    "covers": [
+     "cave ceiling rock; sits ~1% above the top bat S2.3"
+    ]
+   }
+  ]
+ },
+ "composition": {
+  "focalPoint": {
+   "primary": {
+    "x": 56,
+    "y": 62.5,
+    "what": "golem eyes/face (S3.2), only warm glow in the dark lower half"
+   },
+   "secondary": {
+    "x": 37,
+    "y": 78,
+    "what": "hero head on the brightest floor patch"
+   },
+   "tertiary": {
+    "x": 50.5,
+    "y": 16,
+    "what": "logo wordmark (brightest pixels overall)"
+   }
+  },
+  "overlayShare": {
+   "logoPlatePct": 12.2,
+   "wordmarkGlyphPct": 5.9,
+   "untouchedScenePct": 87.8,
+   "note": "no band, no cut-out, no subline, no badges, no CTA"
+  },
+  "layerSeparation": [
+   "logo carries its own dark outline plate",
+   "flat saturated white/yellow vs desaturated navy scene",
+   "logo occupies the darkest zone (ceiling, lum < 30)",
+   "0 deg geometric alignment vs organic painted shapes",
+   "logo sits fully above every scene element (top bat starts at y 26.2)"
+  ],
+  "readingOrder": [
+   "M2/M3 logo",
+   "S3.2 golem eyes -> S3 golem",
+   "S4 hero (sword diagonal points back at golem)",
+   "S5.3/S5.4 crystals + S1.9 crack",
+   "S2 monster eye line at y ~35",
+   "S5.1/S5.2 standing stones"
+  ],
+  "zones": {
+   "marketingOnly": "x 18.5-83 / y 6.6-25.5",
+   "sceneOnly": "everything else (top 6.6%, side margins, y 25.5-100)",
+   "mixed": "none"
+  },
+  "thirds": {
+   "y33": "monster eye line (y 34-36) sits on the top-third line",
+   "y67": "golem chest / left fist; hero hair starts at 72",
+   "x33": "hero body straddles it (30-44)",
+   "x67": "golem right shoulder"
+  },
+  "balance": "Top: symmetric (logo centred x 50.3-50.8). Bottom: hero low-left (37, 80) vs golem centre-right (60, 64); bottom-right crystals (61-86, 79-88) and right green crystals counterweight the hero.",
+  "angles": {
+   "logo": 0,
+   "sceneUi": 0,
+   "swordDeg": -35,
+   "floorCrackDeg": 30,
+   "note": "no tilted marketing element"
+  },
+  "luminance": {
+   "meanOf255": 45.8,
+   "outer15pctColumns": [
+    20.6,
+    22.5
+   ],
+   "centre40pctColumns": 63.0,
+   "top7pctRows": 14.3,
+   "bottom10pctRows": 16.3
+  }
+ },
+ "measured": {
+  "logoWhiteBboxPx": [
+   222,
+   147,
+   863,
+   319
+  ],
+  "logoYellowBboxPx": [
+   219,
+   320,
+   875,
+   458
+  ],
+  "logoTiltDegFit": -0.9,
+  "logoOutlineThicknessPx": {
+   "sides": "~18-24",
+   "topBottom": "~15-25"
+  },
+  "redEyePairs": [
+   [
+    16.4,
+    35.5
+   ],
+   [
+    19.5,
+    35.6
+   ],
+   [
+    35.2,
+    35.0
+   ],
+   [
+    37.0,
+    35.0
+   ],
+   [
+    65.7,
+    34.4
+   ],
+   [
+    68.3,
+    34.1
+   ],
+   [
+    40.7,
+    49.1
+   ],
+   [
+    42.3,
+    49.3
+   ],
+   [
+    68.0,
+    47.4
+   ],
+   [
+    69.7,
+    47.2
+   ],
+   [
+    52.1,
+    62.7
+   ],
+   [
+    59.5,
+    62.3
+   ]
+  ],
+  "cyanBlobsTop": [
+   [
+    13.3,
+    80.8,
+    3247
+   ],
+   [
+    54.3,
+    58.5,
+    2596
+   ],
+   [
+    74.6,
+    58.1,
+    2503
+   ],
+   [
+    83.1,
+    68.4,
+    1978
+   ],
+   [
+    82.5,
+    83.4,
+    1871
+   ]
+  ],
+  "greenBlobs": [
+   [
+    90.0,
+    73.8
+   ],
+   [
+    94.6,
+    73.8
+   ],
+   [
+    90.2,
+    70.9
+   ],
+   [
+    49.9,
+    85.9
+   ],
+   [
+    55.9,
+    88.0
+   ],
+   [
+    51.2,
+    89.5
+   ]
+  ],
+  "magentaBlobs": [
+   [
+    64.1,
+    69.0
+   ],
+   [
+    60.9,
+    69.7
+   ],
+   [
+    53.7,
+    71.5
+   ]
+  ],
+  "batBlobsPct": [
+   [
+    48.7,
+    26.2,
+    13.1,
+    6.0
+   ],
+   [
+    41.5,
+    35.5,
+    15.9,
+    3.1
+   ]
+  ],
+  "heroSkinBboxPct": [
+   30.1,
+   74.3,
+   44.7,
+   82.0
+  ],
+  "heroTunicBboxPct": [
+   30.0,
+   77.0,
+   46.1,
+   83.0
+  ],
+  "leftSlabBboxPct": [
+   2.6,
+   56.2,
+   21.9,
+   76.4
+  ],
+  "rightSlabLitBboxPct": [
+   84.0,
+   66.3,
+   93.6,
+   72.0
+  ],
+  "warmFloorBboxPct": [
+   8.1,
+   61.4,
+   66.4,
+   94.5
+  ],
+  "topDarkRowsEndPx": 133,
+  "bottomDarkRowsStartPx": 1731,
+  "lumGrid10x10": [
+   [
+    9.3,
+    11.7,
+    63.4,
+    55.2,
+    53.6,
+    64.7,
+    56.5,
+    67.7,
+    15.9,
+    13.0
+   ],
+   [
+    11.3,
+    19.4,
+    161.4,
+    150.7,
+    161.5,
+    154.4,
+    162.7,
+    169.6,
+    24.2,
+    12.7
+   ],
+   [
+    13.3,
+    23.0,
+    79.6,
+    84.3,
+    85.3,
+    84.4,
+    83.0,
+    85.1,
+    30.7,
+    16.0
+   ],
+   [
+    20.7,
+    23.1,
+    31.0,
+    32.3,
+    37.3,
+    38.8,
+    35.3,
+    25.7,
+    31.4,
+    24.1
+   ],
+   [
+    14.9,
+    27.1,
+    32.3,
+    46.9,
+    56.9,
+    55.4,
+    55.5,
+    36.1,
+    25.9,
+    23.7
+   ],
+   [
+    19.3,
+    22.0,
+    43.2,
+    47.9,
+    62.6,
+    78.3,
+    41.2,
+    63.0,
+    28.0,
+    17.1
+   ],
+   [
+    27.8,
+    45.1,
+    25.5,
+    53.2,
+    32.9,
+    40.1,
+    29.8,
+    41.7,
+    45.3,
+    24.5
+   ],
+   [
+    27.9,
+    42.5,
+    58.9,
+    117.2,
+    66.9,
+    29.7,
+    30.8,
+    34.3,
+    44.1,
+    48.2
+   ],
+   [
+    16.0,
+    46.9,
+    43.6,
+    56.3,
+    70.0,
+    69.5,
+    48.8,
+    27.4,
+    40.4,
+    14.2
+   ],
+   [
+    11.2,
+    11.1,
+    11.4,
+    20.4,
+    31.6,
+    23.5,
+    13.4,
+    15.6,
+    13.5,
+    10.8
+   ]
+  ],
+  "method": "PIL + numpy colour-threshold masks and connected components; luminance grid; edge scans. Expect +/-1% on hand-rounded boxes (S1.5-S1.8, S2.x bodies, S3.x, S4.x, S5.2) which combine measured anchors with visual reading."
+ }
+}
