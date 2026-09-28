@@ -47,7 +47,8 @@ function overviewHtml(d) {
     + (worded ? "<p>" + esc(ai.verdictText) + "</p>" : "")
     + "<h3>Key points to optimise, most important first</h3>"
     + (points.length ? '<ol class="keypoints">' + points.map((p) => "<li>" + esc(p) + "</li>").join("") + "</ol>" : "<p>None: our deck fits every competitor pattern found.</p>")
-    + status + (d.approved ? "" : '<p class="meta">No batch is approved for this stage yet: the games below are the batch Start analysis would propose.</p>');
+    + status + (d.approved ? "" : '<p class="meta">No batch is approved for this stage yet: the games below are the batch Start analysis would propose.</p>')
+    + (d.leftOut && d.leftOut.length ? '<p class="meta">Not in this check: ' + esc(d.leftOut.join(", ")) + " (not on Google Play in " + esc(d.market) + "). They are shown in the countries where they exist.</p>" : "");
 }
 
 function tocHtml() {

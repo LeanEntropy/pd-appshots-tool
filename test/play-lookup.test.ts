@@ -104,7 +104,7 @@ test("details: mapped, cached for a day, 404 is a plain answer, errors retried o
 test("a broken cache entry is kept aside and read again from Google Play", async () => {
   const s = storage();
   const f = fakeScraper([app("com.dxx.firenow", "Survivor.io")]);
-  const k = "shared/cache/play/details/com.dxx.firenow/us-en.json";
+  const k = "shared/cache/play/details/com.dxx.firenow/us-en.v2.json";
   s.putText(k, "{ not json");
   assert.equal((await lookup(s, f.scraper).details("com.dxx.firenow")).title, "Survivor.io");
   assert.equal(f.calls.app, 1);

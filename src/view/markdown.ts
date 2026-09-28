@@ -72,7 +72,10 @@ export function indexMarkdown(vm: ViewModel): string {
             `[${d.gl.toUpperCase()}${d.status === "ok" ? ` ${d.length}` : " n/a"}](${deckFile(a, d)})`,
         )
         .join(" ");
-      lines.push(`| ${a.name} | ${ranks(a)} | ${a.baselineLength || "n/a"} | ${locs} |`);
+      const english = a.notInBaseline
+        ? `not on Google Play in ${vm.coreMarket.label}: not in the core check`
+        : a.baselineLength || "n/a";
+      lines.push(`| ${a.name} | ${ranks(a)} | ${english} | ${locs} |`);
     }
     lines.push("");
   };

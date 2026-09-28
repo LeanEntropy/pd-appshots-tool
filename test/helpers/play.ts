@@ -6,8 +6,14 @@ import type { Storage } from "../../src/storage/index.ts";
 
 export const ICON = "https://play-lh.googleusercontent.com/abc";
 
-export function app(appId: string, title: string, genreId = "GAME_ROLE_PLAYING") {
+export function app(
+  appId: string,
+  title: string,
+  genreId = "GAME_ROLE_PLAYING",
+  onlyIn?: string[],
+) {
   return {
+    onlyIn,
     appId,
     title,
     developer: `${title} Studio`,
@@ -26,10 +32,10 @@ export function fakeScraper(apps: ReturnType<typeof app>[], hits: unknown[] = []
   const calls = { app: 0, search: 0 };
   const fail: unknown[] = [];
   const scraper: Scraper = {
-    app: async ({ appId }) => {
+    app: async ({ appId, country }) => {
       calls.app++;
       if (fail.length) throw fail.shift();
-      const a = apps.find((x) => x.appId === appId);
+      const a = apps.find((x) => x.appId === appId && (!x.onlyIn || x.onlyIn.includes(country)));
       if (!a) throw Object.assign(new Error("App not found (404)"), { status: 404 });
       return a;
     },

@@ -1,64 +1,13 @@
 import assert from "node:assert/strict";
-import { cpSync, mkdirSync, mkdtempSync } from "node:fs";
-import { tmpdir } from "node:os";
-import { join } from "node:path";
 import { test } from "node:test";
 import { CountryCatalogueSchema, loadCountries } from "../src/config/countries.ts";
 import { loadProject } from "../src/config/project.ts";
 import { readRegistry } from "../src/config/registry.ts";
 import type { Fetcher } from "../src/play/icon.ts";
-import { startAppServer } from "../src/server/app-server.ts";
-import { workspaceStorage } from "../src/storage/index.ts";
 import { wizardHtml } from "../src/view/wizard-html.ts";
-import { app, fakeFetcher, fakeScraper, lookup } from "./helpers/play.ts";
+import { OURS, wizardServer } from "./helpers/wizard.ts";
 
-const REPO = join(import.meta.dirname, "..");
-const TOKEN = "wiz-token";
-const headers = { "Content-Type": "application/json", "X-SSR-Token": TOKEN };
-const OURS = "com.pockethaven.roguelegend";
 const LINK = `https://play.google.com/store/apps/details?id=${OURS}&hl=en&gl=US`;
-
-async function wizardServer(slowIcon?: Fetcher) {
-  const root = mkdtempSync(join(tmpdir(), "ssr-wiz-"));
-  mkdirSync(join(root, "configs"));
-  cpSync(join(REPO, "configs", "defaults.json"), join(root, "configs", "defaults.json"));
-  cpSync(join(REPO, "taxonomies"), join(root, "taxonomies"), { recursive: true });
-  cpSync(join(REPO, "prompts"), join(root, "prompts"), { recursive: true });
-  const storage = workspaceStorage(join(root, "workspace"));
-  const f = fakeScraper(
-    [
-      app(OURS, "Rogue Legend"),
-      app("com.habby.capybara", "Capybara Go"),
-      app("com.dxx.firenow", "Survivor.io", "GAME_ADVENTURE"),
-      app("com.tool.app", "Some Tool", "TOOLS"),
-    ],
-    [app("com.habby.capybara", "Capybara Go"), app("com.dxx.firenow", "Survivor.io")],
-  );
-  const fetcher = slowIcon ?? (await fakeFetcher()).fetcher;
-  const s = await startAppServer({ root, token: TOKEN, play: lookup(storage, f.scraper), fetcher });
-  const get = async (p: string) => {
-    const r = await fetch(`${s.origin}${p}`, { redirect: "manual" });
-    const text = await r.text();
-    return {
-      status: r.status,
-      text,
-      json: () => JSON.parse(text),
-      location: r.headers.get("location"),
-    };
-  };
-  const post = async (p: string, body: unknown, h: Record<string, string> = headers) => {
-    const r = await fetch(`${s.origin}${p}`, {
-      method: "POST",
-      headers: h,
-      body: JSON.stringify(body),
-    });
-    return {
-      status: r.status,
-      body: (await r.json()) as Record<string, unknown> & { problems?: string[] },
-    };
-  };
-  return { ...s, root, storage, get, post, calls: f.calls };
-}
 
 test("country catalogue: valid, US first as the baseline, the Asia set ticked by default", () => {
   const cat = loadCountries();
@@ -245,6 +194,50 @@ test("wizard: the project is saved before its icon is fetched (a slow icon never
     assert.equal(readRegistry(w.storage).projects[0]?.id, "slow-icon");
     release();
     assert.equal((await pending).status, 201);
+  } finally {
+    w.server.close();
+  }
+});
+
+test("wizard: a competitor not on Google Play in the US is allowed, with its reference country", async () => {
+  const w = await wizardServer();
+  try {
+    const made = await w.post("/api/projects", { appId: OURS, name: "Ref" });
+    const id = made.body.id as string;
+    const card = (await w.get(`/api/play/search?q=com.jp.only&project=${id}`)).json().app;
+    assert.deepEqual(card.reference, { gl: "jp", hl: "ja", label: "Japan (Japanese)" });
+    assert.match(
+      card.warnings[0],
+      /^Not on Google Play in the United States; using Japan \(Japanese\) as its reference/,
+    );
+    const noProject = await w.get("/api/play/search?q=com.jp.only");
+    assert.ok(!noProject.json().app, "without the project's countries it is not found as an ID");
+    const r = await w.post(`/p/${id}/api/settings`, {
+      competitors: [{ id: "com.jp.only", tier: "direct" }],
+    });
+    assert.equal(r.status, 200);
+    const c = (r.body.settings as { competitors: { name: string; reference?: unknown }[] })
+      .competitors[0];
+    assert.equal(c?.name, "Japan Only");
+    assert.deepEqual(c?.reference, { gl: "jp", hl: "ja", label: "Japan (Japanese)" });
+    assert.ok((r.body.warnings as string[]).some((x) => /^Japan Only: Not on Google Play/.test(x)));
+    const untick = await w.post(`/p/${id}/api/settings`, { markets: [{ gl: "kr", hl: "ko" }] });
+    assert.ok(
+      (untick.body.warnings as string[]).some((x) =>
+        /Japan \(Japanese\) is no longer ticked/.test(x),
+      ),
+    );
+    // A competitor that exists only in a country added in the same save is found there.
+    const both = await w.post(`/p/${id}/api/settings`, {
+      markets: [{ gl: "jp", hl: "ja" }],
+      competitors: [
+        { id: "com.jp.only", tier: "direct" },
+        { id: "com.jp.two", tier: "reference" },
+      ],
+    });
+    assert.equal(both.status, 200, both.body.problems?.[0]);
+    assert.equal((await w.post(`/p/${id}/api/settings/finish`, {})).status, 200);
+    assert.equal(loadProject(id, { root: w.root }).config.competitors[0]?.id, "com.jp.only");
   } finally {
     w.server.close();
   }

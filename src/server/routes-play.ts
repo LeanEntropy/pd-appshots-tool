@@ -5,7 +5,8 @@ import { type ProjectSettings, ProjectSettingsSchema } from "../config/project-s
 import { readRegistry, slugFor, upsertEntry } from "../config/registry.ts";
 import { fetchIcon } from "../play/icon.ts";
 import { PACKAGE_ID, parsePlayInput } from "../play/input.ts";
-import { type PlayDetails, PlayProblem } from "../play/lookup.ts";
+import { type PlayDetails, PlayProblem, type Reference } from "../play/lookup.ts";
+import { PROJECT_ID } from "../storage/index.ts";
 import type { ApiResponse } from "./api.ts";
 import type { AppContext } from "./app-context.ts";
 
@@ -26,14 +27,30 @@ const bad = (message: string): ApiResponse => ({ status: 400, body: { problems: 
 
 const Query = z.string().trim().min(1).max(500);
 
+/** The warning on a competitor that is read in another country. */
+export function referenceWarning(ref: Reference): string {
+  return `Not on Google Play in the United States; using ${ref.label} as its reference. It is left out of the first comparison (United States, English) and included in the countries where it exists.`;
+}
+
 /** The card the wizard shows before the user confirms a game. */
-export function card(d: PlayDetails) {
-  const warnings: string[] = [];
+export function card(d: PlayDetails, reference: Reference | null = null) {
+  const warnings: string[] = reference ? [referenceWarning(reference)] : [];
   if (!d.isGame)
     warnings.push(
       `This app is listed under ${d.genre || "a category that is not a game"}, not a game category. Charts will be switched off.`,
     );
-  return { ...d, warnings };
+  return { ...d, reference, warnings };
+}
+
+/** The countries of the project the search is for (a competitor may be found in one of them). */
+function projectMarkets(app: AppContext, q: URLSearchParams): Reference[] {
+  const id = q.get("project") ?? "";
+  if (!PROJECT_ID.test(id)) return [];
+  try {
+    return readSettings(app.storage, { projectId: id })?.markets ?? [];
+  } catch {
+    return [];
+  }
 }
 
 /**
@@ -68,7 +85,8 @@ export async function getSearch(app: AppContext, q: URLSearchParams): Promise<Ap
   try {
     if (input.kind === "id") {
       try {
-        return { status: 200, body: { app: card(await app.play.details(input.appId)) } };
+        const found = await app.play.detailsAnywhere(input.appId, projectMarkets(app, q));
+        return { status: 200, body: { app: card(found.app, found.reference) } };
       } catch (e) {
         if (!(bare && e instanceof PlayProblem && e.kind === "unavailable")) throw e;
       }

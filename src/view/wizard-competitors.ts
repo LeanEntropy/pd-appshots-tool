@@ -23,7 +23,8 @@ function drawHits() {
   if (!box) return;
   if (hitCard) {
     const a = hitCard;
-    box.innerHTML = '<div class="appcard">' + icon(googleIcon(a.icon), a.title) + '<div class="who"><strong>' + esc(a.title) + '</strong><div class="meta">' + [a.developer, category(a.genreId), a.installs ? a.installs + " downloads" : "", stars(a.score)].filter(Boolean).map(esc).join(" &middot; ") + "</div></div>" + addButton(a.appId, a.title) + "</div>";
+    box.innerHTML = '<div class="appcard">' + icon(googleIcon(a.icon), a.title) + '<div class="who"><strong>' + esc(a.title) + '</strong><div class="meta">' + [a.developer, category(a.genreId), a.installs ? a.installs + " downloads" : "", stars(a.score)].filter(Boolean).map(esc).join(" &middot; ") + "</div></div>" + addButton(a.appId, a.title) + "</div>"
+      + (a.warnings || []).map((w) => '<div class="warnbox">' + esc(w) + "</div>").join("");
     return;
   }
   if (!hits) { box.innerHTML = ""; return; }
@@ -49,7 +50,8 @@ function drawComps() {
   if (!$("compsBox")) return;
   const n = W.s.competitors.length;
   const rows = W.s.competitors.map((c, i) => '<li tabindex="0" data-index="' + i + '" aria-label="' + esc(c.name) + ", position " + (i + 1) + '"><span class="grip" aria-hidden="true">&#8942;&#8942;</span>' + icon(savedIcon(c.iconFile), c.name, true)
-    + '<div class="who"><strong>' + esc(c.name) + '</strong><div class="meta">' + esc(c.developer || c.id) + "</div></div>"
+    + '<div class="who"><strong>' + esc(c.name) + '</strong><div class="meta">' + esc(c.developer || c.id) + "</div>"
+    + (c.reference ? '<div class="warn">Not on Google Play in the United States; using ' + esc(c.reference.label) + " as its reference</div>" : "") + "</div>"
     + '<label class="sr" for="tier-' + i + '">How close is ' + esc(c.name) + '?</label><select id="tier-' + i + '" data-tier="' + i + '">' + TIERS.map(([v, l]) => '<option value="' + v + '"' + (v === c.tier ? " selected" : "") + ">" + esc(l) + "</option>").join("") + "</select>"
     + '<button type="button" class="btn" data-remove="' + esc(c.id) + '" data-act-key="remove:' + esc(c.id) + '">Remove</button></li>').join("");
   $("compsBox").innerHTML = n
@@ -77,7 +79,7 @@ function search(btn) {
     status: "searchLine",
     run: async () => {
       hits = null; hitCard = null; drawHits();
-      const r = await getJson("/api/play/search?q=" + encodeURIComponent(q));
+      const r = await getJson("/api/play/search?q=" + encodeURIComponent(q) + "&project=" + encodeURIComponent(W.id));
       if (r.app) { hitCard = r.app; drawHits(); return "Found " + r.app.title + "."; }
       hits = r.hits; drawHits(); fillHits(hitGen);
       return hits.length + " matches for " + q + ".";

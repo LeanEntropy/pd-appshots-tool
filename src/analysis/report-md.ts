@@ -95,6 +95,11 @@ export function reportMarkdown(d: ReportData, label: Labeler): string[] {
       "_No batch is approved for this stage yet; the games below are the proposed batch._",
       "",
     );
+  if (d.leftOut.length)
+    out.push(
+      `_Not in this check: ${d.leftOut.join(", ")} (not on Google Play in ${d.market}). They are shown in the countries where they exist._`,
+      "",
+    );
 
   out.push(head(1), "");
   out.push(

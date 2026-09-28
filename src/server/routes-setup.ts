@@ -6,13 +6,13 @@ import { isDraft, type ProjectSettings, ProjectSettingsSchema } from "../config/
 import { markOpened, readRegistry, upsertEntry } from "../config/registry.ts";
 import { fetchIcon } from "../play/icon.ts";
 import { PACKAGE_ID } from "../play/input.ts";
-import type { PlayDetails } from "../play/lookup.ts";
+import type { PlayDetails, Reference } from "../play/lookup.ts";
 import { projectKey } from "../storage/index.ts";
 import { wizardHtml } from "../view/wizard-html.ts";
 import type { ApiResponse } from "./api.ts";
 import type { AppContext, Loaded } from "./app-context.ts";
 import { redirect, send, sendHtml, writeRequest } from "./http-util.ts";
-import { playFailure } from "./routes-play.ts";
+import { playFailure, referenceWarning } from "./routes-play.ts";
 
 /** Soft rules: shown as warnings, never blocking (plan 4, soft rules). */
 export function warnings(s: ProjectSettings, minCompetitors = 5): string[] {
@@ -24,6 +24,14 @@ export function warnings(s: ProjectSettings, minCompetitors = 5): string[] {
     );
   if (s.charts.enabled === false && !(s.ourApp.genreId ?? "").startsWith("GAME"))
     out.push("Your game is not listed in a game category, so the top-grossing charts are off.");
+  for (const c of s.competitors) {
+    if (!c.reference) continue;
+    out.push(
+      s.markets.some((m) => m.gl === c.reference?.gl)
+        ? `${c.name}: ${referenceWarning(c.reference)}`
+        : `${c.name} is not on Google Play in the United States and ${c.reference.label} is no longer ticked, so nothing of it will be downloaded unless it exists in another ticked country.`,
+    );
+  }
   return out;
 }
 
@@ -81,7 +89,11 @@ export async function postSettings(
         ],
       },
     };
-  const found = new Map<string, PlayDetails>();
+  // The countries this save ends with: a competitor may exist only in a country added now.
+  const checked = p.data.markets ? checkMarkets(app.countries(), p.data.markets) : null;
+  if (checked && "problem" in checked) return bad(checked.problem);
+  const markets = checked ? checked.markets : before.markets;
+  const found = new Map<string, { app: PlayDetails; reference: Reference | null }>();
   if (p.data.competitors) {
     const seen = new Set<string>();
     for (const c of p.data.competitors) {
@@ -91,7 +103,8 @@ export async function postSettings(
       seen.add(c.id);
       if (before.competitors.some((x) => x.id === c.id)) continue;
       try {
-        found.set(c.id, await app.play.details(c.id));
+        // Not on Google Play in the US: read in the first project country where it exists.
+        found.set(c.id, await app.play.detailsAnywhere(c.id, markets));
       } catch (e) {
         return playFailure(e);
       }
@@ -110,7 +123,9 @@ export async function postSettings(
         next.competitors.push({ ...had, tier: c.tier });
         continue;
       }
-      const d = found.get(c.id) ?? (await app.play.details(c.id));
+      const f =
+        found.get(c.id) ?? (await app.play.detailsAnywhere(c.id, checked ? markets : s.markets));
+      const d = f.app;
       const iconFile = await fetchIcon(
         app.storage,
         { projectId: id },
@@ -126,14 +141,11 @@ export async function postSettings(
         tier: c.tier,
         ...(iconFile ? { iconFile } : {}),
         addedAt: now,
+        ...(f.reference ? { reference: f.reference } : {}),
       });
     }
   }
-  if (p.data.markets) {
-    const m = checkMarkets(app.countries(), p.data.markets);
-    if ("problem" in m) return bad(m.problem);
-    next.markets = m.markets;
-  }
+  if (checked) next.markets = markets;
   if (p.data.charts) {
     const isGame = (s.ourApp.genreId ?? "").startsWith("GAME");
     if (p.data.charts.enabled && !isGame)

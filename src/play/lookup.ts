@@ -1,124 +1,34 @@
 import { createHash } from "node:crypto";
 import gplay from "google-play-scraper";
-import { z } from "zod";
 import { key, type Storage } from "../storage/index.ts";
+import {
+  appSegment,
+  Cached,
+  DETAILS_HOURS,
+  NO_ANSWER,
+  notSoldThere,
+  type PlayDetails,
+  type PlayHit,
+  PlayProblem,
+  type Reference,
+  type Scraper,
+  SEARCH_HOURS,
+  status,
+  toDetails,
+  toHits,
+} from "./answers.ts";
 import { PACKAGE_ID } from "./input.ts";
 import { type PlayQueue, type Priority, sharedPlayQueue } from "./queue.ts";
 
-/** A game's store details, as the wizard shows them on the confirmation card. */
-export interface PlayDetails {
-  appId: string;
-  title: string;
-  developer: string;
-  genre: string;
-  genreId: string;
-  icon: string;
-  installs: string;
-  score: number | null;
-  url: string;
-  /** In a game category (charts need one). */
-  isGame: boolean;
-}
-
-/** One search result: only what Google Play's search returns. */
-export interface PlayHit {
-  appId: string;
-  title: string;
-  developer: string;
-  icon: string;
-  score: number | null;
-}
-
-/** A failure the user can read (plan 3.5). */
-export class PlayProblem extends Error {
-  constructor(
-    message: string,
-    readonly kind: "unavailable" | "no-answer" | "unexpected" | "no-hits",
-  ) {
-    super(message);
-  }
-}
-
-/** The scraper calls we use; tests inject a fake. */
-export interface Scraper {
-  app(o: { appId: string; lang: string; country: string }): Promise<unknown>;
-  search(o: { term: string; num: number; lang: string; country: string }): Promise<unknown>;
-}
-
-// External boundary: only the fields we use, checked (plan 3.2).
-const score = z.number().nullish().catch(null);
-const DetailsRaw = z.object({
-  appId: z.string().min(1),
-  title: z.string().min(1),
-  developer: z.string().default(""),
-  genre: z.string().default(""),
-  genreId: z.string().default(""),
-  icon: z.string().default(""),
-  installs: z.string().default(""),
-  score,
-  url: z.string().default(""),
-});
-const HitRaw = z.object({
-  appId: z.string().min(1),
-  title: z.string().min(1),
-  developer: z.string().default(""),
-  icon: z.string().default(""),
-  score,
-});
-const Cached = z.object({ fetchedAt: z.string(), value: z.unknown() });
-
-/** A package ID as one storage key segment (package IDs use only letters, digits, "." and "_"). */
-export const appSegment = (appId: string) => appId.replace(/_/g, "@");
-
-export const DETAILS_HOURS = 24;
-export const SEARCH_HOURS = 6;
-const NO_ANSWER = "Google Play did not answer. Try again in a minute.";
-const UNEXPECTED = "Google Play answered in an unexpected way. Paste the game's link instead.";
-
-function status(e: unknown): number | undefined {
-  return e && typeof e === "object" && "status" in e && typeof e.status === "number"
-    ? e.status
-    : undefined;
-}
-
-/** Logs what Google Play sent when it does not match (for the terminal, never the page). */
-function unexpected(what: string, raw: unknown, issues: z.core.$ZodIssue[]): PlayProblem {
-  const shape = Array.isArray(raw)
-    ? `array of ${raw.length}, first item keys: ${Object.keys(raw[0] ?? {}).join(", ")}`
-    : raw && typeof raw === "object"
-      ? `keys: ${Object.keys(raw).slice(0, 40).join(", ")}`
-      : typeof raw;
-  const where = issues
-    .slice(0, 5)
-    .map((i) => `${i.path.join(".")}: ${i.message}`)
-    .join("; ");
-  console.warn(`Google Play ${what} answer did not match (${where}). Shape: ${shape}`);
-  return new PlayProblem(UNEXPECTED, "unexpected");
-}
-
-export function toDetails(raw: unknown): PlayDetails {
-  const r = DetailsRaw.safeParse(raw);
-  if (!r.success) throw unexpected("details", raw, r.error.issues);
-  const d = r.data;
-  return {
-    appId: d.appId,
-    title: d.title,
-    developer: d.developer,
-    genre: d.genre,
-    genreId: d.genreId,
-    icon: d.icon,
-    installs: d.installs,
-    score: d.score ?? null,
-    url: `https://play.google.com/store/apps/details?id=${encodeURIComponent(d.appId)}`,
-    isGame: d.genreId.startsWith("GAME"),
-  };
-}
-
-export function toHits(raw: unknown): PlayHit[] {
-  const r = z.array(HitRaw).safeParse(raw);
-  if (!r.success) throw unexpected("search", raw, r.error.issues);
-  return r.data.map((h) => ({ ...h, score: h.score ?? null }));
-}
+export type { PlayDetails, PlayHit, Reference, Scraper } from "./answers.ts";
+export {
+  appSegment,
+  DETAILS_HOURS,
+  PlayProblem,
+  SEARCH_HOURS,
+  toDetails,
+  toHits,
+} from "./answers.ts";
 
 export interface LookupOptions {
   queue?: PlayQueue;
@@ -194,10 +104,19 @@ export class PlayLookup {
     }
   }
 
-  /** Store details in the United States (English), or a PlayProblem with a plain message. */
-  async details(appId: string, priority: Priority = "interactive"): Promise<PlayDetails> {
+  /**
+   * Store details in the United States (English) by default, or in another country; a
+   * PlayProblem with a plain message when the game is not there.
+   */
+  async details(
+    appId: string,
+    priority: Priority = "interactive",
+    at: { gl: string; hl: string } = { gl: "us", hl: "en" },
+  ): Promise<PlayDetails> {
     if (!PACKAGE_ID.test(appId)) throw notOnPlay();
-    const k = key("shared", "cache", "play", "details", appSegment(appId), "us-en.json");
+    // v2: entries from before the "available: false" check are not trusted (read again).
+    const file = `${at.gl}-${at.hl}.v2.json`;
+    const k = key("shared", "cache", "play", "details", appSegment(appId), file);
     const hit = this.cached(k, DETAILS_HOURS);
     if (hit) {
       if (hit.value === null) throw notOnPlay();
@@ -209,7 +128,10 @@ export class PlayLookup {
     }
     let raw: unknown;
     try {
-      raw = await this.call(() => this.scraper.app({ appId, lang: "en", country: "us" }), priority);
+      raw = await this.call(
+        () => this.scraper.app({ appId, lang: at.hl, country: at.gl }),
+        priority,
+      );
     } catch (e) {
       if (status(e) === 404) {
         this.remember(k, null);
@@ -217,10 +139,46 @@ export class PlayLookup {
       }
       throw e;
     }
+    // Google Play still shows the page of a game that is not sold in that country, marked
+    // "available: false" (checked live: a Japan-only game read with country=us).
+    if (notSoldThere(raw)) {
+      this.remember(k, null);
+      throw notOnPlay();
+    }
     const d = toDetails(raw);
     // Only the fields we use are kept (the full answer holds the whole store page).
     this.remember(k, d);
     return d;
+  }
+
+  /**
+   * A competitor's details: in the United States, else in the first of the project's other
+   * countries where it exists (its reference). `reference` is null when it is in the US.
+   */
+  async detailsAnywhere(
+    appId: string,
+    markets: readonly Reference[],
+    priority: Priority = "interactive",
+  ): Promise<{ app: PlayDetails; reference: Reference | null }> {
+    try {
+      return { app: await this.details(appId, priority), reference: null };
+    } catch (e) {
+      if (!(e instanceof PlayProblem && e.kind === "unavailable")) throw e;
+    }
+    for (const m of markets) {
+      if (m.gl === "us") continue;
+      try {
+        return { app: await this.details(appId, priority, m), reference: m };
+      } catch (e) {
+        if (!(e instanceof PlayProblem && e.kind === "unavailable")) throw e;
+      }
+    }
+    throw new PlayProblem(
+      markets.some((m) => m.gl !== "us")
+        ? "No game with this ID on Google Play in the United States or in this project's other countries. Check the link, or paste it again from the game's Google Play page."
+        : notOnPlay().message,
+      "unavailable",
+    );
   }
 
   /** Top matches for a name, in store order; nothing is picked automatically. */
