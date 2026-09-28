@@ -1,6 +1,7 @@
 import { z } from "zod";
 import type { Config } from "../config/schema.ts";
 import { secondOpinionOn } from "./access.ts";
+import { speedFields } from "./fields-speed.ts";
 import {
   type AiStep,
   type GroupId,
@@ -219,6 +220,7 @@ export function fieldsFor(config: Config): FieldDef[] {
       int(1, 365),
     ),
     ...traffic,
+    ...speedFields(),
     {
       id: "options.pdf.paper",
       group: "pdf",

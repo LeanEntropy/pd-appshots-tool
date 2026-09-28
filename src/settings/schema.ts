@@ -80,6 +80,34 @@ export const OptionsSchema = z
       }),
     /** Store visitors per month, per country code; a missing country is "unknown". */
     traffic: z.record(z.string().regex(/^[a-z]{2}$/), z.enum(TRAFFIC_LEVELS)).default({}),
+    /** Faster, leaner per-image analysis (docs/plan-analysis-speed.md). */
+    speed: z
+      .object({
+        /** AI calls at the same time inside one batch; 1 = one after another (as before). */
+        parallelCalls: z.number().int().min(1).max(5).default(3),
+        /** The image travels inside the request (one model turn) instead of a Read-tool turn. */
+        inlineImages: z.boolean().default(false),
+        /** The shorter answer (fields nothing reads are no longer asked for). */
+        leanAnswer: z.boolean().default(false),
+        /** Colour statistics use colours measured by code per layer instead of the model's. */
+        measuredColours: z.boolean().default(false),
+      })
+      .prefault({}),
+    /** Pixel check of near-identical pictures across countries (plan-analysis-speed item 8). */
+    pixelCheck: z
+      .object({
+        /** off: fingerprint only; suggest: grouped for one-click confirmation; automatic. */
+        mode: z.enum(["off", "suggest", "automatic"]).default("suggest"),
+        /** At most this share of pixels changed outside the text/band boxes: same picture. */
+        sameMaxOutside: z.number().min(0).max(0.05).default(0.005),
+        /** More than this share changed outside: a different picture. */
+        differentMinOutside: z.number().min(0.01).max(0.5).default(0.05),
+      })
+      .prefault({})
+      .refine((p) => p.sameMaxOutside < p.differentMinOutside, {
+        message: "the 'same picture' limit must be below the 'different picture' limit",
+        path: ["sameMaxOutside"],
+      }),
     pdf: z
       .object({
         paper: z.enum(["A4", "Letter"]).default("A4"),
@@ -113,6 +141,7 @@ export type GroupId =
   | "coreSize"
   | "suggestions"
   | "abTests"
+  | "speed"
   | "pdf";
 
 export const GROUPS: { id: GroupId; title: string; help: string }[] = [
@@ -146,6 +175,11 @@ export const GROUPS: { id: GroupId; title: string; help: string }[] = [
     id: "abTests",
     title: "A/B tests",
     help: "Store visitors per month per country. Fewer, bigger tests are suggested where traffic is low; “don't know” counts as low.",
+  },
+  {
+    id: "speed",
+    title: "Analysis speed",
+    help: "How screenshots are sent to the AI and how near-identical pictures across countries are handled.",
   },
   {
     id: "pdf",
