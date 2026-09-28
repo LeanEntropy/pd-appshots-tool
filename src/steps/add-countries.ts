@@ -205,19 +205,33 @@ export function countriesPreview(loaded: LoadedConfig, plan: CountriesPlan) {
     const l = plan.listings[deckKey(t)];
     for (const s of l?.status === "ok" ? l.screenshots : []) ids.add(googleImageId(s));
   }
-  const countries = plan.gls.map((gl) => {
-    const mine = plan.targets.filter((t) => t.gl === gl);
+  const row = (gl: string, mine: typeof plan.targets) => {
     const ok = mine.filter((t) => plan.listings[deckKey(t)]?.status === "ok");
     const images = ok.reduce((n, t) => n + (plan.listings[deckKey(t)]?.screenshots.length ?? 0), 0);
     const label = config.markets.find((m) => m.gl === gl)?.label ?? gl.toUpperCase();
     return { gl, label, pages: mine.length, found: ok.length, images };
-  });
+  };
+  const countries = plan.gls.map((gl) =>
+    row(
+      gl,
+      plan.targets.filter((t) => t.gl === gl),
+    ),
+  );
+  // Chart games new to the project are also read in the main country, as the project download does.
+  const others = [...new Set(plan.targets.map((t) => t.gl))].filter((gl) => !plan.gls.includes(gl));
+  const alsoIn = others.map((gl) =>
+    row(
+      gl,
+      plan.targets.filter((t) => t.gl === gl),
+    ),
+  );
   const inLibrary = [...ids].filter((g) => db.byGoogleId(g)).length;
   return {
     gls: plan.gls,
     planHash: plan.planHash,
     createdAt: plan.createdAt,
     countries,
+    alsoIn,
     images: ids.size,
     inLibrary,
     toDownload: ids.size - inLibrary,

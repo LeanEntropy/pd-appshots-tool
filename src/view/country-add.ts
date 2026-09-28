@@ -39,6 +39,7 @@ function cpPickerHtml(v) {
 function cpApprovalHtml(p) {
   return '<div class="cpick"><h3 id="approvalTitle">Download the new countries?</h3><ul>'
     + p.countries.map((c) => "<li>" + countryLabel(c.gl, countryOf(c.label)) + ": store pages found for " + c.found + " of " + c.pages + " games, " + c.images + " screenshots.</li>").join("")
+    + (p.alsoIn || []).map((c) => "<li>Also the top-chart games new to the project, in " + countryLabel(c.gl, countryOf(c.label)) + " (as every project download does): " + c.found + " of " + c.pages + " store pages found, " + c.images + " screenshots.</li>").join("")
     + "<li>Different images: " + p.images + ". Already in the shared library, not downloaded again: " + p.inLibrary + ".</li>"
     + "<li><strong>Images to download: " + p.toDownload + "</strong>. Disk space: about " + cpBytes(p.bytes) + (p.bytesSource === "measured" ? " (measured from a sample)" : " (rough estimate)") + ".</li>"
     + "<li>Images sent to AI: 0. Cost: none. Analysing them later needs its own approval.</li></ul>"
