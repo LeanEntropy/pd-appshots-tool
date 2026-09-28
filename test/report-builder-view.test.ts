@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 import { runInNewContext } from "node:vm";
 import { renderGalleryHtml } from "../src/steps/deck-view.ts";
+import { FLAG_SCRIPT } from "../src/view/flags.ts";
 import { EXPAND_SCRIPT } from "../src/view/gallery-expand.ts";
 import { REPORT_SCRIPT } from "../src/view/gallery-report.ts";
 import { BUILDER_SCRIPT } from "../src/view/report-builder.ts";
@@ -24,6 +25,7 @@ function page(): Ctx {
     IMG: "../images/",
     API: "/p/x/api",
     esc: (s: unknown) => String(s).replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`),
+    actEsc: (s: unknown) => String(s).replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`),
     money: (n: number) => `$${Number(n || 0).toFixed(2)}`,
     document: { addEventListener: () => {}, getElementById: () => null },
     window: { addEventListener: () => {} },
@@ -31,11 +33,18 @@ function page(): Ctx {
     pageFromHash: () => "overview",
   };
   runInNewContext(
-    `${REPORT_SCRIPT}\n${BUILDER_SCRIPT}\n${BUILDER_REVIEW_SCRIPT}\n${SUGGEST_SCRIPT}\n${EXPAND_SCRIPT}\nthis.bld = bld; this.builderHtml = builderHtml; this.needsHtml = needsHtml; this.reviewHtml = reviewHtml; this.suggestionCard = suggestionCard; this.researchHtml = researchHtml; this.whatNextHtml = whatNextHtml;`,
+    `${FLAG_SCRIPT}\n${REPORT_SCRIPT}\n${BUILDER_SCRIPT}\n${BUILDER_REVIEW_SCRIPT}\n${SUGGEST_SCRIPT}\n${EXPAND_SCRIPT}\nthis.bld = bld; this.builderHtml = builderHtml; this.needsHtml = needsHtml; this.reviewHtml = reviewHtml; this.suggestionCard = suggestionCard; this.researchHtml = researchHtml; this.whatNextHtml = whatNextHtml;`,
     ctx,
   );
+  // The words as read: the country flag markup (tested in flags.test.ts) is left out here.
+  for (const k of ["builderHtml", "needsHtml", "reviewHtml", "suggestionCard", "whatNextHtml"]) {
+    const f = ctx[k] as (...a: unknown[]) => string;
+    ctx[k] = (...a: unknown[]) => unflag(f(...a));
+  }
   return ctx as Ctx;
 }
+
+const unflag = (h: string) => h.replace(/<span class="cty">(?:<img[^>]*>)?([^<]*)<\/span>/g, "$1");
 
 const US = { gl: "us", hl: "en", label: "United States (English)" };
 const TW = { gl: "tw", hl: "zh-TW", label: "Taiwan" };

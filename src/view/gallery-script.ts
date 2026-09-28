@@ -1,4 +1,6 @@
 import { ACTION_SCRIPT } from "./action.ts";
+import { COUNTRY_ADD_SCRIPT } from "./country-add.ts";
+import { FLAG_SCRIPT } from "./flags.ts";
 import { ADD_SCRIPT } from "./gallery-add.ts";
 import { ANALYSIS_SCRIPT } from "./gallery-analysis.ts";
 import { EXPAND_SCRIPT } from "./gallery-expand.ts";
@@ -50,7 +52,7 @@ function appCard(a, selectable) {
   const counts = a.analysedLength === a.baselineLength ? String(a.baselineLength || "n/a") : a.analysedLength + " phone of " + a.baselineLength;
   const note = nb ? '<p class="nb">Not on Google Play in ' + esc(DATA.coreMarket.label) + ": left out of the core check. " + (nb.availableIn.length ? "Shown in " + esc(nb.availableIn.join(", ")) + "." : "Not found in any of the project's countries.") + "</p>" : "";
   return '<section class="app"><header><h3>' + esc(a.name) + '</h3><span class="meta">' + esc(a.appId) + " &middot; " + esc(a.tier.replace("_", " ")) + (ranks ? " &middot; chart: " + ranks : "") + (nb ? "" : " &middot; English deck: " + counts) + "</span>" + pick + "</header>" + note
-    + decks.map((d) => '<div class="deck"><div class="loc">' + esc(d.label) + (d.status === "ok" ? " (" + d.length + ")" : "") + '</div><div class="row">' + thumbs(d) + "</div></div>").join("")
+    + decks.map((d) => '<div class="deck"><div class="loc">' + withFlag(d.label) + (d.status === "ok" ? " (" + d.length + ")" : "") + '</div><div class="row">' + thumbs(d) + "</div></div>").join("")
     + "</section>";
 }
 
@@ -71,4 +73,5 @@ document.getElementById("locale").innerHTML = '<option value="all">All countries
 `;
 
 export const GALLERY_SCRIPT = `${ACTION_SCRIPT}
-${RENDER_SCRIPT}\n${INFO_SCRIPT}\n${STORE_SCRIPT}\n${PICKER_SCRIPT}\n${GRID_SCRIPT}\n${NAV_SCRIPT}\n${REPORT_SCRIPT}\n${REPORT_PARTS_SCRIPT}\n${REPORT_SUMMARY_SCRIPT}\n${REPORT_LIST_SCRIPT}\n${RUN_SCRIPT}\n${ANALYSIS_SCRIPT}\n${BUILDER_SCRIPT}\n${BUILDER_REVIEW_SCRIPT}\n${SUGGEST_SCRIPT}\n${EXPAND_SCRIPT}\n${EXPORT_SCRIPT}\n${PLAY_CARD_SCRIPT}\n${ADD_SCRIPT}\nrender();\nloadSaved();\naddInit();\nshowPage(false);\n`;
+${FLAG_SCRIPT}
+${RENDER_SCRIPT}\n${INFO_SCRIPT}\n${STORE_SCRIPT}\n${PICKER_SCRIPT}\n${GRID_SCRIPT}\n${NAV_SCRIPT}\n${REPORT_SCRIPT}\n${REPORT_PARTS_SCRIPT}\n${REPORT_SUMMARY_SCRIPT}\n${REPORT_LIST_SCRIPT}\n${RUN_SCRIPT}\n${ANALYSIS_SCRIPT}\n${BUILDER_SCRIPT}\n${BUILDER_REVIEW_SCRIPT}\n${SUGGEST_SCRIPT}\n${EXPAND_SCRIPT}\n${EXPORT_SCRIPT}\n${PLAY_CARD_SCRIPT}\n${ADD_SCRIPT}\n${COUNTRY_ADD_SCRIPT}\nrender();\nloadSaved();\naddInit();\nshowPage(false);\n`;

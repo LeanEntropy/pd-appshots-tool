@@ -8,13 +8,20 @@
 export const EXPAND_SCRIPT = `
 let whatNext = null;
 
+// One option as a box of the side-by-side offers grid (report-suggest.ts), its buttons at the bottom.
+function nextOption(cls, title, text, buttons) {
+  return '<div class="offer ' + cls + '"><h4>' + title + '</h4><p class="why">' + text + '</p><div class="offer-acts">' + buttons + "</div></div>";
+}
+
 function whatNextHtml(o) {
+  const main = countryLabel(o.main.gl, theCountryOf(o.main.label));
   const core = !o.coreReady
-    ? '<p><button type="button" class="primary wnext" data-next="core">Run the Full check</button> <span class="meta">Highly recommended: it strengthens every other report.</span></p>'
+    ? nextOption("c-full-check", "Run the Full check", "Highly recommended: it strengthens every other report.", '<button type="button" class="primary wnext" data-next="core">Run the Full check</button>')
     : "";
-  return '<section class="card expand" aria-labelledby="expandTitle"><h3 id="expandTitle">What next?</h3>' + core
-    + '<p><button type="button" class="wnext" data-next="compare">Compare countries</button> <button type="button" class="wnext" data-next="more">Add more competitors in ' + esc(theCountryOf(o.main.label)) + "</button></p>"
-    + '<p class="meta">Each opens the report builder with the choices filled in. It shows the exact images and cost first; nothing runs until you approve.</p></section>';
+  return '<section class="card expand" aria-labelledby="expandTitle"><h3 id="expandTitle">What next?</h3><div class="offers">' + core
+    + nextOption("", "Compare countries", "See where competitors change their images between countries. Missing a country? Add it to the project first.", '<button type="button" class="wnext" data-next="compare">Compare countries</button><button type="button" class="cpOpen" data-act-key="cp-next">Add countries</button>')
+    + nextOption("c-charts", "Add more competitors in " + main, "A report of more games in the main country, with the same pick to start from.", '<button type="button" class="wnext" data-next="more">Add more competitors</button>')
+    + '</div><p class="meta">Each opens the report builder with the choices filled in. It shows the exact images and cost first; nothing runs until you approve.</p></section>';
 }
 
 async function loadExpansion() {

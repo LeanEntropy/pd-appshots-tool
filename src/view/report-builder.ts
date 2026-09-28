@@ -45,7 +45,7 @@ function availability(sold) {
   const bad = bld.markets.filter((m) => sold[m.gl] !== "ok");
   if (!bld.markets.length) return "";
   if (!bad.length) return '<span class="tag">' + (bld.markets.length > 1 ? "in all " + bld.markets.length : "sold here") + "</span>";
-  return bad.map((m) => '<span class="tag no">' + (sold[m.gl] === "not-sold" ? "not sold in " : "not downloaded in ") + esc(theCountryOf(m.label)) + "</span>").join("");
+  return bad.map((m) => '<span class="tag no">' + (sold[m.gl] === "not-sold" ? "not sold in " : "not downloaded in ") + countryLabel(m.gl, theCountryOf(m.label)) + "</span>").join("");
 }
 const countryOf = (label) => String(label || "").replace(/\\s*\\([^)]*\\)\\s*$/, "");
 // Inside a sentence: "the United States", "the Philippines", "Japan".
@@ -60,13 +60,14 @@ function builderHtml() {
   }).join("");
   let body;
   if (isPresetType(bld.type)) {
-    body = '<p>' + esc(o.main.label) + ", the main country, fixed. Competitors: your pick on the Competitors page (" + o.pick.length + "). " + (bld.type === "pilot" ? "The Pilot uses the first picked competitors." : "") + "</p>";
+    body = '<p>' + countryLabel(o.main.gl, o.main.label) + ", the main country, fixed. Competitors: your pick on the Competitors page (" + o.pick.length + "). " + (bld.type === "pilot" ? "The Pilot uses the first picked competitors." : "") + "</p>";
   } else {
     const input = bld.type === "country" ? "radio" : "checkbox";
-    const countries = o.markets.map((m) => '<label><input type="' + input + '" name="bcountry" value="' + esc(mkey(m)) + '"' + (bld.markets.some((x) => mkey(x) === mkey(m)) ? " checked" : "") + "> " + esc(m.label) + "</label>").join("");
+    const countries = o.markets.map((m) => '<label><input type="' + input + '" name="bcountry" value="' + esc(mkey(m)) + '"' + (bld.markets.some((x) => mkey(x) === mkey(m)) ? " checked" : "") + "> " + countryLabel(m.gl, m.label) + "</label>").join("");
     const comp = (c, name) => '<label class="bcomp"><input type="checkbox" name="' + name + '" value="' + esc(c.appId) + '"' + ((name === "bcomp" ? bld.comps : bld.charts).includes(c.appId) ? " checked" : "") + "> " + esc(c.name) + (c.inPick ? ' <span class="tag">in your pick</span>' : "") + availability(c.sold) + "</label>";
     body = '<div class="bcols"><fieldset><legend>Countries</legend>' + countries
-      + (bld.type === "compare" ? '<p class="meta">' + esc(o.main.label) + " (the main country) is used as the reference for what changed, ticked or not.</p>" : "") + "</fieldset>"
+      + (bld.type === "compare" ? '<p class="meta">' + countryLabel(o.main.gl, o.main.label) + " (the main country) is used as the reference for what changed, ticked or not.</p>"
+        + '<p><button type="button" class="cpOpen" data-act-key="cp-builder">Add countries to the project</button></p>' : "") + "</fieldset>"
       + "<fieldset><legend>Competitors (from this project)</legend>" + o.competitors.map((c) => comp(c, "bcomp")).join("")
       + (o.charts.length ? "<details><summary>Chart games (not ticked by default)</summary>" + o.charts.map((c) => comp(c, "bchart")).join("") + "</details>" : "")
       + '<p class="meta">Our game: ' + esc(o.ours.name) + " (always included)</p></fieldset></div>"

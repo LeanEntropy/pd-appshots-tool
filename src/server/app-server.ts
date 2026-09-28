@@ -1,12 +1,14 @@
 import { createServer, type IncomingMessage, type Server, type ServerResponse } from "node:http";
 import type { AddressInfo } from "node:net";
 import { draftState } from "../projects/state.ts";
+import { flagSvg } from "../storage/index.ts";
 import { homeHtml } from "../view/home-html.ts";
 import { wizardHtml } from "../view/wizard-html.ts";
 import type { ApiResponse } from "./api.ts";
 import { type AppContext, type AppOptions, createAppContext } from "./app-context.ts";
 import { redirect, send, sendHtml, writeRequest } from "./http-util.ts";
 import { competitorsRoute } from "./routes-competitors.ts";
+import { countriesRoute } from "./routes-countries.ts";
 import { getImport, getJobs, getProjects, postArchive, postImport } from "./routes-home.ts";
 import { getCountries, getLookup, getSearch, postProject } from "./routes-play.ts";
 import { projectRoute } from "./routes-project.ts";
@@ -14,6 +16,7 @@ import { settingsRoute } from "./routes-settings.ts";
 import { setupRoute } from "./routes-setup.ts";
 
 const PROJECT_PATH = /^\/p\/([^/]+)(\/.*)?$/;
+const FLAG_PATH = /^\/flags\/([a-z]{2})\.svg$/;
 
 type PlayGet = (app: AppContext, q: URLSearchParams) => ApiResponse | Promise<ApiResponse>;
 const PLAY_GETS: Record<string, PlayGet> = {
@@ -67,6 +70,21 @@ async function globalRoute(
     if (!w) return true;
     const r = await postProject(app, w.body);
     send(res, r.status, r.body);
+    return true;
+  }
+  // Country flags from the flag-icons package (shipped with the tool, never from the internet).
+  const flag = get ? FLAG_PATH.exec(p) : null;
+  if (flag) {
+    const svg = flagSvg(flag[1] ?? "");
+    if (!svg) send(res, 404, { problems: ["Not found."] });
+    else {
+      res.writeHead(200, {
+        "Content-Type": "image/svg+xml",
+        "Cache-Control": "max-age=86400",
+        "Content-Security-Policy": "default-src 'none'; style-src 'unsafe-inline'",
+      });
+      res.end(svg);
+    }
     return true;
   }
   if (p === "/api/health" && get) {
@@ -138,6 +156,7 @@ export function createAppServer(app: AppContext): Server {
         return send(res, 409, { problems: ["Add at least one competitor first."] });
       }
       if (await competitorsRoute(app, found.loaded, rest, req, res, url)) return;
+      if (await countriesRoute(app, found.loaded, rest, req, res)) return;
       return await projectRoute(app, found.loaded, rest, req, res, url);
     } catch (e) {
       // The details go to the terminal; the page gets a plain sentence.
