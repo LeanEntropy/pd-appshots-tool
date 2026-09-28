@@ -149,7 +149,7 @@ async function loadOverview(rebuild) {
 
 document.addEventListener("click", (e) => {
   if (e.target.id === "startAnalysis") openApproval(e.target, null);
-  if (e.target.id === "continueRun" && lastStatus && lastStatus.ledger) openApproval(e.target, { stage: lastStatus.stage, batchId: lastStatus.ledger.batchId });
+  if (e.target.id === "continueRun" && lastStatus && lastStatus.ledger && !lastStatus.reportId) openApproval(e.target, { stage: lastStatus.stage, batchId: lastStatus.ledger.batchId });
   if (e.target.id === "approve") act(e.target, { busy: "Starting the run...", keep: true, run: approve });
   if (e.target.id === "rebuildOverview") act(e.target, { busy: "Building the overview (about a minute the first time)...", status: "overviewStatus", run: () => loadOverview(true), done: "The store overview is up to date." });
   if (e.target.id === "cancelApproval") closeApproval();

@@ -99,6 +99,29 @@ export function getReportVersion(loaded: LoadedConfig, id: string, vid: string):
     research,
   };
   let note = "";
+  if (files.has("country-report.json")) {
+    try {
+      const raw = s.getJson(versionFileKey(paths, entry.id, "country-report.json")) as {
+        kind?: unknown;
+        countries?: unknown;
+      };
+      if (raw?.kind === "countries" && Array.isArray(raw.countries))
+        return {
+          status: 200,
+          body: {
+            ...meta,
+            country: artWordingDeep(raw),
+            // The written report too: the basic PDF export prints it.
+            html: markdownToHtml(
+              artWording(s.getText(versionFileKey(paths, entry.id, "report.md")) ?? ""),
+            ),
+          },
+        };
+    } catch {
+      // Unreadable: shown as its markdown below.
+    }
+    note = "The saved data of this version is incomplete, so it is shown as its written report.";
+  }
   if (files.has("countries.json")) {
     try {
       const raw = s.getJson(versionFileKey(paths, entry.id, "countries.json")) as {

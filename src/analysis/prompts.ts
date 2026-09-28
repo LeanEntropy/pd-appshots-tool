@@ -60,6 +60,29 @@ export function taxonomyText(t: Taxonomy): { list: string; definitions: string }
   return { list, definitions };
 }
 
+/**
+ * The prompts of the country reports (plan-reports 2.4, 3, 3A), each a contract version and its
+ * file. Kept apart from PROMPT_VERSIONS on purpose: those are part of the Pilot's and the Full
+ * check's fingerprints, and a new report step must not make their AI parts look out of date.
+ */
+export const REPORT_PROMPTS = {
+  layerDiff: "layer-diff.v1",
+  countryAdvice: "country-advice.v1",
+  countryAdviceReview: "country-advice-review.v1",
+  conceptMap: "concept-map.v1",
+} as const;
+export type ReportPromptName = keyof typeof REPORT_PROMPTS;
+
+/** Renders a prompt of the country reports (REPORT_PROMPTS), like renderPrompt. */
+export function renderReportPrompt(
+  root: string,
+  objectsDir: string,
+  name: ReportPromptName,
+  taxonomy: Taxonomy,
+): RenderedPrompt {
+  return renderFile(root, objectsDir, REPORT_PROMPTS[name], taxonomy);
+}
+
 /** Renders a versioned prompt with the taxonomy and stores it by content hash. */
 export function renderPrompt(
   root: string,
@@ -67,10 +90,16 @@ export function renderPrompt(
   name: PromptName,
   taxonomy: Taxonomy,
 ): RenderedPrompt {
-  const template = readFileSync(
-    join(root, "prompts", "analysis", `${PROMPT_FILES[name]}.md`),
-    "utf8",
-  );
+  return renderFile(root, objectsDir, PROMPT_FILES[name], taxonomy);
+}
+
+function renderFile(
+  root: string,
+  objectsDir: string,
+  fileName: string,
+  taxonomy: Taxonomy,
+): RenderedPrompt {
+  const template = readFileSync(join(root, "prompts", "analysis", `${fileName}.md`), "utf8");
   const tx = taxonomyText(taxonomy);
   const voice = template.includes("{{VOICE}}")
     ? readFileSync(join(root, "prompts", "analysis", `${VOICE_FILE}.md`), "utf8").trim()

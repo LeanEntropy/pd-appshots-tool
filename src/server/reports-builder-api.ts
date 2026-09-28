@@ -4,13 +4,15 @@ import { fitFor } from "../core/selection.ts";
 import { buildReportVersion } from "../reports/build.ts";
 import { eligibility, eligibilityProblem, scopeIncomplete } from "../reports/eligibility.ts";
 import { mainMarketRef } from "../reports/main-market.ts";
-import { matchCheck, savePairVerdict } from "../reports/match-check.ts";
+import { DOUBT_BITS, matchCheck, savePairVerdict } from "../reports/match-check.ts";
 import { suggestName } from "../reports/names.ts";
 import { buildScopePlan, chartGames, projectMarkets } from "../reports/scope-plan.ts";
 import { createReport, listDefs, readDef, saveDef } from "../reports/store.ts";
 import { researchSnapshot } from "../reports/suggest.ts";
 import { isPreset, type ReportScope } from "../reports/types.ts";
 import { workspaceStorage } from "../storage/index.ts";
+import { hamming } from "../store/identity.ts";
+import { openImageDb } from "../store/imagedb.ts";
 import { readDeck } from "../store/manifest.ts";
 import type { ApiResponse } from "./api.ts";
 
@@ -187,11 +189,11 @@ export function getReportPlan(loaded: LoadedConfig, id: string): ApiResponse | n
 }
 
 /** "Build report": a new version at once when nothing needs AI; otherwise a refusal with why. */
-export function postBuild(loaded: LoadedConfig, id: string): ApiResponse | null {
+export async function postBuild(loaded: LoadedConfig, id: string): Promise<ApiResponse | null> {
   const paths = projectPaths(loaded);
   const def = readDef(workspaceStorage(paths.workspace), paths, id);
   if (!def) return null;
-  const r = buildReportVersion(loaded, def, { research: () => researchSnapshot(loaded) });
+  const r = await buildReportVersion(loaded, def, { research: () => researchSnapshot(loaded) });
   if (!r.ok) return { status: r.status, body: { problems: [r.problem] } };
   return { status: 200, body: { id: def.id, versionId: r.versionId, name: r.def.name } };
 }
@@ -207,9 +209,18 @@ const VerdictBody = z.strictObject({ image: Hash, anchor: Hash, same: z.boolean(
 export function postMatchVerdict(loaded: LoadedConfig, raw: unknown): ApiResponse {
   const b = VerdictBody.safeParse(raw);
   if (!b.success) return bad();
-  const known = matchCheck(loaded, 10_000).doubtful.some(
-    (p) => p.image.id === b.data.image && p.anchor.id === b.data.anchor,
-  );
+  // A pair the check lists, or two images of the project whose pictures are close (a report's
+  // own doubtful pairs can concern games outside the pick).
+  const db = openImageDb(projectPaths(loaded));
+  const a = db.get(b.data.image);
+  const c = db.get(b.data.anchor);
+  const close =
+    !!a && !!c && a.phash.length === c.phash.length && hamming(a.phash, c.phash) <= DOUBT_BITS.to;
+  const known =
+    close ||
+    matchCheck(loaded, 10_000).doubtful.some(
+      (p) => p.image.id === b.data.image && p.anchor.id === b.data.anchor,
+    );
   if (!known) return bad();
   savePairVerdict(loaded, b.data.image, b.data.anchor, b.data.same);
   return { status: 200, body: { saved: true } };

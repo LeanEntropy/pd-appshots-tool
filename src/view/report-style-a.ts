@@ -14,6 +14,12 @@ const S = 'section[data-page="report"]';
 /** A selector for every band section (with its suffix on each part). */
 const band = (x = "") =>
   `${S} .rbox details.sec[data-sec]${x}, ${S} .rbox details.sec.research${x}`;
+/** The band sections of the given kinds (their data-sec ids, space-separated). */
+const kind = (ids: string) =>
+  ids
+    .split(" ")
+    .map((id) => `${S} .rbox details.sec[data-sec="${id}"]`)
+    .join(", ");
 
 export const REPORTS_A_CSS = `
 :root { ${LIGHT} }
@@ -82,10 +88,10 @@ ${S} .rbox > p, ${S} .rbox > .card, ${S} .rbox > .banner { margin: 0; padding: 1
 
 /* Report sections: full-width tinted bands, coloured by kind */
 ${band()} { --k-h: var(--a-h); margin: 0; padding: 24px 24px 26px; border: 0; border-radius: 0; background: var(--a-grey); }
-${S} .rbox details.sec[data-sec="summary"], ${S} .rbox details.sec[data-sec="abtests"] { background: var(--a-teal); }
-${S} .rbox details.sec[data-sec="patterns"], ${S} .rbox details.sec[data-sec="research"], ${S} .rbox details.sec.research { --k-h: var(--a-h2); background: var(--a-sand); }
-${S} .rbox details.sec[data-sec="recs"] { --k-h: var(--a-h3); background: var(--a-green); }
-${S} .rbox details.sec[data-sec="store"] { background: var(--a-grey2); }
+${kind("summary abtests")} { background: var(--a-teal); }
+${kind("patterns research local habits sorting")}, ${S} .rbox details.sec.research { --k-h: var(--a-h2); background: var(--a-sand); }
+${kind("recs advice")} { --k-h: var(--a-h3); background: var(--a-green); }
+${kind("store words")} { background: var(--a-grey2); }
 ${band(" > summary")} { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 14px; padding: 0; background: none; border-radius: 0; color: var(--k-h); }
 ${band(" > summary::after")} { align-self: center; }
 ${band(" .sec-t")} { flex: 1; min-width: 0; font-size: 24px; font-weight: 800; color: var(--k-h); letter-spacing: -.015em; line-height: 1.2; }
@@ -127,6 +133,17 @@ ${S} .slot, ${S} .abtest { margin: 0; padding: 14px 0 6px; border: 0; border-top
 ${band(" .slot h4")}, ${band(" .abtest h3")} { font-size: 17px; font-weight: 750; text-transform: none; letter-spacing: 0; margin: 0 0 4px; color: var(--a-h3); }
 ${band(" .abtest h3")} { color: var(--a-h); }
 ${S} .pcard { border: 0; background: var(--a-our); }
+/* Country reports: per-country parts as rows, verdicts as columns of rows */
+${band(" .sec-b details.sec")} { margin: 0; padding: 12px 0; border: 0; border-top: 1px solid var(--a-div); border-radius: 0; background: none; }
+${band(" .sec-b details.sec > summary")} { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px; padding: 0; background: none; border-radius: 0; font-size: 18px; font-weight: 800; color: var(--k-h); }
+${band(" .sec-b details.sec > summary::after")} { align-self: center; }
+${band(" .sec-b details.sec .sec-t")} { font-size: 18px; letter-spacing: 0; }
+${band(" .sec-b details.sec > .sec-b")} { padding: 8px 0 0; }
+${S} .vcards { grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr)); gap: 0 28px; margin: 8px 0; }
+${S} .vcard { padding: 12px 0; border: 0; border-top: 1px solid var(--a-div); border-radius: 0; background: none; }
+${S} .vcard h4 { font-size: 16px; font-weight: 750; margin: 0 0 4px; }
+${S} .rbox .missing { border: 0; border-radius: 10px; background: var(--a-bad-bg); padding: 12px 16px; }
+${S} table.rt tr.ourrow td { background: var(--a-our); }
 }
 @container (max-width: 560px) {
   ${S} .expand, ${S} #sgSec, ${S} #builder, ${S} .rc-top, ${S} .rc-b > .banner, ${S} .rbox > p, ${S} .rbox > .card, ${S} .rbox nav.toc, ${band()} { padding-left: 14px; padding-right: 14px; }

@@ -22,7 +22,7 @@ function needsHtml(p) {
   if (c.newImages) lines.push(row("Images: estimated cost", usdRange(p.images.usd)));
   for (const t of p.text.parts) lines.push(row(t.label, usdRange(t.usd)));
   return "<h4>What this report needs</h4><table>" + lines.join("") + "</table>"
-    + (p.text.later && p.text.parts.length ? '<p class="meta">The text-only steps are written by the next update of the tool. Building now gives everything computed from the analyses, at no cost.</p>' : "")
+
     + '<p class="total">Total about ' + usdRange(p.usd) + (p.cap ? "" : ' <span class="meta">(limit ' + money(p.limitUsd) + " per report)</span>") + "</p>"
     + (p.cap ? '<p class="meta">Core total after this batch: ' + p.cap.coreTotal + " of " + p.cap.cap + " images.</p>" : "")
     + (p.overLimit ? '<p class="over">This is over the spending limit of ' + money(p.limitUsd) + ".</p>" : "")
@@ -39,10 +39,9 @@ function renderNeeds(p) {
   if (!acts) return;
   const n = p.counts.newImages;
   let main;
-  if (p.instant) main = '<button type="button" class="primary" id="bBuild">Build report</button><span class="meta">Free: nothing new is sent to AI.</span>'
-    + (isPresetType(bld.type) && p.usd[1] > 0 ? '<button type="button" id="bApprove">Review and approve the written parts</button><span class="meta">The pattern wording and recommendations are text-only AI: shown with their cost first.</span>' : "");
-  else if (isPresetType(bld.type)) main = '<button type="button" class="primary" id="bApprove">Review and approve</button><span class="meta">Opens the approval with the exact images and cost. Nothing runs until you approve.</span>';
-  else main = '<button type="button" class="primary" id="bReview">Review the ' + n + " images</button>" + '<span class="meta">Shows exactly which images and what they cost. Running the paid steps of this kind of report comes with the next update of the tool: nothing is sent.</span>';
+  if (p.instant) main = '<button type="button" class="primary" id="bBuild">Build report</button><span class="meta">Free: nothing is sent to AI' + (isPresetType(bld.type) ? "" : "; written parts already paid for are reused, the rest are marked missing") + ".</span>"
+    + (p.usd[1] > 0 ? '<button type="button" id="bApprove">Review and approve the written parts</button><span class="meta">Text-only AI: shown with the steps and cost first.</span>' : "");
+  else main = '<button type="button" class="primary" id="bApprove">Review and approve</button><span class="meta">Opens the approval with the exact ' + n + " images, the text-only steps and the cost. Nothing runs until you approve.</span>";
   acts.innerHTML = main + (!isPresetType(bld.type) && p.counts.layerDiff ? '<button type="button" id="bMatch">Check the picture matches (free)</button>' : "") + '<button type="button" id="bClose">Close</button>';
 }
 
@@ -86,7 +85,9 @@ document.addEventListener("click", (e) => {
   else if (b.id === "bPutBack") { bld.leftOut = []; builderChanged(true); }
   else if (b.id === "bReview" && p) { document.getElementById("approval").innerHTML = reviewHtml(p); approvalDialog(); }
   else if (b.id === "bMatch") act(b, { busy: "Checking the picture matches...", status: "bStatus", run: showMatchCheck, done: "" });
-  else if (b.id === "bApprove") {
+  else if (b.id === "bApprove" && !isPresetType(bld.type)) {
+    act(b, { busy: "Working out the numbers...", status: "bStatus", run: async () => { await ensureDraft(); await showReportApproval(bld.id); }, done: "" });
+  } else if (b.id === "bApprove") {
     const st = document.getElementById("stage");
     if (st) { st.value = bld.type; st.dispatchEvent(new Event("change", { bubbles: true })); }
     goTo("analysis");

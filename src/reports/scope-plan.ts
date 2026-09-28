@@ -1,3 +1,4 @@
+import type { LayerDiffRecord } from "../analysis/layer-diff.ts";
 import { latestOrderDate } from "../analysis/orders.ts";
 import { buildAnalysisPlan } from "../analysis/plan.ts";
 import { type AnalysisRecord, isUsable, readRecords } from "../analysis/records.ts";
@@ -10,6 +11,7 @@ import { readDeck } from "../store/manifest.ts";
 import { stableHash } from "../util/hash.ts";
 import { latestRun } from "../view/model.ts";
 import { type AnchorCandidate, type ScopeInput, type ScopeItem, tierScope } from "./anchors.ts";
+import { layerLookup, withLayerResults } from "./layer-lookup.ts";
 import { readDifferentPairs } from "./match-check.ts";
 import { theCountry } from "./names.ts";
 import { type CostParts, costOf, dropProposal, presetCost } from "./scope-cost.ts";
@@ -76,15 +78,19 @@ export interface PlanContext {
   records: Map<string, AnalysisRecord>;
   different: Set<string>;
   names: Map<string, string>;
+  /** The current text-layer comparison of an image against an anchor (none: not compared). */
+  layer?: (imageId: string, anchorId: string) => LayerDiffRecord | undefined;
 }
 
 export function planContext(loaded: LoadedConfig): PlanContext {
   const paths = projectPaths(loaded);
+  const records = readRecords(paths);
   return {
     db: openImageDb(paths),
-    records: readRecords(paths),
+    records,
     different: readDifferentPairs(loaded),
     names: gameNames(loaded),
+    layer: layerLookup(loaded, records),
   };
 }
 
@@ -251,7 +257,7 @@ export function buildScopePlan(
     theCountry(main.label),
     ctx.different,
   );
-  const items: PlanImage[] = tiered.map((t) => ({
+  const items: PlanImage[] = withLayerResults(tiered, ctx).map((t) => ({
     ...t,
     name: names.get(t.appId) ?? t.appId,
     thumb: thumb(t.imageId),

@@ -6,9 +6,9 @@ import type { ScopeItem } from "./anchors.ts";
 import type { MarketRef, ReportScope } from "./types.ts";
 
 /**
- * Provisional cost per text-only call of the report steps that arrive with the next update
- * (country advice, its second opinion, words used per country, A/B tests), in dollars, low and
- * high. One place, so the numbers shown in the builder and the suggestions stay the same.
+ * Provisional cost per text-only call of the country reports' steps (country advice, its second
+ * opinion, words used per country, A/B tests), in dollars, low and high. One place, so the
+ * numbers shown in the builder, the approval and the suggestions stay the same.
  */
 export const TEXT_USD = {
   countryAdvice: [0.13, 0.3],
@@ -119,7 +119,7 @@ export function costOf(
   const limitUsd = settingsOf(config).spending.perReportUsd;
   return {
     images,
-    text: { parts, usd: textUsd, later: true },
+    text: { parts, usd: textUsd, later: false },
     usd,
     limitUsd,
     overLimit: usd[1] > limitUsd,

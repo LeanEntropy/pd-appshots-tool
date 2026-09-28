@@ -95,7 +95,7 @@ test("a One country report of the main country from existing analyses is instant
   });
   assert.equal(p.counts.newImages, 0);
   assert.equal(p.instant, true);
-  assert.equal(p.text.later, true);
+  assert.equal(p.text.later, false);
 });
 
 test("over the limit: the lowest-priority combinations are proposed, never applied silently", async () => {

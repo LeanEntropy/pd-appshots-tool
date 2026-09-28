@@ -48,24 +48,26 @@ test("a Compare countries report with nothing new to analyse builds at once, one
       includeCharts: [],
     },
   });
-  const r = buildReportVersion(loaded, def, { now: new Date("2026-09-28T12:00:00.000Z") });
+  const r = await buildReportVersion(loaded, def, { now: new Date("2026-09-28T12:00:00.000Z") });
   assert.ok(r.ok, r.ok ? "" : r.problem);
   const files = runFolders(s, paths).get(r.versionId);
-  assert.ok(files?.has("countries.json") && files.has("report.md") && files.has("version.json"));
+  assert.ok(
+    files?.has("country-report.json") && files.has("report.md") && files.has("version.json"),
+  );
   assert.equal(files?.has("report-data.json"), false);
   const v = getReportVersion(loaded, def.id, r.versionId).body as {
-    countries: { gl: string; data: { games: unknown[] } }[];
-    html: string;
+    country: { countries: { gl: string; data: { games: unknown[] } }[]; name: string };
   };
   assert.deepEqual(
-    v.countries.map((c) => c.gl),
+    v.country.countries.map((c) => c.gl),
     ["jp", "kr"],
   );
-  assert.equal(v.countries[0]?.data.games.length, 3);
-  assert.match(v.html, /Japan, South Korea vs 2 competitors/);
+  assert.equal(v.country.countries[0]?.data.games.length, 3);
+  assert.equal(v.country.name, "Japan, South Korea vs 2 competitors");
   // Listed as ready with its generation date; no newer data right after the build.
   const card = listReports(loaded).find((x) => x.id === def.id);
-  assert.equal(card?.status.kind, "ready");
+  // The written parts are not paid for yet: a partial version that says so.
+  assert.equal(card?.status.kind, "partial");
   assert.equal(card?.versions[0]?.format, "data");
   assert.equal(card?.newer, null);
   // A Full check now exists: the report built on the Pilot only says so.

@@ -12,6 +12,8 @@ import {
   postMatchVerdict,
   postPlan,
 } from "./reports-builder-api.ts";
+import { postReportApproval, postReportRun } from "./reports-run-api.ts";
+import { stateFor } from "./routes-project.ts";
 
 export const GONE = { problems: ["This report no longer exists. Reload the page."] };
 
@@ -78,7 +80,7 @@ export async function builderRoute(
     send(res, r.status, r.body);
     return true;
   }
-  const m = /^\/api\/reports\/(r-[a-z0-9-]{1,80})\/(plan|build)$/.exec(rest);
+  const m = /^\/api\/reports\/(r-[a-z0-9-]{1,80})\/(plan|build|approval|run)$/.exec(rest);
   if (!m) return false;
   const id = m[1] as string;
   if (m[2] === "plan" && req.method === "GET") {
@@ -88,8 +90,25 @@ export async function builderRoute(
   }
   if (m[2] === "build" && req.method === "POST") {
     if ((await write()) === undefined) return true;
-    const r = postBuild(loaded, id);
+    const r = await postBuild(loaded, id);
     send(res, r ? r.status : 404, r ? r.body : GONE);
+    return true;
+  }
+  if (m[2] === "approval" && req.method === "POST") {
+    if ((await write()) === undefined) return true;
+    const r = postReportApproval(loaded, id);
+    send(res, r ? r.status : 404, r ? r.body : GONE);
+    return true;
+  }
+  if (m[2] === "run" && req.method === "POST") {
+    const body = await write();
+    if (body === undefined) return true;
+    const r = postReportRun(loaded, id, body, {
+      ...app.runner,
+      names: app.names,
+      onEnd: () => stateFor(app, loaded),
+    });
+    send(res, r.status, r.body);
     return true;
   }
   send(res, 405, { problems: ["Not allowed."] });

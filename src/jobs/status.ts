@@ -1,6 +1,8 @@
 ﻿import { batchSpend } from "../analysis/attempts.ts";
 import { buildAnalysisPlan } from "../analysis/plan.ts";
 import { type LoadedConfig, projectPaths } from "../config/load.ts";
+import { buildScopePlan } from "../reports/scope-plan.ts";
+import { readDef } from "../reports/store.ts";
 import { type ProjectContext, type Storage, workspaceStorage } from "../storage/index.ts";
 import { LOCKS, lockHolder } from "../storage/leases.ts";
 import { type Job, legacyAnalysisJob, readJournal } from "./journal.ts";
@@ -16,6 +18,9 @@ export interface AnalysisStatus {
   /** True while the job runs in this server (a terminal run cannot be stopped from the page). */
   stoppable: boolean;
   stage: "pilot" | "core" | null;
+  /** A report's AI batch (One country, Compare countries): its id and name. */
+  reportId: string | null;
+  reportName: string | null;
   progress: Job["progress"] | null;
   startedAt: string | null;
   finishedAt: string | null;
@@ -80,6 +85,18 @@ export function analysisStatus(
         };
     } catch {}
   }
+  const def = job?.reportId ? readDef(storage, paths, job.reportId) : null;
+  if (stopped && def && !continuable) {
+    try {
+      const plan = buildScopePlan(loaded, def.scope);
+      if (plan.counts.newImages > 0)
+        continuable = {
+          remaining: plan.counts.newImages,
+          estimateUsd: plan.usd,
+          leftUsd: plan.limitUsd,
+        };
+    } catch {}
+  }
   const state: AnalysisStatus["state"] = !job ? "none" : interrupted ? "stopped" : job.state;
   return {
     jobId: job?.id ?? null,
@@ -88,6 +105,8 @@ export function analysisStatus(
     interrupted,
     stoppable: isRunning && running.get(ctx.projectId)?.jobId === job?.id,
     stage: job?.stage ?? null,
+    reportId: job?.reportId ?? null,
+    reportName: def?.name ?? null,
     progress: job?.progress ?? null,
     startedAt: job?.startedAt ?? null,
     // An interrupted run has no end time: the page says the tool stopped during the run.

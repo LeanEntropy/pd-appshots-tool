@@ -127,3 +127,46 @@ export function matchCheck(loaded: LoadedConfig, limit = 24): MatchCheck {
   out.doubtful = out.doubtful.slice(0, limit);
   return out;
 }
+
+/**
+ * The doubtful picture matches of one report's plan that the user has not answered yet
+ * (plan-reports 2.4; the R3 review, finding 8): each text comparison whose picture is close to
+ * the "same picture" line. The paid approval shows them first, and a run is refused until every
+ * one is answered (Same screen keeps the text comparison; Different screens makes it a full
+ * analysis).
+ */
+export function doubtfulInPlan(
+  loaded: LoadedConfig,
+  items: readonly {
+    tier: string;
+    imageId: string;
+    basedOn: string | null;
+    name: string;
+    country: string;
+    position: number;
+  }[],
+): MatchPair[] {
+  const db = openImageDb(projectPaths(loaded));
+  const saved = read(loaded).pairs;
+  const out: MatchPair[] = [];
+  for (const it of items) {
+    if (it.tier !== "layer-diff" || !it.basedOn) continue;
+    const img = db.get(it.imageId);
+    const anchor = db.get(it.basedOn);
+    if (!img || !anchor || img.phash.length !== anchor.phash.length) continue;
+    const bits = hamming(img.phash, anchor.phash);
+    const user = saved[pairKey(img.id, anchor.id)];
+    if (bits < DOUBT_BITS.from || user) continue;
+    out.push({
+      game: it.name,
+      country: it.country,
+      position: it.position,
+      image: { id: img.id, thumb: img.thumb ?? null },
+      anchor: { id: anchor.id, thumb: anchor.thumb ?? null, position: 0 },
+      bits,
+      treatedAs: "same",
+      userSaid: null,
+    });
+  }
+  return out;
+}

@@ -22,7 +22,7 @@ function stopButton(label) {
   return '<button type="button" class="stopbtn" data-stop="1" data-act-key="stop"' + (asked ? ' disabled aria-busy="true">' + ACT_SPIN() + "Stopping after this image..." : ">" + label) + "</button>";
 }
 
-const STEP_WORDS = { start: "starting", analysis: "reading the image (first analysis)", review: "checking (second opinion)", settle: "settling a disagreement between the two models", patterns: "finding patterns across games", recommend: "writing recommendations", "recommend-review": "checking the recommendations", "recommend-revise": "revising the recommendations", report: "writing the report" };
+const STEP_WORDS = { "layer-diff": "comparing the text on the images", "concept-map": "grouping the words used", "country-advice": "writing the advice per country", "ab-tests": "writing the A/B tests", start: "starting", analysis: "reading the image (first analysis)", review: "checking (second opinion)", settle: "settling a disagreement between the two models", patterns: "finding patterns across games", recommend: "writing recommendations", "recommend-review": "checking the recommendations", "recommend-revise": "revising the recommendations", report: "writing the report" };
 
 function money(n) { return "$" + Number(n || 0).toFixed(2); }
 function secs(from, to) { return from ? Math.max(0, Math.round(((to ? Date.parse(to) : Date.now()) - Date.parse(from)) / 1000)) : 0; }
@@ -77,7 +77,8 @@ function runPanelHtml(s) {
   const list = items.map((it) => { const st = runState(it); return '<li class="' + st + '">' + esc(it.name + " #" + it.position) + ' <span class="st">' + { done: "ok", failed: "failed", current: "in progress", queued: "waiting" }[st] + "</span></li>"; }).join("");
   const errs = (s.errors || []).map((e) => "<li>" + esc((e.name ? e.name + (e.position ? " #" + e.position : "") + ": " : "") + e.message) + "</li>").join("");
   let head;
-  if (s.running) head = '<h2>' + spinHtml("spin") + 'Running: ' + imageLine(p) + (cur.length ? " &mdash; " + esc(cur.join(", ")) : "") + "</h2>"
+  const what = s.reportName ? " \u201c" + esc(s.reportName) + "\u201d" : "";
+  if (s.running) head = '<h2>' + spinHtml("spin") + 'Running' + what + ': ' + imageLine(p) + (cur.length ? " &mdash; " + esc(cur.join(", ")) : "") + "</h2>"
     + '<p class="now">Step: ' + esc(STEP_WORDS[p.phase] || p.phase) + '</p><p class="meta">' + esc(p.message) + "</p>"
     + (s.stoppable ? '<p>' + stopButton("Stop after this image") + ' <span class="meta">Finished images are kept; you can continue later.</span></p>' : "");
   else if (!s.finishedAt) head = '<h2 class="warn">Interrupted</h2><p class="warn"><strong>The tool stopped during this run.</strong> Finished images are kept.</p>' + continueBox(s);
@@ -85,7 +86,7 @@ function runPanelHtml(s) {
     + '<p class="meta">Run of ' + esc(new Date(s.startedAt).toLocaleString()) + ".</p>"
     + (s.synthesisSkipped ? '<p class="meta">Patterns and recommendations not written: ' + esc(s.synthesisSkipped) + "</p>" : "")
     + (s.error ? continueBox(s) : "")
-    + (s.report ? '<p><a href="#report" class="toreport">Show the final report</a> <span class="meta">(saved as ' + esc(s.report) + ")</span></p>" : "");
+    + (s.report ? '<p><a href="#report' + (s.reportId ? "/" + esc(s.reportId) : "") + '" class="toreport">Show the ' + (s.reportId ? "report" : "final report") + '</a> <span class="meta">(saved as ' + esc(s.report) + ")</span></p>" : "");
   return head
     + '<progress max="' + (p.total || 1) + '" value="' + p.done + '"></progress><p>' + p.done + " of " + p.total + " images done</p>"
     + (s.running || s.finishedAt ? '<p>Elapsed: <span class="rt-elapsed">' + elapsed(s.startedAt, s.running ? null : s.finishedAt) + "</span>" : "<p>") + (s.running ? ' &middot; Remaining: <span class="rt-left">' + remaining(s) + "</span>" : "") + "</p>"

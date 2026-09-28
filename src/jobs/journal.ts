@@ -29,6 +29,8 @@ export const JobSchema = z.object({
   /** The approval screen the user accepted (fingerprint and when it was shown): used once. */
   approvalId: z.string().default(""),
   stage: z.enum(["pilot", "core"]).optional(),
+  /** A One country or Compare countries report's AI batch (plan-reports 2.3). */
+  reportId: z.string().optional(),
   /** The game a store job is for (checking or downloading an added competitor). */
   appId: z.string().optional(),
   batchId: z.string().nullable().default(null),
@@ -56,10 +58,14 @@ export type Job = z.infer<typeof JobSchema>;
 
 export const BatchSchema = z.object({
   id: z.string(),
-  stage: z.enum(["pilot", "core"]),
+  /** "report": the AI batch of a report of the builder (reportId). */
+  stage: z.enum(["pilot", "core", "report"]),
+  reportId: z.string().optional(),
   firstApprovedPlanHash: z.string(),
   limitUsd: z.number(),
   runs: z.array(z.string()).default([]),
+  /** Every approval that started a run of this batch (an approval starts one job, ever). */
+  approvals: z.array(z.string()).default([]),
   /** Every image any run of this batch sent to AI (the attempts summed for its spend). */
   imageIds: z.array(z.string()).default([]),
   createdAt: z.string(),
