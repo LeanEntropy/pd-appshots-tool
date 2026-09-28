@@ -101,16 +101,16 @@ test("builder API: options, drafts, plans, instant build and refusals", async ()
     assert.equal(built.status, 200);
     const { versionId } = await built.json();
     const files = runFolders(s, paths).get(versionId);
-    for (const f of ["report-data.json", "report.md", "version.json", "suggestions.json"])
+    for (const f of ["country-report.json", "report.md", "version.json", "suggestions.json"])
       assert.ok(files?.has(f), f);
     const v = await (await fetch(`${api}/reports/${draft.id}/versions/${versionId}`)).json();
-    assert.ok(v.data.games.length === 4);
-    assert.match(v.data.synthesis.reason, /Built on the Pilot only/);
+    assert.ok(v.country.countries[0].data.games.length === 4);
+    assert.match(v.country.banners.join(" "), /Built on the Pilot only/);
+    // The written parts are not paid for yet: listed as missing, with how to get them.
+    assert.ok(v.country.missing.length > 0);
     assert.ok(Array.isArray(v.research.items));
-    // In the markdown, "What to research next" is section 7, before the statistics.
     const md = s.getText(versionFileKey(paths, versionId, "report.md")) ?? "";
-    assert.match(md, /\n7\. \[What to research next\]\(#7-what-to-research-next\)\n8\. \[Detailed/);
-    assert.match(md, /## 7\. What to research next\n\n[\s\S]*## 8\. Detailed statistics/);
+    assert.match(md, /## 1\. Summary: the bottom line[\s\S]*## What to research next/);
     // Autosave of a new scope (and name) for a report of the builder.
     const jpScope = { type: "country", markets: [JP], competitors: three, includeCharts: [] };
     const saved = await post(

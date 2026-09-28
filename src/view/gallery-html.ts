@@ -3,6 +3,7 @@ import { CSS } from "./gallery-css.ts";
 import { GALLERY_SCRIPT } from "./gallery-script.ts";
 import type { ViewModel } from "./model.ts";
 import { BUILDER_CSS } from "./report-builder.ts";
+import { REPORT_COUNTRY_CSS } from "./report-country.ts";
 import { REPORT_LIST_CSS } from "./report-list.ts";
 import { SUGGEST_CSS } from "./report-suggest.ts";
 import { REPORT_SUMMARY_CSS } from "./report-summary.ts";
@@ -39,7 +40,7 @@ export function galleryHtml(vm: ViewModel, token = "", served?: GalleryServed): 
 <meta name="ssr-token" content="${escHtml(token)}">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Store Screenshot Recipe</title>
-<style>${CSS}${REPORT_LIST_CSS}${REPORT_SUMMARY_CSS}${ADD_CSS}${BUILDER_CSS}${SUGGEST_CSS}</style>
+<style>${CSS}${REPORT_LIST_CSS}${REPORT_SUMMARY_CSS}${ADD_CSS}${BUILDER_CSS}${SUGGEST_CSS}${REPORT_COUNTRY_CSS}</style>
 </head>
 <body>
 <div id="runbar" role="status" aria-live="polite" hidden></div>

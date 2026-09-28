@@ -7,6 +7,7 @@ import {
   readSavedPlan,
   type Stage,
 } from "../analysis/plan.ts";
+import type { Provider } from "../analysis/providers.ts";
 import {
   batchLimit,
   type Progress,
@@ -16,14 +17,11 @@ import {
   runAnalysis,
 } from "../analysis/run.ts";
 import { type LoadedConfig, projectPaths } from "../config/load.ts";
-import {
-  type ProjectContext,
-  projectKey,
-  type Storage,
-  workspaceStorage,
-} from "../storage/index.ts";
-import { acquireAll, HEARTBEAT_MS, LOCKS, type LockInfo, lockHolder } from "../storage/leases.ts";
+import { type ProjectContext, projectKey, workspaceStorage } from "../storage/index.ts";
+import { acquireAll, HEARTBEAT_MS, LOCKS, lockHolder } from "../storage/leases.ts";
+import { busyMessage } from "./busy.ts";
 import { type Batch, type Job, readJournal, updateJournal, writeJournal } from "./journal.ts";
+import type { StartSpec } from "./start-spec.ts";
 
 export interface AnalysisInput {
   stage: Stage;
@@ -37,7 +35,11 @@ export interface AnalysisInput {
 export interface RunnerOptions {
   depsFor?: (onProgress: (p: Progress) => void) => RunDeps;
   run?: (loaded: LoadedConfig, plan: AnalysisPlan, deps: RunDeps) => Promise<RunOutcome>;
+  /** The model providers of a report's AI batch, by model reference (tests use fakes). */
+  reportProvider?: (ref: string) => Provider;
 }
+
+export type { RunEnd, StartSpec } from "./start-spec.ts";
 
 export type EnqueueResult =
   | { ok: true; jobId: string; done: Promise<Job>; existing: boolean }
@@ -56,24 +58,7 @@ export const running = new Map<string, Handle>();
 const round = (n: number) => Math.round(n * 100) / 100;
 const money = (n: number) => `$${n.toFixed(2)}`;
 
-/** "Rogue Legend is using the AI now (image 5 of 17)." from the lock and its project's journal. */
-export function busyMessage(
-  storage: Storage,
-  held: LockInfo | null,
-  names: (id: string) => string,
-): string {
-  const later = "You can start this when it finishes.";
-  if (!held?.projectId) return `Another job is using the AI now. ${later}`;
-  const name = names(held.projectId);
-  if (held.kind === "import") return `${name} is being imported right now. ${later}`;
-  let where = "";
-  try {
-    const other = readJournal(storage, { projectId: held.projectId }).jobs.ai;
-    if (other?.state === "running" && other.progress.total)
-      where = ` (image ${Math.min(other.progress.done + 1, other.progress.total)} of ${other.progress.total})`;
-  } catch {}
-  return `${name} is using the AI now${where}. ${later}`;
-}
+export { busyMessage } from "./busy.ts";
 
 function refuse(status: number, problem: string): EnqueueResult {
   return { ok: false, status, problem };
@@ -107,20 +92,61 @@ export function enqueueAnalysis(
   if (problem || !saved) return refuse(409, problem ?? "No approval screen was shown yet.");
 
   const journal = readJournal(storage, ctx);
+  let batch: Batch | null = null;
+  if (input.continueBatch) {
+    batch = journal.batches.find((b) => b.id === input.continueBatch && b.stage === stage) ?? null;
+    if (!batch) return refuse(409, "That batch is not known any more. Start a new batch instead.");
+  }
+  const full = current.items.filter((i) => i.tier === "full");
+  return startJob(
+    loaded,
+    {
+      stage,
+      planHash,
+      approvalId: `${planHash}@${saved.createdAt}`,
+      frozen: saved,
+      batch,
+      newBatch: { suffix: stage, stage, limitUsd: batchLimit(loaded, current) },
+      attemptIds: full.map((i) => i.imageId),
+      items: current.items
+        .filter((i) => i.tier !== "identical")
+        .map((i) => ({ name: i.name, position: i.position, imageId: i.imageId })),
+      total: full.length,
+      estimateUsd: current.estimate.usd,
+      exec: (deps) => (opts.run ?? runAnalysis)(loaded, current, deps),
+    },
+    opts,
+  );
+}
+
+/**
+ * Starts an approved batch as a job (plan 12B, B3): one approval starts one job, the batch's
+ * spending limit and what it spent carry over, the AI lane is held (one AI job across all
+ * projects), the frozen input is saved, and the run's end is kept in the journal.
+ */
+export function startJob(
+  loaded: LoadedConfig,
+  spec: StartSpec,
+  opts: RunnerOptions & { names?: (id: string) => string } = {},
+): EnqueueResult {
+  const paths = projectPaths(loaded);
+  const storage = workspaceStorage(paths.workspace);
+  const ctx: ProjectContext = { projectId: paths.projectId };
+  const { planHash, approvalId } = spec;
+  const journal = readJournal(storage, ctx);
   // One approval starts one job: a repeated or replayed request never pays twice.
-  const approvalId = `${planHash}@${saved.createdAt}`;
   if (journal.jobs.ai?.approvalId === approvalId)
     return refuse(
       409,
-      "This approval was used already. Press Start analysis to see the current numbers.",
+      "This approval was used already. Open the approval again to see the current numbers.",
     );
-  let batch: Batch | undefined;
-  if (input.continueBatch) {
-    batch = journal.batches.find((b) => b.id === input.continueBatch && b.stage === stage);
-    if (!batch) return refuse(409, "That batch is not known any more. Start a new batch instead.");
-  }
+  let batch: Batch | undefined = spec.batch
+    ? journal.batches.find((b) => b.id === spec.batch?.id)
+    : undefined;
+  if (spec.batch && !batch)
+    return refuse(409, "That batch is not known any more. Start a new batch instead.");
   const spentBefore = batch ? batchSpend(paths, batch.id, batch.imageIds).usd : 0;
-  const limit = batch ? batch.limitUsd : batchLimit(loaded, current);
+  const limit = batch ? batch.limitUsd : spec.newBatch.limitUsd;
   if (limit - spentBefore <= 0.01)
     return refuse(
       409,
@@ -139,12 +165,12 @@ export function enqueueAnalysis(
 
   const now = new Date().toISOString();
   const frozen = projectKey(ctx, "state", "approved", `analysis-${planHash}.json`);
-  storage.putJsonOnce(frozen, saved);
-  const full = current.items.filter((i) => i.tier === "full");
+  storage.putJsonOnce(frozen, spec.frozen);
   if (!batch) {
     batch = {
-      id: `${now.replace(/[:.]/g, "-")}-${stage}`,
-      stage,
+      id: `${now.replace(/[:.]/g, "-")}-${spec.newBatch.suffix}`,
+      stage: spec.newBatch.stage,
+      ...(spec.reportId ? { reportId: spec.reportId } : {}),
       firstApprovedPlanHash: planHash,
       limitUsd: round(limit),
       runs: [],
@@ -153,34 +179,32 @@ export function enqueueAnalysis(
     };
     journal.batches.push(batch);
   }
-  batch.imageIds = [...new Set([...batch.imageIds, ...full.map((i) => i.imageId)])];
+  batch.imageIds = [...new Set([...batch.imageIds, ...spec.attemptIds])];
   const job: Job = {
     id: randomBytes(8).toString("hex"),
     kind: "analysis",
     planHash,
     approvalId,
-    stage,
+    ...(spec.stage ? { stage: spec.stage } : {}),
+    ...(spec.reportId ? { reportId: spec.reportId } : {}),
     batchId: batch.id,
     frozenInput: frozen,
     lockNonce: held.leases[0]?.nonce ?? "",
     startedAt: now,
     heartbeatAt: now,
     finishedAt: null,
-    progress: { phase: "start", done: 0, total: full.length, message: "Startingâ€¦", spentUsd: 0 },
+    progress: { phase: "start", done: 0, total: spec.total, message: "Starting…", spentUsd: 0 },
     state: "running",
     errors: [],
     error: null,
     report: null,
     synthesisSkipped: null,
-    items: current.items
-      .filter((i) => i.tier !== "identical")
-      .map((i) => ({ name: i.name, position: i.position, imageId: i.imageId })),
-    estimateUsd: current.estimate.usd,
+    items: spec.items,
+    estimateUsd: spec.estimateUsd,
     cancelled: false,
   };
   journal.jobs.ai = job;
   writeJournal(storage, ctx, journal);
-
   const handle: Handle = { jobId: job.id, planHash, cancel: false, done: Promise.resolve(job) };
   running.set(ctx.projectId, handle);
   const budget = limit - spentBefore;
@@ -218,7 +242,7 @@ export function enqueueAnalysis(
         }
         return handle.cancel || lost;
       };
-      const out = await (opts.run ?? runAnalysis)(loaded, current, deps);
+      const out = await spec.exec(deps);
       updateJournal(storage, ctx, (jj) => {
         const b = jj.batches.find((x) => x.id === batchId);
         if (b && !b.runs.includes(out.runId)) b.runs.push(out.runId);

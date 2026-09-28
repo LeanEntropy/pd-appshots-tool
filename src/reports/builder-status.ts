@@ -1,5 +1,6 @@
 import type { LoadedConfig } from "../config/load.ts";
 import { countrySlices, scopeDataHash } from "./build.ts";
+import { withLayerRecords } from "./country-inputs.ts";
 import { type Eligibility, scopeIncomplete } from "./eligibility.ts";
 import { mainMarketRef } from "./main-market.ts";
 import { buildScopePlan, type PlanContext } from "./scope-plan.ts";
@@ -43,7 +44,10 @@ export function builderNewer(
     const plan = buildScopePlan(loaded, def.scope, { proposeDrop: false, ctx });
     if (
       inputs.dataHash &&
-      scopeDataHash(plan, countrySlices(loaded, plan, ctx)) !== inputs.dataHash
+      scopeDataHash(
+        plan,
+        countrySlices(loaded, plan, { ...ctx, records: withLayerRecords(loaded, plan).records }),
+      ) !== inputs.dataHash
     )
       reasons.push("new or updated analyses or store pages since this version was made");
   } catch {

@@ -112,8 +112,11 @@ export function abEvidence(x: Omit<AbSectionInput, "ai" | "aiCurrent" | "label">
  * (the rest listed as left out), in leverage order, at most 5, topped up to 2 with tests written
  * by code from the next gaps. With fewer than 2 gaps it says so instead of inventing a test.
  */
-export function abTestsPart(x: AbSectionInput): AbTestsPart {
-  const { evidence, rules } = abEvidence(x);
+export function abTestsPart(
+  x: AbSectionInput,
+  pre: { evidence: Evidence[]; rules: TestRules } = abEvidence(x),
+): AbTestsPart {
+  const { evidence, rules } = pre;
   const leftOut: AbTestsPart["leftOut"] = [];
   let kept: AiTest[] = [];
   if (x.ai && x.aiCurrent) {

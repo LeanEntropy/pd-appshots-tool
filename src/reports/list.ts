@@ -81,10 +81,11 @@ export function listReports(loaded: LoadedConfig): ReportSummary[] {
         id: v.id,
         generatedAt: v.generatedAt,
         archived: v.archived,
-        format:
-          folders.get(v.id)?.has("report-data.json") || folders.get(v.id)?.has("countries.json")
-            ? ("data" as const)
-            : ("markdown" as const),
+        format: ["report-data.json", "countries.json", "country-report.json"].some((f) =>
+          folders.get(v.id)?.has(f),
+        )
+          ? ("data" as const)
+          : ("markdown" as const),
       }))
       .reverse();
     const newest = versions[0];
@@ -124,7 +125,16 @@ export function listReports(loaded: LoadedConfig): ReportSummary[] {
       elig ??= eligibility(loaded);
       ctx ??= planContext(loaded);
       newer = builderNewer(loaded, d, inputs, elig, ctx);
+      const left =
+        newest && files?.has("country-report.json") ? missingParts(s, paths, newest.id) : 0;
+      if (left)
+        status = {
+          kind: "partial",
+          text: `Partial: ${left} written ${left === 1 ? "part" : "parts"} missing`,
+        };
     }
+    if (job?.state === "running" && job.reportId === d.id)
+      status = { kind: "running", text: job.progress.message || "Running" };
     return {
       id: d.id,
       name: d.name,
@@ -151,6 +161,22 @@ export function listReports(loaded: LoadedConfig): ReportSummary[] {
       (b.generatedAt ?? "").localeCompare(a.generatedAt ?? "") ||
       a.name.localeCompare(b.name),
   );
+}
+
+/** How many AI parts a country version lacks (0 when unreadable). */
+function missingParts(
+  s: ReturnType<typeof workspaceStorage>,
+  c: { projectId: string },
+  versionId: string,
+): number {
+  try {
+    const d = s.getJson(versionFileKey(c, versionId, "country-report.json")) as {
+      missing?: unknown[];
+    };
+    return Array.isArray(d?.missing) ? d.missing.length : 0;
+  } catch {
+    return 0;
+  }
 }
 
 /**

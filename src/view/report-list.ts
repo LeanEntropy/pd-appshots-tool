@@ -71,6 +71,7 @@ function reportCardHtml(r) {
     + (r.newer ? '<div class="banner stale"><p>' + pill("stale", "Newer data") + " " + esc(r.newer) + (r.canNow ? " Choose \\u201cNow\\u201d to see the report with the current data." : "") + "</p></div>" : "")
     + '<div class="rc-bar"><label>Version: <select class="rc-ver" data-rid="' + id + '">' + versionOptions(r) + "</select></label>"
     + (r.status.kind === "draft" ? b("rc-setup primary", "Continue setting up") : "")
+    + (r.type === "country" || r.type === "compare" ? b("rc-approve" + (r.status.kind === "partial" || !r.versions.length ? " primary" : ""), "Review and approve") : "")
     + (r.versions.length || r.canNow ? b("rc-pdf", "Export PDF") : "")
     + (r.versions.length || r.canNow ? b("rc-regen", "Regenerate") : "")
     + b("rc-rename", "Rename") + b("rc-archive", r.archived ? "Restore" : "Archive")
@@ -162,6 +163,11 @@ function showReportVersion(rid, r) {
   if (!box) return;
   box.classList.toggle("noimg", !showImgs);
   if (head) head.innerHTML = r.now ? "Now: computed from the saved analyses, with no AI call." : "Generated " + esc(fmtDate(r.generatedAt)) + (r.archived ? ". Earlier version (archived): kept as it was, never deleted." : ".");
+  if (r.country && typeof renderCountryReport === "function") {
+    const research = typeof researchBody === "function" && r.research && Array.isArray(r.research.items) ? researchBody(r.research) : "";
+    renderCountryReport(box, r.country, rid, research);
+    return;
+  }
   if (r.data || r.countries) {
     // "What to research next": a numbered section when the version kept its list and is about one
     // country (as in its markdown and PDF); otherwise after the report (the live list alone).
