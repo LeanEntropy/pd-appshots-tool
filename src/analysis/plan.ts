@@ -1,7 +1,7 @@
 import { join } from "node:path";
 import { type LoadedConfig, loadTaxonomy, projectPaths } from "../config/load.ts";
 import { analysedSlots, coreDeck, fitFor } from "../core/selection.ts";
-import { baselineMarket, coreMarket } from "../core/targets.ts";
+import { mainMarket } from "../core/targets.ts";
 import { openImageDb } from "../store/imagedb.ts";
 import { readJsonIfExists, writeJsonAtomic } from "../util/fsx.ts";
 import { stableHash } from "../util/hash.ts";
@@ -67,8 +67,8 @@ export function buildAnalysisPlan(
 ): AnalysisPlan {
   const { config } = loaded;
   const paths = projectPaths(loaded);
-  const market = coreMarket(config);
-  const baseline = baselineMarket(config);
+  const market = mainMarket(config);
+  const baseline = market;
   const view = fitFor(loaded);
   const competitors =
     stage === "pilot"

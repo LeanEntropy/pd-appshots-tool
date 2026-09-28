@@ -12,6 +12,14 @@ export interface GalleryServed {
   stage: string;
 }
 
+/** The Settings page of a served project (its API base is /p/<id>/api). */
+function settingsLink(apiBase: string): string {
+  const base = apiBase.replace(/\/api$/, "");
+  return base.startsWith("/p/")
+    ? `<a class="btn-new" href="${escHtml(base)}/settings">Settings</a>`
+    : "";
+}
+
 /**
  * Deterministic HTML: the same view model always produces the same page. The token (only when
  * served by the local gallery server) authorises the page's saves and analysis requests.
@@ -30,7 +38,7 @@ export function galleryHtml(vm: ViewModel, token = "", served?: GalleryServed): 
 </head>
 <body>
 <div id="runbar" role="status" aria-live="polite" hidden></div>
-${served ? appBar(served.name) + stepBar(served.steps) : ""}
+${served ? appBar(served.name, settingsLink(served.apiBase)) + stepBar(served.steps) : ""}
 <header class="top">
 <div class="titlebar"><h1>${served ? escHtml(served.name) : `Store Screenshot Recipe: ${escHtml(vm.project)}`}</h1><span class="meta grow">Downloaded run ${escHtml(vm.runId)}. Market for the analysis: ${escHtml(vm.coreMarket.label)}.</span><label>Show country: <select id="locale"></select></label></div>
 <nav class="tabs" aria-label="Pages"><a href="#overview" data-tab="overview">Overview</a><a href="#competitors" data-tab="competitors">Competitors</a><a href="#screenshots" data-tab="screenshots">Screenshots</a><a href="#analysis" data-tab="analysis">Analysis</a><a href="#report" data-tab="report">Report</a></nav>

@@ -6,8 +6,8 @@ import {
   workspaceStorage,
 } from "../storage/index.ts";
 import { readJson } from "../util/fsx.ts";
-import { stableHash, stableStringify } from "../util/hash.ts";
-import type { LoadedConfig } from "./load.ts";
+import { stableStringify } from "../util/hash.ts";
+import { configHash, type LoadedConfig } from "./load.ts";
 import {
   isDraft,
   type ProjectSettings,
@@ -73,8 +73,14 @@ export function settingsToRawConfig(s: ProjectSettings, d: ToolDefaults): Record
     tierWeights: d.tierWeights,
     models: d.models,
     taxonomy: d.taxonomy,
+    options: d.options,
   };
   const merged = deepMerge(tool, s.overrides ?? {}) as typeof tool;
+  // The main country is the baseline; one no longer in the project falls back to the first.
+  const main = s.markets.some((m) => m.gl === merged.core.market)
+    ? merged.core.market
+    : (s.markets[0]?.gl ?? merged.core.market);
+  merged.core = { ...merged.core, market: main };
   // Tool values first: the project's own fields below always win.
   return {
     ...merged,
@@ -84,7 +90,12 @@ export function settingsToRawConfig(s: ProjectSettings, d: ToolDefaults): Record
     ourApp: { name: s.ourApp.name, id: s.ourApp.id },
     category: s.category,
     competitors: s.competitors.map((c) => ({ name: c.name, id: c.id, tier: c.tier })),
-    markets: s.markets.map((m, i) => ({ gl: m.gl, hl: m.hl, label: m.label, baseline: i === 0 })),
+    markets: s.markets.map((m) => ({
+      gl: m.gl,
+      hl: m.hl,
+      label: m.label,
+      baseline: m.gl === main,
+    })),
     charts: {
       ...(s.charts.enabled ? {} : { enabled: false }),
       collection: s.charts.collection,
@@ -124,7 +135,7 @@ export function loadProject(id: string, opts: { root: string }): LoadedConfig {
     config,
     path: storage.localPath(settingsKey({ projectId: id })),
     root: opts.root,
-    hash: stableHash(config),
+    hash: configHash(config),
     projectId: id,
   };
 }

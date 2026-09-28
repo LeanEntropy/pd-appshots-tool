@@ -1,4 +1,5 @@
 import type { Config } from "../config/schema.ts";
+import { secondOpinionOn } from "../settings/access.ts";
 import type { TierResult } from "./tiers.ts";
 
 export interface ModelPasses {
@@ -93,6 +94,7 @@ export function estimate(
   ];
   if (synthesis) {
     const rec = modelName(config.models.recommend);
+    const recReview = secondOpinionOn(config, "recommendations");
     passes.push(
       {
         role: "Pattern summary",
@@ -111,9 +113,9 @@ export function estimate(
       {
         role: "Recommendation check",
         model: modelName(config.models.recommendationReview),
-        calls: config.review.enabled ? 1 : 0,
+        calls: recReview ? 1 : 0,
         images: 0,
-        note: config.review.enabled ? "cross-family review" : "turned off",
+        note: recReview ? "cross-family review" : "turned off",
       },
     );
   }

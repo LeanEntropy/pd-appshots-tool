@@ -1,6 +1,6 @@
 import { type LoadedConfig, loadTaxonomy, projectPaths } from "../config/load.ts";
 import { computeStats, type RunStats } from "../core/stats.ts";
-import { baselineMarket, deckKey } from "../core/targets.ts";
+import { deckKey, mainMarket } from "../core/targets.ts";
 import { fullResUrl, googleImageId, withDeckDeviceClasses } from "../play/screenshots.ts";
 import { workspaceStorage } from "../storage/index.ts";
 import { openImageDb } from "../store/imagedb.ts";
@@ -146,7 +146,7 @@ export async function runDownload(
     decks,
     deckHashes,
   });
-  const b = baselineMarket(config);
+  const b = mainMarket(config);
   return {
     runId,
     manifestPath,

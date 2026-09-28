@@ -41,7 +41,16 @@ export function loadConfig(configPath: string): LoadedConfig {
     throw new Error(`The config file has problems:\n${lines.join("\n")}`);
   }
   const root = dirname(dirname(path));
-  return { config: parsed.data, path, root, hash: stableHash(parsed.data) };
+  return { config: parsed.data, path, root, hash: configHash(parsed.data) };
+}
+
+/**
+ * The config's fingerprint for download previews and run manifests. The Settings page's report
+ * options are left out: a PDF or suggestion setting never makes a download preview out of date.
+ * (Analysis plans have their own fingerprint of everything they use.)
+ */
+export function configHash(config: Config): string {
+  return stableHash({ ...config, options: undefined });
 }
 
 export function fromRoot(loaded: LoadedConfig, p: string): string {

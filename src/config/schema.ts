@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { OptionsSchema } from "../settings/schema.ts";
 
 const Tier = z.enum(["direct", "same_audience", "reference"]);
 
@@ -126,6 +127,8 @@ export const ConfigBase = z.object({
       psd: z.string().optional(),
     })
     .optional(),
+  /** Settings page values with no older home (src/settings/schema.ts); all have defaults. */
+  options: OptionsSchema,
 });
 
 export const ConfigSchema = ConfigBase.superRefine((c, ctx) => {
@@ -186,7 +189,62 @@ export const ConfigSchema = ConfigBase.superRefine((c, ctx) => {
       });
     }
   }
+  settingsRules(c, ctx);
 });
+
+/** Rules of the Settings page (plan-reports 5B): main country, model choices, review families. */
+function settingsRules(c: z.infer<typeof ConfigBase>, ctx: z.RefinementCtx): void {
+  const base = c.markets.find((m) => m.baseline);
+  if (base && base.gl !== c.core.market)
+    ctx.addIssue({
+      code: "custom",
+      path: ["core", "market"],
+      message: "the main country must be the baseline country",
+    });
+  const models: [string[], string | undefined][] = [
+    ...Object.entries(c.models).map(([k, v]): [string[], string | undefined] => [["models", k], v]),
+    ...Object.entries(c.options.models).map(([k, v]): [string[], string] => [
+      ["options", "models", k],
+      v,
+    ]),
+  ];
+  const readsImages = ["fullAnalysis", "imageReview", "adjudicate", "layerDiff"];
+  for (const [path, ref] of models) {
+    if (!ref) continue;
+    if (/haiku/.test(ref))
+      ctx.addIssue({ code: "custom", path, message: "Haiku is not used for the tool's AI steps" });
+    if (path[0] === "models" && readsImages.includes(path[1] ?? "") && /sonnet/.test(ref))
+      ctx.addIssue({ code: "custom", path, message: "Sonnet is not used to read screenshots" });
+    if (path[0] === "options" && ref.includes("gpt-6-astra"))
+      ctx.addIssue({
+        code: "custom",
+        path,
+        message: "GPT-6 Astra is reserved for special image-review cases only",
+      });
+  }
+  const family = (ref: string) => ref.split(":")[0];
+  const reviewer = c.models.recommendationReview;
+  const on = c.options.secondOpinion;
+  const text: [keyof typeof on, string][] = [
+    ["countryAdvice", c.options.models.countryAdvice],
+    ["conceptMap", c.options.models.conceptMap],
+    ["abTests", c.options.models.abTests],
+  ];
+  for (const [step, ref] of text) {
+    if (on[step] && family(ref) === family(reviewer))
+      ctx.addIssue({
+        code: "custom",
+        path: ["options", "models", step],
+        message: "the reviewer must be from a different model family than the producer",
+      });
+  }
+  if (on.textLayer && family(c.models.layerDiff) === family(c.models.imageReview))
+    ctx.addIssue({
+      code: "custom",
+      path: ["models", "layerDiff"],
+      message: "the reviewer must be from a different model family than the producer",
+    });
+}
 
 export type Config = z.infer<typeof ConfigSchema>;
 export type Competitor = z.infer<typeof Competitor>;

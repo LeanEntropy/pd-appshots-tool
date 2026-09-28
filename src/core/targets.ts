@@ -18,18 +18,21 @@ export function deckKey(t: { appId: string; gl: string; hl: string }): string {
   return `${t.appId}|${t.gl}|${t.hl}`;
 }
 
-export function baselineMarket(config: Config): Market {
-  const b = config.markets.find((m) => m.baseline);
-  if (!b) throw new Error("The config has no baseline market.");
-  return b;
-}
-
-/** The market the core check runs in (config core.market). */
-export function coreMarket(config: Config): Market {
+/**
+ * The project's main country (Settings page, default United States): the one market the Pilot
+ * and the Full check run in, the baseline every "what changed" comparison is made against, and
+ * the anchor of the suggestions. The config rules make the baseline and core.market the same.
+ */
+export function mainMarket(config: Config): Market {
   const m = config.markets.find((x) => x.gl === config.core.market);
-  if (!m) throw new Error("The config's core market is not one of its markets.");
+  if (!m) throw new Error("The main country is not one of the project's countries.");
   return m;
 }
+
+/** @deprecated Use mainMarket (kept while other branches still call it). */
+export const baselineMarket = mainMarket;
+/** @deprecated Use mainMarket (kept while other branches still call it). */
+export const coreMarket = mainMarket;
 
 /**
  * Every deck (app x market) Setup downloads: our deck, the named competitors and the chart
@@ -37,7 +40,7 @@ export function coreMarket(config: Config): Market {
  * Order: ours, named competitors in config order, then chart games by first appearance.
  */
 export function buildTargets(config: Config, charts: readonly ChartResult[]): DeckTarget[] {
-  const baseline = baselineMarket(config);
+  const baseline = mainMarket(config);
   const out = new Map<string, DeckTarget>();
   const add = (t: DeckTarget) => {
     const k = deckKey(t);

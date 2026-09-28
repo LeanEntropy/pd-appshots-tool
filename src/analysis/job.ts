@@ -1,6 +1,7 @@
 import { join } from "node:path";
 import { type LoadedConfig, projectPaths } from "../config/load.ts";
 import { fitFor } from "../core/selection.ts";
+import { secondOpinionOn } from "../settings/access.ts";
 import { latestRun } from "../view/model.ts";
 import type { AnalysisPlan, Stage } from "./plan.ts";
 import { providerFor } from "./providers.ts";
@@ -54,7 +55,9 @@ export function defaultDeps(loaded: LoadedConfig, onProgress: (p: Progress) => v
     reviewer: review ? providerFor(m.imageReview, schemaDir) : null,
     adjudicator: providerFor(m.adjudicate, schemaDir),
     writer: providerFor(m.recommend, schemaDir),
-    recommendationReviewer: review ? providerFor(m.recommendationReview, schemaDir) : null,
+    recommendationReviewer: secondOpinionOn(loaded.config, "recommendations")
+      ? providerFor(m.recommendationReview, schemaDir)
+      : null,
     onProgress,
   };
 }

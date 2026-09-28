@@ -2,11 +2,11 @@ import { coreOrder, type LoadedConfig, projectPaths, writeRunConfig } from "../c
 import type { Config } from "../config/schema.ts";
 import { type DeckManifest, readDeck } from "../store/manifest.ts";
 import { type FitCandidate, type FitResult, fitCore, slotCount } from "./fit.ts";
-import { coreMarket } from "./targets.ts";
+import { mainMarket } from "./targets.ts";
 
 /** The core-market deck of an app, or undefined when missing or unavailable. */
 export function coreDeck(loaded: LoadedConfig, appId: string): DeckManifest | undefined {
-  const m = coreMarket(loaded.config);
+  const m = mainMarket(loaded.config);
   const d = readDeck(projectPaths(loaded).decks, { appId, gl: m.gl, hl: m.hl });
   return d?.status === "ok" ? d : undefined;
 }
@@ -16,7 +16,7 @@ export function coreDeck(loaded: LoadedConfig, appId: string): DeckManifest | un
  * confirmed "not available"): they are left out of the core check, not an error.
  */
 export function notInCoreMarket(loaded: LoadedConfig): { appId: string; name: string }[] {
-  const m = coreMarket(loaded.config);
+  const m = mainMarket(loaded.config);
   const decks = projectPaths(loaded).decks;
   return loaded.config.competitors
     .filter((c) => readDeck(decks, { appId: c.id, gl: m.gl, hl: m.hl })?.status === "unavailable")

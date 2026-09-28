@@ -9,6 +9,7 @@ import { redirect, send, sendHtml, writeRequest } from "./http-util.ts";
 import { getImport, getJobs, getProjects, postArchive, postImport } from "./routes-home.ts";
 import { getCountries, getLookup, getSearch, postProject } from "./routes-play.ts";
 import { projectRoute } from "./routes-project.ts";
+import { settingsRoute } from "./routes-settings.ts";
 import { setupRoute } from "./routes-setup.ts";
 
 const PROJECT_PATH = /^\/p\/([^/]+)(\/.*)?$/;
@@ -127,6 +128,7 @@ export function createAppServer(app: AppContext): Server {
         return send(res, r.status, r.body);
       }
       if (await setupRoute(app, id, found, rest, req, res)) return;
+      if (await settingsRoute(app, id, found, rest, req, res)) return;
       if ("draft" in found) {
         const s = draftState(id, found.draft);
         if (rest === "/api/state") return send(res, 200, s);

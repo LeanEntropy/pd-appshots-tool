@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { type LoadedConfig, projectPaths } from "../config/load.ts";
 import { analysedSlots, coreDeck, fitFor } from "../core/selection.ts";
-import { baselineMarket } from "../core/targets.ts";
+import { mainMarket } from "../core/targets.ts";
 import { type Increment, readJournal, updateJournal } from "../jobs/journal.ts";
 import { workspaceStorage } from "../storage/index.ts";
 import { readDeck } from "../store/manifest.ts";
@@ -49,7 +49,7 @@ export function expansionOptions(loaded: LoadedConfig): ExpansionOptions {
       images: analysedSlots(config, coreDeck(loaded, c.id)).length,
     }))
     .filter((c) => c.images > 0);
-  const base = baselineMarket(config);
+  const base = mainMarket(config);
   const apps = [config.ourApp.id, ...inCore];
   const countries = config.markets
     .filter((m) => !(m.gl === base.gl && m.hl === base.hl))

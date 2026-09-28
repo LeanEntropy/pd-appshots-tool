@@ -16,6 +16,7 @@ export const ToolDefaultsSchema = ConfigBase.pick({
   tierWeights: true,
   models: true,
   taxonomy: true,
+  options: true,
 }).extend({
   schemaVersion: z.literal(1),
   charts: z.object({
@@ -85,7 +86,7 @@ export const ProjectSettingsSchema = z
     category: z.string().min(1),
     ownAssets: z.object({ dir: z.string().min(1), psd: z.string().optional() }).optional(),
     /**
-     * Advanced values that differ from the tool defaults (not in the UI yet). Only tool-default
+     * Values that differ from the tool defaults, set on the Settings page. Only tool-default
      * sections are allowed, so an override can never change the project, its game or folder.
      */
     overrides: z
@@ -99,6 +100,8 @@ export const ProjectSettingsSchema = z
         tierWeights: Section,
         models: Section,
         taxonomy: z.string().min(1),
+        /** The Settings page's own values (src/settings/schema.ts). */
+        options: Section,
       })
       .partial()
       .optional(),

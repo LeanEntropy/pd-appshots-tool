@@ -2,7 +2,7 @@ import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import { extname, join, relative } from "node:path";
 import sharp from "sharp";
 import { fromRoot, type LoadedConfig, projectPaths } from "../config/load.ts";
-import { baselineMarket } from "../core/targets.ts";
+import { mainMarket } from "../core/targets.ts";
 import { describeImage, hamming, type ImageFacts, NEAR_IDENTICAL_BITS } from "../store/identity.ts";
 import { openImageDb } from "../store/imagedb.ts";
 import { readDeck } from "../store/manifest.ts";
@@ -48,7 +48,7 @@ export async function runOwnAssets(loaded: LoadedConfig, log: (s: string) => voi
     return;
   }
   const paths = projectPaths(loaded);
-  const base = baselineMarket(config);
+  const base = mainMarket(config);
   const live = readDeck(paths.decks, { appId: config.ourApp.id, gl: base.gl, hl: base.hl });
   if (live?.status !== "ok") {
     throw new Error("Our live store deck is not downloaded yet. Run the download step first.");

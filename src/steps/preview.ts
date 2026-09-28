@@ -1,7 +1,7 @@
 import { join } from "node:path";
 import { type LoadedConfig, type ProjectPaths, projectPaths } from "../config/load.ts";
 import { type PreviewSummary, summarize } from "../core/summary.ts";
-import { baselineMarket, buildTargets, type DeckTarget, deckKey } from "../core/targets.ts";
+import { buildTargets, type DeckTarget, deckKey, mainMarket } from "../core/targets.ts";
 import { type ChartResult, type Listing, PlayClient } from "../play/client.ts";
 import { fullResUrl } from "../play/screenshots.ts";
 import { workspaceStorage } from "../storage/index.ts";
@@ -90,7 +90,7 @@ export async function buildPlan(
   const { config } = loaded;
   const paths = projectPaths(loaded);
   const client = newClient(loaded, paths);
-  const base = baselineMarket(config);
+  const base = mainMarket(config);
 
   const chartsOn = config.charts.enabled !== false;
   let category = config.category;
