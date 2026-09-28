@@ -2,6 +2,7 @@ import { type LoadedConfig, loadTaxonomy, projectPaths } from "../config/load.ts
 import { computeStats, type RunStats } from "../core/stats.ts";
 import { baselineMarket, deckKey } from "../core/targets.ts";
 import { fullResUrl, googleImageId, withDeckDeviceClasses } from "../play/screenshots.ts";
+import { workspaceStorage } from "../storage/index.ts";
 import { openImageDb } from "../store/imagedb.ts";
 import {
   type DeckManifest,
@@ -12,6 +13,7 @@ import {
 } from "../store/manifest.ts";
 import { runThrottled, sleep } from "../util/cli-io.ts";
 import type { DownloadPlan } from "./preview.ts";
+import { saveListingTexts } from "./store-text.ts";
 
 async function fetchImage(url: string): Promise<Buffer> {
   for (let attempt = 0; ; attempt++) {
@@ -123,6 +125,12 @@ export async function runDownload(
     decks.push(deck);
   }
   db.save();
+  // The store text read by the preview, under the day it was read (no new Google Play reads).
+  saveListingTexts(
+    workspaceStorage(paths.workspace),
+    plan.targets.map((t) => plan.listings[deckKey(t)]).filter((l) => l !== undefined),
+    log,
+  );
 
   const runId = newRunId("setup");
   const manifestPath = writeRunManifest(paths.runs, {

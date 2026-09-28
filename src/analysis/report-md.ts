@@ -2,6 +2,7 @@ import type { Labeler } from "./labels.ts";
 import type { PatternFit } from "./pattern-fit.ts";
 import type { OrderRow, ReportData } from "./report-data.ts";
 import { cell, IMG, patternSection, recommendationSection } from "./report-sections.ts";
+import { storeTextMarkdown } from "./report-store-md.ts";
 
 const img = (thumb: string | null, file: string | null, alt: string) =>
   thumb ? `[![${alt}](${IMG}${thumb})](${IMG}${file ?? thumb})` : "";
@@ -11,6 +12,7 @@ export const SECTIONS = [
   "Patterns across competitors",
   "Position by position",
   "Recommendations",
+  "Store text and keywords",
   "Detailed statistics",
 ] as const;
 const slug = (i: number) =>
@@ -60,7 +62,8 @@ function cellOf(r: OrderRow | undefined, name: string): string {
 /**
  * The report body in markdown, in the same numbered sections as the gallery's Report page:
  * overview (verdict and key points), patterns with our fit, one row per store position (ours
- * first), recommendations, then the detailed statistics. Everything but the AI wording and the
+ * first), recommendations, store text and derived keywords per country, then the detailed
+ * statistics. Everything but the AI wording and the
  * recommendations is computed by code and always present.
  */
 export function reportMarkdown(d: ReportData, label: Labeler): string[] {
@@ -189,7 +192,9 @@ export function reportMarkdown(d: ReportData, label: Labeler): string[] {
     out.push(...rec.slice(1).map((l) => (l.startsWith("### ") ? `#${l}` : l)));
   } else out.push(`Not written yet. ${s.reason} How to get them: ${s.howTo}`, "");
 
-  out.push(head(4), "");
+  out.push(head(4), "", ...storeTextMarkdown(d.storeText));
+
+  out.push(head(5), "");
   if (d.patterns)
     out.push(
       ...patternSection(d.patterns, null, label)

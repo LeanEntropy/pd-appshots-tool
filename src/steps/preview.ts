@@ -4,8 +4,10 @@ import { type PreviewSummary, summarize } from "../core/summary.ts";
 import { baselineMarket, buildTargets, type DeckTarget, deckKey } from "../core/targets.ts";
 import { type ChartResult, type Listing, PlayClient } from "../play/client.ts";
 import { fullResUrl } from "../play/screenshots.ts";
+import { workspaceStorage } from "../storage/index.ts";
 import { readJsonIfExists, writeJsonAtomic } from "../util/fsx.ts";
 import { stableHash } from "../util/hash.ts";
+import { saveListingTexts } from "./store-text.ts";
 
 export interface DownloadPlan {
   createdAt: string;
@@ -121,6 +123,8 @@ export async function buildPlan(
   log(
     `  ${targets.length} store pages checked (${client.requests} requests, ${client.cacheHits} from cache).`,
   );
+  const texts = saveListingTexts(workspaceStorage(paths.workspace), Object.values(listings), log);
+  log(`  Store text and category saved for ${texts.saved} store pages (free, no AI).`);
 
   const measured = await measureBytes(
     Object.values(listings),

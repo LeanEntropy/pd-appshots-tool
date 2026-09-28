@@ -12,9 +12,10 @@ import { runDeckView } from "./steps/deck-view.ts";
 import { type Check, runDoctor } from "./steps/doctor.ts";
 import { runDownload } from "./steps/download.ts";
 import { runOwnAssets } from "./steps/own-assets.ts";
-import { buildPlan, planProblem, readPlan } from "./steps/preview.ts";
+import { buildPlan, newClient, planProblem, readPlan } from "./steps/preview.ts";
 import { describePlan, previewMarkdown } from "./steps/preview-report.ts";
 import { currentFit, describeFit, runSelect } from "./steps/select.ts";
+import { runStoreTextBackfill } from "./steps/store-text.ts";
 import { type Args, confirm, parseArgs } from "./util/cli-io.ts";
 
 const log = (s: string) => console.log(s);
@@ -39,6 +40,8 @@ const HELP = `Store Screenshot Recipe: setup commands (no AI analysis)
   npm run overview    Free store overview per country (orientation, ratios, deck length, reuse, colours). No AI
   npm run report      Write the report from the saved analyses, no AI (-- --stage core for the core check)
   npm run refresh-records  Rebuild each analysis record's identity block and taxonomy mapping (no AI)
+  npm run store-text  Fill in the category, tags and store text of the pages already downloaded
+                      (free, no AI). Shows the count first; -- --yes reads them, one at a time
 
   npm run projects    List the projects
   npm run migrate     Import an existing project into the shared image and analysis library.
@@ -198,6 +201,11 @@ Landscape images: US ${Math.round(a.us * 100)}%, Asian markets ${Math.round(a.as
       log(`Refreshed ${r.records} analysis records (identity and taxonomy mapping, no AI call).`);
       for (const m of r.mapped) log(`  ${m}`);
       return 0;
+    }
+    case "store-text": {
+      const client = newClient(loaded, projectPaths(loaded));
+      const r = await runStoreTextBackfill(loaded, { yes: args.yes, log, client });
+      return r.failed ? 1 : 0;
     }
     case "publish-deck-view":
       log(

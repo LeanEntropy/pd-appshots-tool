@@ -2,7 +2,7 @@
  * Report page: the report as it stands now (from the saved analyses, no AI) or an earlier run.
  * Numbered sections with a table of contents: 1 overview (verdict and prioritised key points),
  * 2 patterns with our fit, 3 one row per store position (ours first), 4 recommendations,
- * 5 detailed statistics. Everything but the AI wording and the recommendations is computed by
+ * 5 store text and derived keywords per country, 6 detailed statistics. Everything but the AI wording and the recommendations is computed by
  * code and always shown; when the AI parts are missing or out of date it says why and offers the
  * approval (nothing runs without it). Images fold globally (remembered per viewer) or per section.
  */
@@ -12,8 +12,8 @@ let reportSeq = 0;
 const hiddenImgSecs = new Set();
 let showImgs = true;
 try { showImgs = localStorage.getItem("ssr.reportImages") !== "off"; } catch {}
-const SECTIONS = ["Overview", "Patterns across competitors", "Position by position", "Recommendations", "Detailed statistics"];
-const SEC_IDS = ["overview", "patterns", "positions", "recs", "stats"];
+const SECTIONS = ["Overview", "Patterns across competitors", "Position by position", "Recommendations", "Store text and keywords", "Detailed statistics"];
+const SEC_IDS = ["overview", "patterns", "positions", "recs", "store", "stats"];
 
 const L = (k) => (reportData && reportData.labels && reportData.labels[k]) || String(k || "").replace(/_/g, " ");
 const pc = (n) => Math.round((n || 0) * 100) + "%";
@@ -65,7 +65,8 @@ function renderReport() {
     + sec(1, SECTIONS[1], fitHtml(d), false)
     + sec(2, SECTIONS[2], positionsHtml(d), true)
     + sec(3, SECTIONS[3], recsHtml(d), true)
-    + sec(4, SECTIONS[4], patternsHtml(d.patterns), false, true);
+    + sec(4, SECTIONS[4], storeTextHtml(d), false)
+    + sec(5, SECTIONS[5], patternsHtml(d.patterns), false, true);
 }
 
 async function loadReport() {

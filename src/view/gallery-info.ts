@@ -83,12 +83,14 @@ function placeInfo(btn, pop) {
 }
 
 function showInfo(btn) {
-  const v = INFO[btn.dataset.info];
-  if (!v) return;
+  const id = btn.dataset.info || "";
+  const html = id.startsWith("store:") ? storeHtml(id.slice(6)) : INFO[id] ? infoHtml(INFO[id]) : "";
+  if (!html) return;
   clearTimeout(infoHideTimer);
   if (infoBtnOpen && infoBtnOpen !== btn) infoBtnOpen.setAttribute("aria-expanded", "false");
   const pop = document.getElementById("infoPop");
-  pop.innerHTML = infoHtml(v);
+  pop.innerHTML = html;
+  pop.setAttribute("aria-label", id.startsWith("store:") ? "Store page" : "Screenshot analysis");
   pop.hidden = false;
   placeInfo(btn, pop);
   btn.setAttribute("aria-expanded", "true");

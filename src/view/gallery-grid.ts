@@ -56,7 +56,7 @@ function renderGrid() {
   html += "</tr></thead><tbody>";
   for (const r of rows) {
     const d = coreDeckOf(r.app);
-    html += '<tr class="' + (r.inBatch ? "inbatch" : r.inCore ? "" : "outrow") + '"><th class="rowh">' + esc(r.app.name) + rowCount(r, d, stageName) + "</th>";
+    html += '<tr class="' + (r.inBatch ? "inbatch" : r.inCore ? "" : "outrow") + '"><th class="rowh">' + esc(r.app.name) + (typeof storeBtn === "function" ? storeBtn(r.app.appId) : "") + rowCount(r, d, stageName) + "</th>";
     for (let p = 1; p <= cols; p++) {
       const i = d && d.images.find((x) => x.position === p);
       if (!i || !i.thumb) { html += i ? '<td class="out"><span class="na" title="Not analysed: image missing">Position ' + p + ": download failed</span></td>" : "<td></td>"; continue; }

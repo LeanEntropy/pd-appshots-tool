@@ -141,7 +141,7 @@ table.rt { border-collapse: collapse; font-size: 13px; margin: 6px 0 12px; } tab
 table.rt th, table.rt td { border: 1px solid var(--line); padding: 5px 8px; vertical-align: top; }
 .slot { border: 1px solid var(--line); border-left: 5px solid var(--accent); border-radius: 10px; padding: 10px 14px; margin: 10px 0; background: var(--card); }
 .slot h4 { font-size: 16px; margin: 0 0 6px; } .slot dl { display: grid; grid-template-columns: max-content 1fr; gap: 3px 10px; margin: 6px 0; } .slot dt { color: var(--muted); }
-.lbl button.info, .pcard .lbl button.info { position: static; display: inline-block; vertical-align: middle; margin-left: 4px; }
+.rowh button.info.store, .lbl button.info, .pcard .lbl button.info { position: static; display: inline-block; vertical-align: middle; margin-left: 4px; }
 .lbl { font-weight: 600; } .hl { font-style: italic; font-size: 12px; }
 table.rt.pos td { min-width: 130px; } table.rt.pos td.ourcell { background: var(--tint); } table.rt.pos .rthumb img { height: 120px; }
 table.rt.fit tr.miss td { background: color-mix(in srgb, var(--bad) 8%, transparent); }
@@ -162,4 +162,6 @@ button.linkbtn { background: none; border: none; color: var(--accent); padding: 
 .expand { border: 2px solid var(--accent-2); border-radius: 12px; padding: 12px 16px; margin: 16px 0; background: var(--card); }
 .expand h3 { margin: 0 0 8px; color: var(--accent-2); font-size: 18px; } .expand fieldset { border: 1px solid var(--line); border-radius: 8px; margin: 8px 0; }
 .expand label { display: block; margin: 3px 0; }
+.chip { display: inline-block; margin: 1px 0; padding: 0 7px; border: 1px solid var(--line); border-radius: 10px; background: var(--bg); font-size: 12px; }
+details.subsec { margin: 8px 0; } details.subsec > summary { cursor: pointer; font-weight: 600; } table.rt tr.ours th { color: var(--accent); }
 `;

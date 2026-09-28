@@ -1,6 +1,7 @@
 import { existsSync, readdirSync } from "node:fs";
 import { join } from "node:path";
 import type { ImageAnalysis } from "../analysis/schema.ts";
+import type { StoreTextView } from "../analysis/store-compare.ts";
 import type { Config } from "../config/schema.ts";
 import type { Group } from "../core/targets.ts";
 import type { ImageDb } from "../store/imagedb.ts";
@@ -98,6 +99,8 @@ export interface ViewModel {
   pilotCompetitors: number;
   /** Analyses by image id, for the (i) popover. */
   info: Record<string, InfoView>;
+  /** Saved store text per game (category, tags, derived keywords), for the grid's "Store" (i). */
+  storeText?: Record<string, StoreTextView[]>;
 }
 
 export function latestRun(runsDir: string): RunManifest | undefined {

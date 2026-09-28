@@ -2,7 +2,9 @@
 import { dirname, join } from "node:path";
 import { labeler } from "../analysis/labels.ts";
 import { infoViews, summaries } from "../analysis/records.ts";
+import { storeTextViews } from "../analysis/store-compare.ts";
 import { coreOrder, type LoadedConfig, loadTaxonomy, projectPaths } from "../config/load.ts";
+import { workspaceStorage } from "../storage/index.ts";
 import { openImageDb } from "../store/imagedb.ts";
 import { ensureDir } from "../util/fsx.ts";
 import { type GalleryServed, galleryHtml } from "../view/gallery-html.ts";
@@ -20,7 +22,7 @@ function viewModel(loaded: LoadedConfig): ViewModel {
   const run = latestRun(paths.runs);
   if (!run) throw new Error("No download run found yet. Run the download step first.");
   const db = openImageDb(paths);
-  return buildViewModel(
+  const vm = buildViewModel(
     loaded.config,
     run,
     db,
@@ -28,6 +30,13 @@ function viewModel(loaded: LoadedConfig): ViewModel {
     summaries(paths, labeler(loadTaxonomy(loaded).taxonomy)),
     infoViews(paths, labeler(loadTaxonomy(loaded).taxonomy)),
   );
+  const storage = workspaceStorage(paths.workspace);
+  const storeText: Record<string, ReturnType<typeof storeTextViews>> = {};
+  for (const a of [...vm.ours, ...vm.named, ...vm.chart]) {
+    const v = storeTextViews(storage, a.appId, loaded.config.markets);
+    if (v.length) storeText[a.appId] = v;
+  }
+  return { ...vm, storeText };
 }
 
 /** The gallery page, built fresh from the latest download, the saved pick and analyses. */

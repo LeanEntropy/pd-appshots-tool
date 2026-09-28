@@ -120,7 +120,8 @@ test("patterns, ours vs patterns, recommendations, review and the final report",
     "## 2. Patterns across competitors",
     "## 3. Position by position",
     "## 4. Recommendations",
-    "## 5. Detailed statistics",
+    "## 5. Store text and keywords",
+    "## 6. Detailed statistics",
   ])
     assert.ok(md.includes(h), h);
   assert.match(md, /\*\*Verdict: our deck is /);

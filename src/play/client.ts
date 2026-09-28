@@ -6,6 +6,7 @@ import { readJsonIfExists, safeName, writeJsonAtomic } from "../util/fsx.ts";
 import { notSoldThere } from "./answers.ts";
 import { sharedPlayQueue } from "./queue.ts";
 import { dedupScreenshots } from "./screenshots.ts";
+import { officialFromApp, type StoreOfficial } from "./store-text.ts";
 
 export interface Listing {
   appId: string;
@@ -19,6 +20,8 @@ export interface Listing {
   rawCount: number;
   /** Deduped base URLs in store order. */
   screenshots: string[];
+  /** Official store text and category ("ok" pages read since this was added). */
+  store?: StoreOfficial | null;
   error?: string;
   fetchedAt: string;
 }
@@ -88,7 +91,9 @@ export class PlayClient {
   async listing(appId: string, gl: string, hl: string): Promise<Listing> {
     const path = join(this.cacheDir, "listing", safeName(appId), `${gl}-${safeName(hl)}.json`);
     const cached = readJsonIfExists(path) as Listing | undefined;
-    if (cached && cached.status !== "error" && this.fresh(path)) {
+    // A page cached before the store text was kept is read again (once).
+    const complete = cached?.status !== "ok" || cached.store !== undefined;
+    if (cached && cached.status !== "error" && complete && this.fresh(path)) {
       this.cacheHits++;
       return cached;
     }
@@ -120,6 +125,7 @@ export class PlayClient {
           developer: app.developer,
           rawCount: raw.length,
           screenshots: dedupScreenshots(raw),
+          store: officialFromApp(app),
         };
       } catch (e) {
         if (errorStatus(e) === 404) {

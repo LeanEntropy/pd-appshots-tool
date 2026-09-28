@@ -10,6 +10,7 @@ import { type FitSummary, patternFit } from "./pattern-fit.ts";
 import { findPatterns, type Patterns } from "./patterns.ts";
 import type { AnalysisPlan } from "./plan.ts";
 import { type AnalysisRecord, isUsable, screenLabel } from "./records.ts";
+import type { StoreCountry } from "./store-compare.ts";
 import {
   type Interpretation,
   labelProblems,
@@ -80,6 +81,8 @@ export interface ReportData {
   labels: Record<string, string>;
   /** Named competitors not on Google Play in the core country: not in this check, by design. */
   leftOut: string[];
+  /** Store text and derived keywords per country (absent in runs saved before it existed). */
+  storeText?: StoreCountry[];
 }
 
 export interface ReportInputs {
@@ -99,6 +102,7 @@ export interface ReportInputs {
   estimateUsd: [number, number];
   /** Named competitors not on Google Play in the core country (left out of this check). */
   leftOut?: string[];
+  storeText?: StoreCountry[];
 }
 
 function row(x: ReportInputs, slot: DeckManifest["slots"][number], excluded: string | null) {
@@ -259,5 +263,6 @@ export function buildReportData(x: ReportInputs): ReportData {
       : [],
     labels: labelsFor(x.label, patterns, oursVs, ai?.recommendations ?? null),
     leftOut: x.leftOut ?? [],
+    storeText: x.storeText ?? [],
   });
 }

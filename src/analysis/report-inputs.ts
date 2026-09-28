@@ -13,6 +13,7 @@ import { refreshRecord, TAXONOMY_MAPPING } from "./record-refresh.ts";
 import { readRecords } from "./records.ts";
 import { buildReportData, type ReportInputs } from "./report-data.ts";
 import { reportMarkdown } from "./report-md.ts";
+import { compareStoreText } from "./store-compare.ts";
 import type { Interpretation, Recommendations, Review } from "./synthesis-schema.ts";
 
 /** One saved report run of a stage. */
@@ -116,6 +117,12 @@ export function reportInputs(
     lastSkip: skip,
     estimateUsd: proposed.estimate.usd,
     leftOut: notInCoreMarket(loaded).map((c) => c.name),
+    storeText: compareStoreText(
+      storage,
+      loaded.config.markets,
+      { appId: loaded.config.ourApp.id, name: loaded.config.ourApp.name },
+      plan.games.filter((g) => g.appId !== loaded.config.ourApp.id),
+    ),
   };
 }
 
