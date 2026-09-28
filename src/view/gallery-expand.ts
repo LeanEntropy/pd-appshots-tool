@@ -8,20 +8,26 @@
 export const EXPAND_SCRIPT = `
 let whatNext = null;
 
-// One option as a box of the side-by-side offers grid (report-suggest.ts), its buttons at the bottom.
-function nextOption(cls, title, text, buttons) {
-  return '<div class="offer ' + cls + '"><h4>' + title + '</h4><p class="why">' + text + '</p><div class="offer-acts">' + buttons + "</div></div>";
+// One option as a box of the side-by-side offers grid (report-suggest.ts): title, cost chip, one
+// short line and one button; the rest behind Details.
+function nextOption(cls, title, chip, text, button, details) {
+  return '<div class="offer ' + cls + '"><div class="offer-top"><h4>' + title + '</h4><span class="chip">' + chip + '</span></div><p class="why">' + text + "</p>"
+    + (details ? '<details class="offer-more"><summary>Details</summary>' + details + "</details>" : "")
+    + '<div class="offer-acts">' + button + "</div></div>";
 }
 
 function whatNextHtml(o) {
   const main = countryLabel(o.main.gl, theCountryOf(o.main.label));
   const core = !o.coreReady
-    ? nextOption("c-full-check", "Run the Full check", "Highly recommended: it strengthens every other report.", '<button type="button" class="primary wnext" data-next="core">Run the Full check</button>')
+    ? nextOption("c-full-check", "Run the Full check", "Recommended", "It strengthens every other report.", '<button type="button" class="primary wnext" data-next="core">Run the Full check</button>',
+      "<p>A full analysis of your picked competitors in the main country. The builder shows the exact images and cost first.</p>")
     : "";
   return '<section class="card expand" aria-labelledby="expandTitle"><h3 id="expandTitle">What next?</h3><div class="offers">' + core
-    + nextOption("", "Compare countries", "See where competitors change their images between countries. Missing a country? Add it to the project first.", '<button type="button" class="wnext" data-next="compare">Compare countries</button><button type="button" class="cpOpen" data-act-key="cp-next">Add countries</button>')
-    + nextOption("c-charts", "Add more competitors in " + main, "A report of more games in the main country, with the same pick to start from.", '<button type="button" class="wnext" data-next="more">Add more competitors</button>')
-    + '</div><p class="meta">Each opens the report builder with the choices filled in. It shows the exact images and cost first; nothing runs until you approve.</p></section>';
+    + nextOption("", "Compare countries", "Cost shown first", "Where competitors change their images between countries.", '<button type="button" class="wnext" data-next="compare">Compare countries</button>',
+      '<p>Missing a country? Add it to the project first (downloading its store pages is free).</p><div class="offer-acts"><button type="button" class="cpOpen" data-act-key="cp-next">Add countries</button></div>')
+    + nextOption("c-charts", "Add more competitors in " + main, "Cost shown first", "More games in the main country.", '<button type="button" class="wnext" data-next="more">Add more competitors</button>',
+      "<p>A report of more games in " + esc(theCountryOf(o.main.label)) + ", starting from the same pick.</p>")
+    + '</div><p class="meta">Each opens the report builder with the choices filled in. Nothing runs until you approve.</p></section>';
 }
 
 async function loadExpansion() {

@@ -5,7 +5,9 @@ import { escHtml } from "./shell.ts";
  * Country flags next to country names (Windows shows no flag emoji, so these are real pictures:
  * the flag-icons SVGs served by the tool at /flags/<code>.svg, nothing from the internet).
  * One helper, countryLabel(code) = flag + name, in TypeScript for server-made HTML and the same
- * in the pages' script, plus flagText() that puts a flag before each country name in a sentence.
+ * in the pages' script, plus flagText() that puts a flag before each country name in a title.
+ * Flags go only next to country names in titles and headings, never in running text (user,
+ * 2026-09-29): sentences, notes and descriptions use the plain name.
  */
 const NAMES: Record<string, string> = Object.fromEntries(
   loadCountries().countries.map((c) => [c.gl, c.label]),

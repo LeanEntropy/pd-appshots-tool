@@ -1,3 +1,4 @@
+import { asCounted } from "./categories.ts";
 import { colourFamily } from "./colours.ts";
 import { type Labeler, plainLabel } from "./labels.ts";
 import { counts, type DeckEntry, type Patterns, proportion, typeKey } from "./patterns.ts";
@@ -114,7 +115,7 @@ export function compareOurs(
     );
   }
   const capture = counts(
-    ours.flatMap((e) => e.final.screenshot.captures.map((c) => c.orientation)),
+    ours.flatMap((e) => asCounted(e.final).screenshot.captures.map((c) => c.orientation)),
   )[0];
   const theirCapture = p.orientation.capture[0];
   if (capture && theirCapture && capture.key !== theirCapture.key) {
@@ -123,7 +124,7 @@ export function compareOurs(
       `our in-game captures are mostly ${label(capture.key)}; competitors' are mostly ${label(theirCapture.key)} (${theirCapture.n} of ${p.orientation.capture.reduce((n, c) => n + c.n, 0)})`,
     );
   }
-  const ourComp = counts(ours.map((e) => e.final.screenshot.composition))[0];
+  const ourComp = counts(ours.map((e) => asCounted(e.final).screenshot.composition))[0];
   const theirComp = p.composition[0];
   if (ourComp && theirComp && ourComp.key !== theirComp.key) {
     slight++;

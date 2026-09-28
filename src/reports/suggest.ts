@@ -15,6 +15,8 @@ export interface Suggestion extends Omit<Signal, "key"> {
   score: number;
   /** "free", or "12 images, about $2.10 to $3.40". */
   costText: string;
+  /** The card's chip: "Free" or "about $4". */
+  costChip: string;
   /** Why it ranks where it does, in words. */
   rankWhy: string;
 }
@@ -59,7 +61,15 @@ function ranked(list: readonly Signal[]): Suggestion[] {
       const value = s.value >= 6 ? "High value" : s.value >= 3 ? "Medium value" : "Some value";
       const cost = !s.cost ? "free" : m < 3 ? `low cost: ${money(m)}` : `cost about ${money(m)}`;
       const rankWhy = s.category === "same" ? "For information" : `${value}; ${cost}`;
-      return { ...rest, id: `s-${stableHash(key).slice(0, 12)}`, score, costText, rankWhy };
+      const costChip = s.cost ? `about $${m < 10 ? m.toFixed(2) : Math.round(m)}` : "Free";
+      return {
+        ...rest,
+        id: `s-${stableHash(key).slice(0, 12)}`,
+        score,
+        costText,
+        costChip,
+        rankWhy,
+      };
     })
     .sort(
       (a, b) =>

@@ -61,11 +61,11 @@ function reportDescription(r) {
 
 function reportCardHtml(r) {
   const id = rsafe(r.id);
-  const summary = '<span class="rc-name">' + esc(r.name) + "</span>" + pill(TYPE_CLS[r.type] || "", r.typeName)
+  const summary = '<span class="rc-name">' + flagText(r.name) + "</span>" + pill(TYPE_CLS[r.type] || "", r.typeName)
     + pill(STATUS_CLS[r.status.kind] || "none", r.status.text)
     + (r.newer ? '<span class="pill newer" title="' + esc(r.newer) + '">Newer data</span>' : "")
     + (r.archived ? pill("none", "Archived") : "")
-    + '<span class="rc-desc">' + flagText(reportDescription(r)) + "</span>";
+    + '<span class="rc-desc">' + esc(reportDescription(r)) + "</span>";
   const b =(cls, label, extra) => '<button type="button" class="' + cls + '" data-rid="' + id + '" data-act-key="' + cls.split(" ")[0] + "-" + id + '"' + (extra || "") + ">" + label + "</button>";
   return '<details class="rcard ' + (TYPE_CLS[r.type] || "") + '" data-rid="' + id + '" id="rc-' + id + '"><summary>' + summary + '</summary><div class="rc-b">'
     + (r.newer ? '<div class="banner stale"><p>' + pill("stale", "Newer data") + " " + esc(r.newer) + (r.canNow ? " Choose \\u201cNow\\u201d to see the report with the current data." : "") + "</p></div>" : "")
@@ -168,7 +168,7 @@ function showReportVersion(rid, r) {
     const one = (!r.countries || r.countries.length === 1) && !!(r.research && Array.isArray(r.research.items));
     const research = typeof researchBody === "function" && one ? researchBody(r.research) : "";
     if (r.countries) {
-      box.innerHTML = r.countries.map((c, i) => '<details class="sec" open><summary><span class="sec-t">' + esc(c.label) + '</span></summary><div class="sec-b" id="rbc-' + rid + "-" + i + '"></div></details>').join("");
+      box.innerHTML = r.countries.map((c, i) => '<details class="sec" open><summary><span class="sec-t">' + countryLabel(c.gl, c.label) + '</span></summary><div class="sec-b" id="rbc-' + rid + "-" + i + '"></div></details>').join("");
       r.countries.forEach((c, i) => renderReport(document.getElementById("rbc-" + rid + "-" + i), c.data, rid + "-" + rsafe(c.gl), rep.type, research));
     } else renderReport(box, r.data, rid, rep.type, research);
     // Only the Pilot and the Full check are approved from the Analysis page.

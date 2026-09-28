@@ -113,6 +113,9 @@ export function weakPatterns(
       category: "weak",
       title: "Settle the weak patterns",
       why: `${why}: analysing ${list(settlers.map((c) => c.name))} would settle it.`,
+      short: p
+        ? `Image ${p.position} has no clear competitor pattern yet.`
+        : `Image ${l?.position} is split on showing the game logo.`,
       what: `${mainName}: ${list(settlers.map((c) => c.name))} added to your pick`,
       value: [...new Set(weak)].reduce(
         (n, x) => n + POINTS.weakPattern + (x <= 3 ? POINTS.weakPatternFirstThree : 0),

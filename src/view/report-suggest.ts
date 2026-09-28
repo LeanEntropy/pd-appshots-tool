@@ -9,13 +9,18 @@
  * (or the country picker, which asks before downloading anything).
  */
 export const SUGGEST_CSS = `
-.offers { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr)); gap: 12px; margin: 10px 0; }
-.offer { --oc: var(--accent-2); display: flex; flex-direction: column; gap: 6px; padding: 12px 14px; border-radius: 12px; border: 1px solid color-mix(in srgb, var(--oc) 28%, var(--line)); background: color-mix(in srgb, var(--oc) 9%, var(--card)); min-width: 0; }
-.offer h4 { margin: 0; font-size: 15px; line-height: 1.3; } .offer p { margin: 0; } .offer .why { line-height: 1.45; }
-.offer .offer-acts { margin-top: auto; padding-top: 8px; display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.offers { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr)); gap: 16px; margin: 12px 0; }
+.offer { --oc: var(--accent-2); display: flex; flex-direction: column; gap: 10px; padding: 16px 18px; border-radius: 12px; border: 1px solid color-mix(in srgb, var(--oc) 28%, var(--line)); background: color-mix(in srgb, var(--oc) 9%, var(--card)); min-width: 0; }
+.offer .offer-top { display: flex; gap: 8px; align-items: flex-start; justify-content: space-between; }
+.offer h4 { margin: 0; font-size: 15px; line-height: 1.3; } .offer p { margin: 0; } .offer .why { line-height: 1.45; color: var(--muted); }
+.offer .chip { flex: none; font-size: 12px; font-weight: 600; padding: 2px 8px; border-radius: 999px; background: var(--card); border: 1px solid var(--line); white-space: nowrap; }
+.offer .offer-acts { margin-top: auto; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
 .offer .offer-acts button, .offer .offer-acts .btn { margin: 0; padding: 5px 12px; border-radius: 8px; }
 .offer .offer-acts a.btn { display: inline-block; border: 1px solid var(--line); background: var(--bg); color: var(--text); text-decoration: none; }
-.offer .offer-acts .sgd { margin-left: auto; color: var(--muted); }
+.offer button.sgd { margin-left: auto; padding: 2px 4px; border: none; background: none; color: var(--muted); font-size: 12px; text-decoration: underline; cursor: pointer; }
+.offer details.offer-more > summary { cursor: pointer; font-size: 13px; color: var(--muted); }
+.offer details.offer-more[open] > summary { margin-bottom: 6px; } .offer details.offer-more p { margin: 0 0 6px; font-size: 13px; }
+.offer details.offer-more .offer-acts { margin-top: 6px; }
 .offer.c-full-check { --oc: var(--accent); } .offer.c-same { --oc: var(--muted); } .offer.c-charts { --oc: var(--mid); }
 .offer.c-weak { --oc: var(--brand); } .offer.c-regenerate { --oc: var(--ok); } .offer.c-pick-gap { --oc: var(--next); }
 #suggestPanel details.sec > summary .sg-n { font-size: 13px; font-weight: 600; color: var(--muted); }
@@ -45,10 +50,14 @@ function suggestionCard(s) {
   const act1 = s.action ? (s.action.scope ? '<button type="button" class="sgo primary" data-sid="' + esc(s.id) + '" data-which="1">' + esc(s.action.label) + "</button>" : '<a class="btn" href="' + esc(s.action.href) + '">' + esc(s.action.label) + "</a>") : "";
   const act2 = s.second ? '<button type="button" class="sgo" data-sid="' + esc(s.id) + '" data-which="2">' + esc(s.second.label) + "</button>" : "";
   const more = multiCountry(s) ? '<button type="button" class="cpOpen" data-act-key="cp-' + esc(s.id) + '">Add countries</button>' : "";
-  return '<div class="offer c-' + esc(s.category) + '"><h4>' + flagText(s.title) + "</h4>"
-    + '<p class="why">' + flagText(s.why) + (s.older ? ' <span class="older">(based on older data)</span>' : "") + "</p>"
-    + '<p class="meta">' + flagText(s.what) + " \\u00b7 Cost: " + esc(s.costText) + " \\u00b7 " + esc(s.rankWhy) + "</p>"
-    + '<div class="offer-acts">' + act1 + act2 + more + '<button type="button" class="sgd" data-sid="' + esc(s.id) + '" data-act-key="sgd-' + esc(s.id) + '">' + (s.dismissedNow ? "Show again" : "Dismiss") + "</button></div></div>";
+  const chip = s.costChip || (s.costText === "free" ? "Free" : "");
+  // Title, one short line, the cost chip and one button; everything else behind Details.
+  return '<div class="offer c-' + esc(s.category) + '"><div class="offer-top"><h4>' + flagText(s.title) + "</h4>" + (chip ? '<span class="chip">' + esc(chip) + "</span>" : "") + "</div>"
+    + '<p class="why">' + esc(s.short || s.why) + (s.older ? ' <span class="older">(based on older data)</span>' : "") + "</p>"
+    + '<details class="offer-more"><summary>Details</summary><p>' + esc(s.why) + "</p>"
+    + '<p class="meta">' + esc(s.what) + "<br>Cost: " + esc(s.costText) + "<br>" + esc(s.rankWhy) + "</p>"
+    + (act2 || more ? '<div class="offer-acts">' + act2 + more + "</div>" : "") + "</details>"
+    + '<div class="offer-acts">' + act1 + '<button type="button" class="sgd" data-sid="' + esc(s.id) + '" data-act-key="sgd-' + esc(s.id) + '" title="' + (s.dismissedNow ? "Show this suggestion again" : "Hide this suggestion") + '">' + (s.dismissedNow ? "Show again" : "Dismiss") + "</button></div></div>";
 }
 
 function coverageHtml(c) {

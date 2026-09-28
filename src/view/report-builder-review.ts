@@ -26,9 +26,9 @@ function needsHtml(p) {
     + '<p class="total">Total about ' + usdRange(p.usd) + (p.cap ? "" : ' <span class="meta">(limit ' + money(p.limitUsd) + " per report)</span>") + "</p>"
     + (p.cap ? '<p class="meta">Core total after this batch: ' + p.cap.coreTotal + " of " + p.cap.cap + " images.</p>" : "")
     + (p.overLimit ? '<p class="over">This is over the spending limit of ' + money(p.limitUsd) + ".</p>" : "")
-    + (p.drop ? '<p>Proposal: leave out ' + flagText(p.drop.leaveOut.map((x) => x.name + " in " + theCountryOf(x.country)).join(", ")) + ", saves about " + money(p.drop.savesUsd) + (p.drop.fits ? "" : " (still over the limit)") + '. <button type="button" id="bLeave">Leave these out</button></p>' : "")
-    + (left.length ? '<p class="meta">Left out to stay within the limit: ' + flagText(left.map((d) => d.name + " in " + theCountryOf(d.country)).join(", ")) + '. <button type="button" class="linkbtn" id="bPutBack">Put them back</button></p>' : "")
-    + (gone.length ? '<p class="meta">Not in this report: ' + flagText(gone.map((d) => d.name + (d.state === "not-sold" ? " (not sold in " : " (not downloaded in ") + theCountryOf(d.country) + ")").join(", ")) + ".</p>" : "")
+    + (p.drop ? '<p>Proposal: leave out ' + esc(p.drop.leaveOut.map((x) => x.name + " in " + theCountryOf(x.country)).join(", ")) + ", saves about " + money(p.drop.savesUsd) + (p.drop.fits ? "" : " (still over the limit)") + '. <button type="button" id="bLeave">Leave these out</button></p>' : "")
+    + (left.length ? '<p class="meta">Left out to stay within the limit: ' + esc(left.map((d) => d.name + " in " + theCountryOf(d.country)).join(", ")) + '. <button type="button" class="linkbtn" id="bPutBack">Put them back</button></p>' : "")
+    + (gone.length ? '<p class="meta">Not in this report: ' + esc(gone.map((d) => d.name + (d.state === "not-sold" ? " (not sold in " : " (not downloaded in ") + theCountryOf(d.country) + ")").join(", ")) + ".</p>" : "")
     + '<p class="meta">Data: store pages from ' + (dates.length ? esc(shortDate(dates[0])) + (dates.at(-1) !== dates[0] ? " to " + esc(shortDate(dates.at(-1))) : "") : "no saved date") + ". Analyses as of now.</p>";
 }
 
@@ -59,7 +59,7 @@ function reviewHtml(p) {
 function pairHtml(x) {
   const img = (t, alt) => (t ? '<img src="' + IMG + esc(t) + '" alt="' + esc(alt) + '">' : "");
   const now = x.treatedAs === "same" ? "treated as the same picture (text comparison only)" : "treated as different screens (full analysis)";
-  return '<div class="pair">' + img(x.anchor.thumb, "main country") + img(x.image.thumb, x.country) + "<div><strong>" + esc(x.game) + "</strong>: position " + x.position + " in " + flagText(theCountryOf(x.country)) + " vs position " + x.anchor.position + " in the main country. " + esc(now) + (x.userSaid ? " (your answer)" : "") + '<br><button type="button" class="pairv" data-img="' + esc(x.image.id) + '" data-anchor="' + esc(x.anchor.id) + '" data-same="false">Different screens</button> <button type="button" class="pairv" data-img="' + esc(x.image.id) + '" data-anchor="' + esc(x.anchor.id) + '" data-same="true">Same screen</button></div></div>';
+  return '<div class="pair">' + img(x.anchor.thumb, "main country") + img(x.image.thumb, x.country) + "<div><strong>" + esc(x.game) + "</strong>: position " + x.position + " in " + esc(theCountryOf(x.country)) + " vs position " + x.anchor.position + " in the main country. " + esc(now) + (x.userSaid ? " (your answer)" : "") + '<br><button type="button" class="pairv" data-img="' + esc(x.image.id) + '" data-anchor="' + esc(x.anchor.id) + '" data-same="false">Different screens</button> <button type="button" class="pairv" data-img="' + esc(x.image.id) + '" data-anchor="' + esc(x.anchor.id) + '" data-same="true">Same screen</button></div></div>';
 }
 
 async function showMatchCheck() {

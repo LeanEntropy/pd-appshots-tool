@@ -29,11 +29,13 @@ function page() {
   );
   // The words as read: the country flag markup (tested in flags.test.ts) is left out here.
   const card = ctx.card as (r: ReportSummary) => string;
+  ctx.rawCard = card;
   ctx.card = (r: ReportSummary) =>
     card(r).replace(/<span class="cty">(?:<img[^>]*>)?([^<]*)<\/span>/g, "$1");
   return ctx as typeof ctx & {
     renderReport: (box: Box, d: unknown, rid: string, stage: string, research?: string) => void;
     card: (r: ReportSummary) => string;
+    rawCard: (r: ReportSummary) => string;
   };
 }
 
@@ -139,6 +141,21 @@ test("a report card is folded, shows its facts, and offers the right actions", (
     /<span class="rc-desc">Pilot \u00b7 United States \(English\) \u00b7 2 competitors: Archero 2, Capybara Go \u00b7 [^<]*2026[^<]*<\/span>/,
   );
   assert.match(pilot, />Newer data</);
+  // Flags in the card title only; the description names the countries without flags.
+  const cmp = p.rawCard(
+    summary({
+      name: "Japan and Korea",
+      type: "compare",
+      typeName: "Compare countries",
+      countries: "Japan, South Korea, Taiwan, Hong Kong",
+    }),
+  );
+  assert.match(cmp, /<span class="rc-name"><span class="cty">Japan<\/span> and /);
+  assert.match(
+    cmp,
+    /<span class="rc-desc">Compare countries · Japan, South Korea, Taiwan, Hong Kong ·/,
+  );
+  assert.doesNotMatch(cmp.split('class="rc-desc"')[1] ?? "", /class="cty"/);
   assert.match(pilot, /<option value="now">Now/);
   assert.match(
     pilot,

@@ -32,11 +32,10 @@ const ALWAYS_ART: ReadonlySet<string> = new Set(["title_image", "key_art", "load
  * text on top does not change it). Art types become full-screen art when one picture fills the
  * image, or promo when the art frames a smaller picture.
  *
- * Note (title-screen rule, awaiting the user's decision): mapTitleScreen (record-refresh.ts)
- * turns a title image into one 100% in-game capture of type title_image. Both its forms land
- * here as full-screen art, so the category and the layout are the same either way; only the
- * composition and "screenshot areas per image" statistics still see the difference. This is
- * the one place to change if the narrower title-screen rule is adopted.
+ * mapTitleScreen (record-refresh.ts) turns a title image into one 100% in-game capture of type
+ * title_image. Both its forms land here as full-screen art, and asCounted() below makes the
+ * composition and capture statistics count them as art too (user, 2026-09-29: one category,
+ * logo art is not treated differently).
  */
 export function categoryOf(a: ImageAnalysis): string {
   const s = a.screenshot;
@@ -54,6 +53,22 @@ export function categoryOf(a: ImageAnalysis): string {
   )
     return FULL_SCREEN_ART;
   return PROMO;
+}
+
+/**
+ * An analysis as the composition and capture statistics count it: every image of the Title
+ * screen / full-screen art category is full-screen art (no in-game capture), whichever form its
+ * analysis has. Other images are returned as they are. In memory only: the stored record and its
+ * data fingerprint do not change.
+ */
+export function asCounted(a: ImageAnalysis): ImageAnalysis {
+  const s = a.screenshot;
+  if (categoryOf(a) !== FULL_SCREEN_ART) return a;
+  if (s.composition === "pure_art" && !s.captures.length && !s.captureAreaPercent) return a;
+  return {
+    ...a,
+    screenshot: { ...s, composition: "pure_art", captures: [], captureAreaPercent: 0 },
+  };
 }
 
 /** The category of a recommended slot, from its taxonomy screen type alone. */
