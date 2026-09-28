@@ -12,7 +12,7 @@ import { type LoadedConfig, loadTaxonomy, projectPaths } from "../config/load.ts
 import { workspaceStorage } from "../storage/index.ts";
 import { newRunId, readDeck } from "../store/manifest.ts";
 import { stableHash } from "../util/hash.ts";
-import { eligibility, eligibilityProblem } from "./eligibility.ts";
+import { eligibility, eligibilityProblem, scopeIncomplete } from "./eligibility.ts";
 import { mainMarketRef } from "./main-market.ts";
 import { countryName } from "./names.ts";
 import { buildScopePlan, type PlanContext, planContext, type ScopePlan } from "./scope-plan.ts";
@@ -142,6 +142,8 @@ export function buildReportVersion(
   const e = eligibility(loaded);
   const refused = eligibilityProblem(e, def.type);
   if (refused) return { ok: false, status: 409, problem: refused };
+  const incomplete = scopeIncomplete(def.scope);
+  if (incomplete) return { ok: false, status: 409, problem: incomplete };
   const plan = buildScopePlan(loaded, def.scope);
   if (!plan.instant)
     return {

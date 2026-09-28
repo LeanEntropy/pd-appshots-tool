@@ -108,6 +108,7 @@ async function openBuilder(pre) {
   bld.name = p.name || "";
   bld.nameEdited = !!p.name;
   bld.plan = null;
+  bld.dirty = false;
   renderBuilder();
   box.scrollIntoView({ block: "start" });
   const h = document.getElementById("bTitle"); if (h) h.focus();
@@ -117,7 +118,7 @@ async function openBuilder(pre) {
 function closeBuilder() {
   const box = document.getElementById("builder");
   if (box) { box.hidden = true; box.innerHTML = ""; }
-  bld.id = null; bld.plan = null;
+  bld.id = null; bld.plan = null; bld.dirty = false; bld.seq++;
 }
 
 // Every change: "Working out what is needed..." at once, then the numbers (debounced, one save at a time).
@@ -128,7 +129,14 @@ function builderChanged(save) {
   const seq = bld.seq;
   const problem = scopeProblem();
   const needs = document.getElementById("bNeeds");
-  if (problem) { bld.plan = null; if (needs) needs.innerHTML = '<p class="meta">' + esc(problem) + "</p>"; const a = document.getElementById("bActs"); if (a) a.innerHTML = '<button type="button" id="bClose">Close</button>'; return; }
+  if (problem) {
+    bld.plan = null;
+    if (needs) { needs.className = ""; needs.innerHTML = '<p class="meta">' + esc(problem) + "</p>"; }
+    const a = document.getElementById("bActs"); if (a) a.innerHTML = '<button type="button" id="bClose">Close</button>';
+    // The choice so far is still saved as the draft (closing the page keeps it).
+    if (save) bldChain = bldChain.then(() => saveDraftOnly(seq));
+    return;
+  }
   actLine(needs, "busy", "Working out what is needed...");
   clearTimeout(bld.timer);
   bld.timer = setTimeout(() => { bldChain = bldChain.then(() => recompute(seq)); }, 250);
@@ -140,6 +148,14 @@ async function ensureDraft() {
   bld.id = d.id; bld.name = d.name;
   const h = document.getElementById("bTitle"); if (h) h.textContent = "Report setup (saved as a draft)";
   if (typeof loadReport === "function") loadReport();
+}
+
+async function saveDraftOnly(seq) {
+  if (seq !== bld.seq || isPresetType(bld.type)) return;
+  try {
+    if (!bld.id) await ensureDraft();
+    else await sendReq("PATCH", API + "/reports/" + encodeURIComponent(bld.id), bld.nameEdited ? { scope: builderScope(), name: bld.name } : { scope: builderScope() });
+  } catch (e) { if (seq === bld.seq) actLine(document.getElementById("bStatus"), "bad", "Your choice was not saved: " + actReason(e)); }
 }
 
 async function recompute(seq) {

@@ -51,6 +51,18 @@ export function eligibility(loaded: LoadedConfig): Eligibility {
   };
 }
 
+/** Why a builder scope cannot be planned or built yet (a draft may be saved incomplete). */
+export function scopeIncomplete(scope: {
+  type: ReportType;
+  markets: readonly unknown[];
+}): string | null {
+  if (scope.type === "country" && scope.markets.length !== 1)
+    return "Pick the country of this report.";
+  if (scope.type === "compare" && scope.markets.length < 2)
+    return "Tick at least two countries to compare.";
+  return null;
+}
+
 /** Why a report of this type cannot be made now, or null (the API's check). */
 export function eligibilityProblem(e: Eligibility, type: ReportType): string | null {
   const t = e.types[type];

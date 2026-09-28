@@ -1,6 +1,6 @@
 import type { LoadedConfig } from "../config/load.ts";
 import { countrySlices, scopeDataHash } from "./build.ts";
-import type { Eligibility } from "./eligibility.ts";
+import { type Eligibility, scopeIncomplete } from "./eligibility.ts";
 import { mainMarketRef } from "./main-market.ts";
 import { buildScopePlan, type PlanContext } from "./scope-plan.ts";
 import type { ReportDef, VersionInputs } from "./types.ts";
@@ -9,6 +9,8 @@ const money = (n: number) => `$${n.toFixed(2)}`;
 
 /** A draft's status line: what it needs before it can be built (code only). */
 export function draftStatus(loaded: LoadedConfig, def: ReportDef, ctx: PlanContext): string {
+  const incomplete = scopeIncomplete(def.scope);
+  if (incomplete) return `Draft: ${incomplete.charAt(0).toLowerCase()}${incomplete.slice(1)}`;
   try {
     const p = buildScopePlan(loaded, def.scope, { proposeDrop: false, ctx });
     if (p.instant) return "Draft: ready to build, free";

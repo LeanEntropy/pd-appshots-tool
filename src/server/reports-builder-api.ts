@@ -2,7 +2,7 @@ import { z } from "zod";
 import { type LoadedConfig, projectPaths } from "../config/load.ts";
 import { fitFor } from "../core/selection.ts";
 import { buildReportVersion } from "../reports/build.ts";
-import { eligibility, eligibilityProblem } from "../reports/eligibility.ts";
+import { eligibility, eligibilityProblem, scopeIncomplete } from "../reports/eligibility.ts";
 import { mainMarketRef } from "../reports/main-market.ts";
 import { matchCheck, savePairVerdict } from "../reports/match-check.ts";
 import { suggestName } from "../reports/names.ts";
@@ -37,7 +37,11 @@ export const ScopeBody = z.strictObject({
  * A scope from the page, checked against the project's own countries, competitors and chart
  * games (never trusted as given). Pilot and Full check are presets: their scope comes from the pick.
  */
-export function resolveScope(loaded: LoadedConfig, raw: unknown): ReportScope | string {
+export function resolveScope(
+  loaded: LoadedConfig,
+  raw: unknown,
+  o: { partial?: boolean } = {},
+): ReportScope | string {
   const p = ScopeBody.safeParse(raw);
   if (!p.success) return RELOAD;
   const b = p.data;
@@ -52,9 +56,16 @@ export function resolveScope(loaded: LoadedConfig, raw: unknown): ReportScope | 
   if (markets.some((m) => !m) || dup(b.markets.map((m) => m.gl))) return RELOAD;
   if (b.competitors.some((a) => !named.has(a)) || dup(b.competitors)) return RELOAD;
   if (b.includeCharts.some((a) => !charts.has(a)) || dup(b.includeCharts)) return RELOAD;
-  if (b.type === "country" && markets.length !== 1)
+  if (b.type === "country" && markets.length > 1)
     return "Pick one country for a One country report.";
-  if (b.type === "compare" && markets.length < 2) return "Pick at least two countries to compare.";
+  const incomplete = scopeIncomplete({ type: b.type, markets });
+  if (incomplete && !o.partial) return incomplete;
+  // Left out to stay within the limit: only picked games (never ours) in picked countries, once.
+  const games = new Set([...b.competitors, ...b.includeCharts]);
+  const gls = new Set(markets.map((m) => m?.gl));
+  const out = (b.leftOut ?? []).map((x) => `${x.appId}|${x.gl}`);
+  if (dup(out) || (b.leftOut ?? []).some((x) => !games.has(x.appId) || !gls.has(x.gl)))
+    return RELOAD;
   return {
     type: b.type,
     markets: markets.filter((m) => m !== undefined),
@@ -119,7 +130,10 @@ export function planFor(loaded: LoadedConfig, scope: ReportScope): ApiResponse {
 
 export function postPlan(loaded: LoadedConfig, raw: unknown): ApiResponse {
   const scope = resolveScope(loaded, (raw as { scope?: unknown } | null)?.scope);
-  return typeof scope === "string" ? bad(scope) : planFor(loaded, scope);
+  if (typeof scope === "string") return bad(scope);
+  const refused = eligibilityProblem(eligibility(loaded), scope.type);
+  if (refused) return { status: 409, body: { problems: [refused] } };
+  return planFor(loaded, scope);
 }
 
 const DraftBody = z.strictObject({ scope: z.unknown(), name: z.string().max(120).optional() });
@@ -128,7 +142,7 @@ const DraftBody = z.strictObject({ scope: z.unknown(), name: z.string().max(120)
 export function postDraft(loaded: LoadedConfig, raw: unknown): ApiResponse {
   const b = DraftBody.safeParse(raw);
   if (!b.success) return bad();
-  const scope = resolveScope(loaded, b.data.scope);
+  const scope = resolveScope(loaded, b.data.scope, { partial: true });
   if (typeof scope === "string") return bad(scope);
   if (isPreset(scope.type))
     return bad("The Pilot and the Full check are in the list already: build them from there.");
@@ -150,10 +164,12 @@ export function saveScope(loaded: LoadedConfig, id: string, raw: unknown): ApiRe
   const s = workspaceStorage(paths.workspace);
   const def = readDef(s, paths, id);
   if (!def) return null;
-  const scope = resolveScope(loaded, raw);
+  const scope = resolveScope(loaded, raw, { partial: true });
   if (typeof scope === "string") return bad(scope);
   if (isPreset(def.type) || scope.type !== def.type)
     return bad("The kind of a saved report cannot change. Start a new report instead.");
+  const refused = eligibilityProblem(eligibility(loaded), scope.type);
+  if (refused) return { status: 409, body: { problems: [refused] } };
   saveDef(s, paths, { ...def, scope });
   return { status: 200, body: { id: def.id, scope } };
 }
@@ -162,11 +178,12 @@ export function getReportPlan(loaded: LoadedConfig, id: string): ApiResponse | n
   const paths = projectPaths(loaded);
   const def = readDef(workspaceStorage(paths.workspace), paths, id);
   if (!def) return null;
+  const about = { id: def.id, name: def.name, type: def.type, scope: def.scope };
+  // A draft saved before its countries were picked has no numbers yet.
+  const incomplete = scopeIncomplete(def.scope);
+  if (incomplete) return { status: 200, body: { ...about, plan: null, problem: incomplete } };
   const r = planFor(loaded, def.scope);
-  return {
-    ...r,
-    body: { ...(r.body as object), id: def.id, name: def.name, type: def.type, scope: def.scope },
-  };
+  return { ...r, body: { ...(r.body as object), ...about } };
 }
 
 /** "Build report": a new version at once when nothing needs AI; otherwise a refusal with why. */

@@ -43,6 +43,7 @@ test("builder API: options, drafts, plans, instant build and refusals", async ()
     const early = await post("/reports", { scope });
     assert.equal(early.status, 409);
     assert.match(JSON.stringify(await early.json()), /Available after the Pilot/);
+    assert.equal((await post("/reports/plan", { scope })).status, 409);
     readyReport(loaded, "pilot");
     const opts = await (await fetch(`${api}/reports/builder`)).json();
     assert.equal(opts.types.country.open, true);
@@ -60,7 +61,29 @@ test("builder API: options, drafts, plans, instant build and refusals", async ()
       (await post("/reports", { scope: { ...scope, competitors: ["com.nope"] } })).status,
       400,
     );
-    assert.equal((await post("/reports", { scope: { ...scope, type: "compare" } })).status, 400);
+    const badOut = { ...scope, leftOut: [{ appId: three[0], gl: "jp" }] };
+    assert.equal(
+      (await post("/reports", { scope: badOut })).status,
+      400,
+      "left out: not a picked country",
+    );
+    const oursOut = { ...scope, leftOut: [{ appId: loaded.config.ourApp.id, gl: "us" }] };
+    assert.equal(
+      (await post("/reports", { scope: oursOut })).status,
+      400,
+      "our game is never left out",
+    );
+    // An unfinished choice is saved as a draft too; it has no numbers until it is complete.
+    const partial = await post("/reports", { scope: { ...scope, type: "compare" } });
+    assert.equal(partial.status, 201);
+    const pid = (await partial.json()).id;
+    assert.equal((await (await fetch(`${api}/reports/${pid}/plan`)).json()).plan, null);
+    assert.equal((await post(`/reports/${pid}/build`, {})).status, 409);
+    assert.equal(
+      (await post("/reports/plan", { scope: { ...scope, type: "compare" } })).status,
+      400,
+    );
+    await post(`/reports/${pid}`, {}, "DELETE");
     assert.equal(await post("/reports", { scope }, "POST").then((r) => r.status), 201);
     const draft = listDefs(s, paths).find((d) => d.type === "country");
     assert.ok(draft);

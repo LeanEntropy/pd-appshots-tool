@@ -85,9 +85,13 @@ export function getReportVersion(loaded: LoadedConfig, id: string, vid: string):
       status: 404,
       body: { problems: ["This version could not be found. Reload the page."] },
     };
-  const research = files.has("suggestions.json")
-    ? s.getJson(versionFileKey(paths, entry.id, "suggestions.json"))
-    : null;
+  let research: unknown = null;
+  try {
+    if (files.has("suggestions.json"))
+      research = s.getJson(versionFileKey(paths, entry.id, "suggestions.json")) ?? null;
+  } catch {
+    // An unreadable list is simply not shown.
+  }
   const meta = {
     versionId: entry.id,
     generatedAt: entry.generatedAt,

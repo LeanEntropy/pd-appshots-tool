@@ -1,3 +1,4 @@
+import { latestOrderDate } from "../analysis/orders.ts";
 import { buildAnalysisPlan } from "../analysis/plan.ts";
 import { isUsable } from "../analysis/records.ts";
 import { type LoadedConfig, projectPaths } from "../config/load.ts";
@@ -110,7 +111,8 @@ export function signals(
       const d = readDeck(paths.decks, { appId: c.appId, gl: m.gl, hl: m.hl });
       const home = readDeck(paths.decks, { appId: c.appId, gl: main.gl, hl: main.hl });
       if (d?.status !== "ok" || home?.status !== "ok") continue;
-      if (d.fetchedAt && Date.parse(d.fetchedAt) < staleBefore) stale = true;
+      const ordered = latestOrderDate(paths, c.appId, m.gl, m.hl);
+      if (ordered && Date.parse(`${ordered}T00:00:00Z`) < staleBefore) stale = true;
       const homeImgs = analysedSlots(config, home).flatMap((s) => {
         const r = s.imageId ? db.get(s.imageId) : undefined;
         return r ? [r] : [];
