@@ -5,6 +5,7 @@ import { writeCurrentReport } from "./analysis/report-inputs.ts";
 import { importCommand, loadForCommand, printProjects, ROOT } from "./cli-project.ts";
 import { type LoadedConfig, projectPaths } from "./config/load.ts";
 import { asiaVsUs, writeOverview } from "./overview/overview-report.ts";
+import { reportCommand } from "./reports/cli.ts";
 import { openBrowser } from "./server/http-util.ts";
 import { startToolServer } from "./server/instance.ts";
 import { runAnalyzeStep } from "./steps/analyze.ts";
@@ -39,6 +40,7 @@ const HELP = `Store Screenshot Recipe: setup commands (no AI analysis)
   npm run fit         Show which whole decks fit in the core check with the current pick
   npm run overview    Free store overview per country (orientation, ratios, deck length, reuse, colours). No AI
   npm run report      Write the report from the saved analyses, no AI (-- --stage core for the core check)
+                      -- "<report name or id>" saves a new version of that report instead (no AI)
   npm run refresh-records  Rebuild each analysis record's identity block and taxonomy mapping (no AI)
   npm run store-text  Fill in the category, tags and store text of the pages already downloaded
                       (free, no AI). Shows the count first; -- --yes reads them, one at a time
@@ -185,6 +187,8 @@ async function main(): Promise<number> {
       return (await runAnalyzeStep(loaded, args.command, opts, log)) ? 0 : 1;
     }
     case "report": {
+      const name = args.positional.join(" ").trim();
+      if (name) return reportCommand(loaded, name, log);
       const stage = args.flags.get("stage") === "core" ? "core" : "pilot";
       log(`Report from the saved analyses (no AI): ${writeCurrentReport(loaded, stage)}`);
       return 0;

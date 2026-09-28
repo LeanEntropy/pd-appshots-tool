@@ -9,6 +9,7 @@ import { REPORT_SCRIPT } from "./gallery-report.ts";
 import { REPORT_PARTS_SCRIPT } from "./gallery-report-parts.ts";
 import { RUN_SCRIPT } from "./gallery-run.ts";
 import { STORE_SCRIPT } from "./gallery-store.ts";
+import { REPORT_LIST_SCRIPT } from "./report-list.ts";
 
 /** Client-side script for the raw deck gallery. Plain JS, no external libraries. */
 const RENDER_SCRIPT = `
@@ -63,4 +64,4 @@ document.getElementById("locale").innerHTML = '<option value="all">All countries
 `;
 
 export const GALLERY_SCRIPT = `${ACTION_SCRIPT}
-${RENDER_SCRIPT}\n${INFO_SCRIPT}\n${STORE_SCRIPT}\n${PICKER_SCRIPT}\n${GRID_SCRIPT}\n${NAV_SCRIPT}\n${REPORT_SCRIPT}\n${REPORT_PARTS_SCRIPT}\n${RUN_SCRIPT}\n${ANALYSIS_SCRIPT}\n${EXPAND_SCRIPT}\nrender();\nloadSaved();\nshowPage(false);\n`;
+${RENDER_SCRIPT}\n${INFO_SCRIPT}\n${STORE_SCRIPT}\n${PICKER_SCRIPT}\n${GRID_SCRIPT}\n${NAV_SCRIPT}\n${REPORT_SCRIPT}\n${REPORT_PARTS_SCRIPT}\n${REPORT_LIST_SCRIPT}\n${RUN_SCRIPT}\n${ANALYSIS_SCRIPT}\n${EXPAND_SCRIPT}\nrender();\nloadSaved();\nshowPage(false);\n`;

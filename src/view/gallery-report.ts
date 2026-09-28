@@ -1,5 +1,7 @@
 /**
- * Report page: the report as it stands now (from the saved analyses, no AI) or an earlier run.
+ * One report's content (rendered into its card by report-list.ts): the report as it stands now
+ * (from the saved analyses, no AI) or a saved version. Parameterised by container and report id:
+ * every element id is prefixed with the report id, so several open reports never clash.
  * Numbered sections with a table of contents: 1 overview (verdict and prioritised key points),
  * 2 patterns with our fit, 3 one row per store position (ours first), 4 recommendations,
  * 5 store text and derived keywords per country, 6 detailed statistics. Everything but the AI wording and the recommendations is computed by
@@ -7,8 +9,11 @@
  * approval (nothing runs without it). Images fold globally (remembered per viewer) or per section.
  */
 export const REPORT_SCRIPT = `
+// The report being rendered (read by L() and the part renderers while one report is drawn).
 let reportData = null;
-let reportSeq = 0;
+let repRid = "";
+let repStage = "pilot";
+// Hidden image sections, as "<report id>:<section>".
 const hiddenImgSecs = new Set();
 let showImgs = true;
 try { showImgs = localStorage.getItem("ssr.reportImages") !== "off"; } catch {}
@@ -25,8 +30,9 @@ function rthumb(id, thumb, file, alt) {
 function pill(cls, text) { return '<span class="pill ' + esc(cls) + '">' + esc(text) + "</span>"; }
 function sec(n, title, body, imgs, closed) {
   const id = SEC_IDS[n];
-  return '<details class="sec' + (hiddenImgSecs.has(id) ? " noimg" : "") + '"' + (closed ? "" : " open") + ' data-sec="' + id + '" id="rep-' + id + '"><summary><span class="sec-t"><span class="secno">' + (n + 1) + ".</span> " + esc(title) + "</span>"
-    + (imgs ? '<button type="button" class="imgbtn" data-imgsec="' + id + '">' + (hiddenImgSecs.has(id) ? "Show images" : "Hide images") + "</button>" : "")
+  const hid = hiddenImgSecs.has(repRid + ":" + id);
+  return '<details class="sec' + (hid ? " noimg" : "") + '"' + (closed ? "" : " open") + ' data-sec="' + id + '" id="rep-' + repRid + "-" + id + '"><summary><span class="sec-t"><span class="secno">' + (n + 1) + ".</span> " + esc(title) + "</span>"
+    + (imgs ? '<button type="button" class="imgbtn" data-rid="' + repRid + '" data-imgsec="' + id + '">' + (hid ? "Show images" : "Hide images") + "</button>" : "")
     + '</summary><div class="sec-b">' + body + "</div></details>";
 }
 
@@ -41,7 +47,7 @@ function overviewHtml(d) {
   const points = worded ? ai.keyPoints : pts;
   const s = d.synthesis;
   const status = s.state === "current" ? ""
-    : '<div class="banner ' + s.state + '"><p>' + pill(s.state, s.state === "stale" ? "AI parts out of date" : "AI parts not written yet") + " " + esc(s.reason) + "</p><p><strong>How to get them:</strong> " + esc(s.howTo) + '</p><p><button type="button" class="primary" id="reportApprove">Open the approval</button> <span class="meta">Shows the exact images and cost first; nothing runs until you approve.</span></p></div>';
+    : '<div class="banner ' + s.state + '"><p>' + pill(s.state, s.state === "stale" ? "AI parts out of date" : "AI parts not written yet") + " " + esc(s.reason) + "</p><p><strong>How to get them:</strong> " + esc(s.howTo) + '</p><p><button type="button" class="primary reportApprove" data-stage="' + esc(repStage) + '">Open the approval</button> <span class="meta">Shows the exact images and cost first; nothing runs until you approve.</span></p></div>';
   return '<div class="verdict ' + (f ? VERDICT_CLS[f.verdict] || "" : "none") + '"><div class="vlabel">Our deck is</div><div class="vword">' + esc(f ? f.verdict : "not enough data") + "</div>"
     + (f && f.score !== null ? '<div class="meta">Fits ' + pc(f.score) + " of the weighted competitor patterns (" + f.patterns.filter((x) => x.fits === true).length + " fit, " + f.patterns.filter((x) => x.fits === false).length + " different).</div>" : "") + "</div>"
     + (worded ? "<p>" + esc(ai.verdictText) + "</p>" : "")
@@ -52,14 +58,16 @@ function overviewHtml(d) {
 }
 
 function tocHtml() {
-  return '<nav class="card toc" aria-label="Report contents"><strong>Contents</strong><ol>' + SECTIONS.map((s, i) => '<li><button type="button" class="linkbtn" data-goto="rep-' + SEC_IDS[i] + '">' + esc(s) + "</button></li>").join("") + "</ol></nav>";
+  return '<nav class="card toc" aria-label="Report contents"><strong>Contents</strong><ol>' + SECTIONS.map((s, i) => '<li><button type="button" class="linkbtn" data-goto="rep-' + repRid + "-" + SEC_IDS[i] + '">' + esc(s) + "</button></li>").join("") + "</ol></nav>";
 }
 
-function renderReport() {
-  const box = document.getElementById("report");
+// Draws report data d into box, for report rid (ids prefixed with it) of the given batch.
+function renderReport(box, d, rid, stage) {
+  if (!box || !d) return;
+  reportData = d;
+  repRid = String(rid || "").replace(/[^a-z0-9-]/g, "");
+  repStage = stage === "core" ? "core" : "pilot";
   box.classList.toggle("noimg", !showImgs);
-  const d = reportData;
-  if (!d) return;
   box.innerHTML = tocHtml()
     + sec(0, SECTIONS[0], overviewHtml(d), false)
     + sec(1, SECTIONS[1], fitHtml(d), false)
@@ -69,40 +77,11 @@ function renderReport() {
     + sec(5, SECTIONS[5], patternsHtml(d.patterns), false, true);
 }
 
-async function loadReport() {
-  const box = document.getElementById("report");
-  if (!box || !location.protocol.startsWith("http")) return;
-  const stage = (document.getElementById("stage") || {}).value || "pilot";
-  const sel = document.getElementById("reportRun");
-  const run = sel ? sel.value : "current";
-  const seq = ++reportSeq;
-  const line = document.getElementById("reportStatus");
-  actLine(line, "busy", run === "current" ? "Loading the report..." : "Loading run " + run + "...");
-  const ready = () => { if (line && seq === reportSeq) line.hidden = true; };
-  try {
-    if (run === "current") {
-      const r = await getJson(API + "/report/current?stage=" + encodeURIComponent(stage));
-      if (seq !== reportSeq) return;
-      ready();
-      reportData = r.data;
-      if (sel) sel.innerHTML = '<option value="current">Now (from the saved analyses)</option>' + (r.runs || []).map((x) => '<option value="' + esc(x.runId) + '">Run ' + esc(x.runId) + (x.hasData ? "" : " (older format)") + "</option>").join("");
-      renderReport();
-      return;
-    }
-    const r = await getJson(API + "/report/run?stage=" + encodeURIComponent(stage) + "&id=" + encodeURIComponent(run));
-    if (seq !== reportSeq) return;
-    ready();
-    if (r.data) { reportData = r.data; renderReport(); return; }
-    if (!r.html) { box.innerHTML = '<p class="warn">' + esc((r.problems || ["This run could not be found."]).join(" ")) + "</p>"; return; }
-    box.innerHTML = '<div class="banner stale"><p>Run ' + esc(r.runId || run) + " was saved in an older format: shown as written then (" + esc(r.file || "") + ").</p></div>" + (r.html ? '<div class="card">' + r.html + "</div>" : '<p class="warn">' + esc((r.problems || ["Not found."]).join(" ")) + "</p>");
-  } catch (e) { if (seq === reportSeq) actLine(line, "bad", "The report could not be loaded: " + actReason(e)); }
-}
-
 document.addEventListener("click", (e) => {
   const b = e.target.closest && e.target.closest("button.imgbtn");
   if (b) {
     e.preventDefault();
-    const id = b.dataset.imgsec;
+    const id = (b.dataset.rid || "") + ":" + b.dataset.imgsec;
     if (hiddenImgSecs.has(id)) hiddenImgSecs.delete(id); else hiddenImgSecs.add(id);
     const s = b.closest("details.sec");
     if (s) s.classList.toggle("noimg", hiddenImgSecs.has(id));
@@ -110,16 +89,20 @@ document.addEventListener("click", (e) => {
   }
   const g = e.target.dataset && e.target.dataset.goto;
   if (g) { const t = document.getElementById(g); if (t) { t.open = true; t.scrollIntoView({ block: "start" }); } }
-  if (e.target.id === "reportApprove") { goTo("analysis"); openApproval(e.target, null); }
+  const ap = e.target.closest && e.target.closest("button.reportApprove");
+  if (ap) {
+    // The approval is for this report's batch (Pilot or Full check).
+    const st = document.getElementById("stage");
+    if (st && st.value !== ap.dataset.stage) { st.value = ap.dataset.stage; st.dispatchEvent(new Event("change", { bubbles: true })); }
+    goTo("analysis");
+    openApproval(ap, null);
+  }
 });
 document.addEventListener("change", (e) => {
-  if (e.target.id === "reportRun") loadReport();
-  // A saved run belongs to one batch: switching the batch goes back to the current report.
-  if (e.target.id === "stage") { const sel = document.getElementById("reportRun"); if (sel) sel.value = "current"; }
   if (e.target.id === "showImages") {
     showImgs = e.target.checked;
     try { localStorage.setItem("ssr.reportImages", showImgs ? "on" : "off"); } catch {}
-    document.getElementById("report").classList.toggle("noimg", !showImgs);
+    document.querySelectorAll(".rbox").forEach((b) => b.classList.toggle("noimg", !showImgs));
   }
 });
 { const cb = document.getElementById("showImages"); if (cb) cb.checked = showImgs; }

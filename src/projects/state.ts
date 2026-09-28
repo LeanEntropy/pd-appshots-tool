@@ -1,10 +1,10 @@
-import { readLatest } from "../analysis/final-report.ts";
 import { buildAnalysisPlan, type Stage } from "../analysis/plan.ts";
 import { type LoadedConfig, projectPaths } from "../config/load.ts";
 import type { ProjectSettings } from "../config/project-schema.ts";
 import { fitFor } from "../core/selection.ts";
 import { readJournal } from "../jobs/journal.ts";
 import { analysisStatus } from "../jobs/status.ts";
+import { presetOutcome } from "../reports/ready.ts";
 import { workspaceStorage } from "../storage/index.ts";
 import { latestRun } from "../view/model.ts";
 
@@ -53,11 +53,12 @@ const STEPS: { key: ProjectStage[]; label: string }[] = [
   { key: ["recommendations", "expand"], label: "Recommendations" },
 ];
 
-function steps(stage: ProjectStage): ProjectState["steps"] {
+/** With complete, the current step is done too (a Full check report with recommendations). */
+function steps(stage: ProjectStage, complete = false): ProjectState["steps"] {
   const at = STEPS.findIndex((s) => s.key.includes(stage));
   return STEPS.map((s, i) => ({
     label: s.label,
-    state: i < at ? "done" : i === at ? "current" : "todo",
+    state: i < at || (i === at && complete) ? "done" : i === at ? "current" : "todo",
   }));
 }
 
@@ -127,7 +128,13 @@ export function projectState(
       label: "Pick competitors",
       href: gallery("competitors"),
     });
+  // Derived from the saved reports: a stage with a Ready report (recommendations written) is done,
+  // and a Full check report also completes the Pilot. Newer data is the report's badge, not a step back.
+  const core = presetOutcome(loaded, "core");
+  const pilotReady = presetOutcome(loaded, "pilot").ready;
   for (const stage of ["pilot", "core"] as Stage[]) {
+    const runningHere = job.running && job.stage === stage;
+    if (!runningHere && (core.ready || (stage === "pilot" && pilotReady))) continue;
     if (stage === "core" && !view.fit.ok)
       return base("pick", `Pilot done. Pick competitors for the core check: ${view.fit.message}`, {
         label: "Pick competitors",
@@ -167,18 +174,24 @@ export function projectState(
       progress: { done, total, label: `${done} of ${total} ${stage} images analysed` },
     };
   }
-  const latest = readLatest(paths, "core");
   const increments = readJournal(workspaceStorage(paths.workspace), paths).increments;
   if (increments.length)
-    return base("expand", "Expansion chosen: waiting for the expansion step", {
-      label: "Open the report",
-      href: gallery("report"),
-    });
-  return base(
-    "recommendations",
-    latest?.complete
-      ? "Recommendations ready. Next: choose how to expand"
-      : "Core check reported. Next: choose how to expand",
-    { label: "Open the report", href: gallery("report") },
-  );
+    return {
+      ...base("expand", "Expansion chosen: waiting for the expansion step", {
+        label: "Open the report",
+        href: gallery("report"),
+      }),
+      steps: steps("expand", core.ready),
+    };
+  const pct = core.score === null ? "" : ` (${Math.round(core.score * 100)}%)`;
+  return {
+    ...base(
+      "recommendations",
+      core.ready
+        ? `Full check done${core.verdict ? `: ${core.verdict}${pct}` : ""}`
+        : "Core check reported. Next: choose how to expand",
+      { label: core.ready ? "Create a report" : "Open the report", href: gallery("report") },
+    ),
+    steps: steps("recommendations", core.ready),
+  };
 }

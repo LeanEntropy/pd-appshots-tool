@@ -37,7 +37,16 @@ export interface Storage {
   listProjectIds(): string[];
   /** Local-disk capability: the OS path of a key, for tools that need a file (sharp, CLIs). */
   localPath(key: string): string;
+  /**
+   * The only delete (plan-reports 4.3): one report's def (projects/<id>/reports/defs/<r>.json)
+   * or one of its version folders (projects/<id>/reports/<version id>). Any other key is refused.
+   */
+  deleteReportFiles(key: string): void;
 }
+
+/** Keys deleteReportFiles accepts: a report def file, or a report version folder. */
+export const REPORT_DELETE_KEY =
+  /^projects\/[a-z0-9-]{1,60}\/reports\/(defs\/r-[a-z0-9-]+\.json|\d{4}-\d{2}-\d{2}T[0-9-]+Z-r-[a-z0-9-]+)$/;
 
 /** Every project-scoped storage call is made through its context (a future owner check goes here). */
 export interface ProjectContext {

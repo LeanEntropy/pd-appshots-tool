@@ -13,7 +13,7 @@ import {
 } from "node:fs";
 import { dirname, join, relative, resolve, sep } from "node:path";
 import type { Readable } from "node:stream";
-import type { Storage } from "./types.ts";
+import { REPORT_DELETE_KEY, type Storage } from "./types.ts";
 
 /** Top-level key namespaces and their folders inside the workspace. */
 const NAMESPACES: Record<string, string> = {
@@ -125,6 +125,11 @@ export class LocalFsStorage implements Storage {
 
   readStream(k: string): Readable {
     return createReadStream(this.localPath(k));
+  }
+
+  deleteReportFiles(k: string): void {
+    if (!REPORT_DELETE_KEY.test(k)) throw new Error(`Refusing to delete "${k}"`);
+    rmSync(this.localPath(k), { recursive: true, force: true });
   }
 
   exists(k: string): boolean {

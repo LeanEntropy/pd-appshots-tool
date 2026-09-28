@@ -20,6 +20,7 @@ import {
 import type { AppContext } from "./app-context.ts";
 import { redirect, send, sendHtml, writeRequest } from "./http-util.ts";
 import { getReportCurrent, getReportRun } from "./report-api.ts";
+import { isReportsPath, reportsRoute } from "./routes-reports.ts";
 import { serveStatic } from "./static.ts";
 
 type Get = (l: LoadedConfig, q: URLSearchParams, app: AppContext) => ApiResponse;
@@ -43,7 +44,9 @@ const GETS: Record<string, Get> = {
 const POSTS: Record<string, Post> = {
   "/api/selection": (l, b) => postSelection(l, b),
   "/api/analysis/plan": (l, b, a) => postAnalysisPlan(l, b, a.names),
-  "/api/analysis/run": (l, b, a) => postAnalysisRun(l, b, { ...a.runner, names: a.names }),
+  // When the run ends, the home card's cached summary is refreshed (it holds the new report).
+  "/api/analysis/run": (l, b, a) =>
+    postAnalysisRun(l, b, { ...a.runner, names: a.names, onEnd: () => stateFor(a, l) }),
   "/api/analysis/stop": (l) => postAnalysisStop(l),
   "/api/overview": (l) => postOverview(l),
   "/api/expansion": (l, b) => postExpansion(l, b),
@@ -90,6 +93,8 @@ export async function projectRoute(
   }
   if (rest === "/status" && req.method === "GET")
     return sendHtml(res, app.pages.status(id, app.names(id), stateFor(app, loaded), app.token));
+  // Several reports per project (plan-reports R1).
+  if (isReportsPath(rest)) return reportsRoute(app, loaded, rest, req, res);
   const get = GETS[rest];
   if (get && req.method === "GET") {
     const r = get(loaded, url.searchParams, app);
