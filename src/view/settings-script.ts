@@ -73,7 +73,7 @@ function readValue(el, f) {
 // The consequences of a change with a cost; resolves true when the user says save.
 function confirmChange(r) {
   const dlg = document.getElementById("confirmDlg");
-  document.getElementById("confirmBody").innerHTML = "<p><strong>" + actEsc(r.field) + "</strong></p><ul>" + r.consequences.map((c) => "<li>" + actEsc(c.text) + "</li>").join("") + "</ul><p>Save this change?</p>";
+  document.getElementById("confirmBody").innerHTML = "<p><strong>" + actEsc(r.field) + "</strong></p><ul>" + r.consequences.map((c) => "<li>" + actEsc(c.text) + "</li>").join("") + "</ul>" + (r.changedMeanwhile ? "<p><strong>These numbers changed since you last saw them.</strong></p>" : "") + "<p>Save this change?</p>";
   return new Promise((resolve) => {
     const yes = document.getElementById("confirmYes"); const no = document.getElementById("confirmNo");
     const end = (ok) => { yes.onclick = null; no.onclick = null; dlg.oncancel = null; if (dlg.open) dlg.close(); resolve(ok); };
@@ -107,7 +107,13 @@ async function saveField(fid, reset, btn) {
         progress("Waiting for your answer...");
         if (!(await confirmChange(r))) { restore(fid); return { cancelled: true }; }
         progress("Saving...");
-        r = await send(SET_API, Object.assign({}, body, { confirm: true }));
+        r = await send(SET_API, Object.assign({}, body, { confirm: r.confirmKey }));
+        // The numbers changed meanwhile (another tab): show the new ones and ask again.
+        if (r.needsConfirm) {
+          if (!(await confirmChange(r))) { restore(fid); return { cancelled: true }; }
+          r = await send(SET_API, Object.assign({}, body, { confirm: r.confirmKey }));
+          if (r.needsConfirm) throw new Error("The settings keep changing in another tab. Reload this page.");
+        }
       }
       VIEW = r.view;
       renderSettings();

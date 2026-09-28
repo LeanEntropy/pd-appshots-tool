@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
+import { readFileSync, writeFileSync } from "node:fs";
 import { test } from "node:test";
 import { approvalProblem } from "../src/analysis/job.ts";
 import { buildAnalysisPlan } from "../src/analysis/plan.ts";
@@ -42,7 +42,7 @@ test("settings: every field saves, reloads, and goes back to the default", async
     const wanted = new Map<string, unknown>();
     for (const f of before.fields) {
       const v = another(f);
-      const r = await s.post({ field: f.id, value: v, confirm: true });
+      const r = await s.save({ field: f.id, value: v });
       assert.equal(r.status, 200, `${f.id}: ${JSON.stringify(r.body)}`);
       assert.equal(r.body.saved, true);
       wanted.set(f.id, v);
@@ -61,7 +61,7 @@ test("settings: every field saves, reloads, and goes back to the default", async
     assert.equal(t.pdf.paper, "Letter");
     assert.equal(t.traffic("jp"), wanted.get("traffic.jp"));
     for (const f of after.fields) {
-      const r = await s.post({ field: f.id, reset: true, confirm: true });
+      const r = await s.save({ field: f.id, reset: true });
       assert.equal(r.status, 200, `${f.id}: ${JSON.stringify(r.body)}`);
     }
     const back = await s.view();
@@ -95,7 +95,7 @@ test("settings: refused values keep the old value and say why", async () => {
       ["core.workspace", "x", /does not know/],
     ];
     for (const [field, value, reason] of cases) {
-      const r = await s.post({ field, value, confirm: true });
+      const r = await s.save({ field, value });
       assert.equal(r.status, 400, field);
       assert.match(r.body.problems?.[0] ?? "", reason, field);
     }
@@ -129,8 +129,7 @@ test("settings: a new screenshot model shows the images analysed again and their
     const off = await s.post({ field: "review.screenshotAnalysis", value: false });
     assert.equal(off.body.consequences?.[0]?.images, 8);
     assert.equal(
-      (await s.post({ field: "review.screenshotAnalysis", value: false, confirm: true })).body
-        .saved,
+      (await s.save({ field: "review.screenshotAnalysis", value: false })).body.saved,
       true,
     );
     const on = await s.post({ field: "review.screenshotAnalysis", value: true });
@@ -193,6 +192,45 @@ test("settings: the page and the Settings link", async () => {
     assert.ok(gallery.includes(`href="/p/${s.id}/settings"`));
     const noToken = await fetch(s.api, { method: "POST", body: "{}" });
     assert.equal(noToken.status, 403);
+  } finally {
+    s.server.close();
+  }
+});
+
+test("settings: a confirmation only saves the numbers that were shown", async () => {
+  const s = await settingsServer();
+  try {
+    madeByAnotherProject(s.root, s.id);
+    const body = { field: "model.screenshotAnalysis", value: "claude:claude-opus-5-5" };
+    const ask = await s.post(body);
+    const key = ask.body.confirmKey as string;
+    assert.ok(key);
+    const guessed = await s.post({ ...body, confirm: "made-up" });
+    assert.equal(guessed.body.needsConfirm, true, "a key that was not given saves nothing");
+    // Another save in between (another tab): the old key no longer applies.
+    assert.equal((await s.post({ field: "options.pdf.images", value: false })).body.saved, true);
+    const stale = await s.post({ ...body, confirm: key });
+    assert.equal(stale.body.needsConfirm, true);
+    assert.equal(stale.body.changedMeanwhile, true);
+    const ok = await s.post({ ...body, confirm: stale.body.confirmKey });
+    assert.equal(ok.body.saved, true);
+    assert.equal((await s.field("model.screenshotAnalysis"))?.value, "claude:claude-opus-5-5");
+  } finally {
+    s.server.close();
+  }
+});
+
+test("settings: the screenshot switch turns an older review master switch back on", async () => {
+  const s = await settingsServer();
+  try {
+    const file = JSON.parse(readFileSync(s.settingsFile, "utf8"));
+    file.overrides.review.enabled = false;
+    writeFileSync(s.settingsFile, JSON.stringify(file));
+    assert.equal((await s.field("review.screenshotAnalysis"))?.value, false);
+    const r = await s.save({ field: "review.screenshotAnalysis", value: true });
+    assert.equal(r.body.saved, true);
+    assert.equal((await s.field("review.screenshotAnalysis"))?.value, true);
+    assert.equal(s.project().config.review.enabled, true);
   } finally {
     s.server.close();
   }

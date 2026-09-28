@@ -115,9 +115,11 @@ export function fieldsFor(config: Config): FieldDef[] {
       paths: [
         ["review", "coreCoverage"],
         ["review", "expansionCoverage"],
+        ["review", "enabled"],
       ],
       get: (c) => secondOpinionOn(c, "screenshotAnalysis"),
-      write: (v) => (v ? [1, 1] : [0, 0]),
+      // Switching it on also turns the older master switch back on, so "on" really means on.
+      write: (v) => (v ? [1, 1, true] : [0, 0, true]),
     },
     {
       ...modelField("screenshotAnalysis", ["models", "imageReview"], MODEL_CHOICES.imageReviewer),

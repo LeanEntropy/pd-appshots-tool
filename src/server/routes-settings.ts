@@ -6,6 +6,7 @@ import type { Config } from "../config/schema.ts";
 import { consequences, textUsdPerUse, usdRange } from "../settings/consequences.ts";
 import { changeField, fieldViews } from "../settings/overrides.ts";
 import { AI_STEPS, type AiStep, GROUPS, STEP_LABELS } from "../settings/schema.ts";
+import { stableHash } from "../util/hash.ts";
 import { settingsPage } from "../view/settings-analysis.ts";
 import type { ApiResponse } from "./api.ts";
 import type { AppContext, Loaded } from "./app-context.ts";
@@ -14,21 +15,24 @@ import { redirect, send, sendHtml, writeRequest } from "./http-util.ts";
 /**
  * The Settings page of a project (plan-reports 5B): GET /settings (the page),
  * GET /api/analysis-settings (its values) and POST /api/analysis-settings (one change, saved at
- * once; a change with a cost first answers with its consequences and is saved only when the
- * page sends it again with confirm).
+ * once; a change with a cost first answers with its consequences and a confirmation key, and
+ * is saved only when the page sends it again with that key. The key covers the saved settings,
+ * the change and the consequences shown, so a confirmation never applies to numbers that changed
+ * in between (another tab, another save): those are shown again instead).
  */
 const Body = z.strictObject({
   field: z.string().min(1).max(80),
   value: z.unknown().optional(),
   reset: z.literal(true).optional(),
-  confirm: z.boolean().optional(),
+  confirm: z.string().max(80).optional(),
 });
 
 const LATER =
   "Not used yet: this step arrives with the country reports. Your choice is kept for it.";
 const NOTES: Partial<Record<AiStep, string>> = {
   textLayer: LATER,
-  patterns: "Written by the recommendations model.",
+  patterns:
+    "Written by the recommendations model (one writer does both today). Its own second opinion arrives with the reports update; today the recommendations' second opinion checks the combined text.",
   countryAdvice: LATER,
   conceptMap: LATER,
   abTests:
@@ -90,8 +94,18 @@ export function postAnalysisSettings(app: AppContext, id: string, raw: unknown):
   const r = changeField(s, d, b.data.field, change);
   if ("problem" in r) return { status: 400, body: { problems: [r.problem] } };
   const cons = consequences(found.loaded, r.after);
-  if (cons.length && !b.data.confirm)
-    return { status: 200, body: { needsConfirm: true, field: r.field.label, consequences: cons } };
+  const confirmKey = stableHash({ s, field: b.data.field, change, cons }).slice(0, 32);
+  if (cons.length && b.data.confirm !== confirmKey)
+    return {
+      status: 200,
+      body: {
+        needsConfirm: true,
+        field: r.field.label,
+        consequences: cons,
+        confirmKey,
+        ...(b.data.confirm ? { changedMeanwhile: true } : {}),
+      },
+    };
   const next = ProjectSettingsSchema.parse({ ...r.settings, updatedAt: new Date().toISOString() });
   app.storage.putJson(settingsKey({ projectId: id }), next);
   return {

@@ -41,6 +41,12 @@ export async function settingsServer() {
       },
     };
   };
+  /** Saves like the page: when asked, answers yes with the confirmation key it was given. */
+  const save = async (body: Record<string, unknown>) => {
+    const first = await post(body);
+    if (!first.body.needsConfirm) return first;
+    return post({ ...body, confirm: first.body.confirmKey });
+  };
   const view = async () => {
     const r = await fetch(api);
     return (await r.json()) as { fields: FieldView[] };
@@ -48,7 +54,7 @@ export async function settingsServer() {
   const field = async (fid: string) => (await view()).fields.find((f) => f.id === fid);
   const project = () => loadProject(id, { root });
   const settingsFile = join(root, "workspace", id, "project.json");
-  return { ...s, id, root, api, post, view, field, project, settingsFile };
+  return { ...s, id, root, api, post, save, view, field, project, settingsFile };
 }
 
 /**

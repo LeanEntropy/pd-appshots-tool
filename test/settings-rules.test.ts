@@ -5,6 +5,7 @@ import { estimate } from "../src/analysis/estimate.ts";
 import { configHash, loadConfig } from "../src/config/load.ts";
 import { configFromSettings, loadDefaults, settingsFromConfig } from "../src/config/project.ts";
 import type { ProjectSettings } from "../src/config/project-schema.ts";
+import { ConfigSchema } from "../src/config/schema.ts";
 import { baselineMarket, buildTargets, coreMarket, mainMarket } from "../src/core/targets.ts";
 import { settingsOf } from "../src/settings/access.ts";
 
@@ -88,4 +89,17 @@ test("the recommendations second opinion follows its own switch", () => {
   assert.equal(check(on), 1);
   assert.equal(check(off), 0);
   assert.equal(settingsOf(off).steps.screenshotAnalysis.secondOpinion, false);
+});
+
+test("the config rules refuse a same-family reviewer and Astra in every role", () => {
+  const refused = (over: Record<string, unknown>) =>
+    ConfigSchema.safeParse({ ...fixture, ...over }).success === false;
+  const models = (m: Record<string, string>) => ({ models: { ...fixture.models, ...m } });
+  assert.equal(refused(models({ imageReview: "claude:claude-opus-5-5" })), true);
+  assert.equal(refused(models({ recommendationReview: "claude:claude-opus-5-5" })), true);
+  assert.equal(refused(models({ imageReview: "codex:gpt-6-astra" })), true);
+  assert.equal(refused(models({ recommendationReview: "codex:gpt-6-astra" })), true);
+  assert.equal(refused(models({ fullAnalysis: "claude:claude-sonnet-5" })), true);
+  assert.equal(refused(models({ imageReviewSpecial: "codex:gpt-6-astra" })), false);
+  assert.equal(refused({}), false);
 });
