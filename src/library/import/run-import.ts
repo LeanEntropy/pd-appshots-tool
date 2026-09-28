@@ -226,6 +226,9 @@ export async function runImport(o: ImportOptions): Promise<ImportReport> {
     fail("gate");
     if (report.gate.length)
       throw new Error(`the check found differences: ${report.gate.join("; ")}`);
+    // The old tool's analysis holds no lock, and the import yields while it works: check again.
+    const lateRun = runningAnalysis(storage, ctx);
+    if (lateRun) throw new Error(`An analysis started meanwhile (${lateRun}).`);
     locks.check();
     j.created = j.created.filter((k) => k !== staged); // becomes refs.json
     o.progress?.("Switching the project over");

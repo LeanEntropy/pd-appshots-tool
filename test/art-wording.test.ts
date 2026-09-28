@@ -17,6 +17,10 @@ const FORBIDDEN = [
   /in-game capture: none/i,
   /no screenshot/i,
   /art only/i,
+  /not an? (in-game|gameplay) (screenshot|capture|screen)/i,
+  /without (an? |any )?(in-game|gameplay) (screenshot|capture)/i,
+  /zero (in-game|gameplay) (screenshots|captures)/i,
+  /rather than an? (in-game |game )(screen|screenshot|capture)/i,
 ];
 const claims = (s: string) => FORBIDDEN.some((re) => re.test(s));
 
@@ -34,6 +38,10 @@ test("older text is reworded for display, by code only", () => {
     "taxonomy mapping: no capture, shows the game logo or title",
     "In-game capture: none",
     "This image is not from the game.",
+    "It is not an in-game screenshot.",
+    "Promotional art without a gameplay screenshot.",
+    "Zero gameplay captures in this deck.",
+    "Only promotional art, rather than a game screen.",
   ];
   for (const s of old) assert.equal(claims(artWording(s)), false, `${s} -> ${artWording(s)}`);
   assert.equal(artWording("marketing image, no screenshot"), ART_SCREEN);

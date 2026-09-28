@@ -38,7 +38,10 @@ function render() {
   const t = document.getElementById("archivedToggle");
   t.hidden = !arch.length;
   const box = document.getElementById("archivedCards");
-  document.getElementById("showArchived").textContent = (box.hidden ? "Show archived (" : "Hide archived (") + arch.length + ")";
+  const toggle = document.getElementById("showArchived");
+  toggle.textContent = (box.hidden ? "Show archived (" : "Hide archived (") + arch.length + ")";
+  toggle.setAttribute("aria-expanded", String(!box.hidden));
+  toggle.setAttribute("aria-controls", "archivedCards");
   box.innerHTML = arch.map(card).join("");
 }
 
@@ -77,6 +80,8 @@ async function followImport(progress) {
     try { imp = (await getJson("/api/import")).importing; misses = 0; }
     catch (e) { if (++misses >= 10) throw e; }
     if (imp && imp.state === "done") return imp;
+    // No import known to the server (it was restarted): say so instead of waiting forever.
+    if (!misses && !imp) { await loadProjects(); throw new Error("The tool was restarted, so this import's progress was lost. Your projects are listed below; if the project is still offered for import, import it again."); }
     if (imp && imp.state === "failed") throw new Error("The import did not finish: " + imp.text.split("\\n").slice(0, 3).join(" "));
     if (imp && imp.progress) progress(imp.progress.step, imp.progress.done, imp.progress.total);
     await new Promise((r) => setTimeout(r, 600));
@@ -108,7 +113,8 @@ function importing(id, name, btn) {
 async function loadImport() {
   const el = document.getElementById("import");
   let r;
-  try { r = await getJson("/api/import"); } catch { return; }
+  try { r = await getJson("/api/import"); }
+  catch (e) { el.innerHTML = '<p class="act-msg bad" role="alert">Projects to import could not be checked: ' + esc(actReason(e)) + "</p>"; return; }
   const imp = r.importing;
   const running = imp && imp.state === "running";
   const done = imp && !running ? '<div class="importbox"><h2>' + (imp.state === "done" ? "Import finished: " + esc(imp.name || imp.id) + " now uses the shared library" : '<span class="warn">The import did not finish</span>') + "</h2><details" + (imp.state === "done" ? "" : " open") + "><summary>What was checked</summary><pre>" + esc(imp.text) + "</pre></details></div>" : "";

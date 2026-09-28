@@ -147,6 +147,8 @@ new MutationObserver(() => {
 document.addEventListener("click", (e) => {
   const a = e.target.closest && e.target.closest("a.btn, a.btn-new");
   if (!a || e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || a.target === "_blank") return;
+  // A second click while the next page loads does nothing.
+  if (a.getAttribute("aria-busy") === "true") { e.preventDefault(); return; }
   const href = a.getAttribute("href") || "";
   if (!href || href.startsWith("#")) return;
   if (a.dataset.actLabel === undefined) a.dataset.actLabel = a.innerHTML;

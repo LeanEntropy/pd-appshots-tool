@@ -37,6 +37,10 @@ const RULES: [RegExp, string][] = [
   ],
   [/\b0% (?:of the image )?(?:is )?in-game capture\b/gi, ART_SCREEN],
   [/\bnot (?:taken )?from the game\b/gi, "possibly shown in the game"],
+  [/\bnot an? (?:in-game|gameplay) (?:screenshot|capture|screen)\b/gi, `an ${MAY}`],
+  [/\bwithout (?:an? |any )?(?:in-game|gameplay) (?:screenshots?|captures?)\b/gi, `(${MAY})`],
+  [/\b(?:zero|0) (?:in-game|gameplay) (?:screenshots|captures)\b/gi, ART_SCREEN],
+  [/\brather than an? (?:in-game |game )(?:screen|screenshot|capture)\b/gi, `(${MAY})`],
   [/\bwith no screenshot\b/gi, "as full-screen art"],
 ];
 
