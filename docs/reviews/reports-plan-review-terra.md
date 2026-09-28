@@ -50,3 +50,24 @@ Date: 2026-09-28. Reviewer: gpt-5.6-terra via Codex CLI (read-only, ephemeral). 
     **Fix:** resolve D1 before implementation and encode the chosen eligibility rule in builder validation, suggestion actions, and tests.
 
 Overall verdict: the plan is strong on report structure, reuse, migration intent, deterministic suggestions, and the general PDF comparison, but it is not implementation-ready until it tightens approval/budget enforcement, freezes data provenance at job start, guarantees useful partial reports, and proves the Windows headless-PDF path.
+## Second review: additions 3A (terminology) and 3B (voice, A/B tests), 2026-09-28 (verbatim)
+
+1. **Critical — 3B.2 A/B tests:** The stated Play Console metrics are incorrect (“first-time installers / retained first-time installers”). Use its actual targets: **Unique user install clicks** or **Unique user open clicks**; require the model to choose only from supported metrics. [Google Play guidance](https://support.google.com/googleplay/android-developer/answer/12053285)
+
+2. **Critical — 3B.2 / risks:** “Countries to run it in” is not directly executable: localized experiments target languages, while country-specific assets require the relevant custom store listing and eligible targeting. Add a deterministic listing-target resolver; validate each test against an actual listing ID, language/audience eligibility, and that every target country is covered. [Google Play guidance](https://support.google.com/googleplay/android-developer/answer/12053285)
+
+3. **High — 3A.2 mapping cache/versioning:** `library/terms/<hl>/<term hash>.json` is insufficiently keyed. A mapping depends on the normalized term, language, concept-list version, mapping prompt/schema/model, and likely candidate context. Include all in the cache key/provenance and in report freshness/fingerprints; otherwise a changed concept list can silently reuse obsolete mappings.
+
+4. **High — 3A.2 term discovery:** Mapping only top derived keywords plus layer words used by at least two games misses the most important divergence: a term used only by our game or one competitor. Build deterministic raw token/phrase frequencies from all stated fields, map a bounded but explicit candidate set that includes every term used by our game and competitor-common terms, and disclose any omitted terms.
+
+5. **High — 3A.2 counting:** Substring matching for Japanese/Chinese/Thai and unrestricted Korean word-prefix matching will overcount terms embedded in unrelated words (and Korean compounds such as `전투력`). Use segment-aware matching where available, longest-match/non-overlap rules, and a Korean particle-suffix allowlist; test false-positive fixtures.
+
+6. **Medium — 3A.3 output/decision rules:** “Most common” and “we differ” lack a precise denominator and multi-term rule. Define eligible competitors as those with usable source text for that country; count “games using term” separately from occurrences; specify how a game using multiple variants is displayed and how its representative term is chosen. This makes `n of m`, ties, and recommendations reproducible.
+
+7. **High — 3B.2 validation:** Citation validation proves an evidence ID exists, but not that it supports the test in its proposed countries or assets. Require each target country/position/claim to be covered by the cited evidence, and reject aggregated evidence when it does not apply to every proposed target.
+
+8. **Medium — 3B.2 experiment design:** The plan permits a full-deck rewrite while presenting a single causal hypothesis. Add a deterministic `testUnit` (one screenshot, screenshot set/order, text, or listing), selected assets, and rationale; default to one changed asset/set unless the stated hypothesis is explicitly a package test. Play Console itself recommends isolating one asset where possible. [Google Play guidance](https://support.google.com/googleplay/android-developer/answer/12053285)
+
+9. **Medium — R2b / tests:** The milestone says “one text-only run per report,” but regeneration actually needs several independently cached synthesis calls (patterns, recommendations, optional review, A/B tests). State the call inventory and cost range explicitly, and test that a voice-only regeneration does not accidentally schedule image calls while still rerunning every required stale text artifact.
+
+Verdict: The additions have the right architecture—deterministic evidence first, cheap text-only AI second, and no image-cache invalidation—but 3A needs stronger lexical/version semantics and 3B needs Play-Console-executable targeting and metrics. Resolve those before approval; they are correctness issues, not implementation polish.

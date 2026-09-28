@@ -14,6 +14,8 @@ Review: gpt-5.6-terra (cross-family), see "Review outcome" at the end.
 - **Report tab:** a list of all reports, each folded, with name, type, countries, date, status and the newer-data badge. Open one to read it. Actions per report: **Export PDF**, **Regenerate**, **Rename**, **Archive**, **Delete**.
 - **PDF export (decision):** a print stylesheet shared by all output, plus **server-side PDF by `playwright-core` driving the Chrome or Edge already installed on the computer** (`page.pdf`, with background colours, clickable contents and PDF bookmarks). It runs as a job with progress. The browser's own "Save as PDF" stays available as a fallback when no Chrome or Edge is found.
 - **Suggested next research** (section 5A): a free, code-only panel with a coverage map (every game by country) and ranked suggestions of what to research next (value divided by cost). Each opens the builder prefilled; nothing runs without approval. Shown at the end of every report, in the Report tab and on the home card.
+- **Words used, per country** (section 3A): the local words each game uses for the same ideas (battle, hero, summon, ...), from the image texts and the store text, counted by code; Opus maps new terms, text only, cached. In One country and Compare countries reports.
+- **CMO voice and A/B tests** (section 3B): all synthesis prompts speak as a store-page CMO (new synthesis versions; no image is re-analysed). Every report ends with "A/B tests to run next": computed gaps with evidence, written by Opus, validated by code. The existing pilot picks this up on its next text-only run.
 - **Migration:** the existing pilot runs and the core-check run become two listed reports, "Pilot (United States, English)" and "Full check (United States, English)", with every earlier run as an earlier version. No file is moved or rewritten.
 
 ## 1. Report types and the "New report" builder
@@ -141,12 +143,72 @@ The report keeps the required format: contents, numbered sections, overview with
    - the text and genre wording per country from the text-layer comparisons: the English headline, the local one, the back-translation, and genre terms in a table.
    Computed by code first: identical by content hash, same picture by perceptual hash, order by matching. The AI parts (text, wording) come only from the text-layer records.
 4. **Our localisation vs the competitors'**, per country: for each localisation habit (translate the text, reorder, swap pictures, change colours, keep English genre terms), the share of competitors who do it and whether we do, marked [V] same or [X] different with the reason. Computed by code.
-5. **Recommendations per country:** the recommended order for that country, per position the screen to capture (usually the same as the Full check's recommendation) and the full marketing-layer spec with the **local text**, genre wording notes and anything to change from the English deck. Produced by one text-only AI call per country (**"country advice"**), from: the Full check's recommendations, that country's patterns and position table, the competitors' localisation habits and their local texts. Zod-validated, cached by input, cross-family reviewed like the core recommendations (when review is on).
-6. **Detailed statistics** (folded): per-country pattern tables, as in the current report.
+5. **Words used, per country** (section 3A): the terminology comparison.
+6. **Recommendations per country:** the recommended order for that country, per position the screen to capture (usually the same as the Full check's recommendation) and the full marketing-layer spec with the **local text**, genre wording notes (using the terminology table) and anything to change from the English deck. Produced by one text-only AI call per country (**"country advice"**), from: the Full check's recommendations, that country's patterns and position table, the competitors' localisation habits, their local texts and the terminology table. Zod-validated, cached by input, cross-family reviewed like the core recommendations (when review is on).
+7. **What to research next** (section 5A).
+8. **A/B tests to run next** (section 3B), the last main section of every report.
+9. **Appendix: detailed statistics** (folded): per-country pattern tables, as in the current report.
 
-**One country** is the same without section 3's matrix across countries (it keeps the comparison with English for that one country, unless the country is the United States), and with one country in sections 2, 4 and 5. A One country report for the United States with more competitors has the Full check's sections and its own recommendations.
+**One country** is the same without section 3's matrix across countries (it keeps the comparison with English for that one country, unless the country is the United States), and with one country in sections 2, 4, 5 and 6. A One country report for the United States with more competitors has the Full check's sections and its own recommendations.
 
-**Data model:** `ReportData` (today one market) becomes the per-country part. A new `MultiReportData = { def, version, countries: ReportData[], localisation: LocalisationData | null, countryAdvice: Record<gl, CountryAdvice | null>, overview }`. `buildReportData` is reused per country by giving it that country's plan slice; the new code is `localisation.ts` (deterministic diff) and the country-advice call.
+**Data model:** `ReportData` (today one market) becomes the per-country part. A new `MultiReportData = { def, version, countries: ReportData[], localisation: LocalisationData | null, countryAdvice: Record<gl, CountryAdvice | null>, overview }`. `buildReportData` is reused per country by giving it that country's plan slice; the new code is `localisation.ts` (deterministic diff) and the country-advice call. `MultiReportData` also carries `terminology` (3A), `abTests` (3B) and `suggestions` (5A).
+
+## 3A. Words used, per country (terminology comparison; added 2026-09-28)
+
+Compares the exact local words the games use for the same ideas, e.g. battle, play, hero, upgrade, summon, free, reward (Japanese バトル vs 戦闘, Korean 전투 vs 배틀). In One country and Compare countries reports (and the United States in a US One country report). Free when the texts and term mappings exist; otherwise one cheap text-only call per language.
+
+### 3A.1 Sources (no new reading)
+
+- **Marketing-layer text** from the analyses: the English full analyses and the text-layer comparison records (local text per image and position).
+- **Store text** from `docs/plan-store-metadata.md`: the per-country snapshots in `library/store-text/<app>/<gl>-<hl>/<date>.json` (title, short description, full description, tags), and its derived keywords. The version pins the snapshot date it used (section 4.1). The terminology code **reuses** that plan's cleaning and word splitting (`keywords.ts`: `he` for entities, `Intl.Segmenter` per language, `stopwords-iso`), not a second tokeniser.
+- If a country has no store-text snapshot yet, the section uses the image texts only and says: "Store text not read yet for 4 games in Japan: read it (free) with Read store text", which runs the store-metadata backfill (a user-started, free job).
+
+### 3A.2 Method
+
+1. **Concept list (config, game-agnostic):** `configs/concepts.json`, tracked, like the taxonomy: concept id, English label, and known local variants per language, seeded with the user's list (battle, play, hero, upgrade, summon, free, reward) and a few more common ones (gacha / draw, idle / AFK, roguelike, stage, boss, equipment, skill, event, login bonus). Example: `battle: { ja: ["バトル", "戦闘"], ko: ["전투", "배틀"], "zh-TW": ["戰鬥", "對戰"] }`. Versioned; a new version recounts with no AI.
+2. **Counting by code:** per game, country, source (layer, title, short description, full description) and concept: how often each known variant occurs. Matching on normalised text (NFKC, lower case), on the word segments of `Intl.Segmenter` (the store-metadata tokeniser), longest match first and without overlaps, so a term inside a longer known term is not counted twice. Korean: the stem plus an allow-list of particle endings (를, 을, 는, 은, 이, 가, 의, 에, 로, 으로, 와, 과, 도), so 전투를 counts as 전투 but the compound 전투력 (combat power) does not. Fixtures with false-positive cases for ja, ko, zh-TW and th are part of the tests.
+3. **Mapping new terms (AI, text only, Opus):** candidates come from deterministic word and phrase counts over all the sources (not only the top keywords): **every** word or phrase our game uses in its image texts, title and short description, plus the words used by at least 2 competitors, up to a stated limit per language (default 150, most games first). Terms left out by the limit are listed ("40 rarer terms not mapped"). They are sent in one call per language: "map each term to a concept from the list, or propose a new concept, and give a short English gloss and whether it is a loanword or a native word". No images. Zod-validated; the answer is cached in the shared library under a key that hashes the language, the normalised term, the concept-list version, and the mapping prompt, schema and model (`library/terms/<hl>/<key>.json`, with the same values stored as provenance), so a term is mapped once for every project, and a new concept list or prompt maps it again. These versions are part of the report's data fingerprint, so a change shows "Newer data". Mapped terms feed the counting as extra variants; the concept list file is not edited automatically (a "Add these to the concept list" suggestion lists them for the user).
+4. **Cost:** counting is free. Mapping is listed in the approval like every AI call ("Term mapping, text only: 2 languages, about $0.05"); with everything cached it is $0 and the report builds instantly.
+
+### 3A.3 Output per country
+
+- **Concept by game table:** rows = concepts; columns = our game first, then the competitors; each cell the term used and where (image text, title, short or full description) with its count.
+- **Most common term** per concept: counted in **games that use it** (occurrences shown separately), with "n of m games", where m = the competitors with usable text in that country (image texts analysed, or a store-text snapshot). A game that uses several variants counts for each variant it uses; its main term (shown first in its cell) is the one it uses most, ties broken by the title, then the short description, then the images. Ties between terms: more games, then more total uses.
+- **Where our wording differs:** [X] when we use a different term than the most common one used by at least half the competitors with n of at least 3 (else "no clear common term"), with the reason ("we use 戦闘 in 2 images; 6 of 8 competitors use バトル"). Also [X] when our own images and our store text use different words for the same concept.
+- **Suggestions:** by code, "consider バトル instead of 戦闘 (6 of 8 competitors)" per differing concept; the country advice (section 3, point 6) and the A/B tests (3B) may use them, citing this table.
+- In Compare countries, a short cross-country row per concept (the common term in each country) for a quick view.
+
+## 3B. Report voice and "A/B tests to run next" (all reports; added 2026-09-28)
+
+### 3B.1 Voice
+
+- All synthesis and recommendation prompts are written in one voice: a **Chief Marketing Officer who is an expert in optimising game store pages** for discoverability (ASO) and for turning page views into installs. One shared block `prompts/analysis/voice-cmo.v1.md` is included in: pattern wording, recommendations, the recommendations review, country advice and the A/B tests. It asks for decisive, prioritised, evidence-led advice in plain words, with the expected effect on discoverability or conversion stated for each recommendation. Term mapping (3A) is a neutral lookup and does not use it.
+- **Versioning without re-analysing images:** the per-image prompts (full analysis, second opinion, settling) are not touched, so the analysis key (`pipeline.ts`, which covers only per-image steps) stays the same and **no image is analysed again**. The synthesis contract versions move up (`patterns.v2` to `v3`, `recommend.v2` to `v3`, `recommend-review.v1` to `v2`; new `country-advice.v1`, `ab-tests.v1`), with new prompt files. A test proves the analysis keys of all existing records are unchanged.
+- **Existing pilot and Full check:** the synthesis versions are part of the plan's `versions`, so the latest pilot and Full check reports show "AI parts out of date: written in the older style" after the change. Regenerate (or Start analysis) then offers a text-only run: **0 images**, only the pattern wording, recommendations, review and A/B tests, with the cost shown and the approval as usual. The next run of the existing pilot path uses the new voice.
+
+### 3B.2 A/B tests to run next
+
+The last main section of every report (pilot, Full check, One country, Compare countries).
+
+1. **Candidates by code** (`ab-candidates.ts`): every gap between our deck and the competitors, from the report's own data, each with an evidence id and its numbers:
+   - patterns where we are [X] different (`patternFit`), weighted as today (order and the first positions first);
+   - per-country pattern gaps and localisation habits where we differ (section 3, point 4);
+   - terminology differences (3A.3);
+   - format gaps, e.g. "7 of 9 competitors in Japan, Korea and Taiwan use landscape composites at position 1; we use portrait".
+   Each evidence item: a statement, n ("7 of 9 games", "18 of 24 images"), the games, countries and positions, and the image ids.
+2. **Written by AI (Opus, text only, CMO voice)**: up to 5 tests, from the candidates, the recommendations and our current deck. Each test has:
+   - **hypothesis;**
+   - **evidence:** the evidence ids it rests on, shown with their n;
+   - **variant:** the exact spec: the image order, and for each image its internal structure (orientation, composition, which in-game screen and where it sits, the marketing band, the headline in the local language, extra elements). Example: "Slot 1: landscape composite, the portrait title screen at left, the headline at right on a dark band";
+   - **control:** our current deck in that country (filled in by code from our deck, not by the AI);
+   - **test unit:** one screenshot, the screenshot set and order, the text on the images, or the whole listing. Following Google's advice to test one asset at a time, the default is one changed screenshot or one set; a whole-listing test is allowed only when the hypothesis says so explicitly;
+   - **primary metric:** chosen only from the target metrics of Play Console store listing experiments: **unique user install clicks** (default) or **unique user open clicks**;
+   - **where it runs (resolved by code, not by the AI):** a default graphics experiment, a localised experiment (up to five languages), or an experiment on a custom store listing for specific countries. Code maps the chosen countries to their listing languages and states the Play Console setup ("localised experiment: Japanese, Korean, Traditional Chinese"). When countries share a language but need different images (Taiwan and Hong Kong both use Traditional Chinese), it says a custom store listing per country is needed. Whether we have custom listings is not visible to the tool, so it is stated as a setup step for the user, not assumed;
+   - **expected impact:** direction and a size in words (small, medium, large) with the reason; no invented percentages;
+   - **priority** (1 = run first);
+   - **countries** to run it in.
+3. **Validated by code** (the existing `validatedCall` with checks, one retry with the problems listed, then drop): every test cites at least one existing evidence id; the n it quotes matches the evidence; **every country and position the test targets is covered by its cited evidence** (evidence from Japan and Korea cannot support a Taiwan test); the metric is one of the two allowed; a single-asset test changes only one asset; its countries are in the report; its positions exist; the variant's length is within the competitors' deck-length range; the control equals our deck. Tests that still fail are dropped and listed as "left out: no matching evidence". If the AI part is missing, the section still lists the candidates by code ("Gaps worth testing") with their evidence.
+4. **Cost:** one text-only call per report (about the size of the recommendations call), in the approval total; cached by input.
 
 ## 4. Storage and versions
 
@@ -269,7 +331,7 @@ The first four are the analysis coverage (the cell colour). **"Used in N reports
 
 ### 5A.5 Where it shows
 
-- **At the end of every report**, as a last section "What to research next" (top 5, with "Show all"). The saved version keeps the list as it was at build time (so the PDF has it); the open card shows the live list, labelled "Now", when it differs.
+- **Near the end of every report**, as the section "What to research next" just before "A/B tests to run next" (top 5, with "Show all"). The saved version keeps the list as it was at build time (so the PDF has it); the open card shows the live list, labelled "Now", when it differs.
 - **In the Report tab**, above the list: the coverage map (folded) and the top 3 suggestions.
 - **On the project's home card**, the top suggestion as the "Next" line with its button (after any interrupted job, which keeps priority).
 - **Dismissed** suggestions stay dismissed, stored per project in `state/suggestions.json` (by a stable id: kind plus games plus countries). A "Show dismissed (2)" link restores them. A dismissed suggestion is shown again only if its kind of signal changes category (e.g. a country from "nothing changes" to "competitors localise" after a store refresh).
@@ -341,6 +403,8 @@ The first four are the analysis coverage (the cell colour). **"Used in N reports
 | `src/reports/migrate.ts` (new) | section 7 |
 | `src/analysis/layer-diff.ts`, `layer-diff-schema.ts`, prompt file (new) | the text-layer step (2.4) |
 | `src/analysis/country-advice.ts` (new) | per-country recommendations (text only) |
+| `src/reports/terminology.ts`, `src/analysis/term-map.ts`, `configs/concepts.json` (new) | 3A: counting by code, the text-only term mapping, the concept list |
+| `src/reports/ab-candidates.ts`, `src/analysis/ab-tests.ts` (new); `prompts/analysis/voice-cmo.v1.md` and new synthesis prompt files; `src/analysis/prompts.ts` versions | 3B |
 | `src/export/pdf.ts` (new) | `playwright-core` launch (chrome, then msedge), print, save |
 | `src/jobs/*` | kinds `report-analysis` (AI lane) and `pdf-export` (export lane) |
 | `src/server/reports-api.ts` (replaces `report-api.ts`) | list, get version, builder plan, create/update draft, build, regenerate, rename, archive, delete, export, download |
@@ -363,6 +427,8 @@ API (all under `/p/<id>/api/`, bodies Zod-validated, ids validated against the l
 - **Approval and recovery boundaries (job level, fake provider):** no provider call without the matching approval; a text comparison answering "different screen" makes no full call and ends with the escalation approval; the runtime limit stops before passing the approved total and Continue offers only the remaining frozen work; a store or record change during a run does not enter the version (it becomes "Newer data"); country advice and review calls are in the approval total; stopping or failing builds a partial version with all deterministic sections; resuming reads only the frozen manifest.
 - **Text-layer key:** redoing the English analysis or changing the crop method makes the old comparison not reusable.
 - **Scope exclusions:** budget exclusions are shown as such, and cross-country figures use only competitors present in every compared country.
+- **Terminology:** variant counting on fixtures in ja, ko (with particles), zh-TW, th and en; most common term and ties; the "we differ" rule with n thresholds; our images vs our store text; missing store text falls back to image text with the message; cached term mappings make the build call no provider.
+- **Voice and A/B tests:** the analysis keys of all existing records are unchanged after the prompt versions move; the pilot shows "written in the older style" and offers a 0-image run that schedules no image call but reruns every out-of-date text part (patterns, recommendations, review when on, A/B tests); A/B validation drops a test citing an unknown evidence id or a wrong n, fills the control from our deck, and falls back to the code-only candidates when the AI part is missing.
 - **PDF:** print mode opens every section and sets `reportReady` only after images load; the export job with a fake launcher (no browser) passes the right options; one real smoke test, skipped when no Chrome/Edge is found, checks the PDF has pages, bookmarks and the report name.
 
 ## 10. Risks
@@ -377,6 +443,10 @@ API (all under `/p/<id>/api/`, bodies Zod-validated, ids validated against the l
 | Renderer refactor (ids per report) breaks the current page | Done first (milestone R1) with the existing UI tests plus the two-reports test |
 | Many reports make the Report tab slow | Folded cards load nothing; fingerprints computed by code in milliseconds and cached per request |
 | Old runs without data | Shown as today (markdown); never rewritten |
+| A/B tests that Play Console cannot run as written (wrong metric, countries sharing a language) | Metric limited to Play's two targets; the setup (default, localised, custom listing) resolved by code with the language mapping; custom listings stated as a user step |
+| A/B tests or country advice claim evidence that is not there | Code-built candidates with evidence ids; code checks every citation and n; failing tests dropped and listed; the control filled by code |
+| Term counting mismatches (a variant inside a longer word, Korean particles) | Concept variants curated in config; counts shown with n and source; "no clear common term" below the threshold; AI mapping text only and cached |
+| The new voice changes the tone of existing reports | Only synthesis versions move; image analyses untouched; old versions stay readable; the user approves the text-only rerun |
 
 ## 11. Milestones and user checkpoints
 
@@ -386,8 +456,9 @@ Each milestone: implement (Opus dev agent), tests + typecheck + Biome, cross-fam
 |---|---|---|---|
 | R1 | Report storage (defs, versions, write-once), migration of pilot and core, the Report tab list (folded cards, open, versions, rename, archive, delete), renderer parameterised per report, stale badge for pilot/core, `npm run report -- <name>` | none | The user sees "Pilot" and "Full check" listed and folded, opens both, sees the same content as before, renames one, archives and restores it |
 | R2 | PDF export: print stylesheet, print mode, `playwright-core` export job with progress, the with/without pictures option, browser fallback | none | The user exports the Full check with and without pictures and checks colours, tables, page breaks, contents links and bookmarks |
+| R2b | Report voice and A/B tests (3B) for the existing pilot and Full check: CMO voice block, new synthesis versions, candidates by code, A/B tests call and validation, section in page, markdown and PDF | a text-only run per report, 0 images: pattern wording, recommendations, the recommendations review when on, and the A/B tests (4 calls, each cached), with the call list and cost range on the approval | The user approves the pilot's text-only run, reads the new-voice report and its A/B tests, and checks that each test's evidence is real |
 | R3 | Builder and generalised planner (all four types), English anchors, drop proposal, drafts from saved expansion choices, "What next?" card; **no AI yet**: the builder shows the exact images and cost, and builds instantly when nothing is needed (e.g. a US report with only core competitors). Plus the perceptual-hash accuracy check, and **Suggested next research** (5A: coverage map, signals, ranking, dismissals, report section, Report tab panel, home-card line) | none | The user builds a free One country (United States) report from existing analyses, reviews the Japan/Korea/Taiwan builder numbers and the doubtful picture matches without approving, and checks that the top suggestions and their reasons make sense |
-| R4 | Text-layer step and country advice; report AI batches through jobs; One country and Compare countries content (per-country tables, localisation, our habits vs competitors', recommendations per country) | first paid expansion, approved by the user | The user approves a Japan, South Korea and Taiwan comparison with 3 to 5 competitors, watches progress, reads the report and exports it to PDF. Outputs reviewed cross-family (screenshot-side review stays paused per the user) |
+| R4 | Text-layer step and country advice; words used per country (3A, needs the store-text snapshots from the store-metadata plan); report AI batches through jobs; One country and Compare countries content (per-country tables, localisation, our habits vs competitors', recommendations per country) | first paid expansion, approved by the user | The user approves a Japan, South Korea and Taiwan comparison with 3 to 5 competitors, watches progress, reads the report and exports it to PDF. Outputs reviewed cross-family (screenshot-side review stays paused per the user) |
 
 ## 12. Decisions for the user
 
@@ -398,6 +469,8 @@ Each milestone: implement (Opus dev agent), tests + typecheck + Biome, cross-fam
 - **D5.** Add `playwright-core` as a dependency (recommended; no browser download, uses the installed Chrome or Edge)?
 - **D6.** Country advice reviewed cross-family by default (a few cents per country), or only when the user turns review on?
 - **D7.** The suggestion points (5A.4) and thresholds (90% reuse = "nothing changes", split vote 40-60%, n below 4, store data older than 30 days): accept as the starting values?
+- **D8.** The starting concept list for 3A (the user's seven plus gacha / draw, idle / AFK, roguelike, stage, boss, equipment, skill, event, login bonus): accept, or edit?
+- **D9.** A/B tests: up to 5 per report, and expected impact in words (small, medium, large) rather than percentages: accept?
 
 ## Review outcome
 
@@ -420,3 +493,19 @@ Cross-family review by gpt-5.6-terra on 2026-09-28 (`docs/reviews/reports-plan-r
 | 13 | Migration checks too narrow | Applied (7): byte-for-byte unchanged files, malformed and partial old runs, interrupted re-run, `latest-*` freshness unchanged |
 | 14 | Tests miss approval and recovery boundaries | Applied (9): job-level tests for each boundary with a fake provider |
 | 15 | D1 unresolved while R3 depends on it | Kept as user decision D1, now stated as enforced in one function everywhere; the recommended rule is the default, and Rogue Legends already has a Full check with recommendations, so R3 is not blocked |
+
+### Review of the additions (3A, 3B)
+
+Short cross-family review by gpt-5.6-terra on 2026-09-28 (appended to `docs/reviews/reports-plan-review-terra.md`). 9 findings, all applied. The metric finding was checked against Google's Play Console help page for store listing experiments before it was applied.
+
+| # | Finding | Outcome |
+|---|---|---|
+| 1 | Wrong Play Console metrics | Applied: unique user install clicks (default) or unique user open clicks only |
+| 2 | "Countries" is not how experiments are targeted | Applied: code resolves default, localised (up to five languages) or custom-listing setup; shared-language countries flagged |
+| 3 | Term-mapping cache key too thin | Applied: key covers the language, the term, the concept-list version and the prompt, schema and model; part of the report fingerprint |
+| 4 | Term discovery missed rare but important terms | Applied: every term our game uses plus the words shared by competitors, with a stated limit and a list of what was left out |
+| 5 | Substring and prefix matching overcounts | Applied: word segments, longest match without overlaps, Korean particle allow-list, false-positive fixtures |
+| 6 | "Most common" lacked a denominator | Applied: games with usable text as the base; games using several variants and ties defined |
+| 7 | Citations not checked against the targets | Applied: every targeted country and position must be covered by the cited evidence |
+| 8 | Whole-deck variants blur the cause | Applied: a test unit, one asset or set by default (Google's own advice) |
+| 9 | "One run" hid several calls | Applied: the call list and cost on the approval; the test checks no image call and every stale text part rerun |
