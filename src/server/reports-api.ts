@@ -14,6 +14,7 @@ import {
   versionFileKey,
 } from "../reports/store.ts";
 import { isPreset } from "../reports/types.ts";
+import { settingsOf } from "../settings/access.ts";
 import { workspaceStorage } from "../storage/index.ts";
 import { markdownToHtml } from "../view/md-html.ts";
 import type { ApiResponse } from "./api.ts";
@@ -35,7 +36,12 @@ function findDef(loaded: LoadedConfig, id: string) {
 export function getReports(loaded: LoadedConfig): ApiResponse {
   return {
     status: 200,
-    body: { reports: listReports(loaded), mainCountry: mainMarketRef(loaded).label },
+    body: {
+      reports: listReports(loaded),
+      mainCountry: mainMarketRef(loaded).label,
+      // The Settings page's Export PDF defaults (the page's export dialog starts from them).
+      pdf: settingsOf(loaded.config).pdf,
+    },
   };
 }
 

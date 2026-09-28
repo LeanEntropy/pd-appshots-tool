@@ -3,6 +3,9 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import sharp from "sharp";
 import { type LoadedConfig, loadConfig, projectPaths } from "../../src/config/load.ts";
+import { mainMarketRef } from "../../src/reports/main-market.ts";
+import { syncPresetReports } from "../../src/reports/migrate.ts";
+import { workspaceStorage } from "../../src/storage/index.ts";
 import { openImageDb } from "../../src/store/imagedb.ts";
 import {
   type DeckManifest,
@@ -109,5 +112,15 @@ export async function tempProject(
     decks: all,
     deckHashes: {},
   });
+  return loaded;
+}
+
+/** A temp project with its Pilot and Full check report defs (the report list creates them). */
+export async function reportsProject(
+  decks: Parameters<typeof tempProject>[0],
+): Promise<LoadedConfig> {
+  const loaded = await tempProject(decks);
+  const paths = projectPaths(loaded);
+  syncPresetReports(workspaceStorage(paths.workspace), paths, mainMarketRef(loaded));
   return loaded;
 }

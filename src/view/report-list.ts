@@ -4,7 +4,8 @@
  * badge. Opening a card loads that report (nothing is fetched for folded cards) and draws it with
  * the report renderer inside the card. Per card: a version selector (earlier Pilot and Full check
  * versions are archived but readable), Rename, Archive or Restore, and Delete (not for the Pilot
- * or the Full check). Every action gives feedback through act(). #report/<id> opens that card.
+ * or the Full check), and Export PDF of the version picked (report-export.ts). Every action gives
+ * feedback through act(). #report/<id> opens that card.
  */
 export const REPORT_LIST_CSS = `
 .rcard { background: var(--card); border: 1px solid var(--line); border-left: 6px solid var(--accent); border-radius: 12px; margin-bottom: 12px; }
@@ -69,11 +70,12 @@ function reportCardHtml(r) {
   return '<details class="rcard ' + (TYPE_CLS[r.type] || "") + '" data-rid="' + id + '" id="rc-' + id + '"><summary>' + summary + '</summary><div class="rc-b">'
     + (r.newer ? '<div class="banner stale"><p>' + pill("stale", "Newer data") + " " + esc(r.newer) + (r.canNow ? " Choose \\u201cNow\\u201d to see the report with the current data." : "") + "</p></div>" : "")
     + '<div class="rc-bar"><label>Version: <select class="rc-ver" data-rid="' + id + '">' + versionOptions(r) + "</select></label>"
+    + (r.versions.length || r.canNow ? b("rc-pdf", "Export PDF") : "")
     + b("rc-rename", "Rename") + b("rc-archive", r.archived ? "Restore" : "Archive")
     + (r.deletable ? b("rc-delete danger", "Delete") : '<span class="meta">The ' + esc(r.typeName) + " can be archived, not deleted.</span>") + "</div>"
     + '<div class="rc-edit" id="re-' + id + '" hidden><label>New name: <input type="text" maxlength="120" class="rc-input" id="rn-' + id + '" data-rid="' + id + '"></label> '
     + b("rc-save primary", "Save name") + " " + b("rc-cancel", "Cancel") + "</div>"
-    + '<p class="act-msg" id="rs-' + id + '" hidden></p><p class="meta" id="rh-' + id + '"></p><div class="rbox" id="rb-' + id + '"></div></div></details>';
+    + '<p class="act-msg" id="rs-' + id + '" hidden></p><div class="rc-pdfres" id="rp-' + id + '"></div><p class="meta" id="rh-' + id + '"></p><div class="rbox" id="rb-' + id + '"></div></div></details>';
 }
 
 function renderReportList() {
@@ -120,6 +122,7 @@ async function loadReport() {
     if (seq !== listSeq) return;
     if (line) line.hidden = true;
     reportList = r.reports || [];
+    if (typeof setPdfDefaults === "function") setPdfDefaults(r.pdf);
     const deep = rsafe((/^#report\\/(r-[a-z0-9-]+)/.exec(location.hash) || [])[1]);
     const target = deep && reportList.find((x) => x.id === deep);
     if (target && !openState.has(deep)) { openState.set(deep, {}); if (target.archived) showArchived = true; }
@@ -218,6 +221,13 @@ document.addEventListener("click", (e) => {
     if (ed) ed.hidden = true;
   } else if (b.classList.contains("rc-save")) {
     saveName(b, rid);
+  } else if (b.classList.contains("rc-pdf")) {
+    // The version picked in this card; pictures as shown here (the sections hidden in this card are offered too).
+    const sel = document.querySelector('.rc-ver[data-rid="' + rid + '"]');
+    const version = sel ? sel.value : "";
+    if (!version) { actLine(document.getElementById("rs-" + rid), "bad", "This report has no version to export yet."); return; }
+    const hidden = [...hiddenImgSecs].filter((x) => x.startsWith(rid + ":")).map((x) => x.slice(rid.length + 1));
+    exportReportPdf({ report: rid, version }, { button: b, status: "rs-" + rid, result: "rp-" + rid, images: showImgs && PDF_DEFAULTS.images, hiddenSections: hidden });
   } else if (b.classList.contains("rc-archive")) {
     const archived = !rep.archived;
     act(b, { busy: archived ? "Archiving..." : "Restoring...", status: "reportStatus",

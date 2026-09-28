@@ -18,6 +18,7 @@ import {
   postSelection,
 } from "./api.ts";
 import type { AppContext } from "./app-context.ts";
+import { exportRoute } from "./export-api.ts";
 import { redirect, send, sendHtml, writeRequest } from "./http-util.ts";
 import { getReportCurrent, getReportRun } from "./report-api.ts";
 import { isReportsPath, reportsRoute } from "./routes-reports.ts";
@@ -95,6 +96,8 @@ export async function projectRoute(
     return sendHtml(res, app.pages.status(id, app.names(id), stateFor(app, loaded), app.token));
   // Several reports per project (plan-reports R1).
   if (isReportsPath(rest)) return reportsRoute(app, loaded, rest, req, res);
+  // PDF export (milestone R2): the print page and the export job's endpoints.
+  if (await exportRoute(app, loaded, rest, req, res, url)) return;
   const get = GETS[rest];
   if (get && req.method === "GET") {
     const r = get(loaded, url.searchParams, app);
