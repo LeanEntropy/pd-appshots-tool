@@ -4,8 +4,10 @@
  * Import offer for a project made before the shared library (runs only when pressed).
  */
 import { ACTION_SCRIPT } from "./action.ts";
+import { FLAG_SCRIPT } from "./flags.ts";
 
 export const HOME_SCRIPT = `${ACTION_SCRIPT}
+${FLAG_SCRIPT}
 const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 const LABEL = { setup: "Setting up", preview: "Ready to download", pick: "Pick competitors", pilot: "Pilot", core: "Core check", recommendations: "Recommendations ready", expand: "Expansions" };
 let projects = [];
@@ -22,7 +24,7 @@ function card(p) {
   const prog = s && s.progress ? '<progress max="' + (s.progress.total || 1) + '" value="' + s.progress.done + '"></progress><span class="meta">' + esc(s.progress.label) + "</span>" : "";
   const next = s ? '<a class="btn primary" href="' + esc(s.next.href) + '">' + esc(s.next.label) + "</a>" : "";
   const notices = (s ? s.notices.map((n) => '<p class="warn">' + esc(n) + "</p>").join("") : "")
-    + (s && s.suggestion && !p.archived ? '<p class="meta"><strong>Next:</strong> ' + esc(s.suggestion.text) + ' <a class="btn" href="' + esc(s.suggestion.href) + '">See the suggestions</a></p>' : "");
+    + (s && s.suggestion && !p.archived ? '<p class="meta"><strong>Next:</strong> ' + flagText(s.suggestion.text) + ' <a class="btn" href="' + esc(s.suggestion.href) + '">See the suggestions</a></p>' : "");
   return '<article class="pcard st-' + esc(stage) + (sub ? " sub-" + esc(sub) : "") + (p.archived ? " archived" : "") + '" tabindex="-1" aria-labelledby="t-' + esc(p.id) + '">'
     + '<div class="phead">' + (p.iconFile ? '<img class="icon" alt="" src="/p/' + esc(p.id) + "/icons/" + esc(encodeURIComponent(p.iconFile)) + '">' : '<span class="icon" aria-hidden="true">' + esc((p.name || "?").slice(0, 1).toUpperCase()) + "</span>") + '<div class="who"><h2 id="t-' + esc(p.id) + '">' + esc(p.name) + '</h2><div class="meta">' + esc(p.ourAppId) + " &middot; " + p.competitors + " competitors &middot; " + p.countries + " countries</div></div>"
     + '<span class="pill">' + esc(pill) + "</span></div>"

@@ -65,7 +65,7 @@ function reportCardHtml(r) {
     + pill(STATUS_CLS[r.status.kind] || "none", r.status.text)
     + (r.newer ? '<span class="pill newer" title="' + esc(r.newer) + '">Newer data</span>' : "")
     + (r.archived ? pill("none", "Archived") : "")
-    + '<span class="rc-desc">' + esc(reportDescription(r)) + "</span>";
+    + '<span class="rc-desc">' + flagText(reportDescription(r)) + "</span>";
   const b =(cls, label, extra) => '<button type="button" class="' + cls + '" data-rid="' + id + '" data-act-key="' + cls.split(" ")[0] + "-" + id + '"' + (extra || "") + ">" + label + "</button>";
   return '<details class="rcard ' + (TYPE_CLS[r.type] || "") + '" data-rid="' + id + '" id="rc-' + id + '"><summary>' + summary + '</summary><div class="rc-b">'
     + (r.newer ? '<div class="banner stale"><p>' + pill("stale", "Newer data") + " " + esc(r.newer) + (r.canNow ? " Choose \\u201cNow\\u201d to see the report with the current data." : "") + "</p></div>" : "")
