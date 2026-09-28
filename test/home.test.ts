@@ -95,7 +95,7 @@ test("the home offers the import, runs it only on request, then lists the projec
   }
 });
 
-test("a draft project opens on its status page and refuses analysis", async () => {
+test("a draft project opens on its setup steps and refuses analysis", async () => {
   const loaded = await tempProject({});
   const storage = workspaceStorage(projectPaths(loaded).workspace);
   const now = new Date().toISOString();
@@ -123,8 +123,11 @@ test("a draft project opens on its status page and refuses analysis", async () =
   try {
     const s = (await (await fetch(`${origin}/p/draft-game/api/state`)).json()) as { stage: string };
     assert.equal(s.stage, "setup");
+    const open = await fetch(`${origin}/p/draft-game/`, { redirect: "manual" });
+    assert.equal(open.headers.get("location"), "/p/draft-game/setup");
+    assert.match(await (await fetch(`${origin}/p/draft-game/setup`)).text(), /wizardStart\(\)/);
     assert.match(
-      await (await fetch(`${origin}/p/draft-game/`)).text(),
+      await (await fetch(`${origin}/p/draft-game/status`)).text(),
       /add at least one competitor/,
     );
     const plan = await fetch(`${origin}/p/draft-game/api/analysis/plan`, {

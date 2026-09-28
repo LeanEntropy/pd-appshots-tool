@@ -2,19 +2,35 @@ import { createServer, type IncomingMessage, type Server, type ServerResponse } 
 import type { AddressInfo } from "node:net";
 import { draftState } from "../projects/state.ts";
 import { homeHtml } from "../view/home-html.ts";
-import { newProjectHtml } from "../view/pages-html.ts";
+import { wizardHtml } from "../view/wizard-html.ts";
+import type { ApiResponse } from "./api.ts";
 import { type AppContext, type AppOptions, createAppContext } from "./app-context.ts";
 import { redirect, send, sendHtml, writeRequest } from "./http-util.ts";
 import { getImport, getJobs, getProjects, postArchive, postImport } from "./routes-home.ts";
+import { getCountries, getLookup, getSearch, postProject } from "./routes-play.ts";
 import { projectRoute } from "./routes-project.ts";
+import { setupRoute } from "./routes-setup.ts";
 
 const PROJECT_PATH = /^\/p\/([^/]+)(\/.*)?$/;
+
+type PlayGet = (app: AppContext, q: URLSearchParams) => ApiResponse | Promise<ApiResponse>;
+const PLAY_GETS: Record<string, PlayGet> = {
+  "/api/play/lookup": getLookup,
+  "/api/play/search": getSearch,
+  "/api/countries": (app) => getCountries(app),
+};
 
 /** Paths of the single-project server before this version (plan 6.2, route inventory). */
 function isOldPath(p: string): boolean {
   return (
     (p.startsWith("/api/") &&
-      !["/api/projects", "/api/jobs", "/api/health", "/api/import"].includes(p)) ||
+      ![
+        "/api/projects",
+        "/api/jobs",
+        "/api/health",
+        "/api/import",
+        ...Object.keys(PLAY_GETS),
+      ].includes(p)) ||
     p.startsWith("/views/") ||
     p.startsWith("/images/") ||
     p.startsWith("/own/")
@@ -35,7 +51,20 @@ async function globalRoute(
     return true;
   }
   if (p === "/new" && get) {
-    sendHtml(res, newProjectHtml());
+    sendHtml(res, wizardHtml(app.token, null));
+    return true;
+  }
+  const play = PLAY_GETS[p];
+  if (play && get) {
+    const r = await play(app, url.searchParams);
+    send(res, r.status, r.body);
+    return true;
+  }
+  if (p === "/api/projects" && req.method === "POST") {
+    const w = await writeRequest(req, res, app.token);
+    if (!w) return true;
+    const r = await postProject(app, w.body);
+    send(res, r.status, r.body);
     return true;
   }
   if (p === "/api/health" && get) {
@@ -97,8 +126,9 @@ export function createAppServer(app: AppContext): Server {
         const r = postArchive(app, id, w.body);
         return send(res, r.status, r.body);
       }
+      if (await setupRoute(app, id, found, rest, req, res)) return;
       if ("draft" in found) {
-        const s = draftState(id);
+        const s = draftState(id, found.draft);
         if (rest === "/api/state") return send(res, 200, s);
         if (rest === "/" || rest === "/status")
           return sendHtml(res, app.pages.status(id, found.draft.name, s, app.token));

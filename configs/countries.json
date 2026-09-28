@@ -1,0 +1,347 @@
+{
+  "version": 1,
+  "defaultTicked": ["jp", "kr", "tw", "hk", "th", "vn", "id", "ph"],
+  "languages": {
+    "en": "English",
+    "ja": "Japanese",
+    "ko": "Korean",
+    "zh-TW": "Traditional Chinese",
+    "zh-CN": "Simplified Chinese",
+    "th": "Thai",
+    "vi": "Vietnamese",
+    "id": "Indonesian",
+    "fil": "Filipino",
+    "ms": "Malay",
+    "hi": "Hindi",
+    "de": "German",
+    "fr": "French",
+    "fr-CA": "French (Canada)",
+    "es": "Spanish (Spain)",
+    "es-419": "Spanish (Latin America)",
+    "pt-BR": "Portuguese (Brazil)",
+    "pt-PT": "Portuguese (Portugal)",
+    "it": "Italian",
+    "nl": "Dutch",
+    "pl": "Polish",
+    "sv": "Swedish",
+    "no": "Norwegian",
+    "da": "Danish",
+    "fi": "Finnish",
+    "cs": "Czech",
+    "tr": "Turkish",
+    "ru": "Russian",
+    "uk": "Ukrainian",
+    "ar": "Arabic"
+  },
+  "countries": [
+    {
+      "gl": "us",
+      "label": "United States",
+      "region": "Americas",
+      "defaultHl": "en",
+      "languages": ["en"]
+    },
+    {
+      "gl": "jp",
+      "label": "Japan",
+      "region": "Asia",
+      "defaultHl": "ja",
+      "languages": ["ja", "en"]
+    },
+    {
+      "gl": "kr",
+      "label": "South Korea",
+      "region": "Asia",
+      "defaultHl": "ko",
+      "languages": ["ko", "en"]
+    },
+    {
+      "gl": "tw",
+      "label": "Taiwan",
+      "region": "Asia",
+      "defaultHl": "zh-TW",
+      "languages": ["zh-TW", "en"]
+    },
+    {
+      "gl": "hk",
+      "label": "Hong Kong",
+      "region": "Asia",
+      "defaultHl": "zh-TW",
+      "languages": ["zh-TW", "en"]
+    },
+    {
+      "gl": "th",
+      "label": "Thailand",
+      "region": "Asia",
+      "defaultHl": "th",
+      "languages": ["th", "en"]
+    },
+    {
+      "gl": "vn",
+      "label": "Vietnam",
+      "region": "Asia",
+      "defaultHl": "vi",
+      "languages": ["vi", "en"]
+    },
+    {
+      "gl": "id",
+      "label": "Indonesia",
+      "region": "Asia",
+      "defaultHl": "id",
+      "languages": ["id", "en"]
+    },
+    {
+      "gl": "ph",
+      "label": "Philippines",
+      "region": "Asia",
+      "defaultHl": "en",
+      "languages": ["en", "fil"]
+    },
+    {
+      "gl": "my",
+      "label": "Malaysia",
+      "region": "Asia",
+      "defaultHl": "en",
+      "languages": ["en", "ms", "zh-CN"]
+    },
+    {
+      "gl": "sg",
+      "label": "Singapore",
+      "region": "Asia",
+      "defaultHl": "en",
+      "languages": ["en", "zh-CN"]
+    },
+    {
+      "gl": "in",
+      "label": "India",
+      "region": "Asia",
+      "defaultHl": "en",
+      "languages": ["en", "hi"]
+    },
+    {
+      "gl": "au",
+      "label": "Australia",
+      "region": "Oceania",
+      "defaultHl": "en",
+      "languages": ["en"]
+    },
+    {
+      "gl": "nz",
+      "label": "New Zealand",
+      "region": "Oceania",
+      "defaultHl": "en",
+      "languages": ["en"]
+    },
+    {
+      "gl": "ca",
+      "label": "Canada",
+      "region": "Americas",
+      "defaultHl": "en",
+      "languages": ["en", "fr-CA"]
+    },
+    {
+      "gl": "mx",
+      "label": "Mexico",
+      "region": "Americas",
+      "defaultHl": "es-419",
+      "languages": ["es-419", "en"]
+    },
+    {
+      "gl": "br",
+      "label": "Brazil",
+      "region": "Americas",
+      "defaultHl": "pt-BR",
+      "languages": ["pt-BR", "en"]
+    },
+    {
+      "gl": "ar",
+      "label": "Argentina",
+      "region": "Americas",
+      "defaultHl": "es-419",
+      "languages": ["es-419", "en"]
+    },
+    {
+      "gl": "cl",
+      "label": "Chile",
+      "region": "Americas",
+      "defaultHl": "es-419",
+      "languages": ["es-419", "en"]
+    },
+    {
+      "gl": "co",
+      "label": "Colombia",
+      "region": "Americas",
+      "defaultHl": "es-419",
+      "languages": ["es-419", "en"]
+    },
+    {
+      "gl": "pe",
+      "label": "Peru",
+      "region": "Americas",
+      "defaultHl": "es-419",
+      "languages": ["es-419", "en"]
+    },
+    {
+      "gl": "gb",
+      "label": "United Kingdom",
+      "region": "Europe",
+      "defaultHl": "en",
+      "languages": ["en"]
+    },
+    { "gl": "ie", "label": "Ireland", "region": "Europe", "defaultHl": "en", "languages": ["en"] },
+    {
+      "gl": "de",
+      "label": "Germany",
+      "region": "Europe",
+      "defaultHl": "de",
+      "languages": ["de", "en"]
+    },
+    {
+      "gl": "at",
+      "label": "Austria",
+      "region": "Europe",
+      "defaultHl": "de",
+      "languages": ["de", "en"]
+    },
+    {
+      "gl": "ch",
+      "label": "Switzerland",
+      "region": "Europe",
+      "defaultHl": "de",
+      "languages": ["de", "fr", "it", "en"]
+    },
+    {
+      "gl": "fr",
+      "label": "France",
+      "region": "Europe",
+      "defaultHl": "fr",
+      "languages": ["fr", "en"]
+    },
+    {
+      "gl": "be",
+      "label": "Belgium",
+      "region": "Europe",
+      "defaultHl": "nl",
+      "languages": ["nl", "fr", "en"]
+    },
+    {
+      "gl": "nl",
+      "label": "Netherlands",
+      "region": "Europe",
+      "defaultHl": "nl",
+      "languages": ["nl", "en"]
+    },
+    {
+      "gl": "es",
+      "label": "Spain",
+      "region": "Europe",
+      "defaultHl": "es",
+      "languages": ["es", "en"]
+    },
+    {
+      "gl": "pt",
+      "label": "Portugal",
+      "region": "Europe",
+      "defaultHl": "pt-PT",
+      "languages": ["pt-PT", "en"]
+    },
+    {
+      "gl": "it",
+      "label": "Italy",
+      "region": "Europe",
+      "defaultHl": "it",
+      "languages": ["it", "en"]
+    },
+    {
+      "gl": "pl",
+      "label": "Poland",
+      "region": "Europe",
+      "defaultHl": "pl",
+      "languages": ["pl", "en"]
+    },
+    {
+      "gl": "cz",
+      "label": "Czechia",
+      "region": "Europe",
+      "defaultHl": "cs",
+      "languages": ["cs", "en"]
+    },
+    {
+      "gl": "se",
+      "label": "Sweden",
+      "region": "Europe",
+      "defaultHl": "sv",
+      "languages": ["sv", "en"]
+    },
+    {
+      "gl": "no",
+      "label": "Norway",
+      "region": "Europe",
+      "defaultHl": "no",
+      "languages": ["no", "en"]
+    },
+    {
+      "gl": "dk",
+      "label": "Denmark",
+      "region": "Europe",
+      "defaultHl": "da",
+      "languages": ["da", "en"]
+    },
+    {
+      "gl": "fi",
+      "label": "Finland",
+      "region": "Europe",
+      "defaultHl": "fi",
+      "languages": ["fi", "en"]
+    },
+    {
+      "gl": "tr",
+      "label": "Turkey",
+      "region": "Europe",
+      "defaultHl": "tr",
+      "languages": ["tr", "en"]
+    },
+    {
+      "gl": "ru",
+      "label": "Russia",
+      "region": "Europe",
+      "defaultHl": "ru",
+      "languages": ["ru", "en"]
+    },
+    {
+      "gl": "ua",
+      "label": "Ukraine",
+      "region": "Europe",
+      "defaultHl": "uk",
+      "languages": ["uk", "en"]
+    },
+    {
+      "gl": "sa",
+      "label": "Saudi Arabia",
+      "region": "Middle East and Africa",
+      "defaultHl": "ar",
+      "languages": ["ar", "en"]
+    },
+    {
+      "gl": "ae",
+      "label": "United Arab Emirates",
+      "region": "Middle East and Africa",
+      "defaultHl": "ar",
+      "languages": ["ar", "en"]
+    },
+    {
+      "gl": "eg",
+      "label": "Egypt",
+      "region": "Middle East and Africa",
+      "defaultHl": "ar",
+      "languages": ["ar", "en"]
+    },
+    {
+      "gl": "za",
+      "label": "South Africa",
+      "region": "Middle East and Africa",
+      "defaultHl": "en",
+      "languages": ["en"]
+    }
+  ]
+}

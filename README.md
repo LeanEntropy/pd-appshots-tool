@@ -45,6 +45,7 @@ after `--`, e.g. `npm run download -- --yes`.
 | Our assets | `npm run own-assets` | Matches the local files in the assets folder to our live deck (reference only) and reads the PSD if psd-tools is installed |
 | Raw deck view | `npm run deck-view` | Writes offline markdown per game and country and a read-only `gallery.html` |
 | **The tool (main screen)** | `npm start` (or `npm run gallery`) | Starts one local server for all projects and opens the projects home: a card per project with its status, progress and next step, a "Working now" strip, Archive, and the Import offer for a project made before the shared library. Each project opens on its workspace (comparison grid, competitor picker that saves automatically, **Start analysis** with its approval screen, **Stop**, and **Continue** after a stop). `-- --project <id>` opens one project directly. Running it again opens the running tool |
+| New project | **+ New project** on the home page | Five steps, saved as you go: your game (Google Play link or package ID, with a confirmation card), competitors (link, ID or name search; drag to reorder), countries (ticks, language filled in), charts, then review and create. Close the page at any time: the project card says "Continue setting up". Lookups use Google Play politely (one request at a time, cached in `workspace/_shared/cache/play/`) |
 | Pick competitors (fallback) | `npm run select -- --pick "Archero 2, Capybara Go, ..."` | Saves the pick from the terminal (names or package ids), or asks in the terminal |
 | Analysis approval | `npm run pilot` / `npm run core` | Shows the approval screen (games and positions, images by cost level, model passes, estimated cost). No AI call. In Claude Code: `/analyze pilot` |
 | Store overview (free) | `npm run overview` | Per country, from the downloaded images only: orientation mix, aspect ratios, deck lengths, reuse of US images, measured colours. Also shown and rebuildable in the gallery. No AI |
@@ -62,6 +63,7 @@ Development: `npm test`, `npm run typecheck`, `npm run lint`.
 
 ```
 configs/defaults.json           tool defaults (models, caps, estimates, download pacing, taxonomy)
+configs/countries.json          Google Play countries with their languages (new-project wizard)
 configs/<project>.json          game config before its import (competitors, countries, charts)
 taxonomies/mobile-rpg.v1.json   screen types and marketing-layer vocabulary (draft)
 tools/psd/                      optional Python helper for the PSD (psd-tools)

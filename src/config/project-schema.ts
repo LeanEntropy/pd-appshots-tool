@@ -92,6 +92,8 @@ export const ProjectSettingsSchema = z
       .partial()
       .optional(),
     archived: z.boolean().optional(),
+    /** Present while the new-project steps are not finished: the step to reopen on (1 to 5). */
+    setupStep: z.number().int().min(1).max(5).optional(),
   })
   .superRefine((s, ctx) => {
     const ids = s.competitors.map((c) => c.id);
@@ -120,7 +122,10 @@ export const ProjectSettingsSchema = z
   });
 export type ProjectSettings = z.infer<typeof ProjectSettingsSchema>;
 
-/** A draft cannot run anything yet: it needs our game, a competitor and US English. */
+/**
+ * A draft cannot run anything yet: it needs our game, a competitor and US English, and the
+ * new-project steps must be finished.
+ */
 export function isDraft(s: ProjectSettings): boolean {
-  return s.competitors.length === 0;
+  return s.competitors.length === 0 || s.setupStep !== undefined;
 }

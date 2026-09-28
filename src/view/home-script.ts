@@ -23,7 +23,7 @@ function card(p) {
   const next = s ? '<a class="btn primary" href="' + esc(s.next.href) + '">' + esc(s.next.label) + "</a>" : "";
   const notices = s ? s.notices.map((n) => '<p class="warn">' + esc(n) + "</p>").join("") : "";
   return '<article class="pcard st-' + esc(stage) + (sub ? " sub-" + esc(sub) : "") + (p.archived ? " archived" : "") + '" tabindex="-1" aria-labelledby="t-' + esc(p.id) + '">'
-    + '<div class="phead"><span class="icon" aria-hidden="true">' + esc((p.name || "?").slice(0, 1).toUpperCase()) + '</span><div class="who"><h2 id="t-' + esc(p.id) + '">' + esc(p.name) + '</h2><div class="meta">' + esc(p.ourAppId) + " &middot; " + p.competitors + " competitors &middot; " + p.countries + " countries</div></div>"
+    + '<div class="phead">' + (p.iconFile ? '<img class="icon" alt="" src="/p/' + esc(p.id) + "/icons/" + esc(encodeURIComponent(p.iconFile)) + '">' : '<span class="icon" aria-hidden="true">' + esc((p.name || "?").slice(0, 1).toUpperCase()) + "</span>") + '<div class="who"><h2 id="t-' + esc(p.id) + '">' + esc(p.name) + '</h2><div class="meta">' + esc(p.ourAppId) + " &middot; " + p.competitors + " competitors &middot; " + p.countries + " countries</div></div>"
     + '<span class="pill">' + esc(pill) + "</span></div>"
     + '<p class="line">' + (sub === "running" ? '<span class="spin" style="border-color: var(--accent); border-right-color: transparent" aria-hidden="true"></span>' : "") + esc(line) + "</p>" + prog + notices
     + '<div class="actions">' + (p.archived ? "" : next) + ' <a class="btn" href="/p/' + esc(p.id) + '/">Open</a>'

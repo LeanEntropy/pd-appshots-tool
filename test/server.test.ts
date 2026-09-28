@@ -148,7 +148,7 @@ test("one server serves each project under /p/<id>/ with its API base, and guard
     const home = await (await fetch(`${origin}/`)).text();
     assert.match(home, /Your projects/);
     assert.match(home, /\+ New project/);
-    assert.match(await (await fetch(`${origin}/new`)).text(), /milestone 3/);
+    assert.match(await (await fetch(`${origin}/new`)).text(), /wizardStart\(\)/);
     const land = await fetch(`${origin}/p/${id}/`, { redirect: "manual" });
     assert.equal(land.status, 302);
     assert.match(land.headers.get("location") ?? "", new RegExp(`^/p/${id}/views/gallery.html#`));
