@@ -156,6 +156,24 @@ export function refreshRecord(
   return { ...out, final: t.final, mappedFrom };
 }
 
+/**
+ * Records saved under an older taxonomy mapping, with the current one applied in memory (no AI;
+ * `npm run refresh-records` or the next write saves it). The report and the run both read
+ * records this way, so the data fingerprint a run saves matches the report built after it.
+ */
+export function withCurrentMapping(
+  records: ReadonlyMap<string, AnalysisRecord>,
+): Map<string, AnalysisRecord> {
+  return new Map(
+    [...records].map(([id, r]) => [
+      id,
+      r.final && r.identity && r.mapping !== TAXONOMY_MAPPING
+        ? refreshRecord(r, () => r.identity as ImageIdentity, r.taxonomy ?? "")
+        : r,
+    ]),
+  );
+}
+
 /** Record writer that refreshes identity and mapping first (shared lookups for a whole run). */
 export function recordWriter(loaded: LoadedConfig, db?: ImageDb) {
   const paths = projectPaths(loaded);

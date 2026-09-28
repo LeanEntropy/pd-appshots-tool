@@ -19,7 +19,7 @@ import { findPatterns, type Patterns } from "./patterns.ts";
 import type { AnalysisPlan } from "./plan.ts";
 import { type PromptName, renderPrompt } from "./prompts.ts";
 import type { Provider } from "./providers.ts";
-import { recordWriter } from "./record-refresh.ts";
+import { recordWriter, withCurrentMapping } from "./record-refresh.ts";
 import { type AnalysisRecord, readRecords } from "./records.ts";
 import { analyseChunk, modelCopy } from "./run-chunk.ts";
 import { analyseImages } from "./run-images.ts";
@@ -172,7 +172,7 @@ export async function runAnalysis(
   const { stoppedForBudget, cancelled, aborted } = loop;
   for (const h of loop.heldElsewhere) fail(`${h}; it will be reused, not paid`, null, null);
 
-  const all = readRecords(paths);
+  const all = withCurrentMapping(readRecords(paths));
   for (const s of snaps) enrichOrder(paths, s, all);
   const entries = batchEntries(plan, all, db, config.ourApp.id);
   let patterns: Patterns | null = null;

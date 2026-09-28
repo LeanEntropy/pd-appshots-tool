@@ -8,11 +8,10 @@ import type { AbTestsOutput } from "./ab-tests-schema.ts";
 import { reportLabeler } from "./categories.ts";
 import { batchDataHash } from "./entries.ts";
 import { readLatest } from "./final-report.ts";
-import type { ImageIdentity } from "./identity.ts";
 import { labeler } from "./labels.ts";
 import { orderHistory } from "./orders.ts";
 import { type AnalysisPlan, buildAnalysisPlan, readSavedPlan, type Stage } from "./plan.ts";
-import { refreshRecord, TAXONOMY_MAPPING } from "./record-refresh.ts";
+import { withCurrentMapping } from "./record-refresh.ts";
 import { readRecords } from "./records.ts";
 import { buildReportData, type ReportInputs } from "./report-data.ts";
 import { reportMarkdown } from "./report-md.ts";
@@ -73,16 +72,7 @@ export function reportInputs(
   // The cost of the next approval is the batch as it would be proposed now (no AI, not saved).
   const proposed = buildAnalysisPlan(loaded, stage);
   const plan = saved ?? proposed;
-  // Records saved under an older taxonomy mapping are shown with the current one (in memory,
-  // no AI; `npm run refresh-records` or the next run writes it to disk).
-  const records = new Map(
-    [...readRecords(paths)].map(([id, r]) => [
-      id,
-      r.final && r.identity && r.mapping !== TAXONOMY_MAPPING
-        ? refreshRecord(r, () => r.identity as ImageIdentity, r.taxonomy ?? "")
-        : r,
-    ]),
-  );
+  const records = withCurrentMapping(readRecords(paths));
   const db = openImageDb(paths);
   const m = plan.market;
   const decks = new Map(plan.games.map((g) => [g.appId, coreDeck(loaded, g.appId)]));

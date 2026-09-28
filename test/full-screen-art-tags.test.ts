@@ -2,7 +2,35 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 import { categoryOf, FULL_SCREEN_ART } from "../src/analysis/categories.ts";
 import { artMessage, isEventLine } from "../src/analysis/image-tags.ts";
+import { TAXONOMY_MAPPING, withCurrentMapping } from "../src/analysis/record-refresh.ts";
 import { reading } from "./helpers/fake-provider.ts";
+
+test("the run and the report read records with the same (current) mapping", () => {
+  const r = reading("img1", "key_art", "ARCHERO 2");
+  r.screenshot.composition = "pure_art";
+  r.screenshot.captures = [];
+  const rec = {
+    imageId: "x",
+    appId: "a",
+    gl: "us",
+    hl: "en",
+    position: 1,
+    status: "ok" as const,
+    final: r,
+    producer: null,
+    reviewer: null,
+    adjudication: null,
+    differences: [],
+    problems: [],
+    runId: "r",
+    updatedAt: "",
+    identity: { game: "Archero 2" } as never,
+    mapping: "key-art-title-screen.v3",
+  };
+  const out = withCurrentMapping(new Map([["x", rec]])).get("x");
+  assert.equal(out?.mapping, TAXONOMY_MAPPING);
+  assert.equal(out?.final?.screenshot.screenType, "title_image");
+});
 
 test("title, key and loading art stay full-screen art even with a capture listed", () => {
   for (const t of ["title_image", "key_art", "loading_screen"]) {
