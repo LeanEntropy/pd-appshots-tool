@@ -67,6 +67,8 @@ export interface RunManifest {
   /** Full deck manifests at the time of the run, so any past view can be rebuilt. */
   decks: DeckManifest[];
   deckHashes: Record<string, string>;
+  /** Deck keys downloaded by this run when it added to an earlier run's decks (plan 6.3). */
+  added?: string[];
 }
 
 export function newRunId(kind: string, now = new Date()): string {

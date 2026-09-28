@@ -8,6 +8,7 @@ import {
   type DeckManifest,
   type DeckSlot,
   newRunId,
+  type RunManifest,
   writeDeck,
   writeRunManifest,
 } from "../store/manifest.ts";
@@ -37,11 +38,25 @@ export interface DownloadResult {
   stats: RunStats;
 }
 
+/** Options for a partial download (one added game) run from the page. */
+export interface DownloadOptions {
+  /** Called after each image: images done and the total to download. */
+  onImage?: (done: number, total: number) => void;
+  /**
+   * The latest download run: its decks are kept in the new run manifest (the views read only the
+   * latest run), and the plan's decks replace those with the same key (plan 6.3).
+   */
+  mergeWith?: RunManifest;
+  /** Tests: image bytes without the network. */
+  fetchImage?: (url: string) => Promise<Buffer>;
+}
+
 /** Downloads every screenshot of an approved plan into the project image database. */
 export async function runDownload(
   loaded: LoadedConfig,
   plan: DownloadPlan,
   log: (s: string) => void,
+  opts: DownloadOptions = {},
 ): Promise<DownloadResult> {
   const { config } = loaded;
   const paths = projectPaths(loaded);
@@ -76,11 +91,12 @@ export async function runDownload(
     config.download.imageDelayMs,
     async ([gid, url]) => {
       try {
-        await db.ingest(await fetchImage(fullResUrl(url)), undefined, gid);
+        await db.ingest(await (opts.fetchImage ?? fetchImage)(fullResUrl(url)), undefined, gid);
       } catch (e) {
         failed.push(`${where.get(gid)} (${e instanceof Error ? e.message : String(e)})`);
       }
-      if (++done % 50 === 0) {
+      opts.onImage?.(++done, wanted.size);
+      if (done % 50 === 0) {
         db.save();
         log(`  ${done} of ${wanted.size} images`);
       }
@@ -133,6 +149,7 @@ export async function runDownload(
   );
 
   const runId = newRunId("setup");
+  const kept = (opts.mergeWith?.decks ?? []).filter((d) => !(deckKey(d) in deckHashes));
   const manifestPath = writeRunManifest(paths.runs, {
     runId,
     kind: "setup-download",
@@ -143,8 +160,9 @@ export async function runDownload(
     planHash: plan.planHash,
     aiCalls: 0,
     imageCount: db.size,
-    decks,
-    deckHashes,
+    decks: [...kept, ...decks],
+    deckHashes: { ...(opts.mergeWith?.deckHashes ?? {}), ...deckHashes },
+    ...(opts.mergeWith ? { added: Object.keys(deckHashes) } : {}),
   });
   const b = mainMarket(config);
   return {

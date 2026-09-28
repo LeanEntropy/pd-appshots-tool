@@ -29,6 +29,8 @@ export const JobSchema = z.object({
   /** The approval screen the user accepted (fingerprint and when it was shown): used once. */
   approvalId: z.string().default(""),
   stage: z.enum(["pilot", "core"]).optional(),
+  /** The game a store job is for (checking or downloading an added competitor). */
+  appId: z.string().optional(),
   batchId: z.string().nullable().default(null),
   /** Storage key of the frozen input (the immutable copy of the approved plan). */
   frozenInput: z.string().nullable().default(null),

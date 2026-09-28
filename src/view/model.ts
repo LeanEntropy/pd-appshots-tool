@@ -196,8 +196,9 @@ export function buildViewModel(
       max: config.core.maxCompetitors,
     },
     ours: apps.filter((a) => a.group === "ours"),
+    // A competitor removed from the project is hidden; its files and analyses are kept.
     named: apps
-      .filter((a) => a.group === "named")
+      .filter((a) => a.group === "named" && namedOrder.has(a.appId))
       .sort((a, b) => (namedOrder.get(a.appId) ?? 99) - (namedOrder.get(b.appId) ?? 99)),
     chart: apps
       .filter((a) => a.group === "chart")

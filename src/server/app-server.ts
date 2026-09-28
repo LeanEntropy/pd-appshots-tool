@@ -6,6 +6,7 @@ import { wizardHtml } from "../view/wizard-html.ts";
 import type { ApiResponse } from "./api.ts";
 import { type AppContext, type AppOptions, createAppContext } from "./app-context.ts";
 import { redirect, send, sendHtml, writeRequest } from "./http-util.ts";
+import { competitorsRoute } from "./routes-competitors.ts";
 import { getImport, getJobs, getProjects, postArchive, postImport } from "./routes-home.ts";
 import { getCountries, getLookup, getSearch, postProject } from "./routes-play.ts";
 import { projectRoute } from "./routes-project.ts";
@@ -136,6 +137,7 @@ export function createAppServer(app: AppContext): Server {
           return sendHtml(res, app.pages.status(id, found.draft.name, s, app.token));
         return send(res, 409, { problems: ["Add at least one competitor first."] });
       }
+      if (await competitorsRoute(app, found.loaded, rest, req, res, url)) return;
       return await projectRoute(app, found.loaded, rest, req, res, url);
     } catch (e) {
       // The details go to the terminal; the page gets a plain sentence.

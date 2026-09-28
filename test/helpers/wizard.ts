@@ -3,6 +3,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import type { Fetcher } from "../../src/play/icon.ts";
 import { startAppServer } from "../../src/server/app-server.ts";
+import type { StoreDeps } from "../../src/steps/add-competitor.ts";
 import { workspaceStorage } from "../../src/storage/index.ts";
 import { app, fakeFetcher, fakeScraper, lookup } from "./play.ts";
 
@@ -12,7 +13,7 @@ export const headers = { "Content-Type": "application/json", "X-SSR-Token": TOKE
 export const OURS = "com.pockethaven.roguelegend";
 
 /** The tool's server on a temp workspace, with a scripted Google Play and local icons. */
-export async function wizardServer(slowIcon?: Fetcher) {
+export async function wizardServer(slowIcon?: Fetcher, storeDeps?: StoreDeps) {
   const root = mkdtempSync(join(tmpdir(), "ssr-wiz-"));
   mkdirSync(join(root, "configs"));
   cpSync(join(REPO, "configs", "defaults.json"), join(root, "configs", "defaults.json"));
@@ -31,7 +32,13 @@ export async function wizardServer(slowIcon?: Fetcher) {
     [app("com.habby.capybara", "Capybara Go"), app("com.dxx.firenow", "Survivor.io")],
   );
   const fetcher = slowIcon ?? (await fakeFetcher()).fetcher;
-  const s = await startAppServer({ root, token: TOKEN, play: lookup(storage, f.scraper), fetcher });
+  const s = await startAppServer({
+    root,
+    token: TOKEN,
+    play: lookup(storage, f.scraper),
+    fetcher,
+    ...(storeDeps ? { storeDeps } : {}),
+  });
   const get = async (p: string) => {
     const r = await fetch(`${s.origin}${p}`, { redirect: "manual" });
     const text = await r.text();
