@@ -20,6 +20,7 @@ import {
 import type { AppContext } from "./app-context.ts";
 import { redirect, send, sendHtml, writeRequest } from "./http-util.ts";
 import { getReportCurrent, getReportRun } from "./report-api.ts";
+import { isReportsPath, reportsRoute } from "./routes-reports.ts";
 import { serveStatic } from "./static.ts";
 
 type Get = (l: LoadedConfig, q: URLSearchParams, app: AppContext) => ApiResponse;
@@ -90,6 +91,8 @@ export async function projectRoute(
   }
   if (rest === "/status" && req.method === "GET")
     return sendHtml(res, app.pages.status(id, app.names(id), stateFor(app, loaded), app.token));
+  // Several reports per project (plan-reports R1).
+  if (isReportsPath(rest)) return reportsRoute(app, loaded, rest, req, res);
   const get = GETS[rest];
   if (get && req.method === "GET") {
     const r = get(loaded, url.searchParams, app);

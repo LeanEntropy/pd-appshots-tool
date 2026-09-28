@@ -8,7 +8,8 @@ const PAGES = ["overview", "competitors", "screenshots", "analysis", "report"];
 
 // Pure: any hash to a page name, with a fixed fallback.
 function pageFromHash(h) {
-  const p = String(h || "").replace(/^#/, "").toLowerCase();
+  // #report/<report id> opens the Report page with that report's card open.
+  const p = String(h || "").replace(/^#/, "").split("/")[0].toLowerCase();
   return PAGES.includes(p) ? p : "screenshots";
 }
 

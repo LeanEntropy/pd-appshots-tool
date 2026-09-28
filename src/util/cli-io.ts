@@ -5,14 +5,20 @@ export interface Args {
   config: string;
   yes: boolean;
   flags: Map<string, string | true>;
+  /** Words that are not flags or flag values (e.g. a report name). */
+  positional: string[];
 }
 
 export function parseArgs(argv: string[]): Args {
   const [command = "help", ...rest] = argv;
   const flags = new Map<string, string | true>();
+  const positional: string[] = [];
   for (let i = 0; i < rest.length; i++) {
     const a = rest[i] ?? "";
-    if (!a.startsWith("--")) continue;
+    if (!a.startsWith("--")) {
+      positional.push(a);
+      continue;
+    }
     const [key, inline] = a.slice(2).split("=", 2) as [string, string | undefined];
     const next = rest[i + 1];
     if (inline !== undefined) flags.set(key, inline);
@@ -27,6 +33,7 @@ export function parseArgs(argv: string[]): Args {
     config: typeof cfg === "string" ? cfg : "configs/rogue-legend.json",
     yes: flags.has("yes"),
     flags,
+    positional,
   };
 }
 

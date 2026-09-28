@@ -6,6 +6,7 @@ import {
   type ProjectPaths,
   projectPaths,
 } from "../config/load.ts";
+import { recordPresetRun } from "../reports/version.ts";
 import type { ImageDb } from "../store/imagedb.ts";
 import { ensureDir, readJsonIfExists, writeJsonAtomic } from "../util/fsx.ts";
 import { artWording } from "./art-wording.ts";
@@ -75,23 +76,22 @@ export function writeFinalReport(
   if (o.synthesisSkipped)
     lines.push(`Patterns and recommendations were not written: ${o.synthesisSkipped}`, "");
   // The same report model as the gallery's Report page: deterministic content always, AI after.
-  const data = buildReportData(
-    reportInputs(loaded, plan.stage, {
-      plan,
-      skip: o.synthesisSkipped,
-      ai:
-        s && (s.recommendations || s.interpretation)
-          ? {
-              runId: o.runId,
-              dataHash,
-              interpretation: s.interpretation,
-              recommendations: s.recommendations,
-              review: s.review,
-              revised: !!s.draft,
-            }
-          : undefined,
-    }),
-  );
+  const inputs = reportInputs(loaded, plan.stage, {
+    plan,
+    skip: o.synthesisSkipped,
+    ai:
+      s && (s.recommendations || s.interpretation)
+        ? {
+            runId: o.runId,
+            dataHash,
+            interpretation: s.interpretation,
+            recommendations: s.recommendations,
+            review: s.review,
+            revised: !!s.draft,
+          }
+        : undefined,
+  });
+  const data = buildReportData(inputs);
   lines.push(...reportMarkdown(data, label));
   const changes = plan.games.flatMap((g) => {
     const h = orderHistory(paths, g.appId, plan.market.gl, plan.market.hl);
@@ -122,5 +122,7 @@ export function writeFinalReport(
     complete: !!s?.recommendations,
   };
   writeJsonAtomic(latestFile(paths, plan.stage), latest);
+  // Reports list (plan-reports R1): this run is the newest version; the previous one is archived.
+  recordPresetRun(loaded, inputs, o.runId);
   return file;
 }

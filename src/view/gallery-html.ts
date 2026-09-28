@@ -1,6 +1,7 @@
 import { CSS } from "./gallery-css.ts";
 import { GALLERY_SCRIPT } from "./gallery-script.ts";
 import type { ViewModel } from "./model.ts";
+import { REPORT_LIST_CSS } from "./report-list.ts";
 import { appBar, escHtml, type Step, stepBar } from "./shell.ts";
 
 /** Served by the tool server: where the project's API is, and the project's steps. */
@@ -26,7 +27,7 @@ export function galleryHtml(vm: ViewModel, token = "", served?: GalleryServed): 
 <meta name="ssr-token" content="${escHtml(token)}">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Store Screenshot Recipe</title>
-<style>${CSS}</style>
+<style>${CSS}${REPORT_LIST_CSS}</style>
 </head>
 <body>
 <div id="runbar" role="status" aria-live="polite" hidden></div>
@@ -58,10 +59,9 @@ ${served ? appBar(served.name) + stepBar(served.steps) : ""}
 <p class="meta">Shows the image count, model passes and estimated cost first. Nothing is sent to an AI model until you press Approve and run. Screenshots already analysed are never sent again.</p>
 </div></div></div></section>
 <section data-page="report" hidden><h2 class="ph" tabindex="-1">Report</h2>
-<div class="card"><label>Showing: <select id="reportRun"><option value="current">Now (from the saved analyses)</option></select></label>
-<label><input type="checkbox" id="showImages" checked> Show images</label>
-<span class="meta">Batch: the one picked on the Analysis page.</span><p id="reportStatus" class="act-msg" hidden></p></div>
-<div id="report"></div><div id="expansion"></div></section>
+<div class="card"><label><input type="checkbox" id="showImages" checked> Show images</label>
+<span class="meta">All reports of this project, newest first. Each one is folded: open it to read it.</span><p id="reportStatus" class="act-msg" hidden></p></div>
+<div id="reportList"></div><div id="expansion"></div></section>
 </main>
 <dialog id="approvalDlg" aria-label="Analysis approval and progress"><div id="approval" tabindex="-1"></div></dialog>
 <div id="infoPop" role="dialog" aria-label="Screenshot analysis" hidden></div>
