@@ -78,7 +78,7 @@ function renderApproval(p) {
 function approvalDialog(text, kind) {
   const dlg = document.getElementById("approvalDlg");
   const box = document.getElementById("approval");
-  if (text !== undefined) box.innerHTML = '<p class="big act-msg ' + (kind || "") + '"' + (kind === "bad" ? ' role="alert"' : "") + ">" + (kind === "busy" ? ACT_SPIN : "") + esc(text) + '</p><div class="actions"><button id="cancelApproval">Close</button></div>';
+  if (text !== undefined) box.innerHTML = '<p class="big act-msg ' + (kind || "") + '"' + (kind === "bad" ? ' role="alert"' : "") + ">" + (kind === "busy" ? ACT_SPIN() : "") + esc(text) + '</p><div class="actions"><button id="cancelApproval">Close</button></div>';
   if (!dlg.open) { if (dlg.showModal) dlg.showModal(); else dlg.setAttribute("open", ""); }
   box.scrollIntoView({ block: "start" });
   box.focus();
@@ -158,6 +158,6 @@ document.addEventListener("change", (e) => { if (e.target.id === "stage") loadRe
 // Past the pilot, the page opens on the core check batch.
 if (["core", "recommendations", "expand"].includes(APP.stage)) document.getElementById("stage").value = "core";
 document.getElementById("approvalDlg").addEventListener("close", () => { shownPlan = null; if (runInDialog) goTo("analysis"); runInDialog = false; });
-if (location.protocol.startsWith("http")) { pollStatus(); document.getElementById("overview").innerHTML = '<p class="act-msg busy">' + ACT_SPIN + "Loading the store overview...</p>"; loadOverview(false); }
+if (location.protocol.startsWith("http")) { pollStatus(); document.getElementById("overview").innerHTML = '<p class="act-msg busy">' + ACT_SPIN() + "Loading the store overview...</p>"; loadOverview(false); }
 else document.getElementById("status").innerHTML = '<h2>Analysis status</h2><p class="meta">Open this page with npm start to run and follow the analysis.</p>';
 `;

@@ -53,6 +53,7 @@ function el(id = ""): FakeEl {
 interface Helper {
   act: (btn: FakeEl | null, o: unknown) => Promise<unknown>;
   send: (url: string, body: unknown) => Promise<unknown>;
+  spinHtml: (cls: string, extraStyle?: string) => string;
   btn: FakeEl;
   line: FakeEl;
 }
@@ -60,6 +61,10 @@ interface Helper {
 export function fakeDom() {
   const byId = new Map<string, FakeEl>();
   const body = el("body");
+  // A settable clock for spinHtml()'s phase-sync math, so tests can assert exact delays instead
+  // of tolerating real wall-clock jitter from setTimeout.
+  let clockMs = 0;
+  const performance = { now: () => clockMs };
   let next: () => Promise<unknown> = async () => ({
     ok: true,
     status: 200,
@@ -91,7 +96,8 @@ export function fakeDom() {
         "MutationObserver",
         "CSS",
         "fetch",
-        `${script}\nreturn { act, send };`,
+        "performance",
+        `${script}\nreturn { act, send, spinHtml };`,
       );
       const h = fn(
         document,
@@ -101,8 +107,12 @@ export function fakeDom() {
         },
         { escape: (s: string) => s },
         () => next(),
-      ) as Pick<Helper, "act" | "send">;
+        performance,
+      ) as Pick<Helper, "act" | "send" | "spinHtml">;
       return { ...h, btn, line };
+    },
+    setClockMs(ms: number) {
+      clockMs = ms;
     },
     respond(status: number, json: unknown) {
       next = async () => ({ ok: status < 400, status, json: async () => json });

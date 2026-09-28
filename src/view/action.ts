@@ -24,7 +24,13 @@ export const ACTION_SCRIPT = `
 const ACT_TOKEN = (document.querySelector('meta[name="ssr-token"]') || {}).content || "";
 const ACT_OFFLINE = "The tool did not answer. Is npm start still running in its terminal?";
 const actEsc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
-const ACT_SPIN = '<span class="act-spin" aria-hidden="true"></span>';
+// Every spinner is rebuilt from scratch on each poll (innerHTML replace, not a DOM diff), which
+// restarts a plain CSS animation from 0deg and makes it visibly jump. A negative animation-delay
+// equal to how far into the 1s cycle we already are keeps a freshly created spinner in phase with
+// where it "should" be, so it reads as one continuous spin across updates instead of snapping back.
+function spinDelay() { return "animation-delay: -" + ((performance.now() % 1000) / 1000).toFixed(3) + "s"; }
+function spinHtml(cls, extraStyle) { return '<span class="' + cls + '" style="' + spinDelay() + (extraStyle ? "; " + extraStyle : "") + '" aria-hidden="true"></span>'; }
+const ACT_SPIN = () => spinHtml("act-spin");
 // Running actions by key: { text } of the busy button, re-applied if the button is re-rendered.
 const actRunning = new Map();
 
@@ -69,7 +75,7 @@ function actLine(el, kind, text, done, total) {
   el.hidden = false;
   el.className = "act-msg " + kind;
   el.setAttribute("role", kind === "bad" ? "alert" : "status");
-  el.innerHTML = (kind === "busy" ? ACT_SPIN : "") + actEsc(text) + (total ? '<progress max="' + total + '" value="' + (done || 0) + '"></progress>' : "");
+  el.innerHTML = (kind === "busy" ? ACT_SPIN() : "") + actEsc(text) + (total ? '<progress max="' + total + '" value="' + (done || 0) + '"></progress>' : "");
 }
 
 function actBusy(btn, text) {
@@ -78,7 +84,7 @@ function actBusy(btn, text) {
   btn.dataset.actText = text;
   btn.disabled = true;
   btn.setAttribute("aria-busy", "true");
-  btn.innerHTML = ACT_SPIN + actEsc(text);
+  btn.innerHTML = ACT_SPIN() + actEsc(text);
 }
 function actIdle(btn) {
   if (!btn || btn.dataset.actLabel === undefined) return;
@@ -154,7 +160,7 @@ document.addEventListener("click", (e) => {
   if (!href || href.startsWith("#")) return;
   if (a.dataset.actLabel === undefined) a.dataset.actLabel = a.innerHTML;
   a.setAttribute("aria-busy", "true");
-  a.innerHTML = ACT_SPIN + actEsc(a.dataset.busy || "Opening...");
+  a.innerHTML = ACT_SPIN() + actEsc(a.dataset.busy || "Opening...");
 });
 // Back/forward cache: a page shown again has its links idle.
 window.addEventListener("pageshow", () => { document.querySelectorAll("a[aria-busy]").forEach((a) => { a.innerHTML = a.dataset.actLabel || a.innerHTML; delete a.dataset.actLabel; a.removeAttribute("aria-busy"); }); });

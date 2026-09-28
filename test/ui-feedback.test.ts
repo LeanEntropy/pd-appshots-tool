@@ -96,6 +96,67 @@ test("act(): a failure shows the server's reason in red and frees the button", a
   assert.match(line.innerHTML, /The tool did not answer\. Is npm start still running/);
 });
 
+test("spinners: no bare span is inserted without a phase-synced delay", () => {
+  // Every place a spinner is inserted goes through spinHtml()/ACT_SPIN() (a computed negative
+  // animation-delay), never a hand-written <span class="spin">/<span class="act-spin">. A bare
+  // span restarts its CSS animation from 0deg whenever the surrounding innerHTML is rebuilt on the
+  // next progress poll, which is what made the run panel's spinner visibly jump backward every
+  // ~1.5 rotations (a 1.5s poll fighting a 1s animation).
+  for (const { f, text } of views) {
+    assert.doesNotMatch(
+      text,
+      /<span class="(act-)?spin"[^>]*aria-hidden/,
+      `${f} inserts a spinner without going through spinHtml()/ACT_SPIN()`,
+    );
+  }
+});
+
+test("spin keyframes: a full turn, linear pace, forever, wherever a spinner is styled", () => {
+  const files = readdirSync(VIEW).filter((f) => f.endsWith(".ts"));
+  let keyframesSeen = 0;
+  for (const f of files) {
+    const text = readFileSync(join(VIEW, f), "utf8");
+    for (const block of text.match(
+      /@keyframes [\w-]+ \{ to \{ transform: rotate\([^)]*\); \} \}/g,
+    ) || []) {
+      keyframesSeen++;
+      assert.match(block, /rotate\(360deg\)/, `${f}: ${block} is not a full 360deg turn`);
+    }
+    for (const anim of text.match(/animation:\s*[\w-]+\s+[\d.]+s\s+\w+\s+\w+/g) || []) {
+      assert.match(anim, /\blinear\s+infinite\b/, `${f}: "${anim}" is not linear and infinite`);
+      // spinHtml()'s phase-sync math (action.ts) hard-codes a 1000ms cycle: any spin animation
+      // with a different duration would fall out of phase and the old jump would reappear.
+      assert.match(
+        anim,
+        /\s1s\s/,
+        `${f}: "${anim}" must run for exactly 1s to match spinHtml()'s cycle`,
+      );
+    }
+  }
+  assert.ok(keyframesSeen >= 2, "expected spin keyframes in at least action.ts and one page's CSS");
+});
+
+test("spinHtml(): a freshly rendered spinner is phase-synced to the clock, not restarted at 0deg", () => {
+  const dom = fakeDom();
+  const { spinHtml } = dom.run(ACTION_SCRIPT);
+  const delayOf = (html: string) => {
+    const m = html.match(/animation-delay:\s*(-?[\d.]+)s/);
+    assert.ok(m, `no animation-delay in ${html}`);
+    return Number(m?.[1]);
+  };
+  // A driven fake clock (not a real setTimeout wait) keeps this exact and non-flaky.
+  dom.setClockMs(200);
+  assert.equal(delayOf(spinHtml("spin")), -0.2, "0.2s into the cycle: -0.2s delay");
+  dom.setClockMs(200 + 120);
+  // A spinner recreated 120ms later lands 120ms further into the (negative) cycle, so it picks up
+  // at the same angle a spinner that had kept spinning the whole time would be at - instead of
+  // every recreation restarting the rotation from 0deg.
+  assert.equal(delayOf(spinHtml("spin")), -0.32);
+  // Crossing a 1s cycle boundary wraps, instead of drifting to -1s and beyond.
+  dom.setClockMs(2950);
+  assert.equal(delayOf(spinHtml("spin")), -0.95);
+});
+
 test("the import reports live steps with counts", async () => {
   const { loaded, root } = await legacyProject();
   const seen: { step: string; done?: number; total?: number }[] = [];

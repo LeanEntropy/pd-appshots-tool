@@ -63,7 +63,7 @@ function renderGrid() {
       const why = whyNot(r, i);
       const live = !why && !i.analysis && typeof runMark === "function" ? runMark(i.imageId) : "";
       const cls = why ? "out" : i.analysis ? "done" : live === "failed" ? "failed" : "next";
-      const badge = why ? '<span class="gbadge out">not analysed</span>' : i.analysis ? '<span class="gbadge done">analysed</span>' : live === "failed" ? '<span class="gbadge failed">failed</span>' : live === "current" ? '<span class="gbadge next"><span class="spin" aria-hidden="true"></span>analysing</span>' : '<span class="gbadge next">will analyse</span>';
+      const badge = why ? '<span class="gbadge out">not analysed</span>' : i.analysis ? '<span class="gbadge done">analysed</span>' : live === "failed" ? '<span class="gbadge failed">failed</span>' : live === "current" ? '<span class="gbadge next">' + spinHtml("spin") + 'analysing</span>' : '<span class="gbadge next">will analyse</span>';
       const tip = r.app.name + ", position " + p + ", " + i.width + "x" + i.height + (why ? ". Not analysed: " + why : i.analysis ? ". Already analysed (no AI)" : ". Will be analysed in this batch");
       html += '<td class="' + cls + '"><a class="thumb" href="' + IMG + esc(i.full) + '" target="_blank" rel="noopener" title="' + esc(tip) + '"><img loading="lazy" width="100" height="160" src="' + IMG + esc(i.thumb) + '" alt="' + esc(r.app.name) + " position " + p + '">' + badge + "</a>" + infoBtn(i.imageId) + caption(i) + "</td>";
     }

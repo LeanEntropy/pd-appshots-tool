@@ -19,7 +19,7 @@ let stopAsked = null;
 
 function stopButton(label) {
   const asked = lastStatus && stopAsked === lastStatus.startedAt;
-  return '<button type="button" class="stopbtn" data-stop="1" data-act-key="stop"' + (asked ? ' disabled aria-busy="true">' + ACT_SPIN + "Stopping after this image..." : ">" + label) + "</button>";
+  return '<button type="button" class="stopbtn" data-stop="1" data-act-key="stop"' + (asked ? ' disabled aria-busy="true">' + ACT_SPIN() + "Stopping after this image..." : ">" + label) + "</button>";
 }
 
 const STEP_WORDS = { start: "starting", analysis: "reading the image (first analysis)", review: "checking (second opinion)", settle: "settling a disagreement between the two models", patterns: "finding patterns across games", recommend: "writing recommendations", "recommend-review": "checking the recommendations", "recommend-revise": "revising the recommendations", report: "writing the report" };
@@ -77,7 +77,7 @@ function runPanelHtml(s) {
   const list = items.map((it) => { const st = runState(it); return '<li class="' + st + '">' + esc(it.name + " #" + it.position) + ' <span class="st">' + { done: "ok", failed: "failed", current: "in progress", queued: "waiting" }[st] + "</span></li>"; }).join("");
   const errs = (s.errors || []).map((e) => "<li>" + esc((e.name ? e.name + (e.position ? " #" + e.position : "") + ": " : "") + e.message) + "</li>").join("");
   let head;
-  if (s.running) head = '<h2><span class="spin" aria-hidden="true"></span>Running: ' + imageLine(p) + (cur.length ? " &mdash; " + esc(cur.join(", ")) : "") + "</h2>"
+  if (s.running) head = '<h2>' + spinHtml("spin") + 'Running: ' + imageLine(p) + (cur.length ? " &mdash; " + esc(cur.join(", ")) : "") + "</h2>"
     + '<p class="now">Step: ' + esc(STEP_WORDS[p.phase] || p.phase) + '</p><p class="meta">' + esc(p.message) + "</p>"
     + (s.stoppable ? '<p>' + stopButton("Stop after this image") + ' <span class="meta">Finished images are kept; you can continue later.</span></p>' : "");
   else if (!s.finishedAt) head = '<h2 class="warn">Interrupted</h2><p class="warn"><strong>The tool stopped during this run.</strong> Finished images are kept.</p>' + continueBox(s);
@@ -113,7 +113,7 @@ function renderRunbar(s) {
   if (!show) return;
   const p = s.progress || { done: 0, total: 0 };
   bar.className = s.running ? "" : s.error ? "stopped" : "finished";
-  bar.innerHTML = (s.running ? '<span class="spin" aria-hidden="true"></span>Running: ' + imageLine(p) + ' &middot; <span class="rt-elapsed">' + elapsed(s.startedAt) + "</span> &middot; " + money(s.spentUsd) + (s.stoppable ? " " + stopButton("Stop") : "") : (s.error ? "Stopped: " + esc(s.error) : "Finished") + (s.report ? ' &middot; <a href="#report" class="toreport">Show the report</a>' : ""))
+  bar.innerHTML = (s.running ? spinHtml("spin") + 'Running: ' + imageLine(p) + ' &middot; <span class="rt-elapsed">' + elapsed(s.startedAt) + "</span> &middot; " + money(s.spentUsd) + (s.stoppable ? " " + stopButton("Stop") : "") : (s.error ? "Stopped: " + esc(s.error) : "Finished") + (s.report ? ' &middot; <a href="#report" class="toreport">Show the report</a>' : ""))
     + ' <button type="button" id="runbarDetails">Details</button>' + (s.running ? "" : ' <button type="button" id="runbarClose" aria-label="Hide this bar">Hide</button>');
 }
 
@@ -144,7 +144,7 @@ function tick() {
 function showRunInDialog() {
   runInDialog = true;
   const box = document.getElementById("approval");
-  box.innerHTML = '<div class="runpanel"><h2><span class="spin" aria-hidden="true"></span>Starting the run...</h2></div><div class="actions"><button type="button" id="cancelApproval">Close this panel (the run continues)</button></div>';
+  box.innerHTML = '<div class="runpanel"><h2>' + spinHtml("spin") + 'Starting the run...</h2></div><div class="actions"><button type="button" id="cancelApproval">Close this panel (the run continues)</button></div>';
   approvalDialog();
 }
 

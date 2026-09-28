@@ -25,7 +25,7 @@ function card(p) {
   return '<article class="pcard st-' + esc(stage) + (sub ? " sub-" + esc(sub) : "") + (p.archived ? " archived" : "") + '" tabindex="-1" aria-labelledby="t-' + esc(p.id) + '">'
     + '<div class="phead">' + (p.iconFile ? '<img class="icon" alt="" src="/p/' + esc(p.id) + "/icons/" + esc(encodeURIComponent(p.iconFile)) + '">' : '<span class="icon" aria-hidden="true">' + esc((p.name || "?").slice(0, 1).toUpperCase()) + "</span>") + '<div class="who"><h2 id="t-' + esc(p.id) + '">' + esc(p.name) + '</h2><div class="meta">' + esc(p.ourAppId) + " &middot; " + p.competitors + " competitors &middot; " + p.countries + " countries</div></div>"
     + '<span class="pill">' + esc(pill) + "</span></div>"
-    + '<p class="line">' + (sub === "running" ? '<span class="spin" style="border-color: var(--accent); border-right-color: transparent" aria-hidden="true"></span>' : "") + esc(line) + "</p>" + prog + notices
+    + '<p class="line">' + (sub === "running" ? spinHtml("spin", "border-color: var(--accent); border-right-color: transparent") : "") + esc(line) + "</p>" + prog + notices
     + '<div class="actions">' + (p.archived ? "" : next) + ' <a class="btn" href="/p/' + esc(p.id) + '/">Open</a>'
     + '<button type="button" class="btn right" data-archive="' + esc(p.id) + '" data-act-key="archive:' + esc(p.id) + '" data-to="' + (p.archived ? "false" : "true") + '">' + (p.archived ? "Show again" : "Archive") + "</button></div></article>";
 }
@@ -66,7 +66,7 @@ async function pollJobs() {
   try { lanes = (await (await fetch("/api/jobs")).json()).lanes || []; } catch {}
   const bar = document.getElementById("working");
   bar.hidden = !lanes.length;
-  bar.innerHTML = lanes.length ? "<span>Working now:</span>" + lanes.map((l) => '<span><span class="spin" aria-hidden="true"></span><a href="/p/' + esc(l.projectId) + '/">' + esc(l.name) + "</a>, " + esc(l.total ? "analysing image " + Math.min(l.done + 1, l.total) + " of " + l.total + " ($" + Number(l.spentUsd).toFixed(2) + " so far)" : l.message) + (l.total ? ' <progress max="' + l.total + '" value="' + l.done + '"></progress>' : "") + "</span>").join("") : "";
+  bar.innerHTML = lanes.length ? "<span>Working now:</span>" + lanes.map((l) => '<span>' + spinHtml("spin") + '<a href="/p/' + esc(l.projectId) + '/">' + esc(l.name) + "</a>, " + esc(l.total ? "analysing image " + Math.min(l.done + 1, l.total) + " of " + l.total + " ($" + Number(l.spentUsd).toFixed(2) + " so far)" : l.message) + (l.total ? ' <progress max="' + l.total + '" value="' + l.done + '"></progress>' : "") + "</span>").join("") : "";
   const key = JSON.stringify(lanes.map((l) => [l.projectId, l.done]));
   if (key !== lastLanes) { lastLanes = key; for (const l of lanes) loadState(l.projectId); if (!lanes.length) for (const p of projects) if (!p.archived) loadState(p.id); }
   jobTimer = setTimeout(pollJobs, lanes.length ? 2000 : 10000);
