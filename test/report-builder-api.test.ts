@@ -5,7 +5,7 @@ import { projectPaths } from "../src/config/load.ts";
 import { draftsFromExpansion } from "../src/reports/drafts.ts";
 import { listReports } from "../src/reports/list.ts";
 import { buildScopePlan } from "../src/reports/scope-plan.ts";
-import { listDefs, readDef, runFolders } from "../src/reports/store.ts";
+import { listDefs, readDef, runFolders, versionFileKey } from "../src/reports/store.ts";
 import { startAppServer } from "../src/server/app-server.ts";
 import { workspaceStorage } from "../src/storage/index.ts";
 import {
@@ -107,6 +107,10 @@ test("builder API: options, drafts, plans, instant build and refusals", async ()
     assert.ok(v.data.games.length === 4);
     assert.match(v.data.synthesis.reason, /Built on the Pilot only/);
     assert.ok(Array.isArray(v.research.items));
+    // In the markdown, "What to research next" is section 7, before the statistics.
+    const md = s.getText(versionFileKey(paths, versionId, "report.md")) ?? "";
+    assert.match(md, /\n7\. \[What to research next\]\(#7-what-to-research-next\)\n8\. \[Detailed/);
+    assert.match(md, /## 7\. What to research next\n\n[\s\S]*## 8\. Detailed statistics/);
     // Autosave of a new scope (and name) for a report of the builder.
     const jpScope = { type: "country", markets: [JP], competitors: three, includeCharts: [] };
     const saved = await post(

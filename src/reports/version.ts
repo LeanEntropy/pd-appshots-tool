@@ -79,8 +79,14 @@ export function findReport(defs: readonly ReportDef[], idOrName: string): Report
 /**
  * `npm run report -- <report name or id>`: a new version of a Pilot or Full check report from the
  * saved analyses, with no AI call. The previous version is archived. Returns the report.md path.
+ * `research` ("What to research next" at build time) is saved with the version and in its markdown.
  */
-export function buildPresetVersion(loaded: LoadedConfig, def: ReportDef, now = new Date()): string {
+export function buildPresetVersion(
+  loaded: LoadedConfig,
+  def: ReportDef,
+  now = new Date(),
+  research?: () => { lines: string[]; saved: unknown },
+): string {
   if (!isPreset(def.type))
     throw new Error(
       "Only the Pilot and the Full check can be rebuilt in this version of the tool.",
@@ -101,9 +107,18 @@ export function buildPresetVersion(loaded: LoadedConfig, def: ReportDef, now = n
     `Generated ${now.toISOString().slice(0, 16).replace("T", " ")} UTC from the saved analyses, with no AI call. Market: ${data.market}.`,
     "",
   ];
-  s.putText(mdKey, `${[...head, ...reportMarkdown(data, x.label)].join("\n")}\n`);
+  const md = (lines?: string[]) =>
+    `${[...head, ...reportMarkdown(data, x.label, lines)].join("\n")}\n`;
+  // Complete before it is listed; "What to research next" is added once it is listed (this
+  // version can cover or settle some suggestions), so a failure there leaves a whole version.
+  s.putText(mdKey, md());
   const v = presetVersionInputs(x, { reportId: def.id, stage, main, now });
   writeVersionInputs(s, paths, versionId, v);
   addVersion(s, paths, def.id, { id: versionId, generatedAt: v.generatedAt });
+  const r = research?.();
+  if (r) {
+    s.putJsonOnce(versionFileKey(paths, versionId, "suggestions.json"), r.saved);
+    s.putText(mdKey, md(r.lines));
+  }
   return s.localPath(mdKey);
 }

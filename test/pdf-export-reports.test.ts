@@ -9,10 +9,12 @@ import {
   ExportOptionsSchema,
   exportOptions,
   parsePrintQuery,
+  reportSource,
 } from "../src/export/report-source.ts";
 import { mainMarketRef } from "../src/reports/main-market.ts";
 import { syncPresetReports } from "../src/reports/migrate.ts";
-import { versionFileKey } from "../src/reports/store.ts";
+import { readDef, versionFileKey } from "../src/reports/store.ts";
+import { buildPresetVersion } from "../src/reports/version.ts";
 import { workspaceStorage } from "../src/storage/index.ts";
 import { EXPORT_SCRIPT } from "../src/view/report-export.ts";
 import { REPORT_LIST_SCRIPT } from "../src/view/report-list.ts";
@@ -128,4 +130,28 @@ test("each report card has Export PDF; the no-browser fallback opens that exact 
   });
   assert.match(page, /"reportId":"r-pilot"/);
   assert.match(page, /#autoprint/);
+});
+
+test("a version's saved research list is section 7 of its markdown and reaches the print page", async () => {
+  const loaded = await tempProject({ Heroll: { phone: 2, tablet: 0 } });
+  const paths = projectPaths(loaded);
+  const s = workspaceStorage(paths.workspace);
+  syncPresetReports(s, paths, mainMarketRef(loaded));
+  const def = readDef(s, paths, "r-pilot");
+  assert.ok(def);
+  const item = { id: "s-1", title: "Run the Full check", costText: "free", why: "Why." };
+  buildPresetVersion(loaded, def, new Date("2026-09-28T10:00:00Z"), () => ({
+    lines: ["1. **Run the Full check** (free). Why.", ""],
+    saved: { items: [item] },
+  }));
+  const vid = readDef(s, paths, "r-pilot")?.versions.at(-1)?.id ?? "";
+  const md = s.getText(versionFileKey(paths, vid, "report.md")) ?? "";
+  assert.match(
+    md,
+    /## 7\. What to research next\n\n1\. \*\*Run the Full check\*\*[\s\S]*## 8\. Detailed/,
+  );
+  const src = reportSource(loaded, { report: "r-pilot", version: vid }, OPTS);
+  assert.ok("page" in src);
+  assert.deepEqual(src.page.research, { items: [item] });
+  assert.match(reportPrintHtml(src.page), /"research":\{"items":\[\{"id":"s-1"/);
 });

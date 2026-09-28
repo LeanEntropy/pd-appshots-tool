@@ -127,14 +127,15 @@ export function setDismissed(loaded: LoadedConfig, id: string, dismiss: boolean)
   return true;
 }
 
-/** What a version keeps of the list at build time (so its markdown and PDF have it). */
+/**
+ * What a version keeps of the list at build time (so its markdown and PDF have it). `lines` is
+ * the section body, without a heading: the report numbers it among its sections.
+ */
 export function researchSnapshot(loaded: LoadedConfig): { lines: string[]; saved: unknown } {
   const v = suggestionsView(loaded);
   const top = v.suggestions.filter((s) => s.category !== "same").slice(0, 5);
   const at = new Date().toISOString();
   const lines = [
-    "## What to research next",
-    "",
     ...(top.length
       ? top.map((s, i) => `${i + 1}. **${s.title}** (${s.costText}). ${s.why}`)
       : [v.note ?? "Nothing to suggest: every gap the tool can see is covered."]),

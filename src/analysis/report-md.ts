@@ -22,9 +22,7 @@ export const SECTIONS = [
   "Store text and keywords",
   "Detailed statistics",
 ] as const;
-const slug = (i: number) =>
-  `${i + 1}-${(SECTIONS[i] ?? "").toLowerCase().replace(/[^a-z0-9]+/g, "-")}`;
-const head = (i: number) => `## ${i + 1}. ${SECTIONS[i]}`;
+export const RESEARCH_SECTION = "What to research next";
 
 export const GROUPS: Record<PatternFit["group"], string> = {
   order: "Order (the sequence of screen types)",
@@ -69,11 +67,17 @@ function cellOf(r: OrderRow | undefined, name: string): string {
 /**
  * The report body in markdown, in the same numbered sections as the gallery's Report page:
  * overview (verdict and key points), patterns with our fit, one row per store position (ours
- * first), recommendations, store text and derived keywords per country, then the detailed
- * statistics. Everything but the AI wording and the
+ * first), recommendations, A/B test details, store text and derived keywords per country, what
+ * to research next (only when `research` is given), then the detailed statistics. Everything but the AI wording and the
  * recommendations is computed by code and always present.
  */
-export function reportMarkdown(d: ReportData, label: Labeler): string[] {
+export function reportMarkdown(d: ReportData, label: Labeler, research?: string[]): string[] {
+  // "What to research next" (plan-reports 5A.5), when the version kept it: before the statistics.
+  const titles: string[] = [...SECTIONS];
+  if (research) titles.splice(6, 0, RESEARCH_SECTION);
+  const slug = (i: number) =>
+    `${i + 1}-${(titles[i] ?? "").toLowerCase().replace(/[^a-z0-9]+/g, "-")}`;
+  const head = (i: number) => `## ${i + 1}. ${titles[i]}`;
   const out: string[] = [];
   const o = overviewText(d);
   const f = d.fit;
@@ -111,7 +115,7 @@ export function reportMarkdown(d: ReportData, label: Labeler): string[] {
     );
 
   // The contents follow the summary (plan-reports 3C).
-  out.push("## Contents", "", ...SECTIONS.map((s, i) => `${i + 1}. [${s}](#${slug(i)})`), "");
+  out.push("## Contents", "", ...titles.map((s, i) => `${i + 1}. [${s}](#${slug(i)})`), "");
 
   out.push(head(1), "");
   out.push(
@@ -205,7 +209,8 @@ export function reportMarkdown(d: ReportData, label: Labeler): string[] {
 
   out.push(head(5), "", ...storeTextMarkdown(d.storeText));
 
-  out.push(head(6), "");
+  if (research) out.push(head(6), "", ...research);
+  out.push(head(titles.length - 1), "");
   if (d.patterns)
     out.push(
       ...patternSection(d.patterns, null, label)

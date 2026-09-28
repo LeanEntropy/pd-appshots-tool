@@ -3,6 +3,7 @@ import { test } from "node:test";
 import { runInNewContext } from "node:vm";
 import { renderGalleryHtml } from "../src/steps/deck-view.ts";
 import { EXPAND_SCRIPT } from "../src/view/gallery-expand.ts";
+import { REPORT_SCRIPT } from "../src/view/gallery-report.ts";
 import { BUILDER_SCRIPT } from "../src/view/report-builder.ts";
 import { BUILDER_REVIEW_SCRIPT } from "../src/view/report-builder-review.ts";
 import { SUGGEST_SCRIPT } from "../src/view/report-suggest.ts";
@@ -30,7 +31,7 @@ function page(): Ctx {
     pageFromHash: () => "overview",
   };
   runInNewContext(
-    `${BUILDER_SCRIPT}\n${BUILDER_REVIEW_SCRIPT}\n${SUGGEST_SCRIPT}\n${EXPAND_SCRIPT}\nthis.bld = bld; this.builderHtml = builderHtml; this.needsHtml = needsHtml; this.reviewHtml = reviewHtml; this.suggestionCard = suggestionCard; this.researchHtml = researchHtml; this.whatNextHtml = whatNextHtml;`,
+    `${REPORT_SCRIPT}\n${BUILDER_SCRIPT}\n${BUILDER_REVIEW_SCRIPT}\n${SUGGEST_SCRIPT}\n${EXPAND_SCRIPT}\nthis.bld = bld; this.builderHtml = builderHtml; this.needsHtml = needsHtml; this.reviewHtml = reviewHtml; this.suggestionCard = suggestionCard; this.researchHtml = researchHtml; this.whatNextHtml = whatNextHtml;`,
     ctx,
   );
   return ctx as Ctx;

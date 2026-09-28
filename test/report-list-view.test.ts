@@ -26,7 +26,7 @@ function page() {
     ctx,
   );
   return ctx as typeof ctx & {
-    renderReport: (box: Box, d: unknown, rid: string, stage: string) => void;
+    renderReport: (box: Box, d: unknown, rid: string, stage: string, research?: string) => void;
     card: (r: ReportSummary) => string;
   };
 }
@@ -100,6 +100,26 @@ test("two open reports never share an element id", () => {
     ca.filter((x) => cb.includes(x)),
     [],
   );
+});
+
+test("What to research next is numbered 7, before the statistics, only when given", () => {
+  const p = page();
+  const box = (): Box => ({ innerHTML: "", classList: { toggle: () => {} } });
+  const a = box();
+  p.renderReport(a, data, "r-core", "core", "<ol><li>Run it</li></ol>");
+  const titles = [...a.innerHTML.matchAll(/class="secno">(\d+)\.<\/span> ([^<]+)</g)].map(
+    (m) => `${m[1]} ${m[2]}`,
+  );
+  assert.deepEqual(titles.slice(-3), [
+    "6 Store text and keywords",
+    "7 What to research next",
+    "8 Detailed statistics",
+  ]);
+  assert.match(a.innerHTML, /data-goto="rep-r-core-research">What to research next/);
+  const b = box();
+  p.renderReport(b, data, "r-core", "core", "");
+  assert.doesNotMatch(b.innerHTML, /What to research next/);
+  assert.match(b.innerHTML, /class="secno">7\.<\/span> Detailed statistics/);
 });
 
 test("a report card is folded, shows its facts, and offers the right actions", () => {

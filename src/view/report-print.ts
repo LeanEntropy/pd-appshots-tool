@@ -2,6 +2,7 @@ import { CSS } from "./gallery-css.ts";
 import { REPORT_SCRIPT } from "./gallery-report.ts";
 import { REPORT_PARTS_SCRIPT } from "./gallery-report-parts.ts";
 import { STORE_SCRIPT } from "./gallery-store.ts";
+import { SUGGEST_CSS } from "./report-suggest.ts";
 import { REPORT_SUMMARY_CSS, REPORT_SUMMARY_SCRIPT } from "./report-summary.ts";
 import { escHtml } from "./shell.ts";
 
@@ -26,6 +27,8 @@ export interface PrintPage {
   reportId: string;
   /** The batch whose data the report shows. */
   stage: "pilot" | "core";
+  /** "What to research next" as saved with the version (its suggestions.json), or null. */
+  research?: unknown;
 }
 
 /**
@@ -39,7 +42,10 @@ function printRender(box) {
   showImgs = PRINT.images;
   if (!PRINT.data) { box.classList.toggle("noimg", !showImgs); return; }
   for (const s of PRINT.hiddenSections) hiddenImgSecs.add(PRINT.reportId + ":" + s);
-  renderReport(box, PRINT.data, PRINT.reportId, PRINT.stage);
+  // The list saved with the version only (a PDF shows the version as it was built).
+  const saved = PRINT.research && Array.isArray(PRINT.research.items) ? PRINT.research.items : null;
+  const research = saved ? (saved.length ? researchList(saved) : "<p>Nothing to suggest when this version was made.</p>") : "";
+  renderReport(box, PRINT.data, PRINT.reportId, PRINT.stage, research);
 }
 
 function printMode(root) {
@@ -96,7 +102,7 @@ export function reportPrintHtml(p: PrintPage): string {
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>${escHtml(p.title)}</title>
-<style>${CSS}${REPORT_SUMMARY_CSS}</style>
+<style>${CSS}${REPORT_SUMMARY_CSS}${SUGGEST_CSS}</style>
 </head>
 <body class="printpage">
 <main class="pages">

@@ -5,7 +5,8 @@
  * Numbered sections, the summary first and then a table of contents: 1 summary (short answer,
  * verdict, key points, key recommendations, A/B tests to run next, dates), 2 patterns with our
  * fit, 3 one row per store position (ours first), 4 recommendations, 5 A/B test details,
- * 6 store text and derived keywords per country, 7 detailed statistics. Everything but the AI wording and the recommendations is computed by
+ * 6 store text and derived keywords per country, then (when the version kept it) what to research
+ * next, and last the detailed statistics. Everything but the AI wording and the recommendations is computed by
  * code and always shown; when the AI parts are missing or out of date it says why and offers the
  * approval (nothing runs without it). Images fold globally (remembered per viewer) or per section.
  */
@@ -29,8 +30,21 @@ function rthumb(id, thumb, file, alt) {
   return '<span class="rthumb rimgs"><a href="' + IMG + esc(file || thumb) + '" target="_blank" rel="noopener"><img loading="lazy" src="' + IMG + esc(thumb) + '" alt="' + esc(alt) + '"></a>' + (id ? infoBtn(id) : "") + "</span>";
 }
 function pill(cls, text) { return '<span class="pill ' + esc(cls) + '">' + esc(text) + "</span>"; }
-function sec(n, title, body, imgs, closed) {
-  const id = SEC_IDS[n];
+// The sections of the report being drawn: the seven above, plus "What to research next" before
+// the statistics when the version kept that list (plan-reports 5A.5).
+let repSecs = [];
+function secList(research) {
+  const l = SECTIONS.map((t, i) => ({ id: SEC_IDS[i], t }));
+  if (research) l.splice(6, 0, { id: "research", t: "What to research next" });
+  return l;
+}
+// A saved "What to research next" list (the version's suggestions.json items).
+function researchList(list) {
+  return "<ol>" + list.map((s) => "<li><strong>" + esc(s.title) + "</strong> (" + esc(s.costText) + "). " + esc(s.why) + (s.older ? ' <span class="older">(based on older data)</span>' : "") + "</li>").join("") + "</ol>";
+}
+function sec(n, body, imgs, closed) {
+  const id = repSecs[n].id;
+  const title = repSecs[n].t;
   const hid = hiddenImgSecs.has(repRid + ":" + id);
   return '<details class="sec' + (hid ? " noimg" : "") + '"' + (closed ? "" : " open") + ' data-sec="' + id + '" id="rep-' + repRid + "-" + id + '"><summary><span class="sec-t"><span class="secno">' + (n + 1) + ".</span> " + esc(title) + "</span>"
     + (imgs ? '<button type="button" class="imgbtn" data-rid="' + repRid + '" data-imgsec="' + id + '">' + (hid ? "Show images" : "Hide images") + "</button>" : "")
@@ -59,25 +73,28 @@ function overviewHtml(d) {
 }
 
 function tocHtml() {
-  return '<nav class="card toc" aria-label="Report contents"><strong>Contents</strong><ol>' + SECTIONS.map((s, i) => '<li><button type="button" class="linkbtn" data-goto="rep-' + repRid + "-" + SEC_IDS[i] + '">' + esc(s) + "</button></li>").join("") + "</ol></nav>";
+  return '<nav class="card toc" aria-label="Report contents"><strong>Contents</strong><ol>' + repSecs.map((s) => '<li><button type="button" class="linkbtn" data-goto="rep-' + repRid + "-" + s.id + '">' + esc(s.t) + "</button></li>").join("") + "</ol></nav>";
 }
 
 // Draws report data d into box, for report rid (ids prefixed with it) of the given batch.
-function renderReport(box, d, rid, stage) {
+// research: the body of "What to research next" (HTML), or "" when the report has none.
+function renderReport(box, d, rid, stage, research) {
   if (!box || !d) return;
   reportData = d;
   repRid = String(rid || "").replace(/[^a-z0-9-]/g, "");
   repStage = stage === "core" ? "core" : "pilot";
+  repSecs = secList(!!research);
   box.classList.toggle("noimg", !showImgs);
   // Bottom line first: the summary, then the contents, then the details (plan-reports 3C).
-  box.innerHTML = sec(0, SECTIONS[0], summaryHtml(d), false)
+  box.innerHTML = sec(0, summaryHtml(d), false)
     + tocHtml()
-    + sec(1, SECTIONS[1], fitHtml(d), false)
-    + sec(2, SECTIONS[2], positionsHtml(d), true)
-    + sec(3, SECTIONS[3], recsHtml(d), true)
-    + sec(4, SECTIONS[4], abDetailsHtml(d), false)
-    + sec(5, SECTIONS[5], storeTextHtml(d), false)
-    + sec(6, SECTIONS[6], patternsHtml(d.patterns), false, true);
+    + sec(1, fitHtml(d), false)
+    + sec(2, positionsHtml(d), true)
+    + sec(3, recsHtml(d), true)
+    + sec(4, abDetailsHtml(d), false)
+    + sec(5, storeTextHtml(d), false)
+    + (research ? sec(6, research, false) : "")
+    + sec(repSecs.length - 1, patternsHtml(d.patterns), false, true);
 }
 
 document.addEventListener("click", (e) => {

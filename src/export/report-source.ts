@@ -97,6 +97,7 @@ export function reportSource(
     problems?: string[];
     generatedAt?: string;
     archived?: boolean;
+    research?: unknown;
   };
   if (!def || r.status !== 200 || (!body.data && !body.html))
     return {
@@ -154,6 +155,7 @@ export function reportSource(
     hiddenSections: options.hiddenSections,
     reportId: def.id,
     stage: def.type === "core" ? "core" : "pilot",
+    research: d ? (body.research ?? null) : null,
   };
   // A saved version's PDFs live in its own folder (deleted with the report); "now" has its own.
   const folder = projectKey(paths, "reports", now ? `now-${def.id}` : ref.version, "exports");

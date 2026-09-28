@@ -163,13 +163,17 @@ function showReportVersion(rid, r) {
   box.classList.toggle("noimg", !showImgs);
   if (head) head.innerHTML = r.now ? "Now: computed from the saved analyses, with no AI call." : "Generated " + esc(fmtDate(r.generatedAt)) + (r.archived ? ". Earlier version (archived): kept as it was, never deleted." : ".");
   if (r.data || r.countries) {
+    // "What to research next": a numbered section when the version kept its list and is about one
+    // country (as in its markdown and PDF); otherwise after the report (the live list alone).
+    const one = (!r.countries || r.countries.length === 1) && !!(r.research && Array.isArray(r.research.items));
+    const research = typeof researchBody === "function" && one ? researchBody(r.research) : "";
     if (r.countries) {
       box.innerHTML = r.countries.map((c, i) => '<details class="sec" open><summary><span class="sec-t">' + esc(c.label) + '</span></summary><div class="sec-b" id="rbc-' + rid + "-" + i + '"></div></details>').join("");
-      r.countries.forEach((c, i) => renderReport(document.getElementById("rbc-" + rid + "-" + i), c.data, rid + "-" + rsafe(c.gl), rep.type));
-    } else renderReport(box, r.data, rid, rep.type);
+      r.countries.forEach((c, i) => renderReport(document.getElementById("rbc-" + rid + "-" + i), c.data, rid + "-" + rsafe(c.gl), rep.type, research));
+    } else renderReport(box, r.data, rid, rep.type, research);
     // Only the Pilot and the Full check are approved from the Analysis page.
     if (rep.type !== "pilot" && rep.type !== "core") for (const x of box.querySelectorAll("button.reportApprove")) x.remove();
-    if (typeof researchHtml === "function") box.insertAdjacentHTML("beforeend", researchHtml(r.research || null));
+    if (!one && typeof researchHtml === "function") box.insertAdjacentHTML("beforeend", researchHtml(r.research || null));
     return;
   }
   box.innerHTML = '<div class="banner stale"><p>' + esc(r.note || "This version was saved in an older format: shown as written then.") + (r.file ? " (" + esc(r.file) + ")" : "") + '</p></div><div class="card">' + (r.html || "") + "</div>";

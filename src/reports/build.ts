@@ -5,7 +5,7 @@ import type { AnalysisPlan } from "../analysis/plan.ts";
 import { PROMPT_VERSIONS } from "../analysis/prompts.ts";
 import { isUsable, readRecords } from "../analysis/records.ts";
 import { buildReportData, type ReportData, type ReportInputs } from "../analysis/report-data.ts";
-import { reportMarkdown } from "../analysis/report-md.ts";
+import { RESEARCH_SECTION, reportMarkdown } from "../analysis/report-md.ts";
 import { SCHEMA_VERSION } from "../analysis/schema.ts";
 import { compareStoreText } from "../analysis/store-compare.ts";
 import { type LoadedConfig, loadTaxonomy, projectPaths } from "../config/load.ts";
@@ -154,12 +154,10 @@ export function buildReportVersion(
   const paths = projectPaths(loaded);
   const s = workspaceStorage(paths.workspace);
   if (isPreset(def.type)) {
-    buildPresetVersion(loaded, def, now);
+    const take = o.research;
+    buildPresetVersion(loaded, def, now, take ? () => take(plan) : undefined);
     const next = readDef(s, paths, def.id) ?? def;
     const versionId = next.versions.at(-1)?.id ?? "";
-    const research = o.research?.(plan);
-    if (research && versionId)
-      s.putJsonOnce(versionFileKey(paths, versionId, "suggestions.json"), research.saved);
     return { ok: true, versionId, def: next };
   }
   const slices = countrySlices(loaded, plan);
@@ -183,12 +181,13 @@ export function buildReportVersion(
     "",
     `Generated ${now.toISOString().slice(0, 16).replace("T", " ")} UTC from the saved analyses, with no AI call. Countries: ${countries.map((c) => countryName(c.label)).join(", ")}.`,
     "",
+    // One country: "What to research next" is a numbered section; several: after the countries.
     ...countries.flatMap((c) =>
       countries.length > 1
         ? [`# ${countryName(c.label)}`, "", ...reportMarkdown(c.data, label), ""]
-        : [...reportMarkdown(c.data, label), ""],
+        : [...reportMarkdown(c.data, label, research?.lines), ""],
     ),
-    ...(research?.lines ?? []),
+    ...(research && countries.length > 1 ? [`# ${RESEARCH_SECTION}`, "", ...research.lines] : []),
   ];
   s.putText(versionFileKey(paths, versionId, "report.md"), `${md.join("\n")}\n`);
   const records = slices[0]?.inputs.records ?? readRecords(paths);

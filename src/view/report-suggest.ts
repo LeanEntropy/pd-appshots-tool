@@ -14,7 +14,7 @@ table.cov td button { font: inherit; font-size: 12px; border: none; background: 
 table.cov td.analysed { background: color-mix(in srgb, var(--ok) 25%, transparent); } table.cov td.partly { background: color-mix(in srgb, var(--mid) 25%, transparent); }
 table.cov td.downloaded { background: var(--bg); } table.cov td.not-sold, table.cov td.not-downloaded { color: var(--muted); }
 table.cov .used { display: block; font-size: 11px; color: var(--accent-2); font-weight: 600; }
-.research ol { margin: 4px 0; } .research .older { color: var(--warn); font-size: 12px; }
+.research ol, [data-sec="research"] ol { margin: 4px 0; } .research .older, [data-sec="research"] .older { color: var(--warn); font-size: 12px; }
 `;
 
 export const SUGGEST_SCRIPT = `
@@ -69,16 +69,21 @@ async function loadSuggestions() {
 }
 
 // "What to research next" in an open report: saved with the version, plus "Now" when it differs.
-function researchHtml(saved) {
+// The section body ("" when there is nothing to show); one country is a numbered section of it.
+function researchBody(saved) {
   const live = suggestView && !suggestView.note ? suggestView.suggestions.filter((s) => s.category !== "same").slice(0, 5) : null;
-  const items = (list) => "<ol>" + list.map((s) => "<li><strong>" + esc(s.title) + "</strong> (" + esc(s.costText) + "). " + esc(s.why) + (s.older ? ' <span class="older">(based on older data)</span>' : "") + "</li>").join("") + "</ol>";
   const savedItems = saved && Array.isArray(saved.items) ? saved.items : null;
   const same = savedItems && live && savedItems.map((s) => s.id).join() === live.map((s) => s.id).join();
   let body = "";
-  if (savedItems) body += (savedItems.length ? items(savedItems) : "<p>Nothing to suggest when this version was made.</p>");
-  if (live && !same) body += "<h4>Now</h4>" + (live.length ? items(live) : "<p>Nothing to suggest now.</p>");
-  if (!body) return "";
-  return '<details class="sec research" open><summary><span class="sec-t">What to research next</span></summary><div class="sec-b">' + body + '<p class="meta">See Suggested next research at the top of this page to set any of these up.</p></div></details>';
+  if (savedItems) body += (savedItems.length ? researchList(savedItems) : "<p>Nothing to suggest when this version was made.</p>");
+  if (live && !same) body += "<h4>Now</h4>" + (live.length ? researchList(live) : "<p>Nothing to suggest now.</p>");
+  return body ? body + '<p class="meta">See Suggested next research at the top of this page to set any of these up.</p>' : "";
+}
+
+// The same as its own section, after the countries of a Compare countries report.
+function researchHtml(saved) {
+  const body = researchBody(saved);
+  return body ? '<details class="sec research" open><summary><span class="sec-t">What to research next</span></summary><div class="sec-b">' + body + "</div></details>" : "";
 }
 
 document.addEventListener("click", (e) => {
