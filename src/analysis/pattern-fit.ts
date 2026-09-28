@@ -1,5 +1,6 @@
 import { colourFamily } from "./colours.ts";
 import type { Labeler } from "./labels.ts";
+import { basisOf, firstPositions, strengthOf, summarise } from "./pattern-fit-parts.ts";
 import { counts, type DeckEntry, type Patterns, proportion, typeKey } from "./patterns.ts";
 
 /** Bump when the pattern check changes: the AI wording of its verdict is then rewritten. */
@@ -18,6 +19,20 @@ export interface PatternFit {
   /** null when it does not apply to our deck (e.g. we have no screenshot at that position). */
   fits: boolean | null;
   reason: string;
+  /** The numbers behind it, for the A/B test evidence (absent in reports saved before it). */
+  basis?: FitBasis;
+}
+
+/** n of `of` games, decks or screenshots; positions empty = the whole deck. */
+export interface FitBasis {
+  n: number;
+  of: number;
+  unit: "games" | "decks" | "screenshots";
+  positions: number[];
+  games: string[];
+  imageIds: string[];
+  /** Our positions that differ (where a test would change something). */
+  ours: number[];
 }
 
 export type OverallVerdict =
@@ -38,22 +53,6 @@ export interface FitSummary {
 }
 
 const pct = (n: number) => `${Math.round(n * 100)}%`;
-const GROUP_RANK: Record<FitGroup, number> = { order: 0, content: 1, layer: 2, format: 3 };
-
-function strengthOf(share: number): "pattern" | "partial" | null {
-  return share >= 0.8 ? "pattern" : share >= 0.5 ? "partial" : null;
-}
-
-function firstPositions(entries: readonly DeckEntry[]): Map<string, Map<string, number>> {
-  const out = new Map<string, Map<string, number>>();
-  for (const e of entries) {
-    const m = out.get(e.appId) ?? new Map<string, number>();
-    const t = typeKey(e.final);
-    if (!m.has(t) || (m.get(t) ?? 99) > e.position) m.set(t, e.position);
-    out.set(e.appId, m);
-  }
-  return out;
-}
 
 /** Deterministic pattern check: which competitor patterns our deck follows, and a verdict. */
 export function patternFit(
@@ -80,7 +79,12 @@ export function patternFit(
     if (at.n < 2 || !at.top || at.types[1]?.share === at.top.share) continue;
     const mine = ourAt(at.position);
     const t = at.top.key;
+    const hits = theirs.filter((e) => e.position === at.position && typeKey(e.final) === t);
     add({
+      basis: {
+        ...basisOf(hits, at.top.n, at.n, "screenshots", [at.position]),
+        ours: mine && typeKey(mine.final) !== t ? [at.position] : [],
+      },
       id: `position-${at.position}`,
       group: "order",
       share: at.top.share,
@@ -108,7 +112,17 @@ export function patternFit(
       if (!x || !y) continue;
       const ox = oursFirst.get(x);
       const oy = oursFirst.get(y);
+      const decks = [...first.entries()].filter(([, m]) => m.has(x) && m.has(y)).map(([a]) => a);
+      const hits = theirs.filter(
+        (e) =>
+          decks.includes(e.appId) &&
+          [first.get(e.appId)?.get(x), first.get(e.appId)?.get(y)].includes(e.position),
+      );
       add({
+        basis: {
+          ...basisOf(hits, both.length, both.length, "decks", []),
+          ours: ox !== undefined && oy !== undefined && ox > oy ? [oy, ox] : [],
+        },
         id: `before-${x}-${y}`,
         group: "order",
         share: both.length / g,
@@ -127,6 +141,13 @@ export function patternFit(
   const ourTypes = new Set(ours.map((e) => typeKey(e.final)));
   for (const t of p.screenTypes)
     add({
+      basis: basisOf(
+        theirs.filter((e) => typeKey(e.final) === t.key),
+        t.games,
+        g,
+        "games",
+        t.positions,
+      ),
       id: `uses-${t.key}`,
       group: "content",
       share: t.gameShare,
@@ -144,10 +165,17 @@ export function patternFit(
     what: string,
     c: { key: string; share: number } | undefined,
     mine: string | null,
+    get: (e: DeckEntry) => string | null,
     name: (k: string) => string = (k) => k.replace(/_/g, " "),
   ) => {
     if (!c) return;
+    const hits = theirs.filter((e) => get(e) === c.key);
+    const counted = theirs.filter((e) => get(e) !== null).length;
     add({
+      basis: {
+        ...basisOf(hits, hits.length, counted, "screenshots", []),
+        ours: ours.filter((e) => get(e) !== null && get(e) !== c.key).map((e) => e.position),
+      },
       id,
       group,
       share: c.share,
@@ -168,11 +196,17 @@ export function patternFit(
     "Image orientation",
     top(p.orientation.canvas),
     ourTop(ours.map((e) => e.canvas)),
+    (e) => e.canvas,
   );
   const layerShare = ours.length
     ? ours.filter((e) => e.final.marketingLayer.present).length / ours.length
     : 0;
+  const layered = theirs.filter((e) => e.final.marketingLayer.present);
   add({
+    basis: {
+      ...basisOf(layered, layered.length, theirs.length, "screenshots", []),
+      ours: ours.filter((e) => !e.final.marketingLayer.present).map((e) => e.position),
+    },
     id: "layer",
     group: "layer",
     share: p.marketingLayer.share,
@@ -187,6 +221,7 @@ export function patternFit(
     "Layout",
     top(p.proportion),
     ourTop(ours.map((e) => proportion(e.final))),
+    (e) => proportion(e.final),
   );
   image(
     "mask-location",
@@ -194,6 +229,7 @@ export function patternFit(
     "Background mask position",
     top(p.maskLocations),
     ourTop(ours.map((e) => e.final.marketingLayer.backgroundMasks[0]?.location ?? null)),
+    (e) => e.final.marketingLayer.backgroundMasks[0]?.location ?? null,
   );
   const theirColours = p.colours.layer.slice(0, 2).filter((c) => c.share >= 0.2);
   if (theirColours.length) {
@@ -205,13 +241,18 @@ export function patternFit(
     const hit = mine.some((m) => theirColours.some((c) => c.key === m.key));
     // Share of competitor layers whose main colours include one of these (each image once).
     const keys = new Set(theirColours.map((c) => c.key));
-    const layered = theirs.filter((e) => e.final.marketingLayer.present);
-    const withOne = layered.filter((e) =>
+    const hasOne = (e: DeckEntry) =>
       e.final.marketingLayer.mainColours
         .slice(0, 2)
-        .some((c) => keys.has(colourFamily(c.name, c.hex) ?? "")),
-    ).length;
+        .some((c) => keys.has(colourFamily(c.name, c.hex) ?? ""));
+    const withOne = layered.filter(hasOne).length;
     add({
+      basis: {
+        ...basisOf(layered.filter(hasOne), withOne, layered.length, "screenshots", []),
+        ours: ours
+          .filter((e) => e.final.marketingLayer.present && !hasOne(e))
+          .map((e) => e.position),
+      },
       id: "layer-colours",
       group: "layer",
       share: layered.length ? withOne / layered.length : 0,
@@ -226,6 +267,7 @@ export function patternFit(
   if (g >= 2) {
     const inRange = ourDeckLength >= p.deckLength.min && ourDeckLength <= p.deckLength.max;
     add({
+      basis: { ...basisOf([], g, g, "games", []), games: p.games.map((x) => x.name) },
       id: "deck-length",
       group: "format",
       share: 1,
@@ -236,29 +278,4 @@ export function patternFit(
     });
   }
   return summarise(out, g);
-}
-
-function summarise(patterns: PatternFit[], games: number): FitSummary {
-  const judged = patterns.filter((x) => x.fits !== null);
-  const w = (x: PatternFit) => (x.strength === "pattern" ? 2 : 1);
-  const total = judged.reduce((n, x) => n + w(x), 0);
-  const score = total ? judged.filter((x) => x.fits).reduce((n, x) => n + w(x), 0) / total : null;
-  let verdict: OverallVerdict = "not enough data";
-  if (games >= 2 && score !== null && judged.length >= 3)
-    verdict =
-      score >= 0.9
-        ? "optimised"
-        : score >= 0.75
-          ? "on par"
-          : score >= 0.6
-            ? "slightly different"
-            : score >= 0.4
-              ? "relatively different"
-              : "very different";
-  const keyPoints = patterns
-    .filter((x) => x.fits === false)
-    .sort((a, b) => w(b) - w(a) || GROUP_RANK[a.group] - GROUP_RANK[b.group])
-    .slice(0, 6)
-    .map((x) => `${x.text} (${x.evidence}); ${x.reason}.`);
-  return { patterns, verdict, score, keyPoints };
 }

@@ -88,10 +88,12 @@ export function writeFinalReport(
             recommendations: s.recommendations,
             review: s.review,
             revised: !!s.draft,
+            abTests: s.abTests ?? null,
+            promptVersions: plan.versions.prompts,
           }
         : undefined,
   });
-  const data = buildReportData(inputs);
+  const data = buildReportData({ ...inputs, generatedAt: new Date().toISOString() });
   lines.push(...reportMarkdown(data, label));
   const changes = plan.games.flatMap((g) => {
     const h = orderHistory(paths, g.appId, plan.market.gl, plan.market.hl);
@@ -111,6 +113,7 @@ export function writeFinalReport(
     "recommendations.json": s?.recommendations ?? null,
     "recommendations-draft.json": s?.draft ?? null,
     "review.json": s?.review ?? null,
+    "ab-tests.json": s?.abTests ?? null,
   };
   for (const [name, value] of Object.entries(files))
     if (value) writeJsonAtomic(join(dir, name), value);

@@ -1,6 +1,12 @@
 import type { Labeler } from "./labels.ts";
 import type { PatternFit } from "./pattern-fit.ts";
 import type { OrderRow, ReportData } from "./report-data.ts";
+import {
+  abCardsMarkdown,
+  abDetailsMarkdown,
+  keyRecommendationsMarkdown,
+  summaryDates,
+} from "./report-md-summary.ts";
 import { cell, IMG, patternSection, recommendationSection } from "./report-sections.ts";
 import { storeTextMarkdown } from "./report-store-md.ts";
 
@@ -8,10 +14,11 @@ const img = (thumb: string | null, file: string | null, alt: string) =>
   thumb ? `[![${alt}](${IMG}${thumb})](${IMG}${file ?? thumb})` : "";
 
 export const SECTIONS = [
-  "Overview",
+  "Summary: the bottom line",
   "Patterns across competitors",
   "Position by position",
   "Recommendations",
+  "A/B test details",
   "Store text and keywords",
   "Detailed statistics",
 ] as const;
@@ -67,12 +74,7 @@ function cellOf(r: OrderRow | undefined, name: string): string {
  * recommendations is computed by code and always present.
  */
 export function reportMarkdown(d: ReportData, label: Labeler): string[] {
-  const out: string[] = ["## Contents", ""];
-  SECTIONS.forEach((s, i) => {
-    out.push(`${i + 1}. [${s}](#${slug(i)})`);
-  });
-  out.push("");
-
+  const out: string[] = [];
   const o = overviewText(d);
   const f = d.fit;
   out.push(head(0), "");
@@ -82,11 +84,15 @@ export function reportMarkdown(d: ReportData, label: Labeler): string[] {
       "",
     );
   else out.push("**Verdict: not enough competitor data yet.**", "");
-  if (o.verdict) out.push(o.verdict, "");
+  if (d.summary) out.push(d.summary.shortAnswer, "");
+  else if (o.verdict) out.push(o.verdict, "");
   out.push("### Key points to optimise, most important first", "");
   if (o.points.length) out.push(...o.points.map((p, i) => `${i + 1}. ${p}`));
   else out.push("None: our deck fits every competitor pattern found.");
   out.push("");
+  if (d.summary) out.push(...keyRecommendationsMarkdown(d.summary));
+  out.push(...abCardsMarkdown(d.abTests));
+  if (d.summary) out.push(`_${summaryDates(d.summary)}_`, "");
   const s = d.synthesis;
   if (s.state !== "current")
     out.push(
@@ -103,6 +109,9 @@ export function reportMarkdown(d: ReportData, label: Labeler): string[] {
       `_Not in this check: ${d.leftOut.join(", ")} (not on Google Play in ${d.market}). They are shown in the countries where they exist._`,
       "",
     );
+
+  // The contents follow the summary (plan-reports 3C).
+  out.push("## Contents", "", ...SECTIONS.map((s, i) => `${i + 1}. [${s}](#${slug(i)})`), "");
 
   out.push(head(1), "");
   out.push(
@@ -192,9 +201,11 @@ export function reportMarkdown(d: ReportData, label: Labeler): string[] {
     out.push(...rec.slice(1).map((l) => (l.startsWith("### ") ? `#${l}` : l)));
   } else out.push(`Not written yet. ${s.reason} How to get them: ${s.howTo}`, "");
 
-  out.push(head(4), "", ...storeTextMarkdown(d.storeText));
+  out.push(head(4), "", ...abDetailsMarkdown(d.abTests));
 
-  out.push(head(5), "");
+  out.push(head(5), "", ...storeTextMarkdown(d.storeText));
+
+  out.push(head(6), "");
   if (d.patterns)
     out.push(
       ...patternSection(d.patterns, null, label)

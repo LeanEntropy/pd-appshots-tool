@@ -36,7 +36,7 @@ const NOTES: Partial<Record<AiStep, string>> = {
   countryAdvice: LATER,
   conceptMap: LATER,
   abTests:
-    "Not used yet: this step arrives with the A/B tests in reports. Your choice is kept for it.",
+    "Writes the A/B tests at the top of the Pilot and Full check reports; code checks every test's evidence. Its own second opinion is not built yet: the switch is kept for it.",
 };
 
 function stepCost(c: Config, step: AiStep): string {

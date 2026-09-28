@@ -2,9 +2,10 @@
  * One report's content (rendered into its card by report-list.ts): the report as it stands now
  * (from the saved analyses, no AI) or a saved version. Parameterised by container and report id:
  * every element id is prefixed with the report id, so several open reports never clash.
- * Numbered sections with a table of contents: 1 overview (verdict and prioritised key points),
- * 2 patterns with our fit, 3 one row per store position (ours first), 4 recommendations,
- * 5 store text and derived keywords per country, 6 detailed statistics. Everything but the AI wording and the recommendations is computed by
+ * Numbered sections, the summary first and then a table of contents: 1 summary (short answer,
+ * verdict, key points, key recommendations, A/B tests to run next, dates), 2 patterns with our
+ * fit, 3 one row per store position (ours first), 4 recommendations, 5 A/B test details,
+ * 6 store text and derived keywords per country, 7 detailed statistics. Everything but the AI wording and the recommendations is computed by
  * code and always shown; when the AI parts are missing or out of date it says why and offers the
  * approval (nothing runs without it). Images fold globally (remembered per viewer) or per section.
  */
@@ -17,8 +18,8 @@ let repStage = "pilot";
 const hiddenImgSecs = new Set();
 let showImgs = true;
 try { showImgs = localStorage.getItem("ssr.reportImages") !== "off"; } catch {}
-const SECTIONS = ["Overview", "Patterns across competitors", "Position by position", "Recommendations", "Store text and keywords", "Detailed statistics"];
-const SEC_IDS = ["overview", "patterns", "positions", "recs", "store", "stats"];
+const SECTIONS = ["Summary: the bottom line", "Patterns across competitors", "Position by position", "Recommendations", "A/B test details", "Store text and keywords", "Detailed statistics"];
+const SEC_IDS = ["summary", "patterns", "positions", "recs", "abtests", "store", "stats"];
 
 const L = (k) => (reportData && reportData.labels && reportData.labels[k]) || String(k || "").replace(/_/g, " ");
 const pc = (n) => Math.round((n || 0) * 100) + "%";
@@ -50,7 +51,7 @@ function overviewHtml(d) {
     : '<div class="banner ' + s.state + '"><p>' + pill(s.state, s.state === "stale" ? "AI parts out of date" : "AI parts not written yet") + " " + esc(s.reason) + "</p><p><strong>How to get them:</strong> " + esc(s.howTo) + '</p><p><button type="button" class="primary reportApprove" data-stage="' + esc(repStage) + '">Open the approval</button> <span class="meta">Shows the exact images and cost first; nothing runs until you approve.</span></p></div>';
   return '<div class="verdict ' + (f ? VERDICT_CLS[f.verdict] || "" : "none") + '"><div class="vlabel">Our deck is</div><div class="vword">' + esc(f ? f.verdict : "not enough data") + "</div>"
     + (f && f.score !== null ? '<div class="meta">Fits ' + pc(f.score) + " of the weighted competitor patterns (" + f.patterns.filter((x) => x.fits === true).length + " fit, " + f.patterns.filter((x) => x.fits === false).length + " different).</div>" : "") + "</div>"
-    + (worded ? "<p>" + esc(ai.verdictText) + "</p>" : "")
+    + (d.summary ? shortAnswerHtml(d) : worded ? "<p>" + esc(ai.verdictText) + "</p>" : "")
     + "<h3>Key points to optimise, most important first</h3>"
     + (points.length ? '<ol class="keypoints">' + points.map((p) => "<li>" + esc(p) + "</li>").join("") + "</ol>" : "<p>None: our deck fits every competitor pattern found.</p>")
     + status + (d.approved ? "" : '<p class="meta">No batch is approved for this stage yet: the games below are the batch Start analysis would propose.</p>')
@@ -68,13 +69,15 @@ function renderReport(box, d, rid, stage) {
   repRid = String(rid || "").replace(/[^a-z0-9-]/g, "");
   repStage = stage === "core" ? "core" : "pilot";
   box.classList.toggle("noimg", !showImgs);
-  box.innerHTML = tocHtml()
-    + sec(0, SECTIONS[0], overviewHtml(d), false)
+  // Bottom line first: the summary, then the contents, then the details (plan-reports 3C).
+  box.innerHTML = sec(0, SECTIONS[0], summaryHtml(d), false)
+    + tocHtml()
     + sec(1, SECTIONS[1], fitHtml(d), false)
     + sec(2, SECTIONS[2], positionsHtml(d), true)
     + sec(3, SECTIONS[3], recsHtml(d), true)
-    + sec(4, SECTIONS[4], storeTextHtml(d), false)
-    + sec(5, SECTIONS[5], patternsHtml(d.patterns), false, true);
+    + sec(4, SECTIONS[4], abDetailsHtml(d), false)
+    + sec(5, SECTIONS[5], storeTextHtml(d), false)
+    + sec(6, SECTIONS[6], patternsHtml(d.patterns), false, true);
 }
 
 document.addEventListener("click", (e) => {

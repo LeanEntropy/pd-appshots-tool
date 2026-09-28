@@ -3,6 +3,7 @@ import { CSS } from "./gallery-css.ts";
 import { GALLERY_SCRIPT } from "./gallery-script.ts";
 import type { ViewModel } from "./model.ts";
 import { REPORT_LIST_CSS } from "./report-list.ts";
+import { REPORT_SUMMARY_CSS } from "./report-summary.ts";
 import { appBar, escHtml, type Step, stepBar } from "./shell.ts";
 
 /** Served by the tool server: where the project's API is, and the project's steps. */
@@ -36,7 +37,7 @@ export function galleryHtml(vm: ViewModel, token = "", served?: GalleryServed): 
 <meta name="ssr-token" content="${escHtml(token)}">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Store Screenshot Recipe</title>
-<style>${CSS}${REPORT_LIST_CSS}${ADD_CSS}</style>
+<style>${CSS}${REPORT_LIST_CSS}${REPORT_SUMMARY_CSS}${ADD_CSS}</style>
 </head>
 <body>
 <div id="runbar" role="status" aria-live="polite" hidden></div>

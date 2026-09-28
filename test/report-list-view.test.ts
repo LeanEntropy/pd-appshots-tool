@@ -6,6 +6,7 @@ import { NAV_SCRIPT } from "../src/view/gallery-nav.ts";
 import { REPORT_SCRIPT } from "../src/view/gallery-report.ts";
 import { REPORT_PARTS_SCRIPT } from "../src/view/gallery-report-parts.ts";
 import { REPORT_LIST_SCRIPT } from "../src/view/report-list.ts";
+import { REPORT_SUMMARY_SCRIPT } from "../src/view/report-summary.ts";
 
 type Box = { innerHTML: string; classList: { toggle: () => void } };
 
@@ -21,7 +22,7 @@ function page() {
     location: { hash: "", protocol: "file:" },
   };
   runInNewContext(
-    `${REPORT_SCRIPT}\n${REPORT_PARTS_SCRIPT}\n${REPORT_LIST_SCRIPT}\nthis.renderReport = renderReport; this.card = reportCardHtml;`,
+    `${REPORT_SCRIPT}\n${REPORT_PARTS_SCRIPT}\n${REPORT_SUMMARY_SCRIPT}\n${REPORT_LIST_SCRIPT}\nthis.renderReport = renderReport; this.card = reportCardHtml;`,
     ctx,
   );
   return ctx as typeof ctx & {
@@ -90,7 +91,7 @@ test("two open reports never share an element id", () => {
     ia.filter((x) => ib.includes(x)),
     [],
   );
-  assert.match(a.innerHTML, /data-goto="rep-r-pilot-overview"/);
+  assert.match(a.innerHTML, /data-goto="rep-r-pilot-patterns"/);
   assert.match(b.innerHTML, /class="primary reportApprove" data-stage="core"/);
   const ca = ids(p.card(summary({})));
   const cb = ids(p.card(summary({ id: "r-core", type: "core", typeName: "Full check" })));

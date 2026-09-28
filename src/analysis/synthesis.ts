@@ -1,4 +1,6 @@
 import type { Taxonomy } from "../config/load.ts";
+import { type AbTestsInput, writeAbTests } from "./ab-tests.ts";
+import type { AbTestsOutput } from "./ab-tests-schema.ts";
 import { type CallContext, validatedCall } from "./call.ts";
 import type { OursVsPatterns } from "./ours-vs.ts";
 import type { FitSummary } from "./pattern-fit.ts";
@@ -19,7 +21,11 @@ export interface SynthesisDeps {
   writer: Provider;
   reviewer: Provider | null;
   prompts: { patterns: RenderedPrompt; recommend: RenderedPrompt; review: RenderedPrompt };
+  /** The A/B tests writer (Opus, text only) and its prompt; none = the tests are written by code. */
+  ab?: { writer: Provider; prompt: RenderedPrompt } | null;
 }
+
+type AbFacts = Omit<AbTestsInput, "ours" | "brief" | "recommendations">;
 
 export interface SynthesisResult {
   interpretation: Interpretation | null;
@@ -27,6 +33,8 @@ export interface SynthesisResult {
   /** The first draft, when a review asked for changes and it was revised. */
   draft: Recommendations | null;
   review: Review | null;
+  /** The AI's A/B tests as written (checked again when the report is built). */
+  abTests: AbTestsOutput | null;
   problems: string[];
 }
 
@@ -56,9 +64,31 @@ export function brief(e: DeckEntry): string {
 
 /**
  * Pattern interpretation, recommendations, cross-family review and (on major findings) one
- * revision. Each call is cached by its full input, so the same data never pays twice.
+ * revision, then the A/B tests to run next. Each call is cached by its full input, so the same
+ * data never pays twice.
  */
 export async function synthesise(
+  deps: SynthesisDeps,
+  taxonomy: Taxonomy,
+  input: Parameters<typeof writeAndReview>[2] & { ab?: AbFacts },
+  ctx: CallContext,
+  report: (phase: string, message: string) => void,
+): Promise<SynthesisResult> {
+  const out = await writeAndReview(deps, taxonomy, input, ctx, report);
+  if (!deps.ab || !input.ab?.evidence.length) return out;
+  report("ab-tests", "Writing the A/B tests…");
+  const ab = await writeAbTests(
+    deps.ab.writer,
+    deps.ab.prompt,
+    { ...input.ab, ours: input.ours, brief, recommendations: out.recommendations },
+    ctx,
+  );
+  out.abTests = ab.value;
+  if (!ab.value) out.problems.push(`A/B tests: ${ab.problems.join("; ")}`);
+  return out;
+}
+
+async function writeAndReview(
   deps: SynthesisDeps,
   taxonomy: Taxonomy,
   input: {
@@ -77,12 +107,13 @@ export async function synthesise(
     recommendations: null,
     draft: null,
     review: null,
+    abTests: null,
     problems: [],
   };
   const facts = [
     `Computed patterns (JSON):\n${JSON.stringify(input.patterns)}`,
     `Our deck vs the patterns, computed (JSON):\n${JSON.stringify(input.oursVs)}`,
-    `Pattern check, computed (JSON): verdict, key points in priority order, and every pattern with whether we fit:\n${JSON.stringify(input.fit)}`,
+    `Pattern check, computed (JSON): verdict, key points in priority order, and every pattern with whether we fit:\n${JSON.stringify(input.fit, (k, v) => (k === "basis" ? undefined : v))}`,
   ].join("\n\n");
   report("patterns", "Finding patterns…");
   const interp = await validatedCall(

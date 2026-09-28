@@ -17,6 +17,11 @@ export const interpretationSchema = z.strictObject({
     .string()
     .describe("3-5 sentences: how our deck compares, using the computed verdicts"),
   verdictText: z.string().describe("2-3 sentences stating the computed overall verdict and why"),
+  shortAnswer: z
+    .string()
+    .describe(
+      "3-5 sentences for the top of the report: how our store page stands (with the exact computed verdict word) and the single most important change",
+    ),
   keyPoints: z
     .array(z.string())
     .describe("one actionable sentence per computed key point, same order and count"),

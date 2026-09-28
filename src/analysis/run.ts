@@ -1,7 +1,8 @@
-﻿import { join } from "node:path";
+import { join } from "node:path";
 import { type LoadedConfig, loadTaxonomy, projectPaths } from "../config/load.ts";
 import { coreDeck } from "../core/selection.ts";
 import { answerKey } from "../library/layout.ts";
+import { abFactsFor } from "../reports/play-context.ts";
 import { workspaceStorage } from "../storage/index.ts";
 import { openImageDb } from "../store/imagedb.ts";
 import { newRunId } from "../store/manifest.ts";
@@ -16,7 +17,7 @@ import { compareOurs, type OursVsPatterns } from "./ours-vs.ts";
 import { patternFit } from "./pattern-fit.ts";
 import { findPatterns, type Patterns } from "./patterns.ts";
 import type { AnalysisPlan } from "./plan.ts";
-import { renderPrompt } from "./prompts.ts";
+import { type PromptName, renderPrompt } from "./prompts.ts";
 import type { Provider } from "./providers.ts";
 import { recordWriter } from "./record-refresh.ts";
 import { type AnalysisRecord, readRecords } from "./records.ts";
@@ -49,6 +50,8 @@ export interface RunDeps {
   writer?: Provider | null;
   /** Cross-family review of the recommendations. */
   recommendationReviewer?: Provider | null;
+  /** The A/B tests (Opus, text only); none = the report shows tests written by code. */
+  abWriter?: Provider | null;
   onProgress: (p: Progress) => void;
   onError?: (e: RunError) => void;
   /** Dollars this run may spend (the batch limit minus what the batch spent already). */
@@ -194,27 +197,35 @@ export async function runAnalysis(
         batchId,
         estimateUsd: config.estimates.synthesisUsd[1],
       });
+      const fit = patternFit(
+        entries.competitors,
+        entries.ours,
+        patterns,
+        entries.ourDeckLength,
+        labeler(taxonomy),
+      );
+      const prompt = (name: PromptName) => renderPrompt(loaded.root, paths.objects, name, taxonomy);
       synthesis = await synthesise(
         {
           writer: deps.writer,
           reviewer: deps.recommendationReviewer ?? null,
           prompts: {
-            patterns: renderPrompt(loaded.root, paths.objects, "patterns", taxonomy),
-            recommend: renderPrompt(loaded.root, paths.objects, "recommend", taxonomy),
-            review: renderPrompt(loaded.root, paths.objects, "recommendReview", taxonomy),
+            patterns: prompt("patterns"),
+            recommend: prompt("recommend"),
+            review: prompt("recommendReview"),
           },
+          ab: deps.abWriter ? { writer: deps.abWriter, prompt: prompt("abTests") } : null,
         },
         taxonomy,
         {
           patterns,
           oursVs,
-          fit: patternFit(
-            entries.competitors,
-            entries.ours,
-            patterns,
-            entries.ourDeckLength,
-            labeler(taxonomy),
-          ),
+          fit,
+          ab: abFactsFor(config, plan.market, {
+            fit,
+            ourDeckLength: entries.ourDeckLength,
+            deckLength: patterns.deckLength,
+          }),
           ours: entries.ours,
           competitors: entries.competitors,
           ourDeckLength: entries.ourDeckLength,
