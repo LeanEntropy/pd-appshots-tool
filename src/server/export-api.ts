@@ -116,7 +116,8 @@ export async function exportRoute(
       loaded,
       report,
       options,
-      { origin: `http://${req.headers.host}` },
+      // The address this server listens on (never the request's Host header).
+      { origin: `http://127.0.0.1:${req.socket.localPort}` },
       exportHooks.deps,
     );
     if (!r.ok) return bad(res, r.problem, r.status);

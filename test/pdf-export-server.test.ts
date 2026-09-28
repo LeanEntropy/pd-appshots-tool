@@ -94,7 +94,8 @@ test("real PDF with the installed Chrome or Edge (skipped when there is none)", 
     const text = pdf.toString("latin1");
     assert.ok(text.startsWith("%PDF-"));
     assert.ok((text.match(/\/Type\s*\/Page\b/g) ?? []).length >= 2, "has pages");
-    assert.match(text, /\/Outlines/, "has bookmarks");
+    // Bookmarks are a bonus (plan 6.2): reported, not required, as older browsers lack them.
+    t.diagnostic(/\/Outlines/.test(text) ? "bookmarks: yes" : "bookmarks: not supported here");
   } finally {
     s.server.close();
   }

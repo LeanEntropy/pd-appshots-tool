@@ -145,7 +145,12 @@ export async function renderPdf(req: RenderRequest, hooks: RenderHooks): Promise
   const { onProgress, signal } = hooks;
   onProgress("Starting Chrome or Edge");
   const browser = await startBrowser(req.browserPath, hooks.launch);
-  const close = () => void browser.close().catch(() => {});
+  // One close, started by Stop or at the end, and awaited before the export lane moves on.
+  let closing: Promise<void> | null = null;
+  const close = () => {
+    closing ??= browser.close().catch(() => {});
+    return closing;
+  };
   signal?.addEventListener("abort", close, { once: true });
   try {
     stopped(signal);
@@ -177,6 +182,6 @@ export async function renderPdf(req: RenderRequest, hooks: RenderHooks): Promise
     throw e;
   } finally {
     signal?.removeEventListener("abort", close);
-    close();
+    await close();
   }
 }
