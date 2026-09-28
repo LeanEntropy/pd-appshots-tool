@@ -4,7 +4,8 @@ export type PlayInput =
   | { kind: "search"; term: string }
   | { kind: "bad"; message: string };
 
-export const PACKAGE_ID = /^[A-Za-z][A-Za-z0-9_]*(\.[A-Za-z0-9_]+)+$/;
+/** A Google Play package ID, at most 150 characters (it becomes a storage key segment). */
+export const PACKAGE_ID = /^(?=.{3,150}$)[A-Za-z][A-Za-z0-9_]*(\.[A-Za-z0-9_]+)+$/;
 
 const NOT_A_GAME_PAGE =
   "This is not a game's page. Open the game on Google Play and copy that link.";

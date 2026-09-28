@@ -46,6 +46,7 @@ async function fillHits(gen) {
 }
 
 function drawComps() {
+  if (!$("compsBox")) return;
   const n = W.s.competitors.length;
   const rows = W.s.competitors.map((c, i) => '<li tabindex="0" data-index="' + i + '" aria-label="' + esc(c.name) + ", position " + (i + 1) + '"><span class="grip" aria-hidden="true">&#8942;&#8942;</span>' + icon(savedIcon(c.iconFile), c.name, true)
     + '<div class="who"><strong>' + esc(c.name) + '</strong><div class="meta">' + esc(c.developer || c.id) + "</div></div>"
@@ -123,7 +124,8 @@ document.addEventListener("change", (e) => {
   if (e.target.dataset.tier === undefined) return;
   const i = Number(e.target.dataset.tier);
   const tier = e.target.value;
-  autosave(() => ({ competitors: compList().map((c, k) => (k === i ? { ...c, tier } : c)) }));
+  const id = (W.s.competitors[i] || {}).id;
+  autosave(() => ({ competitors: compList().map((c) => (c.id === id ? { ...c, tier } : c)) }));
 });
 
 // Pointer drag (mouse, pen, touch): the item moves while dragging; the order is saved on release.

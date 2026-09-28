@@ -101,6 +101,22 @@ test("details: mapped, cached for a day, 404 is a plain answer, errors retried o
   assert.equal(f.calls.app, calls + 1, "the failure was not cached");
 });
 
+test("a broken cache entry is kept aside and read again from Google Play", async () => {
+  const s = storage();
+  const f = fakeScraper([app("com.dxx.firenow", "Survivor.io")]);
+  const k = "shared/cache/play/details/com.dxx.firenow/us-en.json";
+  s.putText(k, "{ not json");
+  assert.equal((await lookup(s, f.scraper).details("com.dxx.firenow")).title, "Survivor.io");
+  assert.equal(f.calls.app, 1);
+  const kept = [...s.list("shared/cache/play/details/com.dxx.firenow")].filter((x) =>
+    x.includes(".bad-"),
+  );
+  assert.equal(kept.length, 1, "the unreadable file was kept aside");
+  const long = `a.${"b".repeat(160)}`;
+  assert.equal(parsePlayInput(long).kind, "bad", "an overlong ID is refused, not stored");
+  assert.equal(parsePlayInput("x".repeat(101)).kind, "bad", "names are 2 to 100 characters");
+});
+
 test("details and search: an unexpected answer is a plain problem, not a crash", async () => {
   const f = fakeScraper([], [{ nope: true }]);
   f.scraper.app = async () => ({ title: 5 });

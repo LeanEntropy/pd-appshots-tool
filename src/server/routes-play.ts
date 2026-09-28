@@ -1,8 +1,8 @@
 import { z } from "zod";
 import { defaultMarkets } from "../config/countries.ts";
-import { settingsKey } from "../config/project.ts";
+import { readSettings, settingsKey } from "../config/project.ts";
 import { type ProjectSettings, ProjectSettingsSchema } from "../config/project-schema.ts";
-import { slugFor, upsertEntry } from "../config/registry.ts";
+import { readRegistry, slugFor, upsertEntry } from "../config/registry.ts";
 import { fetchIcon } from "../play/icon.ts";
 import { PACKAGE_ID, parsePlayInput } from "../play/input.ts";
 import { type PlayDetails, PlayProblem } from "../play/lookup.ts";
@@ -105,7 +105,6 @@ export async function postProject(app: AppContext, raw: unknown): Promise<ApiRes
   const now = new Date().toISOString();
   const id = slugFor(parsed.data.name, app.storage.listProjectIds());
   const ctx = { projectId: id };
-  const iconFile = await fetchIcon(app.storage, ctx, d.appId, d.icon, app.fetcher);
   const settings: ProjectSettings = ProjectSettingsSchema.parse({
     schemaVersion: 1,
     id,
@@ -117,7 +116,6 @@ export async function postProject(app: AppContext, raw: unknown): Promise<ApiRes
       name: d.title,
       ...(d.developer ? { developer: d.developer } : {}),
       ...(d.genreId ? { genreId: d.genreId } : {}),
-      ...(iconFile ? { iconFile } : {}),
     },
     competitors: [],
     markets: defaultMarkets(app.countries()),
@@ -130,14 +128,22 @@ export async function postProject(app: AppContext, raw: unknown): Promise<ApiRes
       status: 409,
       body: { problems: ["A project with this name was just created. Try again."] },
     };
-  upsertEntry(app.storage, {
+  const entry = {
     id,
     name: settings.name,
     ourAppId: d.appId,
-    ...(iconFile ? { iconFile } : {}),
     createdAt: now,
     lastOpenedAt: now,
     archived: false,
-  });
-  return { status: 201, body: { id, settings } };
+  };
+  upsertEntry(app.storage, entry);
+  // The project is saved before the icon is fetched: a slow or failed icon never loses it.
+  const iconFile = await fetchIcon(app.storage, ctx, d.appId, d.icon, app.fetcher);
+  if (!iconFile) return { status: 201, body: { id, settings } };
+  const latest = readSettings(app.storage, ctx) ?? settings;
+  const withIcon = { ...latest, ourApp: { ...latest.ourApp, iconFile } };
+  app.storage.putJson(settingsKey(ctx), withIcon);
+  const e = readRegistry(app.storage).projects.find((p) => p.id === id);
+  upsertEntry(app.storage, { ...(e ?? entry), iconFile });
+  return { status: 201, body: { id, settings: withIcon } };
 }

@@ -136,7 +136,13 @@ export function createAppServer(app: AppContext): Server {
       }
       return await projectRoute(app, found.loaded, rest, req, res, url);
     } catch (e) {
-      send(res, 500, { problems: [e instanceof Error ? e.message : String(e)] });
+      // The details go to the terminal; the page gets a plain sentence.
+      console.error(`${req.method} ${url.pathname}:`, e);
+      send(res, 500, {
+        problems: [
+          "The tool could not finish this. Try again; if it keeps happening, restart the tool (npm start) and look at its terminal.",
+        ],
+      });
     }
   });
 }

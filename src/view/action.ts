@@ -39,7 +39,8 @@ async function actRead(res) {
 }
 async function send(url, body) {
   let res;
-  try { res = await fetch(url, { method: "POST", headers: { "Content-Type": "application/json", "X-SSR-Token": ACT_TOKEN }, body: JSON.stringify(body || {}) }); }
+  // keepalive: a save still reaches the tool when the page is closed right after it.
+  try { res = await fetch(url, { method: "POST", keepalive: true, headers: { "Content-Type": "application/json", "X-SSR-Token": ACT_TOKEN }, body: JSON.stringify(body || {}) }); }
   catch { throw new Error(ACT_OFFLINE); }
   return actRead(res);
 }

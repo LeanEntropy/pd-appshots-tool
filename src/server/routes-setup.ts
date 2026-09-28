@@ -168,6 +168,19 @@ export function postFinish(app: AppContext, id: string): ApiResponse {
   return { status: 200, body: { href: `/p/${id}/` } };
 }
 
+const chains = new Map<string, Promise<unknown>>();
+
+/** Settings writes of one project run one after another, so no save overwrites a newer one. */
+function oneAtATime<T>(id: string, fn: () => Promise<T>): Promise<T> {
+  const run = (chains.get(id) ?? Promise.resolve()).then(fn, fn);
+  const tail = run.catch(() => {});
+  chains.set(id, tail);
+  void tail.then(() => {
+    if (chains.get(id) === tail) chains.delete(id);
+  });
+  return run;
+}
+
 const ICON = /^\/icons\/([A-Za-z0-9.@-]{1,200}\.png)$/;
 
 /**
@@ -204,7 +217,9 @@ export async function setupRoute(
   if ((rest === "/api/settings" || rest === "/api/settings/finish") && req.method === "POST") {
     const w = await writeRequest(req, res, app.token);
     if (!w) return true;
-    const r = rest === "/api/settings" ? await postSettings(app, id, w.body) : postFinish(app, id);
+    const r = await oneAtATime(id, async () =>
+      rest === "/api/settings" ? postSettings(app, id, w.body) : postFinish(app, id),
+    );
     send(res, r.status, r.body);
     return true;
   }

@@ -81,9 +81,24 @@ function status(e: unknown): number | undefined {
     : undefined;
 }
 
+/** Logs what Google Play sent when it does not match (for the terminal, never the page). */
+function unexpected(what: string, raw: unknown, issues: z.core.$ZodIssue[]): PlayProblem {
+  const shape = Array.isArray(raw)
+    ? `array of ${raw.length}, first item keys: ${Object.keys(raw[0] ?? {}).join(", ")}`
+    : raw && typeof raw === "object"
+      ? `keys: ${Object.keys(raw).slice(0, 40).join(", ")}`
+      : typeof raw;
+  const where = issues
+    .slice(0, 5)
+    .map((i) => `${i.path.join(".")}: ${i.message}`)
+    .join("; ");
+  console.warn(`Google Play ${what} answer did not match (${where}). Shape: ${shape}`);
+  return new PlayProblem(UNEXPECTED, "unexpected");
+}
+
 export function toDetails(raw: unknown): PlayDetails {
   const r = DetailsRaw.safeParse(raw);
-  if (!r.success) throw new PlayProblem(UNEXPECTED, "unexpected");
+  if (!r.success) throw unexpected("details", raw, r.error.issues);
   const d = r.data;
   return {
     appId: d.appId,
@@ -101,7 +116,7 @@ export function toDetails(raw: unknown): PlayDetails {
 
 export function toHits(raw: unknown): PlayHit[] {
   const r = z.array(HitRaw).safeParse(raw);
-  if (!r.success) throw new PlayProblem(UNEXPECTED, "unexpected");
+  if (!r.success) throw unexpected("search", raw, r.error.issues);
   return r.data.map((h) => ({ ...h, score: h.score ?? null }));
 }
 
@@ -135,15 +150,29 @@ export class PlayLookup {
     this.now = o.now ?? Date.now;
   }
 
+  /** An unreadable cache entry is kept aside (never silently lost) and read again from Play. */
+  private quarantine(k: string): void {
+    try {
+      const bytes = this.storage.getBytes(k);
+      const stamp = new Date(this.now()).toISOString().replace(/[:.]/g, "-");
+      if (bytes) this.storage.putBlob(`${k}.bad-${stamp}`, bytes);
+    } catch {}
+  }
+
   private cached(k: string, hours: number): { value: unknown } | null {
     let raw: unknown;
     try {
       raw = this.storage.getJson(k);
     } catch {
+      this.quarantine(k);
       return null;
     }
+    if (raw === undefined) return null;
     const c = Cached.safeParse(raw);
-    if (!c.success) return null;
+    if (!c.success) {
+      this.quarantine(k);
+      return null;
+    }
     const age = this.now() - Date.parse(c.data.fetchedAt);
     return age >= 0 && age < hours * 3_600_000 ? { value: c.data.value } : null;
   }
@@ -174,7 +203,9 @@ export class PlayLookup {
       if (hit.value === null) throw notOnPlay();
       try {
         return toDetails(hit.value);
-      } catch {}
+      } catch {
+        this.quarantine(k);
+      }
     }
     let raw: unknown;
     try {
@@ -187,7 +218,8 @@ export class PlayLookup {
       throw e;
     }
     const d = toDetails(raw);
-    this.remember(k, raw);
+    // Only the fields we use are kept (the full answer holds the whole store page).
+    this.remember(k, d);
     return d;
   }
 
@@ -201,7 +233,9 @@ export class PlayLookup {
     if (hit) {
       try {
         hits = toHits(hit.value);
-      } catch {}
+      } catch {
+        this.quarantine(k);
+      }
     }
     if (!hits) {
       const raw = await this.call(

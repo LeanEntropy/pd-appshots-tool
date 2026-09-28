@@ -58,6 +58,13 @@ function autosave(build, after) {
   );
 }
 
+// Closing or leaving the page while a change is still being saved asks first.
+window.addEventListener("beforeunload", (e) => {
+  const name = $("pname");
+  const nameUnsaved = W.id && W.s && name && name.value.trim() && name.value.trim() !== W.s.name;
+  if (autoRuns > 0 || nameUnsaved) { e.preventDefault(); e.returnValue = ""; }
+});
+
 function drawSteps() {
   $("wsteps").innerHTML = STEP_NAMES.map((n, i) => {
     const k = i + 1;

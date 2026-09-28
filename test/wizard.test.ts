@@ -6,6 +6,7 @@ import { test } from "node:test";
 import { CountryCatalogueSchema, loadCountries } from "../src/config/countries.ts";
 import { loadProject } from "../src/config/project.ts";
 import { readRegistry } from "../src/config/registry.ts";
+import type { Fetcher } from "../src/play/icon.ts";
 import { startAppServer } from "../src/server/app-server.ts";
 import { workspaceStorage } from "../src/storage/index.ts";
 import { wizardHtml } from "../src/view/wizard-html.ts";
@@ -17,7 +18,7 @@ const headers = { "Content-Type": "application/json", "X-SSR-Token": TOKEN };
 const OURS = "com.pockethaven.roguelegend";
 const LINK = `https://play.google.com/store/apps/details?id=${OURS}&hl=en&gl=US`;
 
-async function wizardServer() {
+async function wizardServer(slowIcon?: Fetcher) {
   const root = mkdtempSync(join(tmpdir(), "ssr-wiz-"));
   mkdirSync(join(root, "configs"));
   cpSync(join(REPO, "configs", "defaults.json"), join(root, "configs", "defaults.json"));
@@ -33,7 +34,7 @@ async function wizardServer() {
     ],
     [app("com.habby.capybara", "Capybara Go"), app("com.dxx.firenow", "Survivor.io")],
   );
-  const { fetcher } = await fakeFetcher();
+  const fetcher = slowIcon ?? (await fakeFetcher()).fetcher;
   const s = await startAppServer({ root, token: TOKEN, play: lookup(storage, f.scraper), fetcher });
   const get = async (p: string) => {
     const r = await fetch(`${s.origin}${p}`, { redirect: "manual" });
@@ -218,6 +219,32 @@ test("wizard: search gives matches or a card; a tools app has charts off", async
     });
     assert.match(on.body.problems?.[0] ?? "", /game category/);
     assert.equal((await w.get("/api/countries")).json().countries[0].gl, "us");
+  } finally {
+    w.server.close();
+  }
+});
+
+test("wizard: the project is saved before its icon is fetched (a slow icon never loses it)", async () => {
+  let release: () => void = () => {};
+  const gate = new Promise<void>((r) => {
+    release = r;
+  });
+  const slow: Fetcher = async () => {
+    await gate;
+    return new Response(null, { status: 404 });
+  };
+  const w = await wizardServer(slow);
+  try {
+    const pending = w.post("/api/projects", { appId: OURS, name: "Slow Icon" });
+    let saved = false;
+    for (let i = 0; i < 50 && !saved; i++) {
+      saved = w.storage.exists("projects/slow-icon/project.json");
+      if (!saved) await new Promise((r) => setTimeout(r, 20));
+    }
+    assert.ok(saved, "project.json exists while the icon is still loading");
+    assert.equal(readRegistry(w.storage).projects[0]?.id, "slow-icon");
+    release();
+    assert.equal((await pending).status, 201);
   } finally {
     w.server.close();
   }

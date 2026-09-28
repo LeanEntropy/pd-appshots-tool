@@ -41,7 +41,8 @@ DRAW[3] = () => {
   countryCount();
 };
 
-function saveCountries() { autosave(() => ({ markets: pickedMarkets() }), countryCount); }
+// Read from the page now, not when the save's turn comes (the step may be gone by then).
+function saveCountries() { const markets = pickedMarkets(); autosave({ markets }, () => { if ($("countryCount")) countryCount(); }); }
 
 document.addEventListener("change", (e) => {
   if (e.target.dataset.gl !== undefined || e.target.dataset.hl !== undefined) saveCountries();
