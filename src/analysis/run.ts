@@ -1,4 +1,4 @@
-import { join } from "node:path";
+﻿import { join } from "node:path";
 import { type LoadedConfig, loadTaxonomy, projectPaths } from "../config/load.ts";
 import { coreDeck } from "../core/selection.ts";
 import { answerKey } from "../library/layout.ts";
@@ -6,7 +6,8 @@ import { workspaceStorage } from "../storage/index.ts";
 import { openImageDb } from "../store/imagedb.ts";
 import { newRunId } from "../store/manifest.ts";
 import { writeJsonOnce } from "../util/fsx.ts";
-import type { CallContext, ChunkImage } from "./call.ts";
+import { endAttempt, SYNTHESIS, startAttempt } from "./attempts.ts";
+import type { CallContext } from "./call.ts";
 import { batchDataHash, batchEntries } from "./entries.ts";
 import { writeFinalReport } from "./final-report.ts";
 import { labeler } from "./labels.ts";
@@ -14,12 +15,13 @@ import { enrichOrder, type OrderSnapshot, snapshotOrder } from "./orders.ts";
 import { compareOurs, type OursVsPatterns } from "./ours-vs.ts";
 import { patternFit } from "./pattern-fit.ts";
 import { findPatterns, type Patterns } from "./patterns.ts";
-import type { AnalysisPlan, PlanItem } from "./plan.ts";
+import type { AnalysisPlan } from "./plan.ts";
 import { renderPrompt } from "./prompts.ts";
 import type { Provider } from "./providers.ts";
 import { recordWriter } from "./record-refresh.ts";
-import { type AnalysisRecord, isUsable, readRecord, readRecords } from "./records.ts";
-import { analyseChunk, errorKey, modelCopy } from "./run-chunk.ts";
+import { type AnalysisRecord, readRecords } from "./records.ts";
+import { analyseChunk, modelCopy } from "./run-chunk.ts";
+import { analyseImages } from "./run-images.ts";
 import { type SynthesisResult, synthesise } from "./synthesis.ts";
 
 export { errorKey, reviewSample } from "./run-chunk.ts";
@@ -49,6 +51,12 @@ export interface RunDeps {
   recommendationReviewer?: Provider | null;
   onProgress: (p: Progress) => void;
   onError?: (e: RunError) => void;
+  /** Dollars this run may spend (the batch limit minus what the batch spent already). */
+  budgetUsd?: number;
+  /** The approved batch this run belongs to (its spend ledger across stops and continues). */
+  batchId?: string | null;
+  /** Checked before each image: true after the user pressed Stop. */
+  shouldStop?: () => boolean;
 }
 
 export interface RunOutcome {
@@ -56,6 +64,8 @@ export interface RunOutcome {
   records: AnalysisRecord[];
   spentUsd: number;
   stoppedForBudget: boolean;
+  /** The user pressed Stop: the run ended after the current image. */
+  cancelled: boolean;
   /** Why the batch stopped early (repeated identical errors), or null. */
   aborted: string | null;
   errors: RunError[];
@@ -83,10 +93,8 @@ export async function runAnalysis(
   const db = openImageDb(paths);
   const writeRec = recordWriter(loaded, db);
   const runId = newRunId(plan.stage);
-  const budget = Math.min(
-    config.budget.maxUsdPerIncrement,
-    Math.max(plan.estimate.usd[1] * 1.5, 1),
-  );
+  const budget = deps.budgetUsd ?? batchLimit(loaded, plan);
+  const batchId = deps.batchId ?? null;
   let spent = 0;
   const ctx: CallContext = {
     storage: workspaceStorage(paths.workspace),
@@ -105,11 +113,11 @@ export async function runAnalysis(
   const full = plan.items.filter((i) => i.tier === "full");
   const records: AnalysisRecord[] = [];
   const errors: RunError[] = [];
-  let done = 0;
+  const counter = { done: 0 };
   const report = (phase: string, message: string) =>
     deps.onProgress({
       phase,
-      done,
+      done: counter.done,
       total: full.length,
       message,
       spentUsd: Math.round(spent * 100) / 100,
@@ -127,36 +135,16 @@ export async function runAnalysis(
     if (deck) snaps.push(snapshotOrder(paths, deck, g.name));
   }
 
-  let stoppedForBudget = false;
-  let aborted: string | null = null;
-  let streak = { key: "", n: 0 };
-  const size = config.estimates.imagesPerCall;
-  const byApp = new Map<string, PlanItem[]>();
-  for (const it of full) byApp.set(it.appId, [...(byApp.get(it.appId) ?? []), it]);
-  outer: for (const [, appItems] of byApp) {
-    for (let i = 0; i < appItems.length; i += size) {
-      if (spent >= budget) {
-        stoppedForBudget = true;
-        break outer;
-      }
-      // Resumable: anything already analysed (by an earlier, interrupted run) is skipped.
-      const part = appItems.slice(i, i + size).filter((it) => {
-        const skip = isUsable(readRecord(paths, it.imageId));
-        if (skip) done++;
-        return !skip;
-      });
-      if (!part.length) continue;
-      const first = part[0] as PlanItem;
-      const label = `${first.name} #${part.map((p) => p.position).join(", #")}`;
-      const range = part.length > 1 ? `${done + 1}–${done + part.length}` : `${done + 1}`;
-      report("analysis", `Analysing image ${range} / ${full.length} — ${label}`);
-      const chunk: ChunkImage[] = [];
-      for (const it of part)
-        chunk.push({
-          imageId: it.imageId,
-          image: await modelCopy(paths, db, it.imageId),
-        });
-      const recs = await analyseChunk(chunk, part, label, {
+  const loop = await analyseImages(full, {
+    paths,
+    runId,
+    batchId,
+    size: config.estimates.imagesPerCall,
+    stopAfterSameErrors: config.run.stopAfterSameErrors,
+    estimatePerImage: full.length ? plan.estimate.usd[1] / full.length : 0,
+    image: (id) => modelCopy(paths, db, id),
+    analyse: (chunk, part, label) =>
+      analyseChunk(chunk, part, label, {
         producer: deps.producer,
         reviewer: deps.reviewer,
         adjudicator: deps.adjudicator,
@@ -167,35 +155,19 @@ export async function runAnalysis(
         runId,
         ctx,
         phase: report,
-      });
-      for (const raw of recs) {
-        // Saved immediately (with its identity block), before the next image.
-        records.push(await writeRec(raw));
-        const rec = records.at(-1) as AnalysisRecord;
-        done++;
-        const item = part.find((p) => p.imageId === rec.imageId);
-        if (isUsable(rec) || rec.status === "disputed") {
-          if (rec.status === "disputed")
-            fail(
-              `disagreement not settled: ${rec.differences.join("; ")}`,
-              item?.name ?? null,
-              rec.position,
-            );
-          streak = { key: "", n: 0 };
-          continue;
-        }
-        const msg = rec.problems.join("; ") || `status ${rec.status}`;
-        fail(msg, item?.name ?? null, rec.position);
-        const key = errorKey(msg);
-        streak = key === streak.key ? { key, n: streak.n + 1 } : { key, n: 1 };
-        if (streak.n >= config.run.stopAfterSameErrors) {
-          aborted = `Stopped: ${streak.n} images in a row failed with the same error: ${msg}`;
-          break outer;
-        }
-      }
-      report("analysis", `${label}: saved`);
-    }
-  }
+      }),
+    save: writeRec,
+    spent: () => spent,
+    budgetLeft: () => budget - spent,
+    shouldStop: deps.shouldStop ?? (() => false),
+    progress: report,
+    fail,
+    counter,
+    total: full.length,
+  });
+  records.push(...loop.records);
+  const { stoppedForBudget, cancelled, aborted } = loop;
+  for (const h of loop.heldElsewhere) fail(`${h}; it will be reused, not paid`, null, null);
 
   const all = readRecords(paths);
   for (const s of snaps) enrichOrder(paths, s, all);
@@ -204,17 +176,24 @@ export async function runAnalysis(
   let oursVs: OursVsPatterns | null = null;
   let synthesis: SynthesisResult | null = null;
   let synthesisSkipped: string | null = null;
-  if (aborted) synthesisSkipped = "the batch stopped early";
+  if (cancelled) synthesisSkipped = "you stopped the batch";
+  else if (aborted) synthesisSkipped = "the batch stopped early";
   else if (stoppedForBudget) synthesisSkipped = "the spending limit for this batch was reached";
   else if (entries.missing.length)
     synthesisSkipped = `${entries.missing.length} screenshots have no usable analysis yet (${entries.missing.slice(0, 5).join(", ")}${entries.missing.length > 5 ? ", ..." : ""}). Press Start analysis again to retry them; patterns and recommendations are written once every screenshot is analysed.`;
   else if (!entries.competitors.length)
     synthesisSkipped = "no competitor screenshots in this batch";
   if (!synthesisSkipped) {
-    report("patterns", "Finding patterns…");
+    report("patterns", "Finding patternsâ€¦");
     patterns = findPatterns(entries.competitors, entries.decks);
     oursVs = compareOurs(entries.ours, patterns, entries.ourDeckLength, labeler(taxonomy));
     if (deps.writer) {
+      const before = spent;
+      const attempt = startAttempt(paths, SYNTHESIS, {
+        runId,
+        batchId,
+        estimateUsd: config.estimates.synthesisUsd[1],
+      });
       synthesis = await synthesise(
         {
           writer: deps.writer,
@@ -243,15 +222,17 @@ export async function runAnalysis(
         ctx,
         report,
       );
+      endAttempt(paths, SYNTHESIS, attempt, batchId, "finished", spent - before);
       for (const p of synthesis.problems) fail(p, null, null);
     }
   }
-  report("report", "Writing the report…");
+  report("report", "Writing the reportâ€¦");
   const outcome: RunOutcome = {
     runId,
     records,
     spentUsd: spent,
     stoppedForBudget,
+    cancelled,
     aborted,
     errors,
     patterns,
@@ -290,8 +271,17 @@ export async function runAnalysis(
   });
   report(
     "done",
-    aborted ??
-      (stoppedForBudget ? "Stopped: the spending limit for this batch was reached." : "Finished."),
+    cancelled
+      ? "Stopped: you pressed Stop. Finished images are kept."
+      : (aborted ??
+          (stoppedForBudget
+            ? "Stopped: the spending limit for this batch was reached."
+            : "Finished.")),
   );
   return outcome;
+}
+
+/** Spending limit of a new batch: 1.5 times its top estimate (at least $1), within the cap. */
+export function batchLimit(loaded: LoadedConfig, plan: AnalysisPlan): number {
+  return Math.min(loaded.config.budget.maxUsdPerIncrement, Math.max(plan.estimate.usd[1] * 1.5, 1));
 }

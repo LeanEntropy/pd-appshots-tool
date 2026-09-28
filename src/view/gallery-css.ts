@@ -1,8 +1,9 @@
+import { SHELL_CSS, TOKENS } from "./shell.ts";
+
 /** Page styles: tokens for light and dark, grid, dialog, run panel, pages and report. */
 export const CSS = `
-:root { --bg: #f7f7f5; --card: #ffffff; --text: #1d1d1f; --muted: #6b6b70; --line: #e2e2e0; --accent: #2f6fdb; --warn: #b3261e; --next: #c2410c; --tint: #eef3fd; --accent-2: #0f766e; --head-bg: #e6f4f1; --ok: #15803d; --mid: #b45309; --bad: #b91c1c; }
-@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --bg: #151517; --card: #1f1f22; --text: #ececef; --muted: #9a9aa2; --line: #333338; --accent: #7aa7ff; --warn: #ff8a80; --next: #fb923c; --tint: #1c2438; --accent-2: #5eead4; --head-bg: #16302c; --ok: #4ade80; --mid: #fbbf24; --bad: #f87171; } }
-:root[data-theme="dark"] { --bg: #151517; --card: #1f1f22; --text: #ececef; --muted: #9a9aa2; --line: #333338; --accent: #7aa7ff; --warn: #ff8a80; --next: #fb923c; --tint: #1c2438; --accent-2: #5eead4; --head-bg: #16302c; --ok: #4ade80; --mid: #fbbf24; --bad: #f87171; }
+${TOKENS}
+${SHELL_CSS}
 * { box-sizing: border-box; }
 body { margin: 0; background: var(--bg); color: var(--text); font: 14px/1.45 system-ui, sans-serif; }
 h1 { font-size: 20px; margin: 0 0 4px; } h2 { font-size: 16px; margin: 24px 0 8px; } h3 { font-size: 15px; margin: 0; }
@@ -150,4 +151,12 @@ ol.keypoints li { margin: 6px 0; font-size: 15px; }
 .toc ol { margin: 6px 0 0; } .toc li { margin: 2px 0; }
 button.linkbtn { background: none; border: none; color: var(--accent); padding: 0; margin: 0; font: inherit; font-weight: 600; cursor: pointer; text-decoration: underline; }
 .secno { color: var(--accent-2); margin-right: 4px; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.stopbtn { background: var(--bad); color: #fff; border: none; font-weight: 700; padding: 6px 14px; border-radius: 6px; }
+.contbox { border: 2px solid var(--mid); border-radius: 10px; padding: 10px 14px; margin: 10px 0; background: var(--card); }
+.contbox .primary { font-size: 15px; padding: 8px 16px; }
+.freebox { border-left: 5px solid var(--ok); background: var(--card); border-radius: 8px; padding: 8px 12px; margin: 8px 0; }
+.expand { border: 2px solid var(--accent-2); border-radius: 12px; padding: 12px 16px; margin: 16px 0; background: var(--card); }
+.expand h3 { margin: 0 0 8px; color: var(--accent-2); font-size: 18px; } .expand fieldset { border: 1px solid var(--line); border-radius: 8px; margin: 8px 0; }
+.expand label { display: block; margin: 3px 0; }
 `;

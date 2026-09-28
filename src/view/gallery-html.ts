@@ -1,17 +1,22 @@
 import { CSS } from "./gallery-css.ts";
 import { GALLERY_SCRIPT } from "./gallery-script.ts";
 import type { ViewModel } from "./model.ts";
+import { appBar, escHtml, type Step, stepBar } from "./shell.ts";
 
-/** Deterministic HTML: the same view model always produces the same page. */
-const escHtml = (s: string | number) =>
-  String(s).replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`);
+/** Served by the tool server: where the project's API is, and the project's steps. */
+export interface GalleryServed {
+  apiBase: string;
+  steps: readonly Step[];
+  stage: string;
+}
 
 /**
  * Deterministic HTML: the same view model always produces the same page. The token (only when
  * served by the local gallery server) authorises the page's saves and analysis requests.
  */
-export function galleryHtml(vm: ViewModel, token = ""): string {
+export function galleryHtml(vm: ViewModel, token = "", served?: GalleryServed): string {
   const data = JSON.stringify(vm).replace(/</g, "\\u003c");
+  const app = JSON.stringify({ apiBase: served?.apiBase ?? "/api", stage: served?.stage ?? "" });
   return `<!doctype html>
 <html lang="en">
 <head>
@@ -23,8 +28,9 @@ export function galleryHtml(vm: ViewModel, token = ""): string {
 </head>
 <body>
 <div id="runbar" role="status" aria-live="polite" hidden></div>
+${served ? appBar(vm.project) + stepBar(served.steps) : ""}
 <header class="top">
-<div class="titlebar"><h1>Store Screenshot Recipe: ${escHtml(vm.project)}</h1><span class="meta grow">Downloaded run ${escHtml(vm.runId)}. Market for the analysis: ${escHtml(vm.coreMarket.label)}.</span><label>Show country: <select id="locale"></select></label></div>
+<div class="titlebar"><h1>${served ? "" : "Store Screenshot Recipe: "}${escHtml(vm.project)}</h1><span class="meta grow">Downloaded run ${escHtml(vm.runId)}. Market for the analysis: ${escHtml(vm.coreMarket.label)}.</span><label>Show country: <select id="locale"></select></label></div>
 <nav class="tabs" aria-label="Pages"><a href="#overview" data-tab="overview">Overview</a><a href="#competitors" data-tab="competitors">Competitors</a><a href="#screenshots" data-tab="screenshots">Screenshots</a><a href="#analysis" data-tab="analysis">Analysis</a><a href="#report" data-tab="report">Report</a></nav>
 </header>
 <main class="pages">
@@ -53,11 +59,12 @@ export function galleryHtml(vm: ViewModel, token = ""): string {
 <div class="card"><label>Showing: <select id="reportRun"><option value="current">Now (from the saved analyses)</option></select></label>
 <label><input type="checkbox" id="showImages" checked> Show images</label>
 <span class="meta">Batch: the one picked on the Analysis page.</span></div>
-<div id="report"></div></section>
+<div id="report"></div><div id="expansion"></div></section>
 </main>
 <dialog id="approvalDlg" aria-label="Analysis approval and progress"><div id="approval" tabindex="-1"></div></dialog>
 <div id="infoPop" role="dialog" aria-label="Screenshot analysis" hidden></div>
 <script type="application/json" id="data">${data}</script>
+<script type="application/json" id="app">${app.replace(/</g, "\\u003c")}</script>
 <script>${GALLERY_SCRIPT}</script>
 </body>
 </html>

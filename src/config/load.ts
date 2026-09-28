@@ -1,4 +1,4 @@
-import { existsSync, readFileSync } from "node:fs";
+﻿import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { dirname, isAbsolute, join, resolve } from "node:path";
 import { z } from "zod";
 import { type LayoutOverride, libraryLayout } from "../library/layout.ts";
@@ -99,4 +99,14 @@ export function writeRunConfig(paths: ProjectPaths, rc: RunConfig): void {
 export function coreOrder(loaded: LoadedConfig, paths: ProjectPaths): string[] {
   const rc = readRunConfig(paths);
   return rc ? rc.coreCompetitors : loaded.config.competitors.map((c) => c.id);
+}
+
+/** Game config files in configs/ (not the tool defaults or catalogues): import candidates. */
+export function listConfigFiles(root: string): string[] {
+  const dir = join(root, "configs");
+  if (!existsSync(dir)) return [];
+  return readdirSync(dir)
+    .filter((f) => f.endsWith(".json") && !["defaults.json", "countries.json"].includes(f))
+    .sort()
+    .map((f) => join(dir, f));
 }

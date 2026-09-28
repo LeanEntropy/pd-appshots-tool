@@ -1,7 +1,8 @@
-import { defaultDeps, runApproved } from "../analysis/job.ts";
+import { defaultDeps, fitProblem } from "../analysis/job.ts";
 import { buildAnalysisPlan, readSavedPlan, type Stage } from "../analysis/plan.ts";
 import { describeAnalysisPlan } from "../analysis/report.ts";
 import type { LoadedConfig } from "../config/load.ts";
+import { enqueue } from "../jobs/index.ts";
 import { confirm } from "../util/cli-io.ts";
 
 /**
@@ -15,6 +16,11 @@ export async function runAnalyzeStep(
   opts: { yes: boolean; dryRun: boolean },
   log: (s: string) => void,
 ): Promise<boolean> {
+  const guard = fitProblem(loaded, stage);
+  if (guard) {
+    log(guard);
+    return false;
+  }
   const previous = readSavedPlan(loaded, stage);
   if (opts.yes) {
     if (!previous) {
@@ -42,18 +48,30 @@ export async function runAnalyzeStep(
   return start(loaded, stage, plan.planHash, log);
 }
 
+/** Runs the approved batch through the jobs module: the same AI lock as the page. */
 async function start(
   loaded: LoadedConfig,
   stage: Stage,
   hash: string,
   log: (s: string) => void,
 ): Promise<boolean> {
-  const r = await runApproved(loaded, stage, hash, (setState) =>
-    defaultDeps(loaded, (p) => {
-      setState(p);
-      log(`  ${p.message} (spent so far $${p.spentUsd.toFixed(2)})`);
-    }),
+  const r = enqueue(
+    loaded,
+    "analysis",
+    { stage, planHash: hash },
+    {
+      depsFor: (onProgress) =>
+        defaultDeps(loaded, (p) => {
+          onProgress(p);
+          log(`  ${p.message} (spent so far $${p.spentUsd.toFixed(2)})`);
+        }),
+    },
   );
-  log(r.message);
-  return r.ok;
+  if (!r.ok) {
+    log(r.problem);
+    return false;
+  }
+  const job = await r.done;
+  log(`${job.error ?? "Finished."}${job.report ? ` Report: ${job.report}` : ""}`);
+  return job.state === "finished";
 }

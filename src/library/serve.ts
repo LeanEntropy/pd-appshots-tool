@@ -1,4 +1,4 @@
-import type { ProjectPaths } from "../config/load.ts";
+﻿import type { ProjectPaths } from "../config/load.ts";
 import { workspaceStorage } from "../storage/index.ts";
 import { LIB } from "./layout.ts";
 import { readRefs } from "./refs.ts";
@@ -23,14 +23,13 @@ function referenced(paths: ProjectPaths, refsKey: string): Set<string> {
 }
 
 /**
- * The library file behind a project's image URL (images/orig|thumb|model/<sha>...), served only
- * if this project references that image, so one project's page cannot reach another's images.
+ * The library file behind a project's image URL (images/orig|thumb|model/<sha>...), as a storage
+ * key, only if this project references that image: one project's page cannot reach another's.
  */
-export function libraryImagePath(paths: ProjectPaths, rel: string): string | null {
+export function libraryImageKey(paths: ProjectPaths, rel: string): string | null {
   const lib = paths.library;
   const m = IMAGE.exec(rel);
   if (!lib || !m || !referenced(paths, lib.refsKey).has(m[2] as string)) return null;
-  const storage = workspaceStorage(paths.workspace);
   const k = LIB.imageFile(rel.slice("images/".length));
-  return storage.exists(k) ? storage.localPath(k) : null;
+  return workspaceStorage(paths.workspace).exists(k) ? k : null;
 }

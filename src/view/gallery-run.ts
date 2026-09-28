@@ -71,18 +71,31 @@ function runPanelHtml(s) {
   const errs = (s.errors || []).map((e) => "<li>" + esc((e.name ? e.name + (e.position ? " #" + e.position : "") + ": " : "") + e.message) + "</li>").join("");
   let head;
   if (s.running) head = '<h2><span class="spin" aria-hidden="true"></span>Running: ' + imageLine(p) + (cur.length ? " &mdash; " + esc(cur.join(", ")) : "") + "</h2>"
-    + '<p class="now">Step: ' + esc(STEP_WORDS[p.phase] || p.phase) + '</p><p class="meta">' + esc(p.message) + "</p>";
-  else if (!s.finishedAt) head = '<h2 class="warn">Interrupted</h2><p class="warn"><strong>The gallery server stopped during this run.</strong> Finished images are kept; press Start analysis to run the rest.</p>';
+    + '<p class="now">Step: ' + esc(STEP_WORDS[p.phase] || p.phase) + '</p><p class="meta">' + esc(p.message) + "</p>"
+    + (s.stoppable ? '<p><button type="button" class="stopbtn" id="stopRun">Stop after this image</button> <span class="meta">Finished images are kept; you can continue later.</span></p>' : "");
+  else if (!s.finishedAt) head = '<h2 class="warn">Interrupted</h2><p class="warn"><strong>The tool stopped during this run.</strong> Finished images are kept.</p>' + continueBox(s);
   else head = (s.error ? '<h2 class="warn">Stopped</h2><p class="warn"><strong>' + esc(s.error) + "</strong></p>" : '<h2 class="ok">Finished</h2>')
     + '<p class="meta">Run of ' + esc(new Date(s.startedAt).toLocaleString()) + ".</p>"
     + (s.synthesisSkipped ? '<p class="meta">Patterns and recommendations not written: ' + esc(s.synthesisSkipped) + "</p>" : "")
+    + (s.error ? continueBox(s) : "")
     + (s.report ? '<p><a href="#report" class="toreport">Show the final report</a> <span class="meta">(saved as ' + esc(s.report) + ")</span></p>" : "");
   return head
     + '<progress max="' + (p.total || 1) + '" value="' + p.done + '"></progress><p>' + p.done + " of " + p.total + " images done</p>"
     + (s.running || s.finishedAt ? '<p>Elapsed: <span class="rt-elapsed">' + elapsed(s.startedAt, s.running ? null : s.finishedAt) + "</span>" : "<p>") + (s.running ? ' &middot; Remaining: <span class="rt-left">' + remaining(s) + "</span>" : "") + "</p>"
     + "<p>Cost so far: <strong>" + money(s.spentUsd) + "</strong>" + est + "</p>"
+    + (s.ledger ? '<p class="meta">This batch across all its runs: ' + money(s.ledger.spentUsd) + " of its " + money(s.ledger.limitUsd) + " spending limit.</p>" : "")
     + (errs ? '<div class="errs"><strong>' + (s.errors.length) + " problem" + (s.errors.length > 1 ? "s" : "") + '</strong><ul class="warn">' + errs + "</ul></div>" : "")
     + (list ? '<details class="runlist"' + (s.running ? " open" : "") + "><summary>Images in this batch</summary><ol>" + list + "</ol></details>" : "");
+}
+
+// "Analysis stopped at image 9 of 17. [Continue: 8 images left, about $1.60]"
+function continueBox(s) {
+  const c = s.continuable;
+  if (!c) return "";
+  const p = s.progress || { done: 0, total: 0 };
+  return '<div class="contbox"><p><strong>Analysis stopped at image ' + Math.min(p.done + 1, p.total || 1) + " of " + (p.total || "?") + ".</strong> Already spent in this batch: " + money(s.ledger ? s.ledger.spentUsd : 0) + " of its " + money(s.ledger ? s.ledger.limitUsd : 0) + " limit.</p>"
+    + '<button type="button" class="primary" id="continueRun">Continue: ' + c.remaining + " image" + (c.remaining === 1 ? "" : "s") + " left, about " + money(c.estimateUsd[0]) + (c.estimateUsd[1] !== c.estimateUsd[0] ? " to " + money(c.estimateUsd[1]) : "") + "</button>"
+    + '<p class="meta">Opens the approval with the remaining numbers first. Nothing is sent to AI until you approve.</p></div>';
 }
 
 function renderRunbar(s) {
@@ -93,7 +106,7 @@ function renderRunbar(s) {
   if (!show) return;
   const p = s.progress || { done: 0, total: 0 };
   bar.className = s.running ? "" : s.error ? "stopped" : "finished";
-  bar.innerHTML = (s.running ? '<span class="spin" aria-hidden="true"></span>Running: ' + imageLine(p) + ' &middot; <span class="rt-elapsed">' + elapsed(s.startedAt) + "</span> &middot; " + money(s.spentUsd) : (s.error ? "Stopped: " + esc(s.error) : "Finished") + (s.report ? ' &middot; <a href="#report" class="toreport">Show the report</a>' : ""))
+  bar.innerHTML = (s.running ? '<span class="spin" aria-hidden="true"></span>Running: ' + imageLine(p) + ' &middot; <span class="rt-elapsed">' + elapsed(s.startedAt) + "</span> &middot; " + money(s.spentUsd) + (s.stoppable ? ' <button type="button" id="stopRun" class="stopbtn">Stop</button>' : "") : (s.error ? "Stopped: " + esc(s.error) : "Finished") + (s.report ? ' &middot; <a href="#report" class="toreport">Show the report</a>' : ""))
     + ' <button type="button" id="runbarDetails">Details</button>' + (s.running ? "" : ' <button type="button" id="runbarClose" aria-label="Hide this bar">Hide</button>');
 }
 
@@ -105,7 +118,8 @@ function renderStatus() {
   if (start) start.disabled = !!(s && s.running);
   renderRunbar(s);
   if (!s) { el.innerHTML = '<p class="meta">Checking the analysis status...</p>'; return; }
-  const h = s.startedAt ? runPanelHtml(s) : '<h2>Analysis status</h2><p class="meta">No analysis has run yet. Press Start analysis to see the numbers first.</p>';
+  const other = s.otherAi ? '<p class="warn"><strong>' + esc(s.otherAi) + "</strong></p>" : "";
+  const h = other + (s.startedAt ? runPanelHtml(s) : '<h2>Analysis status</h2><p class="meta">No analysis has run yet. Press Start analysis to see the numbers first.</p>');
   el.innerHTML = h;
   const box = document.getElementById("approval");
   const panel = runInDialog && box && box.querySelector(".runpanel");
@@ -130,7 +144,7 @@ function showRunInDialog() {
 async function pollStatus() {
   clearTimeout(pollTimer);
   try {
-    lastStatus = await (await fetch("/api/analysis/status")).json();
+    lastStatus = await (await fetch(API + "/analysis/status")).json();
     const done = lastStatus.progress ? lastStatus.progress.done : 0;
     if (doneSeen === -1 || (lastStatus.running && done !== doneSeen)) {
       doneSeen = done;
@@ -152,7 +166,7 @@ async function pollStatus() {
     renderStatus();
     renderGrid();
   } catch {
-    document.getElementById("status").innerHTML = '<h2>Analysis status</h2><p class="warn">The gallery server is not reachable. Start it with: npm run gallery</p>';
+    document.getElementById("status").innerHTML = '<h2>Analysis status</h2><p class="warn">The gallery server is not reachable. Start it with: npm start</p>';
     pollTimer = setTimeout(pollStatus, 5000);
   }
 }
@@ -161,6 +175,7 @@ setInterval(tick, 1000);
 document.addEventListener("click", (e) => {
   if (e.target.id === "runbarDetails") { goTo("analysis"); const st = document.getElementById("status"); st.focus(); }
   if (e.target.id === "runbarClose") { runbarClosed = true; renderRunbar(lastStatus); }
+  if (e.target.id === "stopRun") { e.target.disabled = true; e.target.textContent = "Stopping after this image..."; apiPost(API + "/analysis/stop", {}).then((r) => { if (!r.ok) alert((r.body.problems || ["Could not stop."]).join(" ")); pollStatus(); }); }
   if (e.target.classList && e.target.classList.contains("toreport") && runInDialog) closeApproval();
 });
 `;

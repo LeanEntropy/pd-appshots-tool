@@ -1,6 +1,6 @@
 /**
  * Core competitor picker: ordered list with pointer drag (mouse and touch) and keyboard moves,
- * live whole-deck count, and autosave to the local gallery server (npm run gallery).
+ * live whole-deck count, and autosave to the local gallery server (npm start).
  * Opened from a plain file, it stays read-only and says how to open it with saving.
  */
 export const PICKER_SCRIPT = `
@@ -12,7 +12,7 @@ let saveTimer = null;
 let saveChain = Promise.resolve();
 let revision = 0;
 let touched = false;
-let saveState = canSave ? "" : "Read-only. To save your pick, open this page with: npm run gallery";
+let saveState = canSave ? "" : "Read-only. To save your pick, open this page with: npm start";
 
 // Same whole-deck rule as the tool (src/core/fit.ts). The server's answer is authoritative.
 function fit() {
@@ -49,21 +49,21 @@ function scheduleSave() {
 
 async function save(snapshot, rev) {
   try {
-    const r = await apiPost("/api/selection", { coreCompetitors: snapshot });
+    const r = await apiPost(API + "/selection", { coreCompetitors: snapshot });
     if (rev !== revision) return;
     saveState = r.ok ? "Saved. " + r.body.summary : "Not saved: " + (r.body.problems || ["unknown problem"]).join(" ");
   } catch {
-    saveState = "Not saved: the gallery server is not running. Start it with: npm run gallery";
+    saveState = "Not saved: the gallery server is not running. Start it with: npm start";
   }
   renderSaveState();
 }
 
 async function loadSaved() {
   const box = document.getElementById("analysisBox");
-  if (box && !canSave) box.innerHTML = '<h2>Analysis</h2><p class="meta">Analysis starts from this page only when it is opened with: npm run gallery</p>';
+  if (box && !canSave) box.innerHTML = '<h2>Analysis</h2><p class="meta">Analysis starts from this page only when it is opened with: npm start</p>';
   if (!canSave) { renderSaveState(); return; }
   try {
-    const res = await fetch("/api/selection");
+    const res = await fetch(API + "/selection");
     if (res.ok && !touched) { const body = await res.json(); selection = body.coreCompetitors; render(); saveState = "Loaded your saved pick. " + body.summary; }
   } catch {}
   renderSaveState();

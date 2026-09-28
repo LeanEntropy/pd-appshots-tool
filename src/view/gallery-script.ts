@@ -1,4 +1,5 @@
-import { ANALYSIS_SCRIPT } from "./gallery-analysis.ts";
+﻿import { ANALYSIS_SCRIPT } from "./gallery-analysis.ts";
+import { EXPAND_SCRIPT } from "./gallery-expand.ts";
 import { GRID_SCRIPT } from "./gallery-grid.ts";
 import { INFO_SCRIPT } from "./gallery-info.ts";
 import { NAV_SCRIPT } from "./gallery-nav.ts";
@@ -14,6 +15,9 @@ const IMG = "../images/";
 const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 let selection = DATA.selection.slice();
 const TOKEN = (document.querySelector('meta[name="ssr-token"]') || {}).content || "";
+const APP = JSON.parse((document.getElementById("app") || {}).textContent || "{}");
+// Every call goes to this project's API (/p/<id>/api), injected by the server.
+const API = APP.apiBase || "/api";
 async function apiPost(url, body) {
   const res = await fetch(url, { method: "POST", headers: { "Content-Type": "application/json", "X-SSR-Token": TOKEN }, body: JSON.stringify(body) });
   return { ok: res.ok, body: await res.json() };
@@ -58,4 +62,4 @@ document.addEventListener("change", (e) => {
 document.getElementById("locale").innerHTML = '<option value="all">All countries</option>' + DATA.markets.map((m) => '<option value="' + esc(m.gl) + '">' + esc(m.label) + "</option>").join("");
 `;
 
-export const GALLERY_SCRIPT = `${RENDER_SCRIPT}\n${INFO_SCRIPT}\n${PICKER_SCRIPT}\n${GRID_SCRIPT}\n${NAV_SCRIPT}\n${REPORT_SCRIPT}\n${REPORT_PARTS_SCRIPT}\n${RUN_SCRIPT}\n${ANALYSIS_SCRIPT}\nrender();\nloadSaved();\nshowPage(false);\n`;
+export const GALLERY_SCRIPT = `${RENDER_SCRIPT}\n${INFO_SCRIPT}\n${PICKER_SCRIPT}\n${GRID_SCRIPT}\n${NAV_SCRIPT}\n${REPORT_SCRIPT}\n${REPORT_PARTS_SCRIPT}\n${RUN_SCRIPT}\n${ANALYSIS_SCRIPT}\n${EXPAND_SCRIPT}\nrender();\nloadSaved();\nshowPage(false);\n`;

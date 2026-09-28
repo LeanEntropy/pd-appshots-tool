@@ -1,4 +1,4 @@
-import { z } from "zod";
+﻿import { z } from "zod";
 import { buildReportData } from "../analysis/report-data.ts";
 import { listRuns, reportInputs, runFileKey } from "../analysis/report-inputs.ts";
 import { type LoadedConfig, projectPaths } from "../config/load.ts";
@@ -35,5 +35,7 @@ export function getReportRun(
   const data = storage.getJson(runFileKey(loaded, run.runId, "report-data.json"));
   if (data) return { status: 200, body: { runId: run.runId, file, data } };
   const md = storage.getText(mdKey) ?? "";
-  return { status: 200, body: { runId: run.runId, file, html: markdownToHtml(md) } };
+  // Old runs link images as ../../images/ (from reports/<run>/); the page sits in views/.
+  const html = markdownToHtml(md).replaceAll('"../../images/', '"../images/');
+  return { status: 200, body: { runId: run.runId, file, html } };
 }

@@ -76,19 +76,19 @@ async function loadReport() {
   const seq = ++reportSeq;
   try {
     if (run === "current") {
-      const r = await (await fetch("/api/report/current?stage=" + encodeURIComponent(stage))).json();
+      const r = await (await fetch(API + "/report/current?stage=" + encodeURIComponent(stage))).json();
       if (seq !== reportSeq) return;
       reportData = r.data;
       if (sel) sel.innerHTML = '<option value="current">Now (from the saved analyses)</option>' + (r.runs || []).map((x) => '<option value="' + esc(x.runId) + '">Run ' + esc(x.runId) + (x.hasData ? "" : " (older format)") + "</option>").join("");
       renderReport();
       return;
     }
-    const r = await (await fetch("/api/report/run?stage=" + encodeURIComponent(stage) + "&id=" + encodeURIComponent(run))).json();
+    const r = await (await fetch(API + "/report/run?stage=" + encodeURIComponent(stage) + "&id=" + encodeURIComponent(run))).json();
     if (seq !== reportSeq) return;
     if (r.data) { reportData = r.data; renderReport(); return; }
     if (!r.html) { box.innerHTML = '<p class="warn">' + esc((r.problems || ["This run could not be found."]).join(" ")) + "</p>"; return; }
     box.innerHTML = '<div class="banner stale"><p>Run ' + esc(r.runId || run) + " was saved in an older format: shown as written then (" + esc(r.file || "") + ").</p></div>" + (r.html ? '<div class="card">' + r.html + "</div>" : '<p class="warn">' + esc((r.problems || ["Not found."]).join(" ")) + "</p>");
-  } catch { box.innerHTML = '<p class="warn">The report could not be loaded. Is the gallery server running (npm run gallery)?</p>'; }
+  } catch { box.innerHTML = '<p class="warn">The report could not be loaded. Is the gallery server running (npm start)?</p>'; }
 }
 
 document.addEventListener("click", (e) => {

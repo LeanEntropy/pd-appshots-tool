@@ -1,21 +1,20 @@
 import { existsSync, readFileSync } from "node:fs";
-import { join } from "node:path";
 import { z } from "zod";
-import { approvalProblem, jobState, runApproved } from "../analysis/job.ts";
 import { labeler } from "../analysis/labels.ts";
-import {
-  type AnalysisPlan,
-  buildAnalysisPlan,
-  readSavedPlan,
-  type Stage,
-} from "../analysis/plan.ts";
 import { infoViews, summaries } from "../analysis/records.ts";
-import { describeAnalysisPlan } from "../analysis/report.ts";
 import { coreOrder, type LoadedConfig, loadTaxonomy, projectPaths } from "../config/load.ts";
 import { type FitView, fitFor, resolvePick, savePick } from "../core/selection.ts";
 import { overviewFile, writeOverview } from "../overview/overview-report.ts";
-import { readJsonIfExists, writeJsonAtomic } from "../util/fsx.ts";
 import { markdownToHtml } from "../view/md-html.ts";
+
+export {
+  getAnalysisStatus,
+  getExpansion,
+  postAnalysisPlan,
+  postAnalysisRun,
+  postAnalysisStop,
+  postExpansion,
+} from "./api-analysis.ts";
 
 export interface ApiResponse {
   status: number;
@@ -64,77 +63,6 @@ export function postSelection(loaded: LoadedConfig, raw: unknown): ApiResponse {
   if (problems.length) return { status: 400, body: { problems } };
   const r = savePick(loaded, ids, "page");
   return { status: 200, body: { saved: true, coreCompetitors: ids, ...fitBody(r) } };
-}
-
-const StageBody = z.strictObject({ stage: z.enum(["pilot", "core"]) });
-const RunBody = z.strictObject({
-  stage: z.enum(["pilot", "core"]),
-  planHash: z.string().regex(/^[0-9a-f]{64}$/),
-});
-
-/** Approval numbers for a batch (no AI). Saves the plan as the one the user is shown. */
-export function postAnalysisPlan(loaded: LoadedConfig, raw: unknown): ApiResponse {
-  const parsed = StageBody.safeParse(raw);
-  if (!parsed.success) return { status: 400, body: { problems: ["Unknown batch."] } };
-  const plan = buildAnalysisPlan(loaded, parsed.data.stage, { save: true });
-  return { status: 200, body: { plan, text: describeAnalysisPlan(plan) } };
-}
-
-export type Starter = (loaded: LoadedConfig, stage: Stage, planHash: string) => Promise<unknown>;
-
-/**
- * Starts an approved batch in the background. Only the page's "Approve and run" button calls
- * this, with the fingerprint of the plan it showed; any change since then is refused.
- */
-export function postAnalysisRun(
-  loaded: LoadedConfig,
-  raw: unknown,
-  start: Starter = runApproved,
-): ApiResponse {
-  const parsed = RunBody.safeParse(raw);
-  if (!parsed.success)
-    return { status: 400, body: { problems: ["The approval could not be read."] } };
-  if (jobState().running)
-    return { status: 409, body: { problems: ["An analysis is already running."] } };
-  const { stage, planHash } = parsed.data;
-  const problem = approvalProblem(
-    readSavedPlan(loaded, stage),
-    buildAnalysisPlan(loaded, stage),
-    planHash,
-  );
-  if (problem) return { status: 409, body: { problems: [problem] } };
-  const approved = readSavedPlan(loaded, stage) as AnalysisPlan;
-  writeJsonAtomic(batchFile(loaded), { stage, planHash, ...runBatch(approved) });
-  void start(loaded, stage, planHash);
-  return { status: 202, body: { started: true } };
-}
-
-/**
- * The running job, or the last one saved on disk, plus the images the run analyses (from the
- * approved plan) and its cost estimate, so the page can list each image's state after a reload.
- */
-export function getAnalysisStatus(loaded?: LoadedConfig): ApiResponse {
-  const job = jobState(loaded);
-  if (!loaded || !job.stage) return { status: 200, body: { ...job, batch: null } };
-  // The snapshot taken at approval; a plan shown later for the same stage does not change it.
-  const snap = readJsonIfExists(batchFile(loaded)) as { stage?: string } | undefined;
-  const plan = readSavedPlan(loaded, job.stage);
-  const batch = snap?.stage === job.stage ? snap : plan ? runBatch(plan) : null;
-  return { status: 200, body: { ...job, batch } };
-}
-
-function batchFile(loaded: LoadedConfig): string {
-  return join(projectPaths(loaded).pending, "analysis-batch.json");
-}
-
-/** The images a run sends to AI, and its cost estimate. */
-function runBatch(plan: AnalysisPlan) {
-  return {
-    estimateUsd: plan.estimate.usd,
-    items: plan.items
-      .filter((i) => i.tier !== "identical")
-      .map((i) => ({ name: i.name, position: i.position, imageId: i.imageId })),
-  };
 }
 
 /** Fresh analyses for the (i) popovers and thumbnail captions, without reloading the page. */

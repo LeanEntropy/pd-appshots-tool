@@ -37,6 +37,7 @@ export const LOCKS = {
   ai: "locks/ai.lock",
   store: "locks/store.lock",
   library: "locks/library.lock",
+  server: "locks/server.lock",
 } as const;
 
 const PROCESS_STARTED = new Date(Date.now() - process.uptime() * 1000).toISOString();
@@ -169,6 +170,13 @@ function lease(path: string, key: string, nonce: string): Lease {
       rmSync(aside, { force: true });
     },
   };
+}
+
+/** Who holds a lock right now: its content when held and not stale, else null. */
+export function lockHolder(storage: Storage, key: string): LockInfo | null {
+  const held = readLock(storage.localPath(key));
+  if (!held?.info || isStale(held.info, held.beat)) return null;
+  return held.info;
 }
 
 export interface HeldLocks {

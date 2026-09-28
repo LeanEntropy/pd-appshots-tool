@@ -6,6 +6,8 @@
  */
 export const ANALYSIS_SCRIPT = `
 let shownPlan = null;
+let shownFree = null;
+let shownContinue = null;
 
 function money(n) { return "$" + Number(n || 0).toFixed(2); }
 function elapsed(from, to) {
@@ -36,6 +38,25 @@ function gameBlock(p, g) {
     + '<div class="athumbs">' + (figs || '<span class="meta">No new images from this game.</span>') + "</div></div>";
 }
 
+// "Already analysed, free", split by who paid (another project's analysis is reused at $0).
+function freeRow(f) {
+  if (!f) return "";
+  const other = f.others.reduce((n, o) => n + o.count, 0);
+  const total = f.thisProject + other + f.sameInBatch;
+  if (!total) return "";
+  const parts = ["by this project: " + f.thisProject];
+  for (const o of f.others) parts.push("by another project (" + esc(o.name) + "): " + o.count);
+  if (f.sameInBatch) parts.push("repeated in this batch, analysed once: " + f.sameInBatch);
+  return '<div class="freebox"><strong>Already analysed, free: ' + total + " images</strong> (" + parts.join("; ") + "). They count toward the core cap, not toward the cost.</div>";
+}
+
+function continueRow(c) {
+  if (!c) return "";
+  return '<div class="contbox"><strong>This continues the stopped batch.</strong> Already spent in this batch: <strong>' + money(c.spentUsd) + "</strong> of its " + money(c.limitUsd) + " spending limit, so the rest may spend up to <strong>" + money(c.leftUsd) + "</strong>."
+    + (c.interrupted ? " " + c.interrupted + " image" + (c.interrupted > 1 ? "s were" : " was") + " being analysed when it stopped; that cost is unknown and counted at its estimate." : "")
+    + " The image being analysed when it stopped is analysed again.</div>";
+}
+
 function renderApproval(p) {
   const passes = p.estimate.passes.map((m) => "<tr><td>" + esc(m.role) + "</td><td>" + esc(m.model) + "</td><td>" + m.calls + "</td><td>" + m.images + "</td></tr>").join("");
   const blocked = !p.withinCap ? '<p class="warn">This batch would take the core above its cap. It cannot run.</p>' : "";
@@ -43,6 +64,7 @@ function renderApproval(p) {
   const box = document.getElementById("approval");
   box.innerHTML = '<h3 id="approvalTitle">Approve the ' + (p.stage === "pilot" ? "core pilot" : "core check") + "?</h3>"
     + '<p class="big">' + esc(p.market.label) + ". <strong>" + p.counts.newImages + " images will be sent to AI</strong> (full analysis: " + p.counts.full + ", text-layer diff: " + p.counts.layerDiff + "), from " + p.games.length + " games. Already analysed or identical (no AI): " + p.counts.identical + ". Left out: " + p.excluded.length + ". Core total after this batch: " + p.coreTotal + " of " + p.cap + ".</p>"
+    + freeRow(shownFree) + continueRow(shownContinue)
     + p.games.map((g) => gameBlock(p, g)).join("")
     + '<table class="passes"><tr><th>Step</th><th>Model</th><th>Calls</th><th>Images</th></tr>' + passes + "</table>"
     + '<p class="big">Estimated cost: <strong>' + money(p.estimate.usd[0]) + " to " + money(p.estimate.usd[1]) + "</strong> on Claude, plus about " + Math.round(p.estimate.gptTokens / 1000) + "k GPT tokens. Provisional.</p>"
@@ -69,20 +91,24 @@ function closeApproval() {
   document.getElementById("approval").textContent = "";
 }
 
-async function showApproval() {
-  const stage = document.getElementById("stage").value;
+async function showApproval(cont) {
+  const stage = cont ? cont.stage : document.getElementById("stage").value;
   approvalDialog("Working out the numbers (no AI)...");
   try {
-    const r = await apiPost("/api/analysis/plan", { stage });
+    const r = await apiPost(API + "/analysis/plan", cont ? { stage, continueBatch: cont.batchId } : { stage });
     if (!r.ok) { approvalDialog((r.body.problems || ["Could not prepare the batch."]).join(" ")); return; }
     shownPlan = r.body.plan;
+    shownFree = r.body.free || null;
+    shownContinue = r.body.continuing || null;
     renderApproval(shownPlan);
-  } catch { approvalDialog("The gallery server is not running. Start it with: npm run gallery"); }
+  } catch { approvalDialog("The gallery server is not running. Start it with: npm start"); }
 }
 
 async function approve() {
   if (!shownPlan) return;
-  const r = await apiPost("/api/analysis/run", { stage: shownPlan.stage, planHash: shownPlan.planHash });
+  const body = { stage: shownPlan.stage, planHash: shownPlan.planHash };
+  if (shownContinue) body.continueBatch = shownContinue.batchId;
+  const r = await apiPost(API + "/analysis/run", body);
   if (!r.ok) { approvalDialog((r.body.problems || ["Not started."]).join(" ")); shownPlan = null; return; }
   shownPlan = null;
   showRunInDialog();
@@ -91,7 +117,7 @@ async function approve() {
 
 async function refreshAnalyses() {
   try {
-    const r = await (await fetch("/api/analyses")).json();
+    const r = await (await fetch(API + "/analyses")).json();
     INFO = r.info || {};
     DATA.info = INFO;
     for (const a of [...DATA.ours, ...DATA.named, ...DATA.chart]) for (const d of a.decks) for (const i of d.images) i.analysis = (i.imageId && r.captions[i.imageId]) || null;
@@ -105,7 +131,7 @@ async function loadOverview(rebuild) {
   const button = '<p><button id="rebuildOverview">' + (rebuild ? "Building..." : "Rebuild the overview") + '</button> <span class="meta">Free: computed from the downloaded images, no AI.</span></p>';
   try {
     if (rebuild) box.querySelector("#rebuildOverview") && (box.querySelector("#rebuildOverview").disabled = true);
-    const r = rebuild ? await apiPost("/api/overview", {}) : { ok: true, body: await (await fetch("/api/overview")).json() };
+    const r = rebuild ? await apiPost(API + "/overview", {}) : { ok: true, body: await (await fetch(API + "/overview")).json() };
     if (!r.ok) { box.innerHTML = '<p class="warn">' + esc((r.body.problems || ["The overview could not be built."]).join(" ")) + "</p>" + button; return; }
     const o = r.body.overview;
     box.innerHTML = o
@@ -115,7 +141,8 @@ async function loadOverview(rebuild) {
 }
 
 document.addEventListener("click", (e) => {
-  if (e.target.id === "startAnalysis") showApproval();
+  if (e.target.id === "startAnalysis") showApproval(null);
+  if (e.target.id === "continueRun" && lastStatus && lastStatus.ledger) showApproval({ stage: lastStatus.stage, batchId: lastStatus.ledger.batchId });
   if (e.target.id === "approve") { e.target.disabled = true; approve(); }
   if (e.target.id === "rebuildOverview") { e.target.disabled = true; e.target.textContent = "Building (about a minute the first time)..."; loadOverview(true); }
   if (e.target.id === "cancelApproval") closeApproval();
@@ -123,5 +150,5 @@ document.addEventListener("click", (e) => {
 document.addEventListener("change", (e) => { if (e.target.id === "stage") loadReport(); });
 document.getElementById("approvalDlg").addEventListener("close", () => { shownPlan = null; if (runInDialog) goTo("analysis"); runInDialog = false; });
 if (location.protocol.startsWith("http")) { pollStatus(); loadOverview(false); }
-else document.getElementById("status").innerHTML = '<h2>Analysis status</h2><p class="meta">Open this page with npm run gallery to run and follow the analysis.</p>';
+else document.getElementById("status").innerHTML = '<h2>Analysis status</h2><p class="meta">Open this page with npm start to run and follow the analysis.</p>';
 `;

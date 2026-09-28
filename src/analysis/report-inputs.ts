@@ -1,5 +1,6 @@
-import { type LoadedConfig, loadTaxonomy, projectPaths } from "../config/load.ts";
+﻿import { type LoadedConfig, loadTaxonomy, projectPaths } from "../config/load.ts";
 import { coreDeck } from "../core/selection.ts";
+import { legacyAnalysisJob, readJournal } from "../jobs/journal.ts";
 import { projectKey, workspaceStorage } from "../storage/index.ts";
 import { openImageDb } from "../store/imagedb.ts";
 import { batchDataHash } from "./entries.ts";
@@ -93,9 +94,8 @@ export function reportInputs(
         revised: !!read<Recommendations>("recommendations-draft.json"),
       };
   }
-  const status = storage.getJson(projectKey(paths, "pending", "analysis-status.json")) as
-    | { stage?: string; synthesisSkipped?: string | null; error?: string | null }
-    | undefined;
+  const status =
+    readJournal(storage, paths).jobs.ai ?? legacyAnalysisJob(storage, paths) ?? undefined;
   const skip =
     override.skip !== undefined
       ? override.skip

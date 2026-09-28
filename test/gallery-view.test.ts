@@ -14,6 +14,7 @@ import { GRID_SCRIPT } from "../src/view/gallery-grid.ts";
 import { galleryHtml } from "../src/view/gallery-html.ts";
 import { GALLERY_SCRIPT } from "../src/view/gallery-script.ts";
 import type { ViewModel } from "../src/view/model.ts";
+import { quickRun, settle } from "./helpers/jobs.ts";
 import { tempProject } from "./helpers/project.ts";
 
 interface FakeImage {
@@ -118,21 +119,14 @@ test("the status lists the images of the approved batch, also after a restart", 
   });
   postSelection(loaded, { coreCompetitors: ["Archero 2", "Heroll"] });
   const shown = postAnalysisPlan(loaded, { stage: "pilot" }).body as { plan: { planHash: string } };
-  const noop = async () => {};
   const run = { stage: "pilot", planHash: shown.plan.planHash };
-  assert.equal(postAnalysisRun(loaded, run, noop).status, 202);
+  assert.equal(postAnalysisRun(loaded, run, quickRun).status, 202);
+  await settle(loaded);
   // A plan shown after the approval does not change the batch the run reports.
   postSelection(loaded, { coreCompetitors: ["Heroll", "Archero 2"] });
   postAnalysisPlan(loaded, { stage: "pilot" });
-  const saved = {
-    running: true,
-    stage: "pilot",
-    progress: null,
-    startedAt: "2026-09-28T00:00:00.000Z",
-    finishedAt: null,
-    spentUsd: 0.5,
-    errors: [],
-  };
+  // An old status file (from before the job journal) is not read once the journal exists.
+  const saved = { running: true, stage: "pilot", startedAt: "2026-09-28T00:00:00.000Z" };
   writeFileSync(join(projectPaths(loaded).pending, "analysis-status.json"), JSON.stringify(saved));
   const body = getAnalysisStatus(loaded).body as {
     running: boolean;

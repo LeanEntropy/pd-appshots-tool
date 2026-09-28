@@ -1,11 +1,11 @@
-import { writeFileSync } from "node:fs";
+﻿import { writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { labeler } from "../analysis/labels.ts";
 import { infoViews, summaries } from "../analysis/records.ts";
 import { coreOrder, type LoadedConfig, loadTaxonomy, projectPaths } from "../config/load.ts";
 import { openImageDb } from "../store/imagedb.ts";
 import { ensureDir } from "../util/fsx.ts";
-import { galleryHtml } from "../view/gallery-html.ts";
+import { type GalleryServed, galleryHtml } from "../view/gallery-html.ts";
 import { deckFile, deckMarkdown, indexMarkdown } from "../view/markdown.ts";
 import { buildViewModel, latestRun, type ViewModel } from "../view/model.ts";
 
@@ -31,8 +31,12 @@ function viewModel(loaded: LoadedConfig): ViewModel {
 }
 
 /** The gallery page, built fresh from the latest download, the saved pick and analyses. */
-export function renderGalleryHtml(loaded: LoadedConfig, token = ""): string {
-  return galleryHtml(viewModel(loaded), token);
+export function renderGalleryHtml(
+  loaded: LoadedConfig,
+  token = "",
+  served?: GalleryServed,
+): string {
+  return galleryHtml(viewModel(loaded), token, served);
 }
 
 /** Offline markdown per deck plus one static HTML gallery, all from the latest download run. */

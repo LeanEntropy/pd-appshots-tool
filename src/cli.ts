@@ -2,10 +2,11 @@ import { writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { refreshAllRecords } from "./analysis/record-refresh.ts";
 import { writeCurrentReport } from "./analysis/report-inputs.ts";
-import { importCommand, loadForCommand, printProjects } from "./cli-project.ts";
+import { importCommand, loadForCommand, printProjects, ROOT } from "./cli-project.ts";
 import { type LoadedConfig, projectPaths } from "./config/load.ts";
 import { asiaVsUs, writeOverview } from "./overview/overview-report.ts";
-import { openBrowser, startGalleryServer } from "./server/gallery-server.ts";
+import { openBrowser } from "./server/http-util.ts";
+import { startToolServer } from "./server/instance.ts";
 import { runAnalyzeStep } from "./steps/analyze.ts";
 import { runDeckView } from "./steps/deck-view.ts";
 import { type Check, runDoctor } from "./steps/doctor.ts";
@@ -26,8 +27,10 @@ const HELP = `Store Screenshot Recipe: setup commands (no AI analysis)
   npm run download    Download the previewed images after your approval (-- --yes to approve up front)
   npm run own-assets  Match our local files to our live deck; read the PSD if psd-tools is installed
   npm run deck-view   Build the offline raw deck pages and the gallery with the competitor picker
-  npm run gallery     Open the gallery: comparison grid, competitor picker (saves automatically),
-                      and the Start analysis button (approval screen first)
+  npm start           Open the tool: all projects, each with its workspace (comparison grid,
+                      competitor picker that saves automatically, Start analysis with its
+                      approval screen first). -- --project <id> opens that project directly.
+  npm run gallery     The same as npm start
   npm run pilot       Approval screen for the core pilot (no AI). Approve in the gallery, with /analyze
                       in Claude Code, or with -- --yes after you have seen the numbers
   npm run core        The same for the full core check
@@ -98,6 +101,27 @@ async function download(loaded: LoadedConfig, args: Args): Promise<boolean> {
   return complete;
 }
 
+/** One server for all projects; a second start opens the running one instead. */
+async function start(args: Args): Promise<number> {
+  const p = args.flags.get("port");
+  const project = args.flags.get("project");
+  const { server, origin } = await startToolServer({
+    root: ROOT,
+    port: typeof p === "string" ? Number(p) : 4777,
+  });
+  const url =
+    typeof project === "string" ? `${origin}/p/${encodeURIComponent(project)}/` : `${origin}/`;
+  if (!args.flags.has("no-open")) openBrowser(url);
+  if (!server) {
+    log(`The tool is already running: ${url} (opened in your browser).`);
+    return 0;
+  }
+  log(`Store Screenshot Recipe: ${url}
+Everything you choose saves automatically. Keep this window open while you use the page; press Ctrl+C to stop.`);
+  await new Promise(() => {});
+  return 0;
+}
+
 async function main(): Promise<number> {
   const args = parseArgs(process.argv.slice(2));
   if (args.command === "help" || args.flags.has("help")) {
@@ -110,6 +134,7 @@ async function main(): Promise<number> {
   }
   if (args.command === "migrate" || args.command === "import")
     return (await importCommand(args, log)) ? 0 : 1;
+  if (args.command === "start" || args.command === "gallery") return start(args);
   const loaded = loadForCommand(args, log);
   switch (args.command) {
     case "doctor":
@@ -148,15 +173,6 @@ async function main(): Promise<number> {
       const r = currentFit(loaded);
       log(describeFit(r));
       return r.fit.ok ? 0 : 1;
-    }
-    case "gallery": {
-      const p = args.flags.get("port");
-      const { url } = await startGalleryServer(loaded, typeof p === "string" ? Number(p) : 4777);
-      log(`Gallery: ${url}
-Your pick saves automatically. Keep this window open while you use the page; press Ctrl+C to stop.`);
-      if (!args.flags.has("no-open")) openBrowser(url);
-      await new Promise(() => {});
-      return 0;
     }
     case "pilot":
     case "core": {

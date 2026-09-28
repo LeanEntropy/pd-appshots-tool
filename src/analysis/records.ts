@@ -53,7 +53,13 @@ export interface AnalysisRecord {
   /** Project that last wrote the record. */
   writtenBy?: string;
   /** Project and run that first paid for a usable result. Set once; usd unknown for imports. */
-  paidBy?: { projectId: string; runId: string; usd: number | null; at: string } | null;
+  paidBy?: {
+    projectId: string;
+    runId: string;
+    batchId?: string | null;
+    usd: number | null;
+    at: string;
+  } | null;
 }
 
 /**

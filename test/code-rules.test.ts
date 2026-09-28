@@ -1,4 +1,4 @@
-import assert from "node:assert/strict";
+﻿import assert from "node:assert/strict";
 import { readdirSync, readFileSync } from "node:fs";
 import { join, relative } from "node:path";
 import { test } from "node:test";
@@ -20,7 +20,6 @@ const LEGACY_FS_ALLOWED = [
   "src/overview/overview-report.ts",
   "src/play/client.ts",
   "src/server/api.ts",
-  "src/server/gallery-server.ts",
   "src/steps/deck-view.ts",
   "src/steps/doctor.ts",
   "src/steps/own-assets.ts",
@@ -30,7 +29,7 @@ const LEGACY_FS_ALLOWED = [
   "src/util/proc.ts",
   "src/view/model.ts",
 ];
-const MAX_ALLOWED = 18;
+const MAX_ALLOWED = 17;
 
 function files(dir: string): string[] {
   return readdirSync(dir, { withFileTypes: true }).flatMap((e) =>
