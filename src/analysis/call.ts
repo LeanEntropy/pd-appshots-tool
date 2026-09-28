@@ -1,11 +1,9 @@
-import { existsSync } from "node:fs";
-import { join } from "node:path";
 import type { z } from "zod";
 import type { Taxonomy } from "../config/load.ts";
-import { readJson, writeJsonAtomic } from "../util/fsx.ts";
+import type { Storage } from "../storage/index.ts";
 import { stableHash } from "../util/hash.ts";
 import type { RenderedPrompt } from "./prompts.ts";
-import type { Provider } from "./providers.ts";
+import type { ModelImage, Provider } from "./providers.ts";
 import { clampRegions } from "./regions.ts";
 import {
   deckAnalysisSchema,
@@ -17,11 +15,16 @@ import {
 
 export interface ChunkImage {
   imageId: string;
-  path: string;
+  image: ModelImage;
 }
 
 export interface CallContext {
-  objectsDir: string;
+  storage: Storage;
+  /**
+   * Storage key of a cached model answer: per-image steps go to the shared library once the
+   * project uses it; project-level steps (patterns, recommendations) stay in the project.
+   */
+  answerKey: (step: string, key: string) => string;
   taxonomy: Taxonomy;
   taxonomyHash: string;
   /** Per-call ceiling; each call also gets no more than what is left of the batch limit. */
@@ -53,10 +56,6 @@ export interface ChunkResult {
 
 const MAX_REPAIRS = 2;
 
-export function objectFile(objectsDir: string, step: string, key: string): string {
-  return join(objectsDir, step, `${key}.json`);
-}
-
 /**
  * One validated model call for a set of images, cached by content: the key covers the step,
  * model, prompt text, schema version, taxonomy and the ordered image ids. An answer that fails
@@ -86,9 +85,9 @@ export async function validatedCall<T>(
     images: images.map((i) => i.imageId),
     extraKey,
   });
-  const file = objectFile(ctx.objectsDir, step, key);
-  if (existsSync(file)) {
-    const stored = readJson(file) as StoredObject;
+  const file = ctx.answerKey(step, key);
+  const stored = ctx.storage.getJson(file) as StoredObject | undefined;
+  if (stored) {
     const parsed = schema.safeParse(stored.output);
     const value = parsed.success ? tidy(parsed.data) : null;
     if (value && check(value, refs).length === 0) return { value, key, problems: [] };
@@ -108,7 +107,7 @@ export async function validatedCall<T>(
       model: provider.model,
       system,
       prompt: prompt + repair,
-      images: images.map((im, i) => ({ ref: refs[i] as string, path: im.path })),
+      images: images.map((im, i) => ({ ref: refs[i] as string, image: im.image })),
       schema: jsonSchema,
       maxBudgetUsd: Math.min(ctx.maxBudgetUsd, left),
       timeoutMs: ctx.timeoutMs,
@@ -141,7 +140,7 @@ export async function validatedCall<T>(
         attempts: attempt + 1,
         createdAt: new Date().toISOString(),
       };
-      writeJsonAtomic(file, obj);
+      ctx.storage.putJson(file, obj);
       return { value, key, problems: [] };
     }
   }

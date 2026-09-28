@@ -1,12 +1,11 @@
-import { existsSync, readdirSync } from "node:fs";
-import { join } from "node:path";
 import type { ProjectPaths } from "../config/load.ts";
-import { readJson, writeJsonAtomic } from "../util/fsx.ts";
 import type { InfoView, ViewAnalysis } from "../view/model.ts";
 import type { ImageIdentity } from "./identity.ts";
 import { COMPOSITION, captureLines, imageLine, pendingMessage } from "./info-text.ts";
 import { type Labeler, plainLabel, screenName } from "./labels.ts";
+import type { PipelineSpec } from "./pipeline.ts";
 import type { MappedFrom } from "./record-refresh.ts";
+import { readStoredRecord, readStoredRecords, writeStoredRecord } from "./record-store.ts";
 import { type ImageAnalysis, SCHEMA_VERSION } from "./schema.ts";
 
 /** Plan-v2 statuses, plus "unreviewed": a required second opinion could not be read. */
@@ -44,6 +43,17 @@ export interface AnalysisRecord {
   mappedFrom?: MappedFrom | null;
   /** Version of the deterministic taxonomy mapping last applied. */
   mapping?: string;
+  // Shared library only (plan 12A):
+  /** Analysis key the record is stored under, or "unproven-<project>" for imported ones. */
+  key?: string;
+  /** "proven": reusable by any project with the same settings; "unproven": its project only. */
+  provenance?: "proven" | "unproven";
+  /** The settings the analysis key is the hash of (proven records). */
+  pipeline?: PipelineSpec;
+  /** Project that last wrote the record. */
+  writtenBy?: string;
+  /** Project and run that first paid for a usable result. Set once; usd unknown for imports. */
+  paidBy?: { projectId: string; runId: string; usd: number | null; at: string } | null;
 }
 
 /**
@@ -59,27 +69,16 @@ export function isUsable(r: AnalysisRecord | undefined): r is AnalysisRecord & {
   return !!r && USABLE.includes(r.status) && r.schema === SCHEMA_VERSION && !!r.final;
 }
 
-export function recordFile(paths: ProjectPaths, imageId: string): string {
-  return join(paths.analysis, `${imageId}.json`);
-}
-
 export function writeRecord(paths: ProjectPaths, r: AnalysisRecord): void {
-  writeJsonAtomic(recordFile(paths, r.imageId), r);
+  writeStoredRecord(paths, r);
 }
 
 export function readRecord(paths: ProjectPaths, imageId: string): AnalysisRecord | undefined {
-  const f = recordFile(paths, imageId);
-  return existsSync(f) ? (readJson(f) as AnalysisRecord) : undefined;
+  return readStoredRecord(paths, imageId);
 }
 
 export function readRecords(paths: ProjectPaths): Map<string, AnalysisRecord> {
-  const out = new Map<string, AnalysisRecord>();
-  if (!existsSync(paths.analysis)) return out;
-  for (const f of readdirSync(paths.analysis).filter((n) => n.endsWith(".json"))) {
-    const r = readJson(join(paths.analysis, f)) as AnalysisRecord;
-    out.set(r.imageId, r);
-  }
-  return out;
+  return readStoredRecords(paths);
 }
 
 export function screenLabel(a: ImageAnalysis | null, label: Labeler = plainLabel): string {

@@ -4,7 +4,7 @@ import sharp from "sharp";
 import { fromRoot, type LoadedConfig, projectPaths } from "../config/load.ts";
 import { baselineMarket } from "../core/targets.ts";
 import { describeImage, hamming, type ImageFacts, NEAR_IDENTICAL_BITS } from "../store/identity.ts";
-import { ImageDb } from "../store/imagedb.ts";
+import { openImageDb } from "../store/imagedb.ts";
 import { readDeck } from "../store/manifest.ts";
 import { ensureDir, writeJsonAtomic } from "../util/fsx.ts";
 import { findPsdPython, run } from "../util/proc.ts";
@@ -42,19 +42,24 @@ function listImages(dir: string): string[] {
 
 export async function runOwnAssets(loaded: LoadedConfig, log: (s: string) => void): Promise<void> {
   const { config } = loaded;
+  const own = config.ownAssets;
+  if (!own) {
+    log("Our own screenshots are not set up for this project (nothing to match).");
+    return;
+  }
   const paths = projectPaths(loaded);
   const base = baselineMarket(config);
   const live = readDeck(paths.decks, { appId: config.ourApp.id, gl: base.gl, hl: base.hl });
   if (live?.status !== "ok") {
     throw new Error("Our live store deck is not downloaded yet. Run the download step first.");
   }
-  const db = ImageDb.open(paths.imageDb, paths.imagesOrig, paths.imagesThumb);
+  const db = openImageDb(paths);
   const liveImages = live.slots
     .map((s) => ({ position: s.position, rec: s.imageId ? db.get(s.imageId) : undefined }))
     .filter((x): x is { position: number; rec: NonNullable<typeof x.rec> } => !!x.rec);
   log(`Our live deck: ${live.deckLength} screenshots (${base.label}).`);
 
-  const assetsDir = fromRoot(loaded, config.ownAssets.dir);
+  const assetsDir = fromRoot(loaded, own.dir);
   const thumbDir = join(paths.own, "thumbs");
   ensureDir(thumbDir);
   const locals: LocalFileMatch[] = [];
@@ -90,8 +95,8 @@ export async function runOwnAssets(loaded: LoadedConfig, log: (s: string) => voi
     status: "skipped",
     detail: "no PSD configured",
   };
-  if (config.ownAssets.psd) {
-    const psdFile = join(assetsDir, config.ownAssets.psd);
+  if (own.psd) {
+    const psdFile = join(assetsDir, own.psd);
     const py = await findPsdPython(loaded.root);
     if (!existsSync(psdFile)) psd = { status: "skipped", detail: `PSD not found: ${psdFile}` };
     else if (!py) psd = { status: "skipped", detail: "psd-tools is not installed (optional)" };

@@ -1,7 +1,7 @@
 import { imageFacts, orientationOf, ratioLabel } from "../analysis/image-facts.ts";
 import { type Count, counts, median } from "../analysis/patterns.ts";
 import { type LoadedConfig, projectPaths } from "../config/load.ts";
-import { ImageDb } from "../store/imagedb.ts";
+import { openImageDb } from "../store/imagedb.ts";
 import { type DeckManifest, withDeckClasses } from "../store/manifest.ts";
 import { latestRun } from "../view/model.ts";
 
@@ -63,7 +63,7 @@ export async function buildOverview(loaded: LoadedConfig): Promise<Overview> {
   const paths = projectPaths(loaded);
   const run = latestRun(paths.runs);
   if (!run) throw new Error("No download run found yet. Run the download step first.");
-  const db = ImageDb.open(paths.imageDb, paths.imagesOrig, paths.imagesThumb);
+  const db = openImageDb(paths);
   const decks = run.decks.filter((d) => d.status === "ok").map(withDeckClasses);
   const topFamily = new Map<string, string | null>();
   for (const id of new Set(

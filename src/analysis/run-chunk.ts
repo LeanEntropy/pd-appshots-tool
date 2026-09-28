@@ -1,37 +1,49 @@
-import { existsSync } from "node:fs";
-import { join } from "node:path";
 import sharp from "sharp";
-import type { Taxonomy } from "../config/load.ts";
+import type { ProjectPaths, Taxonomy } from "../config/load.ts";
+import { imageKey, modelFile } from "../library/layout.ts";
+import { workspaceStorage } from "../storage/index.ts";
 import type { ImageDb } from "../store/imagedb.ts";
 import { sha256 } from "../util/hash.ts";
 import { analyseImages, type CallContext, type ChunkImage, type ChunkResult } from "./call.ts";
 import { compareReadings } from "./compare.ts";
+import { MODEL_COPY } from "./pipeline.ts";
 import type { PlanItem } from "./plan.ts";
 import type { RenderedPrompt } from "./prompts.ts";
-import type { Provider } from "./providers.ts";
+import type { ModelImage, Provider } from "./providers.ts";
 import type { AnalysisRecord } from "./records.ts";
 import { semanticProblems } from "./schema.ts";
 import { buildRecord, type Decision, settle } from "./settle.ts";
 
-/** Model copy of an image: long edge 1568 px, JPEG, cached by image id. */
-const MODEL_LONG_EDGE = 1568;
-
-export async function modelCopy(db: ImageDb, dir: string, imageId: string): Promise<string> {
-  const out = join(dir, `${imageId}.jpg`);
-  if (!existsSync(out)) {
+/**
+ * Model copy of an image (see MODEL_COPY), cached by image id, as a provider-neutral image:
+ * command-line providers use the local file, an API provider would send the bytes.
+ */
+export async function modelCopy(
+  paths: ProjectPaths,
+  db: ImageDb,
+  imageId: string,
+): Promise<ModelImage> {
+  const storage = workspaceStorage(paths.workspace);
+  const k = imageKey(paths, modelFile(!!paths.library, imageId));
+  if (!storage.exists(k)) {
     const rec = db.get(imageId);
     if (!rec) throw new Error(`Image ${imageId} is not in the project image database.`);
-    await sharp(db.abs(rec.file))
+    const bytes = await sharp(db.abs(rec.file))
       .resize({
-        width: MODEL_LONG_EDGE,
-        height: MODEL_LONG_EDGE,
+        width: MODEL_COPY.longEdge,
+        height: MODEL_COPY.longEdge,
         fit: "inside",
         withoutEnlargement: true,
       })
-      .jpeg({ quality: 90 })
-      .toFile(out);
+      .jpeg({ quality: MODEL_COPY.quality })
+      .toBuffer();
+    storage.putBlob(k, bytes);
   }
-  return out;
+  return {
+    mimeType: "image/jpeg",
+    localPath: storage.localPath(k),
+    bytes: () => storage.getBytes(k) ?? Buffer.alloc(0),
+  };
 }
 
 /** Error text without volatile parts (numbers, paths), so repeats of one failure match. */

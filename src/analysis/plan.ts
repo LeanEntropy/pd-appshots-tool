@@ -2,7 +2,7 @@ import { join } from "node:path";
 import { type LoadedConfig, loadTaxonomy, projectPaths } from "../config/load.ts";
 import { analysedSlots, coreDeck, fitFor } from "../core/selection.ts";
 import { baselineMarket, coreMarket } from "../core/targets.ts";
-import { ImageDb } from "../store/imagedb.ts";
+import { openImageDb } from "../store/imagedb.ts";
 import { readJsonIfExists, writeJsonAtomic } from "../util/fsx.ts";
 import { stableHash } from "../util/hash.ts";
 import { batchDataHash } from "./entries.ts";
@@ -75,7 +75,7 @@ export function buildAnalysisPlan(
       ? view.fit.selected.slice(0, config.core.pilotCompetitors)
       : view.fit.selected;
   const apps = [{ appId: config.ourApp.id, name: config.ourApp.name }, ...competitors];
-  const db = ImageDb.open(paths.imageDb, paths.imagesOrig, paths.imagesThumb);
+  const db = openImageDb(paths);
 
   const inputs: TierInput[] = [];
   const excluded: ExcludedItem[] = [];

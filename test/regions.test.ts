@@ -4,11 +4,18 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { test } from "node:test";
 import { analyseImages, type CallContext } from "../src/analysis/call.ts";
-import type { Provider } from "../src/analysis/providers.ts";
+import type { ModelImage, Provider } from "../src/analysis/providers.ts";
 import { clampRegion, clampRegions } from "../src/analysis/regions.ts";
 import { semanticProblems } from "../src/analysis/schema.ts";
 import type { Taxonomy } from "../src/config/load.ts";
+import { workspaceStorage } from "../src/storage/index.ts";
 import { reading } from "./helpers/fake-provider.ts";
+
+const fakeImage: ModelImage = {
+  mimeType: "image/jpeg",
+  localPath: "a.jpg",
+  bytes: () => Buffer.from(""),
+};
 
 const taxonomy = {
   id: "t",
@@ -62,7 +69,8 @@ test("a model answer with a box slightly out of range is accepted without a repa
     },
   } as Provider;
   const ctx: CallContext = {
-    objectsDir: mkdtempSync(join(tmpdir(), "ssr-obj-")),
+    storage: workspaceStorage(mkdtempSync(join(tmpdir(), "ssr-obj-"))),
+    answerKey: (step, key) => `projects/p/objects/${step}/${key}.json`,
     taxonomy,
     taxonomyHash: "t",
     maxBudgetUsd: 1,
@@ -75,7 +83,7 @@ test("a model answer with a box slightly out of range is accepted without a repa
     "review",
     provider,
     system,
-    [{ imageId: "a", path: "a.jpg" }],
+    [{ imageId: "a", image: fakeImage }],
     ctx,
   );
   assert.equal(calls, 1);
@@ -91,7 +99,7 @@ test("a model answer with a box slightly out of range is accepted without a repa
     "review",
     provider,
     system,
-    [{ imageId: "a", path: "a.jpg" }],
+    [{ imageId: "a", image: fakeImage }],
     ctx,
   );
   assert.equal(calls, 1);

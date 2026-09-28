@@ -5,7 +5,7 @@ import { join } from "node:path";
 import { test } from "node:test";
 import sharp from "sharp";
 import { classifyPair, describeImage } from "../src/store/identity.ts";
-import { ImageDb } from "../src/store/imagedb.ts";
+import { LegacyImageDb } from "../src/store/imagedb-legacy.ts";
 
 /** A test picture: gradient with a block whose position depends on `seed`. */
 async function picture(seed: number, width = 180, height = 320, format: "png" | "jpeg" = "png") {
@@ -25,7 +25,10 @@ async function picture(seed: number, width = 180, height = 320, format: "png" | 
 
 function tempDb() {
   const dir = mkdtempSync(join(tmpdir(), "ssr-db-"));
-  return { dir, db: ImageDb.open(join(dir, "db.json"), join(dir, "orig"), join(dir, "thumb")) };
+  return {
+    dir,
+    db: LegacyImageDb.open(join(dir, "db.json"), join(dir, "orig"), join(dir, "thumb")),
+  };
 }
 
 test("identical bytes are stored once, with every place they were seen", async () => {
@@ -40,7 +43,7 @@ test("identical bytes are stored once, with every place they were seen", async (
   assert.equal(db.get(a.record.id)?.sources.length, 2);
   assert.equal(db.byGoogleId("gid-jp")?.id, a.record.id);
   db.save();
-  const reopened = ImageDb.open(join(dir, "db.json"), join(dir, "orig"), join(dir, "thumb"));
+  const reopened = LegacyImageDb.open(join(dir, "db.json"), join(dir, "orig"), join(dir, "thumb"));
   assert.equal(reopened.size, 1);
   assert.equal(reopened.byGoogleId("gid-us")?.id, a.record.id);
 });

@@ -3,7 +3,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import sharp from "sharp";
 import { type LoadedConfig, loadConfig, projectPaths } from "../../src/config/load.ts";
-import { ImageDb } from "../../src/store/imagedb.ts";
+import { openImageDb } from "../../src/store/imagedb.ts";
 import {
   type DeckManifest,
   type DeckSlot,
@@ -39,9 +39,10 @@ export async function tempProject(
     readFileSync(join(REPO, "test", "fixtures", "config.json"), "utf8"),
   );
   writeFileSync(join(root, "configs", "t.json"), JSON.stringify(cfg));
+  cpSync(join(REPO, "configs", "defaults.json"), join(root, "configs", "defaults.json"));
   const loaded = loadConfig(join(root, "configs", "t.json"));
   const paths = projectPaths(loaded);
-  const db = ImageDb.open(paths.imageDb, paths.imagesOrig, paths.imagesThumb);
+  const db = openImageDb(paths);
   const all: DeckManifest[] = [];
   let seed = 1;
   const add = async (

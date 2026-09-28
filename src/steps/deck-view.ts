@@ -3,7 +3,7 @@ import { dirname, join } from "node:path";
 import { labeler } from "../analysis/labels.ts";
 import { infoViews, summaries } from "../analysis/records.ts";
 import { coreOrder, type LoadedConfig, loadTaxonomy, projectPaths } from "../config/load.ts";
-import { ImageDb } from "../store/imagedb.ts";
+import { openImageDb } from "../store/imagedb.ts";
 import { ensureDir } from "../util/fsx.ts";
 import { galleryHtml } from "../view/gallery-html.ts";
 import { deckFile, deckMarkdown, indexMarkdown } from "../view/markdown.ts";
@@ -19,7 +19,7 @@ function viewModel(loaded: LoadedConfig): ViewModel {
   const paths = projectPaths(loaded);
   const run = latestRun(paths.runs);
   if (!run) throw new Error("No download run found yet. Run the download step first.");
-  const db = ImageDb.open(paths.imageDb, paths.imagesOrig, paths.imagesThumb);
+  const db = openImageDb(paths);
   return buildViewModel(
     loaded.config,
     run,

@@ -1,10 +1,8 @@
-import { existsSync, readFileSync } from "node:fs";
-import { join } from "node:path";
 import { z } from "zod";
 import { buildReportData } from "../analysis/report-data.ts";
-import { listRuns, reportInputs } from "../analysis/report-inputs.ts";
+import { listRuns, reportInputs, runFileKey } from "../analysis/report-inputs.ts";
 import { type LoadedConfig, projectPaths } from "../config/load.ts";
-import { readJsonIfExists } from "../util/fsx.ts";
+import { workspaceStorage } from "../storage/index.ts";
 import { markdownToHtml } from "../view/md-html.ts";
 import type { ApiResponse } from "./api.ts";
 
@@ -31,10 +29,11 @@ export function getReportRun(
   if (!parsed.success) return { status: 400, body: { problems: ["Unknown batch."] } };
   const run = listRuns(loaded, parsed.data).find((r) => r.runId === id);
   if (!run) return { status: 404, body: { problems: ["No such report run."] } };
-  const dir = join(projectPaths(loaded).reports, run.runId);
-  const file = join(dir, "report.md");
-  const data = readJsonIfExists(join(dir, "report-data.json"));
+  const storage = workspaceStorage(projectPaths(loaded).workspace);
+  const mdKey = runFileKey(loaded, run.runId, "report.md");
+  const file = storage.localPath(mdKey);
+  const data = storage.getJson(runFileKey(loaded, run.runId, "report-data.json"));
   if (data) return { status: 200, body: { runId: run.runId, file, data } };
-  const md = existsSync(file) ? readFileSync(file, "utf8") : "";
+  const md = storage.getText(mdKey) ?? "";
   return { status: 200, body: { runId: run.runId, file, html: markdownToHtml(md) } };
 }

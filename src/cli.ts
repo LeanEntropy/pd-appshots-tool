@@ -2,7 +2,8 @@ import { writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { refreshAllRecords } from "./analysis/record-refresh.ts";
 import { writeCurrentReport } from "./analysis/report-inputs.ts";
-import { type LoadedConfig, loadConfig, projectPaths } from "./config/load.ts";
+import { importCommand, loadForCommand, printProjects } from "./cli-project.ts";
+import { type LoadedConfig, projectPaths } from "./config/load.ts";
 import { asiaVsUs, writeOverview } from "./overview/overview-report.ts";
 import { openBrowser, startGalleryServer } from "./server/gallery-server.ts";
 import { runAnalyzeStep } from "./steps/analyze.ts";
@@ -36,7 +37,13 @@ const HELP = `Store Screenshot Recipe: setup commands (no AI analysis)
   npm run report      Write the report from the saved analyses, no AI (-- --stage core for the core check)
   npm run refresh-records  Rebuild each analysis record's identity block and taxonomy mapping (no AI)
 
-Options: --config <file> (default configs/rogue-legend.json)`;
+  npm run projects    List the projects
+  npm run migrate     Import an existing project into the shared image and analysis library.
+                      Dry run by default (reads only); -- --yes imports. Nothing is downloaded or
+                      analysed; the project's approval numbers stay the same.
+
+Options: --project <id> (default: the most recently opened project), or --config <file>
+         (default configs/rogue-legend.json, used until the project is imported)`;
 
 function printChecks(checks: Check[]): boolean {
   let ok = true;
@@ -97,7 +104,13 @@ async function main(): Promise<number> {
     log(HELP);
     return 0;
   }
-  const loaded = loadConfig(args.config);
+  if (args.command === "projects") {
+    printProjects(log);
+    return 0;
+  }
+  if (args.command === "migrate" || args.command === "import")
+    return (await importCommand(args, log)) ? 0 : 1;
+  const loaded = loadForCommand(args, log);
   switch (args.command) {
     case "doctor":
       return printChecks(await runDoctor(loaded, { skipAi: args.flags.has("skip-ai") })) ? 0 : 1;

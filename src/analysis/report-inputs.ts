@@ -1,9 +1,7 @@
-import { existsSync, readdirSync, writeFileSync } from "node:fs";
-import { join } from "node:path";
 import { type LoadedConfig, loadTaxonomy, projectPaths } from "../config/load.ts";
 import { coreDeck } from "../core/selection.ts";
-import { ImageDb } from "../store/imagedb.ts";
-import { ensureDir, readJsonIfExists } from "../util/fsx.ts";
+import { projectKey, workspaceStorage } from "../storage/index.ts";
+import { openImageDb } from "../store/imagedb.ts";
 import { batchDataHash } from "./entries.ts";
 import { readLatest } from "./final-report.ts";
 import type { ImageIdentity } from "./identity.ts";
@@ -25,19 +23,27 @@ export interface ReportRun {
 
 /** Saved runs of a stage, newest first (folders reports/<run id>/ with a report.md). */
 export function listRuns(loaded: LoadedConfig, stage: Stage): ReportRun[] {
-  const dir = projectPaths(loaded).reports;
-  if (!existsSync(dir)) return [];
-  return readdirSync(dir)
-    .filter(
-      (d) => /^\d{4}-/.test(d) && d.endsWith(`-${stage}`) && existsSync(join(dir, d, "report.md")),
-    )
+  const paths = projectPaths(loaded);
+  const storage = workspaceStorage(paths.workspace);
+  const prefix = projectKey(paths, "reports");
+  const files = new Set<string>();
+  for (const k of storage.list(prefix)) files.add(k.slice(prefix.length + 1));
+  return [...files]
+    .filter((f) => f.endsWith("/report.md"))
+    .map((f) => f.slice(0, -"/report.md".length))
+    .filter((d) => !d.includes("/") && /^\d{4}-/.test(d) && d.endsWith(`-${stage}`))
     .sort()
     .reverse()
     .map((runId) => ({
       runId,
       createdAt: runId.slice(0, 10),
-      hasData: existsSync(join(dir, runId, "report-data.json")),
+      hasData: files.has(`${runId}/report-data.json`),
     }));
+}
+
+/** A saved report run's file (report.md, report-data.json, ...) as a storage key. */
+export function runFileKey(loaded: LoadedConfig, runId: string, name: string): string {
+  return projectKey(projectPaths(loaded), "reports", runId, name);
 }
 
 /** Everything the pure report builder needs, read from disk (no AI). */
@@ -47,6 +53,7 @@ export function reportInputs(
   override: { plan?: AnalysisPlan; ai?: ReportInputs["latestAi"]; skip?: string | null } = {},
 ): ReportInputs {
   const paths = projectPaths(loaded);
+  const storage = workspaceStorage(paths.workspace);
   const saved = override.plan ?? readSavedPlan(loaded, stage);
   // The cost of the next approval is the batch as it would be proposed now (no AI, not saved).
   const proposed = buildAnalysisPlan(loaded, stage);
@@ -61,7 +68,7 @@ export function reportInputs(
         : r,
     ]),
   );
-  const db = ImageDb.open(paths.imageDb, paths.imagesOrig, paths.imagesThumb);
+  const db = openImageDb(paths);
   const m = plan.market;
   const decks = new Map(plan.games.map((g) => [g.appId, coreDeck(loaded, g.appId)]));
   const orderDates = new Map(
@@ -70,9 +77,10 @@ export function reportInputs(
   let latestAi: ReportInputs["latestAi"] = override.ai ?? null;
   if (override.ai === undefined) {
     const latest = readLatest(paths, stage);
-    const dir = latest ? join(paths.reports, latest.runId) : null;
     const read = <T>(name: string) =>
-      dir ? ((readJsonIfExists(join(dir, name)) as T | undefined) ?? null) : null;
+      latest
+        ? ((storage.getJson(runFileKey(loaded, latest.runId, name)) as T | undefined) ?? null)
+        : null;
     const recommendations = read<Recommendations>("recommendations.json");
     const interpretation = read<Interpretation>("interpretation.json");
     if (latest && (recommendations || interpretation))
@@ -85,7 +93,7 @@ export function reportInputs(
         revised: !!read<Recommendations>("recommendations-draft.json"),
       };
   }
-  const status = readJsonIfExists(join(paths.pending, "analysis-status.json")) as
+  const status = storage.getJson(projectKey(paths, "pending", "analysis-status.json")) as
     | { stage?: string; synthesisSkipped?: string | null; error?: string | null }
     | undefined;
   const skip =
@@ -117,15 +125,15 @@ export function reportInputs(
 export function writeCurrentReport(loaded: LoadedConfig, stage: Stage): string {
   const inputs = reportInputs(loaded, stage);
   const data = buildReportData(inputs);
-  const dir = join(projectPaths(loaded).reports, `current-${stage}`);
-  ensureDir(dir);
-  const file = join(dir, "report.md");
+  const paths = projectPaths(loaded);
+  const storage = workspaceStorage(paths.workspace);
+  const fileKey = projectKey(paths, "reports", `current-${stage}`, "report.md");
   const head = [
     `# ${stage === "pilot" ? "Core pilot" : "Core check"}: report from the saved analyses`,
     "",
     `Market: ${data.market}. Written ${new Date().toISOString().slice(0, 16).replace("T", " ")} from the analyses on disk, with no AI call.`,
     "",
   ];
-  writeFileSync(file, `${[...head, ...reportMarkdown(data, inputs.label)].join("\n")}\n`);
-  return file;
+  storage.putText(fileKey, `${[...head, ...reportMarkdown(data, inputs.label)].join("\n")}\n`);
+  return storage.localPath(fileKey);
 }

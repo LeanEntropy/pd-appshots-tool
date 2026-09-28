@@ -77,6 +77,8 @@ export function reading(
 
 export interface FakeOptions {
   family?: Provider["family"];
+  /** Model name as the provider reports it (default "fake-model"). */
+  model?: string;
   /** Screen type and headline per image path. */
   read: (path: string) => { screenType: string; headline: string };
   /** Make deck calls (more than one image) fail validation this many times. */
@@ -145,7 +147,7 @@ export function fakeProvider(o: FakeOptions): Provider & { calls: VisionCall[] }
   });
   return {
     family: o.family ?? "anthropic",
-    model: "fake-model",
+    model: o.model ?? "fake-model",
     calls,
     async call(c): Promise<VisionResult> {
       calls.push(c);
@@ -175,7 +177,7 @@ export function fakeProvider(o: FakeOptions): Provider & { calls: VisionCall[] }
         const decisions = c.images.map((i) => ({
           imageRef: i.ref,
           chosen: "first",
-          ...o.read(i.path),
+          ...o.read(i.image.localPath ?? ""),
           subtype: "",
           composition: "single_full_capture",
           marketingLayerPresent: true,
@@ -184,7 +186,7 @@ export function fakeProvider(o: FakeOptions): Provider & { calls: VisionCall[] }
         return ok({ decisions });
       }
       const images = c.images.map((i) => {
-        const r = o.read(i.path);
+        const r = o.read(i.image.localPath ?? "");
         return reading(i.ref, r.screenType, r.headline);
       });
       return ok({ images });
