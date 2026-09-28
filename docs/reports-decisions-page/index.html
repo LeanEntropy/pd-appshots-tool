@@ -1,0 +1,459 @@
+<title>Reports Plan Decisions</title>
+<style>
+  :root {
+    color-scheme: light;
+    --bg: #EEF2F0;
+    --surface: #FFFFFF;
+    --surface-2: #E3E9E6;
+    --border: #CFD8D4;
+    --text: #172420;
+    --text-muted: #55665F;
+    --accent: #0B6E62;
+    --accent-strong: #075149;
+    --accent-soft: #DCEEEA;
+    --approve: #1F7A46;
+    --approve-soft: #DEF2E5;
+    --change: #A9600A;
+    --change-soft: #F8E7D2;
+    --question: #6B4FB0;
+    --question-soft: #EAE3F8;
+    --shadow: rgba(15,35,30,0.10);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      color-scheme: dark;
+      --bg: #0F1815;
+      --surface: #17211D;
+      --surface-2: #1E2A25;
+      --border: #2C3A34;
+      --text: #E7EFEA;
+      --text-muted: #9FB2AA;
+      --accent: #4FC2AE;
+      --accent-strong: #7ED8C7;
+      --accent-soft: #1B3B36;
+      --approve: #5BC98A;
+      --approve-soft: #1C3A2A;
+      --change: #E2954A;
+      --change-soft: #3C2C18;
+      --question: #B29CE8;
+      --question-soft: #2E2646;
+      --shadow: rgba(0,0,0,0.35);
+    }
+  }
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --bg: #0F1815;
+    --surface: #17211D;
+    --surface-2: #1E2A25;
+    --border: #2C3A34;
+    --text: #E7EFEA;
+    --text-muted: #9FB2AA;
+    --accent: #4FC2AE;
+    --accent-strong: #7ED8C7;
+    --accent-soft: #1B3B36;
+    --approve: #5BC98A;
+    --approve-soft: #1C3A2A;
+    --change: #E2954A;
+    --change-soft: #3C2C18;
+    --question: #B29CE8;
+    --question-soft: #2E2646;
+    --shadow: rgba(0,0,0,0.35);
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    padding-block: 28px 64px;
+    background: var(--bg);
+    color: var(--text);
+    font-family: "IBM Plex Sans", ui-sans-serif, system-ui, "Segoe UI", Roboto, sans-serif;
+    font-size: 15px;
+    line-height: 1.55;
+  }
+  .mono, .tag, .decision-num, .summary-chip { font-family: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+  .wrap { max-width: 860px; margin: 0 auto; padding-inline: 16px; }
+  h1, h2, h3 { text-wrap: balance; font-weight: 600; }
+  a { color: var(--accent-strong); }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  /* header */
+  .page-header { padding-block: 4px 20px; border-bottom: 1px solid var(--border); }
+  .eyebrow { margin: 0 0 6px; font-family: "IBM Plex Mono", monospace; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--text-muted); }
+  .page-header h1 { margin: 0 0 8px; font-size: 28px; letter-spacing: -0.01em; }
+  .tagline { margin: 0 0 14px; max-width: 64ch; color: var(--text-muted); font-size: 16px; }
+  .status-pill { display: inline-block; padding: 5px 12px; border-radius: 999px; background: var(--accent-soft); color: var(--accent-strong); font-size: 12px; letter-spacing: .04em; text-transform: uppercase; font-weight: 600; }
+
+  /* summary bar */
+  .summary-bar { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 10; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 10px 14px; margin-block: 18px; box-shadow: 0 1px 3px var(--shadow); }
+  .summary-counts { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; font-size: 13px; }
+  .summary-total { color: var(--text-muted); margin-right: 4px; }
+  .summary-total strong { color: var(--text); font-size: 15px; }
+  .summary-chip { padding: 3px 9px; border-radius: 999px; border: 1px solid var(--border); background: var(--surface-2); font-size: 12px; }
+  .summary-chip.approve { color: var(--approve); border-color: var(--approve); background: var(--approve-soft); }
+  .summary-chip.change { color: var(--change); border-color: var(--change); background: var(--change-soft); }
+  .summary-chip.question { color: var(--question); border-color: var(--question); background: var(--question-soft); }
+  .db-notice { margin: 0 0 18px; padding: 9px 12px; border-radius: 8px; background: var(--change-soft); color: var(--change); border: 1px solid var(--change); font-size: 13px; }
+
+  /* buttons */
+  .btn { font: inherit; font-size: 13px; border-radius: 7px; border: 1px solid var(--border); background: var(--surface); color: var(--text); padding: 7px 12px; cursor: pointer; }
+  .btn:hover { border-color: var(--accent); color: var(--accent-strong); }
+  .btn-ghost { background: transparent; }
+  @media (prefers-reduced-motion: no-preference) { .btn { transition: border-color .12s ease, color .12s ease; } }
+
+  section { margin-top: 34px; }
+  h2 { font-size: 21px; margin: 0 0 6px; border-bottom: 2px solid var(--border); padding-bottom: 8px; }
+  .section-intro { color: var(--text-muted); margin: 10px 0 18px; max-width: 68ch; }
+
+  /* plan summary list */
+  .plan-summary-list { list-style: none; margin: 14px 0; padding: 0; display: grid; gap: 8px; }
+  .plan-summary-list li { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 9px 13px; font-size: 14px; }
+
+  .change-box { background: var(--accent-soft); border: 1px solid var(--accent); border-radius: 10px; padding: 14px 16px; margin: 16px 0 4px; font-size: 14px; color: var(--text); }
+  .change-box strong { color: var(--accent-strong); }
+  .change-box ul { margin: 8px 0 0; padding-left: 20px; }
+  .change-box li { margin-bottom: 4px; }
+
+  /* decision cards */
+  .decision-grid { display: grid; grid-template-columns: 1fr; gap: 16px; }
+  .decision-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 18px 20px; box-shadow: 0 1px 2px var(--shadow); display: flex; flex-direction: column; gap: 10px; }
+  .decision-num { color: var(--text-muted); font-size: 12px; letter-spacing: .06em; }
+  .decision-q { margin: 0; font-size: 17px; }
+  .tag { display: inline-block; font-size: 11px; letter-spacing: .05em; text-transform: uppercase; color: var(--text-muted); margin-right: 8px; vertical-align: middle; }
+  .rec-tag { background: var(--accent-soft); color: var(--accent-strong); padding: 3px 8px; border-radius: 5px; font-weight: 600; }
+  .decision-rec { background: var(--accent-soft); border-left: 3px solid var(--accent); border-radius: 0 8px 8px 0; padding: 10px 12px; margin: 0; }
+  .decision-alt, .decision-why { margin: 0; color: var(--text); }
+  .decision-alt { color: var(--text-muted); }
+  .evidence-note { background: var(--surface-2); border: 1px dashed var(--border); border-radius: 8px; padding: 10px 12px; font-size: 13.5px; color: var(--text); }
+  .evidence-note strong { color: var(--accent-strong); }
+
+  /* controls */
+  .control-row { margin-top: 4px; }
+  .radio-group { display: flex; flex-wrap: wrap; gap: 8px; }
+  .radio-pill { display: inline-flex; align-items: center; gap: 6px; padding: 5px 11px; border: 1px solid var(--border); border-radius: 999px; font-size: 13px; cursor: pointer; background: var(--surface); }
+  .radio-pill input { margin: 0; accent-color: currentColor; }
+  .radio-pill.approve:has(input:checked) { background: var(--approve-soft); border-color: var(--approve); color: var(--approve); }
+  .radio-pill.change:has(input:checked) { background: var(--change-soft); border-color: var(--change); color: var(--change); }
+  .radio-pill.question:has(input:checked) { background: var(--question-soft); border-color: var(--question); color: var(--question); }
+  .note-label { display: block; font-size: 11px; text-transform: uppercase; letter-spacing: .05em; color: var(--text-muted); margin: 8px 0 4px; }
+  .note-field { width: 100%; border: 1px solid var(--border); border-radius: 7px; padding: 8px 9px; background: var(--surface); color: var(--text); font: inherit; font-size: 13.5px; resize: vertical; }
+
+  footer { margin-top: 40px; padding-top: 16px; border-top: 1px solid var(--border); color: var(--text-muted); font-size: 12.5px; }
+
+  @media (max-width: 420px) {
+    .page-header h1 { font-size: 24px; }
+    .decision-card { padding: 14px 15px; }
+  }
+  @media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; transition: none !important; animation: none !important; } }
+</style>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+
+<div class="wrap">
+
+  <header class="page-header">
+    <p class="eyebrow">Internal tool proposal &middot; reports &amp; PDF export</p>
+    <h1>Reports Plan: Decisions</h1>
+    <p class="tagline">Nine open decisions from the plan for project reports and PDF export. Each has a recommended default, highlighted below &mdash; approve it, ask for a change, or flag a question.</p>
+    <span class="status-pill">Draft plan: awaiting your review</span>
+  </header>
+
+  <div class="summary-bar" id="summary-bar" role="status" aria-live="polite">
+    <div class="summary-counts">
+      <span class="summary-total"><strong id="summary-answered">0</strong>/9 answered</span>
+      <span class="summary-chip approve">Approve <b id="count-approve">0</b></span>
+      <span class="summary-chip change">Change <b id="count-change">0</b></span>
+      <span class="summary-chip question">Question <b id="count-question">0</b></span>
+      <span class="summary-chip">Unanswered <b id="count-unanswered">9</b></span>
+    </div>
+    <button id="general-comment-btn" class="btn btn-ghost" type="button" hidden>General comment</button>
+  </div>
+  <p id="db-notice" class="db-notice" role="status" hidden>Responses aren't being saved right now &mdash; this page can't reach the feedback store. Your choices and notes still work on screen for this visit, but won't be kept.</p>
+
+  <!-- ============ WHAT THE PLAN DOES ============ -->
+  <section id="summary" aria-labelledby="summary-heading">
+    <h2 id="summary-heading">What the plan does</h2>
+    <ul class="plan-summary-list">
+      <li>A project can hold many reports: Pilot, Full check, One country, and Compare countries.</li>
+      <li>One "New report" builder shows exactly what each report needs &mdash; free, cheap or full-price images &mdash; and the cost, before anything runs; a report that needs no new AI builds instantly.</li>
+      <li>Country reports are the expansion step: the same builder, opened prefilled after the Full check asks "how do you want to expand?"</li>
+      <li>Compare countries shows, per country, our screenshots against competitors', how each game's pictures and text change across countries, and recommendations per country.</li>
+      <li>Saved reports are immutable versions; a "Newer data" badge appears when the underlying data has changed, and reports can be archived.</li>
+      <li>The Report tab lists every report with Export PDF, Regenerate, Rename, Archive and Delete.</li>
+      <li>PDF export drives the installed Chrome or Edge browser, for high-quality PDFs of the wide position tables.</li>
+      <li>A free "Suggested next research" panel, computed from what's already on disk, points to the best next thing to check &mdash; nothing runs without approval.</li>
+    </ul>
+
+    <div class="change-box">
+      <strong>Also added since the last review:</strong>
+      <ul>
+        <li>A terminology comparison, per country &mdash; how competitors' wording differs from ours, side by side.</li>
+        <li>Every report now ends with a short set of suggested A/B tests, written in a CMO's voice.</li>
+        <li>Reports now show, per country, the store category, tags and keywords derived from each game's listing.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ============ DECISIONS ============ -->
+  <section id="decisions" aria-labelledby="decisions-heading">
+    <h2 id="decisions-heading">Your decisions</h2>
+    <p class="section-intro">Nine open decisions, D1&ndash;D9. Each has a recommended default, highlighted below &mdash; approve it, ask for a change, or flag a question, with an optional note.</p>
+
+    <div class="decision-grid">
+
+      <article class="decision-card" id="item-D1">
+        <div class="decision-num">D1</div>
+        <h3 class="decision-q">Allow country and compare-countries reports only after the Full check has recommendations?</h3>
+        <p class="decision-rec"><span class="tag rec-tag">Recommended</span>Yes.</p>
+        <p class="decision-alt"><span class="tag">Alternatives</span>Allow them any time &mdash; their recommendations would then have no core base to build on.</p>
+        <p class="decision-why"><span class="tag">Why</span>Follows the expanding-circle rule: country advice is built from the Full check's own recommendations, so it needs to exist first.</p>
+        <p class="evidence-note"><strong>Correction:</strong> Rogue Legend has only PILOT recommendations so far. The Full check (39 images left, about $7&ndash;13) would have to run first.</p>
+        <div class="control-row" data-decision="1"></div>
+      </article>
+
+      <article class="decision-card" id="item-D2">
+        <div class="decision-num">D2</div>
+        <h3 class="decision-q">If a competitor's English image isn't analysed yet, analyse it once so its other countries only need the cheap text comparison?</h3>
+        <p class="decision-rec"><span class="tag rec-tag">Recommended</span>Yes.</p>
+        <p class="decision-alt"><span class="tag">Alternatives</span>Skip the English anchor and run a full analysis for every country instead.</p>
+        <p class="decision-why"><span class="tag">Why</span>One English analysis plus several cheap text comparisons is reliably cheaper than a full analysis per country, and it's shown in the list with the reason.</p>
+        <div class="control-row" data-decision="2"></div>
+      </article>
+
+      <article class="decision-card" id="item-D3">
+        <div class="decision-num">D3</div>
+        <h3 class="decision-q">Can Pilot and Full check reports be archived but not deleted?</h3>
+        <p class="decision-rec"><span class="tag rec-tag">Recommended</span>Yes.</p>
+        <p class="decision-alt"><span class="tag">Alternatives</span>Allow deleting them too.</p>
+        <p class="decision-why"><span class="tag">Why</span>They carry the analysis freshness pointers that other reports and the "Newer data" badge depend on.</p>
+        <div class="control-row" data-decision="3"></div>
+      </article>
+
+      <article class="decision-card" id="item-D4">
+        <div class="decision-num">D4</div>
+        <h3 class="decision-q">Should the PDF default to A4 landscape?</h3>
+        <p class="decision-rec"><span class="tag rec-tag">Recommended</span>Yes.</p>
+        <p class="decision-alt"><span class="tag">Alternatives</span>A4 portrait &middot; Letter.</p>
+        <p class="decision-why"><span class="tag">Why</span>The position tables are wide, and landscape keeps them readable without shrinking the text.</p>
+        <div class="control-row" data-decision="4"></div>
+      </article>
+
+      <article class="decision-card" id="item-D5">
+        <div class="decision-num">D5</div>
+        <h3 class="decision-q">Add the small <code class="mono">playwright-core</code> library for PDF export?</h3>
+        <p class="decision-rec"><span class="tag rec-tag">Recommended</span>Yes.</p>
+        <p class="decision-alt"><span class="tag">Alternatives</span>The browser's own "Save as PDF" only.</p>
+        <p class="decision-why"><span class="tag">Why</span>It drives the Chrome or Edge already installed on the machine, with no browser download, and gives high-quality PDFs with real colours, links and bookmarks.</p>
+        <div class="control-row" data-decision="5"></div>
+      </article>
+
+      <article class="decision-card" id="item-D6">
+        <div class="decision-num">D6</div>
+        <h3 class="decision-q">Should the per-country advice get a GPT cross-family review?</h3>
+        <p class="decision-rec"><span class="tag rec-tag">Recommended</span>Follow the same review switch as image review, which is currently turned OFF.</p>
+        <p class="decision-alt"><span class="tag">Alternatives</span>Always on &middot; always off.</p>
+        <p class="decision-why"><span class="tag">Why</span>One review switch is simpler to reason about than a second toggle, and it stays consistent with today's setting.</p>
+        <div class="control-row" data-decision="6"></div>
+      </article>
+
+      <article class="decision-card" id="item-D7">
+        <div class="decision-num">D7</div>
+        <h3 class="decision-q">Accept the starting values for "Suggested next research"?</h3>
+        <p class="decision-rec"><span class="tag rec-tag">Recommended</span>Accept: 90% or more of images reused from the US means "nothing new"; a pattern split 40&ndash;60% is weak; fewer than 4 games is thin; store data older than 30 days is stale.</p>
+        <p class="decision-alt"><span class="tag">Alternatives</span>Pick different starting thresholds now.</p>
+        <p class="decision-why"><span class="tag">Why</span>These are reasonable defaults and are stored as plain config values, so all of them are adjustable later without code changes.</p>
+        <div class="control-row" data-decision="7"></div>
+      </article>
+
+      <article class="decision-card" id="item-D8">
+        <div class="decision-num">D8</div>
+        <h3 class="decision-q">Which concepts should the terminology comparison track to start with?</h3>
+        <p class="decision-rec"><span class="tag rec-tag">Recommended</span>Your seven (battle, play, hero, upgrade, summon, free, reward) plus: gacha / draw, idle / AFK, roguelike, stage, boss, equipment, skill, event, login bonus.</p>
+        <p class="decision-alt"><span class="tag">Alternatives</span>Only your seven &middot; edit the list (add a note).</p>
+        <p class="decision-why"><span class="tag">Why</span>These are the words most store pages in this genre use in headlines. The list lives in a config file, so you can change it any time.</p>
+        <div class="control-row" data-decision="8"></div>
+      </article>
+
+      <article class="decision-card" id="item-D9">
+        <div class="decision-num">D9</div>
+        <h3 class="decision-q">How many A/B tests per report, and how is expected impact stated?</h3>
+        <p class="decision-rec"><span class="tag rec-tag">Recommended</span>Up to 5 tests per report, with impact in words (small, medium, large) rather than invented percentages.</p>
+        <p class="decision-alt"><span class="tag">Alternatives</span>More or fewer tests &middot; percentage estimates.</p>
+        <p class="decision-why"><span class="tag">Why</span>Five is enough to act on. Percentages would look precise without real data behind them. Note: Google Play experiments measure install clicks, and run per language or custom store listing, not per country; the tool works out the setup for you.</p>
+        <div class="control-row" data-decision="9"></div>
+      </article>
+
+    </div>
+  </section>
+
+  <footer>
+    Built from <code class="mono">docs/plan-reports.md</code>. Reply with approvals, changes or questions above &mdash; responses save automatically as you go.
+  </footer>
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  var DECISIONS = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+  var TOTAL = DECISIONS.length;
+  var STATE = {};
+  for (var i = 0; i < DECISIONS.length; i++) STATE[DECISIONS[i]] = { status: null, note: "" };
+
+  var DB = null;
+  var writeQueue = {};
+  var noteTimers = {};
+
+  function buildRadioGroupHTML(n) {
+    return (
+      '<div class="radio-group" role="radiogroup" aria-label="Response for decision D' + n + '">' +
+      '<label class="radio-pill approve"><input type="radio" name="status-D' + n + '" id="item-D' + n + '-approve" value="approve"> Approve</label>' +
+      '<label class="radio-pill change"><input type="radio" name="status-D' + n + '" id="item-D' + n + '-change" value="change"> Change</label>' +
+      '<label class="radio-pill question"><input type="radio" name="status-D' + n + '" id="item-D' + n + '-question" value="question"> Question</label>' +
+      '</div>'
+    );
+  }
+
+  function renderDecisionControls(container, n) {
+    container.innerHTML =
+      buildRadioGroupHTML(n) +
+      '<label class="note-label" for="item-D' + n + '-note">Note</label>' +
+      '<textarea id="item-D' + n + '-note" class="note-field" rows="2" placeholder="Optional note..."></textarea>';
+    wireControls(n);
+  }
+
+  function wireControls(n) {
+    var radios = document.querySelectorAll('input[name="status-D' + n + '"]');
+    for (var i = 0; i < radios.length; i++) {
+      radios[i].addEventListener("change", function (ev) {
+        var num = parseInt(ev.target.name.split("-D")[1], 10);
+        STATE[num].status = ev.target.value;
+        updateSummary();
+        scheduleWrite(num);
+      });
+    }
+    var noteEl = document.getElementById("item-D" + n + "-note");
+    if (noteEl) {
+      noteEl.addEventListener("input", function () {
+        STATE[n].note = noteEl.value;
+        clearTimeout(noteTimers[n]);
+        noteTimers[n] = setTimeout(function () { scheduleWrite(n); }, 800);
+      });
+    }
+  }
+
+  function applyStateToUI(n) {
+    var st = STATE[n];
+    if (!st) return;
+    if (st.status) {
+      var r = document.getElementById("item-D" + n + "-" + st.status);
+      if (r) r.checked = true;
+    }
+    var noteEl = document.getElementById("item-D" + n + "-note");
+    if (noteEl && document.activeElement !== noteEl) {
+      noteEl.value = st.note || "";
+    }
+  }
+
+  function updateSummary() {
+    var approve = 0, change = 0, question = 0, answered = 0;
+    for (var i = 0; i < DECISIONS.length; i++) {
+      var n = DECISIONS[i];
+      var s = STATE[n] && STATE[n].status;
+      if (s === "approve") approve++;
+      else if (s === "change") change++;
+      else if (s === "question") question++;
+      if (s) answered++;
+    }
+    document.getElementById("summary-answered").textContent = answered;
+    document.getElementById("count-approve").textContent = approve;
+    document.getElementById("count-change").textContent = change;
+    document.getElementById("count-question").textContent = question;
+    document.getElementById("count-unanswered").textContent = TOTAL - answered;
+  }
+
+  function scheduleWrite(n) {
+    if (!DB) return;
+    var data = STATE[n];
+    var prior = writeQueue[n] || Promise.resolve();
+    writeQueue[n] = prior.then(function () {
+      return DB.collection("reports-decisions").doc("d" + n).set({
+        decision: n,
+        status: data.status || "",
+        note: data.note || "",
+        updatedAt: new Date().toISOString()
+      });
+    }).catch(function (err) {
+      console.error("Failed to save response for decision D" + n, err);
+    });
+  }
+
+  function renderAllControls() {
+    var rows = document.querySelectorAll(".control-row[data-decision]");
+    for (var i = 0; i < rows.length; i++) {
+      var n = parseInt(rows[i].getAttribute("data-decision"), 10);
+      renderDecisionControls(rows[i], n);
+    }
+  }
+
+  function showDbNotice() {
+    var el = document.getElementById("db-notice");
+    if (el) el.hidden = false;
+  }
+
+  function initDb() {
+    if (!window.claude || typeof window.claude.use !== "function") {
+      showDbNotice();
+      return;
+    }
+    window.claude.use("db").then(function (db) {
+      if (!db) { showDbNotice(); return; }
+      DB = db;
+      DB.collection("reports-decisions").onSnapshot(function (snap) {
+        var docs = snap.docs || [];
+        for (var i = 0; i < docs.length; i++) {
+          var d = docs[i];
+          if (!d.exists) continue;
+          var data = d.data();
+          if (!data || !data.decision) continue;
+          var n = data.decision;
+          if (!STATE[n]) continue;
+          var noteEl = document.getElementById("item-D" + n + "-note");
+          var editingNote = noteEl && document.activeElement === noteEl;
+          STATE[n].status = data.status || null;
+          if (!editingNote) STATE[n].note = data.note || "";
+          applyStateToUI(n);
+        }
+        updateSummary();
+      }, function (err) {
+        console.error("reports-decisions subscription error", err);
+        showDbNotice();
+      });
+    }).catch(function (err) {
+      console.error("db capability unavailable", err);
+      showDbNotice();
+    });
+  }
+
+  function initComments() {
+    var btn = document.getElementById("general-comment-btn");
+    if (!window.claude || typeof window.claude.use !== "function") return;
+    window.claude.use("comments").then(function (comments) {
+      if (!comments) return;
+      btn.hidden = false;
+      btn.addEventListener("click", function () {
+        comments.openComposer({ element: btn }).catch(function (err) {
+          console.error("openComposer failed", err);
+        });
+      });
+    }).catch(function (err) {
+      console.error("comments capability unavailable", err);
+    });
+  }
+
+  document.addEventListener("DOMContentLoaded", function () {
+    renderAllControls();
+    updateSummary();
+    initDb();
+    initComments();
+  });
+})();
+</script>

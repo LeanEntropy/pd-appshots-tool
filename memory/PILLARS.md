@@ -147,6 +147,13 @@ Output per locale:
   - When a game's store images or order change, keep the old images in an ARCHIVED state with all their analysis data, their position, and the deck they belonged to (the other image IDs, in order).
   - Update to the new images and order, and keep a CHANGE LOG per game (added / removed / moved / replaced, with dates).
   - Store data is refreshed ONLY inside a user-triggered project action. Never automatically or in the background.
+- For every game processed, store its category, tags and store text (title, short and full description) per country-language per date, plus keywords derived deterministically from that text. Google Play has no official keywords, so derived keywords are labelled as such.
+- Terminology per country: compare the exact local words games use for the same concepts ("battle", "play", "hero", "upgrade"…) in their marketing layers and store text, per country, and show where our wording differs from the common term.
+- Report voice: every report is written as a Chief Marketing Officer who is expert in optimising game store pages for discoverability, ASO and page-view-to-install conversion. Every report ends with concrete A/B tests to run next: hypothesis, the evidence behind it, the exact variant (image order and internal structure of each image, e.g. a landscape composite for Asia), the metric, and priority.
+- Bottom line first, in every report and communication: the top summary holds the TL;DR, key recommendations and the A/B tests to run; the details follow.
+- A SETTINGS page inside the tool lets the user control the parameters: review on/off per AI step, early-stop values, suggestion thresholds, budget limits, models, etc. No config-file editing.
+- Main country: user-selectable per project (default US). The Pilot always runs on the main country. After the Pilot, EVERY report type is open. A Full check of the main country is HIGHLY recommended (a builder warning with its cost) but not a blocker; reports built on Pilot-only data say so.
+- Multiple reports per project: pilot, full, single-country, and multi-country comparison (chosen countries and competitors). All are listed folded in the Report tab, and each can be exported to PDF. Planned in `docs/plan-reports.md`.
 - Sharing without a website (planned milestone 3b): "Share project" exports one zip (Full / Core only / Light / Report only, with the size shown first; Light carries analysis-sized copies, D7 decided 2026-09-28), and the friend uses "Import project" (incremental). No live shared sync folders.
 - Web-readiness rule (not building web now): keep AI providers, storage and jobs each behind one interface, so a hosted website is cheap later. No direct filesystem calls from feature code.
 - Multi-project: the user creates projects in the UI (own game plus competitors, Google Play only in V1), can work on several games, and can resume any project mid-work.
@@ -158,6 +165,7 @@ Output per locale:
   3. User approval.
   4. Implement.
   5. Cross-family review of the implementation.
+- Plans are always AUTHORED by Claude models (Opus). GPT models only REVIEW plans; they never write the initial plan.
 - Cross-family reviews:
   - Claude's output is reviewed by a GPT-family model via Codex CLI; GPT output is reviewed by Claude.
   - Avoid same-family reviews.
