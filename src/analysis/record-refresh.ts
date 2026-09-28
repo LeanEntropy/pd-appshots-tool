@@ -22,7 +22,7 @@ export interface MappedFrom {
   original?: Pick<ImageAnalysis["screenshot"], "composition" | "captures" | "captureAreaPercent">;
 }
 
-/** key_art with no in-game capture: logo or game title → title image; other callout text → feature image. */
+/** key_art full-screen art: logo or game title → title image; other callout text → feature image. */
 export function mapKeyArt(
   a: ImageAnalysis,
   game: string,
