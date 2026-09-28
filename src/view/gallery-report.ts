@@ -74,21 +74,26 @@ async function loadReport() {
   const sel = document.getElementById("reportRun");
   const run = sel ? sel.value : "current";
   const seq = ++reportSeq;
+  const line = document.getElementById("reportStatus");
+  actLine(line, "busy", run === "current" ? "Loading the report..." : "Loading run " + run + "...");
+  const ready = () => { if (line && seq === reportSeq) line.hidden = true; };
   try {
     if (run === "current") {
-      const r = await (await fetch(API + "/report/current?stage=" + encodeURIComponent(stage))).json();
+      const r = await getJson(API + "/report/current?stage=" + encodeURIComponent(stage));
       if (seq !== reportSeq) return;
+      ready();
       reportData = r.data;
       if (sel) sel.innerHTML = '<option value="current">Now (from the saved analyses)</option>' + (r.runs || []).map((x) => '<option value="' + esc(x.runId) + '">Run ' + esc(x.runId) + (x.hasData ? "" : " (older format)") + "</option>").join("");
       renderReport();
       return;
     }
-    const r = await (await fetch(API + "/report/run?stage=" + encodeURIComponent(stage) + "&id=" + encodeURIComponent(run))).json();
+    const r = await getJson(API + "/report/run?stage=" + encodeURIComponent(stage) + "&id=" + encodeURIComponent(run));
     if (seq !== reportSeq) return;
+    ready();
     if (r.data) { reportData = r.data; renderReport(); return; }
     if (!r.html) { box.innerHTML = '<p class="warn">' + esc((r.problems || ["This run could not be found."]).join(" ")) + "</p>"; return; }
     box.innerHTML = '<div class="banner stale"><p>Run ' + esc(r.runId || run) + " was saved in an older format: shown as written then (" + esc(r.file || "") + ").</p></div>" + (r.html ? '<div class="card">' + r.html + "</div>" : '<p class="warn">' + esc((r.problems || ["Not found."]).join(" ")) + "</p>");
-  } catch { box.innerHTML = '<p class="warn">The report could not be loaded. Is the gallery server running (npm start)?</p>'; }
+  } catch (e) { if (seq === reportSeq) actLine(line, "bad", "The report could not be loaded: " + actReason(e)); }
 }
 
 document.addEventListener("click", (e) => {
@@ -103,7 +108,7 @@ document.addEventListener("click", (e) => {
   }
   const g = e.target.dataset && e.target.dataset.goto;
   if (g) { const t = document.getElementById(g); if (t) { t.open = true; t.scrollIntoView({ block: "start" }); } }
-  if (e.target.id === "reportApprove") { goTo("analysis"); showApproval(); }
+  if (e.target.id === "reportApprove") { goTo("analysis"); openApproval(e.target, null); }
 });
 document.addEventListener("change", (e) => {
   if (e.target.id === "reportRun") loadReport();

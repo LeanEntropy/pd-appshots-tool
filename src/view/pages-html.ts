@@ -1,4 +1,5 @@
 import type { ProjectState } from "../projects/state.ts";
+import { ACTION_CSS, ACTION_SCRIPT } from "./action.ts";
 import { appBar, escHtml, SHELL_CSS, stepBar, TOKENS } from "./shell.ts";
 
 export const PAGE_CSS = `${TOKENS}
@@ -13,6 +14,7 @@ h1 { font-size: 24px; margin: 4px 0 12px; color: var(--brand); } h2 { font-size:
 .btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
 .btn:focus-visible { outline: 3px solid var(--accent-2); outline-offset: 2px; }
 code { background: var(--bg); border: 1px solid var(--line); border-radius: 4px; padding: 1px 5px; }
+${ACTION_CSS}
 `;
 
 function page(title: string, body: string, token = "", script = ""): string {
@@ -27,7 +29,7 @@ function page(title: string, body: string, token = "", script = ""): string {
 </head>
 <body>
 ${body}
-${script ? `<script>${script}</script>` : ""}
+<script>${script || ACTION_SCRIPT}</script>
 </body>
 </html>
 `;

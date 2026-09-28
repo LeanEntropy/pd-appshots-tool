@@ -75,10 +75,10 @@ function renderApproval(p) {
   box.focus();
 }
 
-function approvalDialog(text) {
+function approvalDialog(text, kind) {
   const dlg = document.getElementById("approvalDlg");
   const box = document.getElementById("approval");
-  if (text !== undefined) box.innerHTML = '<p class="big">' + esc(text) + '</p><div class="actions"><button id="cancelApproval">Close</button></div>';
+  if (text !== undefined) box.innerHTML = '<p class="big act-msg ' + (kind || "") + '"' + (kind === "bad" ? ' role="alert"' : "") + ">" + (kind === "busy" ? ACT_SPIN : "") + esc(text) + '</p><div class="actions"><button id="cancelApproval">Close</button></div>';
   if (!dlg.open) { if (dlg.showModal) dlg.showModal(); else dlg.setAttribute("open", ""); }
   box.scrollIntoView({ block: "start" });
   box.focus();
@@ -93,26 +93,31 @@ function closeApproval() {
 
 async function showApproval(cont) {
   const stage = cont ? cont.stage : document.getElementById("stage").value;
-  approvalDialog("Working out the numbers (no AI)...");
+  approvalDialog("Working out the numbers (no AI)... this takes a few seconds", "busy");
   try {
-    const r = await apiPost(API + "/analysis/plan", cont ? { stage, continueBatch: cont.batchId } : { stage });
-    if (!r.ok) { approvalDialog((r.body.problems || ["Could not prepare the batch."]).join(" ")); return; }
-    shownPlan = r.body.plan;
-    shownFree = r.body.free || null;
-    shownContinue = r.body.continuing || null;
+    const r = await send(API + "/analysis/plan", cont ? { stage, continueBatch: cont.batchId } : { stage });
+    shownPlan = r.plan;
+    shownFree = r.free || null;
+    shownContinue = r.continuing || null;
     renderApproval(shownPlan);
-  } catch { approvalDialog("The gallery server is not running. Start it with: npm start"); }
+  } catch (e) { approvalDialog("The numbers could not be worked out: " + actReason(e), "bad"); }
 }
 
+// Errors are shown in the dialog itself (a message behind the modal would not be seen).
 async function approve() {
   if (!shownPlan) return;
   const body = { stage: shownPlan.stage, planHash: shownPlan.planHash };
   if (shownContinue) body.continueBatch = shownContinue.batchId;
-  const r = await apiPost(API + "/analysis/run", body);
-  if (!r.ok) { approvalDialog((r.body.problems || ["Not started."]).join(" ")); shownPlan = null; return; }
+  try { await send(API + "/analysis/run", body); }
+  catch (e) { approvalDialog("The run did not start: " + actReason(e), "bad"); shownPlan = null; return; }
   shownPlan = null;
   showRunInDialog();
   await pollStatus();
+}
+
+// Start analysis, Continue, and the report's "Open the approval" all open the approval this way.
+function openApproval(btn, cont) {
+  return act(btn, { key: cont ? "continueRun" : "startAnalysis", busy: "Working out the numbers...", run: () => showApproval(cont) });
 }
 
 async function refreshAnalyses() {
@@ -126,31 +131,33 @@ async function refreshAnalyses() {
   } catch { return null; }
 }
 
+// Loads (or, with rebuild, builds) the overview. A failed build throws, so its button says why.
 async function loadOverview(rebuild) {
   const box = document.getElementById("overview");
-  const button = '<p><button id="rebuildOverview">' + (rebuild ? "Building..." : "Rebuild the overview") + '</button> <span class="meta">Free: computed from the downloaded images, no AI.</span></p>';
-  try {
-    if (rebuild) box.querySelector("#rebuildOverview") && (box.querySelector("#rebuildOverview").disabled = true);
-    const r = rebuild ? await apiPost(API + "/overview", {}) : { ok: true, body: await (await fetch(API + "/overview")).json() };
-    if (!r.ok) { box.innerHTML = '<p class="warn">' + esc((r.body.problems || ["The overview could not be built."]).join(" ")) + "</p>" + button; return; }
-    const o = r.body.overview;
-    box.innerHTML = o
-      ? '<details class="sec"' + (rebuild ? " open" : "") + '><summary><span class="sec-t">Store overview (free, no AI)</span> <span class="meta">Click to expand or fold</span></summary><div class="sec-b"><p class="meta">Saved as ' + esc(o.file) + "</p>" + o.html + button.replace("Building...", "Rebuild the overview") + "</div></details>"
-      : '<details class="sec"><summary><span class="sec-t">Store overview (free, no AI)</span> <span class="meta">Click to expand or fold</span></summary><div class="sec-b"><p>Not built yet.</p>' + button.replace("Rebuild the overview", "Build the overview") + "</div></details>";
-  } catch {}
+  const button = (label) => '<p><button id="rebuildOverview">' + label + '</button> <span class="meta">Free: computed from the downloaded images, no AI.</span></p><p id="overviewStatus" class="act-msg" hidden></p>';
+  let o;
+  try { o = rebuild ? (await send(API + "/overview", {})).overview : (await getJson(API + "/overview")).overview; }
+  catch (e) {
+    if (rebuild) throw e;
+    box.innerHTML = '<p class="act-msg bad" role="alert">The overview could not be loaded: ' + esc(actReason(e)) + "</p>" + button("Build the overview");
+    return;
+  }
+  box.innerHTML = o
+    ? '<details class="sec"' + (rebuild ? " open" : "") + '><summary><span class="sec-t">Store overview (free, no AI)</span> <span class="meta">Click to expand or fold</span></summary><div class="sec-b"><p class="meta">Saved as ' + esc(o.file) + "</p>" + o.html + button("Rebuild the overview") + "</div></details>"
+    : '<details class="sec"><summary><span class="sec-t">Store overview (free, no AI)</span> <span class="meta">Click to expand or fold</span></summary><div class="sec-b"><p>Not built yet.</p>' + button("Build the overview") + "</div></details>";
 }
 
 document.addEventListener("click", (e) => {
-  if (e.target.id === "startAnalysis") showApproval(null);
-  if (e.target.id === "continueRun" && lastStatus && lastStatus.ledger) showApproval({ stage: lastStatus.stage, batchId: lastStatus.ledger.batchId });
-  if (e.target.id === "approve") { e.target.disabled = true; approve(); }
-  if (e.target.id === "rebuildOverview") { e.target.disabled = true; e.target.textContent = "Building (about a minute the first time)..."; loadOverview(true); }
+  if (e.target.id === "startAnalysis") openApproval(e.target, null);
+  if (e.target.id === "continueRun" && lastStatus && lastStatus.ledger) openApproval(e.target, { stage: lastStatus.stage, batchId: lastStatus.ledger.batchId });
+  if (e.target.id === "approve") act(e.target, { busy: "Starting the run...", keep: true, run: approve });
+  if (e.target.id === "rebuildOverview") act(e.target, { busy: "Building the overview (about a minute the first time)...", status: "overviewStatus", run: () => loadOverview(true), done: "The store overview is up to date." });
   if (e.target.id === "cancelApproval") closeApproval();
 });
 document.addEventListener("change", (e) => { if (e.target.id === "stage") loadReport(); });
 // Past the pilot, the page opens on the core check batch.
 if (["core", "recommendations", "expand"].includes(APP.stage)) document.getElementById("stage").value = "core";
 document.getElementById("approvalDlg").addEventListener("close", () => { shownPlan = null; if (runInDialog) goTo("analysis"); runInDialog = false; });
-if (location.protocol.startsWith("http")) { pollStatus(); loadOverview(false); }
+if (location.protocol.startsWith("http")) { pollStatus(); document.getElementById("overview").innerHTML = '<p class="act-msg busy">' + ACT_SPIN + "Loading the store overview...</p>"; loadOverview(false); }
 else document.getElementById("status").innerHTML = '<h2>Analysis status</h2><p class="meta">Open this page with npm start to run and follow the analysis.</p>';
 `;

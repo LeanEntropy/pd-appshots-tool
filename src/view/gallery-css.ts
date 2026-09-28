@@ -1,9 +1,11 @@
+import { ACTION_CSS } from "./action.ts";
 import { SHELL_CSS, TOKENS } from "./shell.ts";
 
 /** Page styles: tokens for light and dark, grid, dialog, run panel, pages and report. */
 export const CSS = `
 ${TOKENS}
 ${SHELL_CSS}
+${ACTION_CSS}
 * { box-sizing: border-box; }
 body { margin: 0; background: var(--bg); color: var(--text); font: 14px/1.45 system-ui, sans-serif; }
 h1 { font-size: 20px; margin: 0 0 4px; } h2 { font-size: 16px; margin: 24px 0 8px; } h3 { font-size: 15px; margin: 0; }

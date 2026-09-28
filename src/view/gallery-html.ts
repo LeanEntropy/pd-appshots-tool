@@ -60,7 +60,7 @@ ${served ? appBar(served.name) + stepBar(served.steps) : ""}
 <section data-page="report" hidden><h2 class="ph" tabindex="-1">Report</h2>
 <div class="card"><label>Showing: <select id="reportRun"><option value="current">Now (from the saved analyses)</option></select></label>
 <label><input type="checkbox" id="showImages" checked> Show images</label>
-<span class="meta">Batch: the one picked on the Analysis page.</span></div>
+<span class="meta">Batch: the one picked on the Analysis page.</span><p id="reportStatus" class="act-msg" hidden></p></div>
 <div id="report"></div><div id="expansion"></div></section>
 </main>
 <dialog id="approvalDlg" aria-label="Analysis approval and progress"><div id="approval" tabindex="-1"></div></dialog>

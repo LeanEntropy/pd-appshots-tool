@@ -26,21 +26,34 @@ async function loadExpansion() {
   const el = document.getElementById("expansion");
   if (!el || !location.protocol.startsWith("http")) return;
   try {
-    const st = await (await fetch(API + "/state")).json();
+    const st = await getJson(API + "/state");
     if (st.stage !== "recommendations" && st.stage !== "expand") { el.innerHTML = ""; return; }
-    expansion = await (await fetch(API + "/expansion")).json();
+    expansion = await getJson(API + "/expansion");
     el.innerHTML = expansionHtml(expansion);
-  } catch {}
+  } catch (e) { el.innerHTML = '<p class="act-msg bad" role="alert">The expansion choice could not be loaded: ' + esc(actReason(e)) + "</p>"; }
 }
 
-async function saveExpansionChoice() {
+// Each tick saves at once, one save after another; only the latest answer redraws the choice.
+let expandChain = Promise.resolve();
+let expandRev = 0;
+function saveExpansionChoice() {
   const pick = (n) => [...document.querySelectorAll('input[name="' + n + '"]:checked')].map((x) => x.value);
-  const note = document.getElementById("expandNote");
-  if (note) note.innerHTML = '<p class="meta">Saving...</p>';
-  const r = await apiPost(API + "/expansion", { competitors: pick("xcomp"), countries: pick("xcountry") });
-  if (!r.ok) { if (note) note.innerHTML = '<p class="warn">' + esc((r.body.problems || ["Not saved."]).join(" ")) + "</p>"; return; }
-  expansion = r.body;
-  document.getElementById("expansion").innerHTML = expansionHtml(expansion);
+  const body = { competitors: pick("xcomp"), countries: pick("xcountry") };
+  const rev = ++expandRev;
+  actLine(document.getElementById("expandNote"), "busy", "Saving your choice...");
+  expandChain = expandChain.then(async () => {
+    try {
+      const r = await send(API + "/expansion", body);
+      if (rev !== expandRev) return;
+      expansion = r;
+      document.getElementById("expansion").innerHTML = expansionHtml(expansion);
+    } catch (e) {
+      if (rev !== expandRev) return;
+      const msg = "Your choice was not saved: " + actReason(e);
+      actLine(document.getElementById("expandNote"), "bad", msg);
+      toast(msg, "bad");
+    }
+  });
 }
 
 document.addEventListener("change", (e) => { if (e.target.name === "xcomp" || e.target.name === "xcountry") saveExpansionChoice(); });

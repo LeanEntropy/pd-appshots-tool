@@ -82,23 +82,32 @@ export function inventory(
   return { db, links, pixels, records, bytes };
 }
 
-/** Hashes every original and checks it equals its name. Returns the ones that do not. */
-export function verifyOriginals(
+/**
+ * Hashes every original and checks it equals its name. Returns the ones that do not. Lets other
+ * work run between small groups of files (the tool server keeps answering during an import).
+ */
+export async function verifyOriginals(
   storage: Storage,
   links: readonly LinkOp[],
   side: "from" | "to",
   onProgress?: (done: number, total: number) => void,
-): string[] {
+): Promise<string[]> {
   const originals = links.filter((l) => l.kind === "original");
   const bad: string[] = [];
-  originals.forEach((l, i) => {
+  for (const [i, l] of originals.entries()) {
     const bytes = storage.getBytes(l[side]);
     const h = bytes ? createHash("sha256").update(bytes).digest("hex") : "missing";
     if (h !== l.sha256) bad.push(l[side]);
-    if ((i + 1) % 200 === 0) onProgress?.(i + 1, originals.length);
-  });
+    if ((i + 1) % 20 === 0 || i + 1 === originals.length) {
+      onProgress?.(i + 1, originals.length);
+      await pause();
+    }
+  }
   return bad;
 }
+
+/** Lets pending requests and timers run (long import loops call it between small groups). */
+export const pause = () => new Promise<void>((r) => setImmediate(r));
 
 /** An analysis started by the old tool that is still running blocks the import (it holds no lock). */
 export function runningAnalysis(

@@ -9,9 +9,11 @@ import { readGoogleId } from "../imagedb.ts";
 import { LIB } from "../layout.ts";
 import type { GoogleIdFile, LibraryFacts, Refs } from "../refs.ts";
 import type { Journal } from "./journal.ts";
-import { type Inventory, verifyOriginals } from "./survey.ts";
+import { type Inventory, pause, verifyOriginals } from "./survey.ts";
 
 export type Log = (s: string) => void;
+/** Live progress for the page: a plain step name, with counts when the step has them. */
+export type Progress = (step: string, done?: number, total?: number) => void;
 export interface LinkCounts {
   linked: number;
   copied: number;
@@ -30,16 +32,18 @@ function intend(storage: Storage, j: Journal, save: () => void, keys: readonly s
 }
 
 /** Step 1: hardlink (or copy) every file, then hash every library original against its name. */
-export function linkFiles(
+export async function linkFiles(
   storage: Storage,
   inv: Inventory,
   j: Journal,
   save: () => void,
   log: Log,
-): LinkCounts {
+  progress: Progress = () => {},
+): Promise<LinkCounts> {
   const n: LinkCounts = { linked: 0, copied: 0, existed: 0 };
-  for (let i = 0; i < inv.links.length; i += 250) {
-    const batch = inv.links.slice(i, i + 250);
+  const total = inv.links.length;
+  for (let i = 0; i < total; i += 50) {
+    const batch = inv.links.slice(i, i + 50);
     intend(
       storage,
       j,
@@ -50,12 +54,16 @@ export function linkFiles(
       const r = linkOrCopy(storage, l.from, l.to);
       n[r === "exists" ? "existed" : r]++;
     }
-    log(`  ${Math.min(i + 250, inv.links.length)} of ${inv.links.length} files linked`);
+    const done = Math.min(i + 50, total);
+    if (done % 250 === 0 || done === total) log(`  ${done} of ${total} files linked`);
+    progress("Linking images and saved answers into the shared library", done, total);
+    await pause();
   }
   log("Checking every original against its content hash…");
-  const bad = verifyOriginals(storage, inv.links, "to", (d, t) =>
-    d % 400 === 0 ? log(`  ${d} of ${t} checked`) : undefined,
-  );
+  const bad = await verifyOriginals(storage, inv.links, "to", (d, t) => {
+    if (d % 400 === 0) log(`  ${d} of ${t} checked`);
+    progress("Checking every image against its content hash", d, t);
+  });
   if (bad.length)
     throw new Error(`${bad.length} library files do not match their content hash: ${bad[0]}`);
   return n;
@@ -163,12 +171,16 @@ export async function refreshIdentities(
   staged: LoadedConfig,
   j: Journal,
   save: () => void,
+  progress: Progress = () => {},
 ): Promise<void> {
   const write = recordWriter(staged);
-  for (const r of readRecords(projectPaths(staged)).values()) {
+  const all = [...readRecords(projectPaths(staged)).values()];
+  for (const [i, r] of all.entries()) {
+    progress("Updating the analysis records", i + 1, all.length);
     // Only records this import wrote, and only existing identity blocks, are rewritten.
     if (!r.identity || !r.key || !j.created.includes(LIB.record(r.imageId, r.key))) continue;
     intend(storage, j, save, [LIB.pixels(r.imageId, IMAGE_FACTS_VERSION)]);
     await write(r);
+    if (i % 10 === 0) await pause();
   }
 }

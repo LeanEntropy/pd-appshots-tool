@@ -13,6 +13,7 @@ let saveChain = Promise.resolve();
 let revision = 0;
 let touched = false;
 let saveState = canSave ? "" : "Read-only. To save your pick, open this page with: npm start";
+let saveKind = "meta";
 
 // Same whole-deck rule as the tool (src/core/fit.ts). The server's answer is authoritative.
 function fit() {
@@ -40,7 +41,8 @@ function setSelection(next) {
 
 function scheduleSave() {
   if (!canSave) return;
-  saveState = "Saving...";
+  saveState = "Saving your pick...";
+  saveKind = "busy";
   renderSaveState();
   clearTimeout(saveTimer);
   // Saves run one after another in order, so an older save can never overwrite a newer one.
@@ -49,11 +51,15 @@ function scheduleSave() {
 
 async function save(snapshot, rev) {
   try {
-    const r = await apiPost(API + "/selection", { coreCompetitors: snapshot });
+    const r = await send(API + "/selection", { coreCompetitors: snapshot });
     if (rev !== revision) return;
-    saveState = r.ok ? "Saved. " + r.body.summary : "Not saved: " + (r.body.problems || ["unknown problem"]).join(" ");
-  } catch {
-    saveState = "Not saved: the gallery server is not running. Start it with: npm start";
+    saveState = "Saved. " + r.summary;
+    saveKind = "ok";
+  } catch (e) {
+    if (rev !== revision) return;
+    saveState = "Not saved: " + actReason(e);
+    saveKind = "bad";
+    toast(saveState, "bad");
   }
   renderSaveState();
 }
@@ -64,14 +70,16 @@ async function loadSaved() {
   if (!canSave) { renderSaveState(); return; }
   try {
     const res = await fetch(API + "/selection");
-    if (res.ok && !touched) { const body = await res.json(); selection = body.coreCompetitors; render(); saveState = "Loaded your saved pick. " + body.summary; }
-  } catch {}
+    if (res.ok && !touched) { const body = await res.json(); selection = body.coreCompetitors; render(); saveState = "Loaded your saved pick. " + body.summary; saveKind = "meta"; }
+  } catch { saveState = "Your saved pick could not be loaded: " + ACT_OFFLINE; saveKind = "bad"; }
   renderSaveState();
 }
 
 function renderSaveState() {
   const el = document.getElementById("saveStatus");
-  if (el) el.textContent = saveState;
+  if (!el) return;
+  if (saveKind === "meta") { el.className = "meta"; el.textContent = saveState; }
+  else actLine(el, saveKind, saveState);
 }
 
 function move(from, to) {

@@ -19,12 +19,13 @@ import {
   type LinkCounts,
   type Log,
   linkFiles,
+  type Progress,
   refreshIdentities,
   stageRefs,
   writeFacts,
   writeRecords,
 } from "./steps.ts";
-import { hasLegacyData, inventory, runningAnalysis, verifyOriginals } from "./survey.ts";
+import { hasLegacyData, inventory, pause, runningAnalysis, verifyOriginals } from "./survey.ts";
 import { finishSwitch, sameSettings } from "./switch.ts";
 
 export interface ImportOptions {
@@ -35,6 +36,8 @@ export interface ImportOptions {
   /** Dry run: hash every original too (about a minute for 2.6 GB). */
   verifyHashes?: boolean;
   log?: Log;
+  /** Live progress for the page (step name, counts). */
+  progress?: Progress;
   /** Tests only: fail after this step, to prove the rollback. */
   failAfter?: "link" | "facts" | "records" | "identity" | "gate";
 }
@@ -69,6 +72,11 @@ export interface ImportReport {
  */
 export async function runImport(o: ImportOptions): Promise<ImportReport> {
   const log = o.log ?? (() => {});
+  // Each step is announced, then other work (the page's progress requests) gets a turn.
+  const step = async (name: string) => {
+    o.progress?.(name);
+    await pause();
+  };
   const legacy: LoadedConfig = { ...loadConfig(o.configPath), layout: { mode: "legacy" } };
   const paths = projectPaths(legacy);
   const ctx: ProjectContext = { projectId: legacy.config.project };
@@ -116,7 +124,9 @@ export async function runImport(o: ImportOptions): Promise<ImportReport> {
   }
 
   log("Reading the project's images, analyses and model answers…");
+  await step("Reading the project's images, analyses and saved answers");
   const inv = inventory(storage, ctx, reviewPolicy(legacy.config));
+  await step("Recording the approval numbers and views before the import");
   const before = takeSnapshot(legacy);
   const blocked = runningAnalysis(storage, ctx);
   const files: Record<string, number> = {};
@@ -153,9 +163,10 @@ export async function runImport(o: ImportOptions): Promise<ImportReport> {
   if (!o.apply) {
     if (o.verifyHashes) {
       log("Checking every original against its content hash (reads only)…");
-      const bad = verifyOriginals(storage, inv.links, "from", (d, t) =>
-        d % 400 === 0 ? log(`  ${d} of ${t} checked`) : undefined,
-      );
+      const bad = await verifyOriginals(storage, inv.links, "from", (d, t) => {
+        if (d % 400 === 0) log(`  ${d} of ${t} checked`);
+        o.progress?.("Checking every image against its content hash", d, t);
+      });
       report.hashes = { checked: report.images, bad };
     }
     return report;
@@ -183,13 +194,15 @@ export async function runImport(o: ImportOptions): Promise<ImportReport> {
     // Taken again under the locks, so nothing can change between this and the check.
     const blockedNow = runningAnalysis(storage, ctx);
     if (blockedNow) throw new Error(`An analysis started meanwhile (${blockedNow}).`);
+    await step("Recording the approval numbers and views before the import");
     report.before = takeSnapshot(legacy);
     save();
     log(`Linking ${inv.links.length} files into the shared library…`);
-    report.linkCounts = linkFiles(storage, inv, j, save, log);
+    report.linkCounts = await linkFiles(storage, inv, j, save, log, o.progress);
     report.hashes = { checked: report.images, bad: [] };
     fail("link");
     locks.check();
+    await step("Saving image facts in the shared library");
     writeFacts(storage, inv, j, save, now);
     const staged = stagedRefsKey(ctx);
     j.created.push(staged);
@@ -197,15 +210,17 @@ export async function runImport(o: ImportOptions): Promise<ImportReport> {
     stageRefs(storage, ctx, inv, staged);
     fail("facts");
     locks.check();
+    await step("Saving the analyses in the shared library");
     writeRecords(storage, ctx, inv, j, save);
     j.phase = "staged";
     save();
     fail("records");
     const stagedLoaded: LoadedConfig = { ...legacy, layout: { mode: "library", refsKey: staged } };
-    await refreshIdentities(storage, stagedLoaded, j, save);
+    await refreshIdentities(storage, stagedLoaded, j, save, o.progress);
     fail("identity");
     locks.check();
     log("Comparing the project before and after (images, approval numbers, reports, views)…");
+    await step("Checking that nothing changed (images, approval numbers, reports, views)");
     report.after = takeSnapshot(stagedLoaded);
     report.gate = compareSnapshots(report.before, report.after);
     fail("gate");
@@ -213,6 +228,7 @@ export async function runImport(o: ImportOptions): Promise<ImportReport> {
       throw new Error(`the check found differences: ${report.gate.join("; ")}`);
     locks.check();
     j.created = j.created.filter((k) => k !== staged); // becomes refs.json
+    o.progress?.("Switching the project over");
     finishSwitch(storage, ctx, settings, j);
     log("Imported. The project now uses the shared library.");
     return { ...report, status: "imported" };

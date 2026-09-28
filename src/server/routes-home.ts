@@ -62,7 +62,17 @@ interface Found {
   analyses: number;
 }
 
-let importing: { id: string; state: "running" | "done" | "failed"; text: string } | null = null;
+interface Importing {
+  id: string;
+  name: string;
+  state: "running" | "done" | "failed";
+  text: string;
+  startedAt: string;
+  /** The step running now, with counts when it has them (shown live on the home page). */
+  progress: { step: string; done: number; total: number } | null;
+}
+
+let importing: Importing | null = null;
 
 /** Projects made before the shared library, found on disk and offered for import (never automatic). */
 export function legacyProjects(app: AppContext): Found[] {
@@ -120,17 +130,40 @@ export async function postImport(app: AppContext, raw: unknown): Promise<ApiResp
   }
   if (importing?.state === "running")
     return { status: 409, body: { problems: ["An import is running already."] } };
-  importing = { id: found.id, state: "running", text: "Importing: checking every image…" };
-  const current = importing;
-  void runImport({ root: app.root, configPath: found.configFile, apply: true, verifyHashes: true })
+  const current: Importing = {
+    id: found.id,
+    name: found.name,
+    state: "running",
+    text: "Importing: checking every image…",
+    startedAt: new Date().toISOString(),
+    progress: { step: "Starting", done: 0, total: 0 },
+  };
+  importing = current;
+  const progress = (step: string, done = 0, total = 0) => {
+    current.progress = { step, done, total };
+  };
+  // Started after this answer is sent, so the page shows the busy state and progress at once.
+  const start = () => new Promise<void>((r) => setImmediate(r));
+  void start()
+    .then(() =>
+      runImport({
+        root: app.root,
+        configPath: found.configFile,
+        apply: true,
+        verifyHashes: true,
+        progress,
+      }),
+    )
     .then((r) => {
       current.state =
         r.status === "imported" || r.status === "already-imported" ? "done" : "failed";
       current.text = describeImport(r);
+      current.progress = null;
     })
     .catch((e: unknown) => {
       current.state = "failed";
       current.text = e instanceof Error ? e.message : String(e);
+      current.progress = null;
     });
   return { status: 202, body: { importing } };
 }

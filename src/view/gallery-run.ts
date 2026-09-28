@@ -14,6 +14,13 @@ let runInDialog = false;
 let doneSeen = -1;
 let savedIds = new Set();
 let runbarClosed = false;
+// The run whose Stop was pressed: its Stop buttons stay busy until it has ended.
+let stopAsked = null;
+
+function stopButton(label) {
+  const asked = lastStatus && stopAsked === lastStatus.startedAt;
+  return '<button type="button" class="stopbtn" data-stop="1" data-act-key="stop"' + (asked ? ' disabled aria-busy="true">' + ACT_SPIN + "Stopping after this image..." : ">" + label) + "</button>";
+}
 
 const STEP_WORDS = { start: "starting", analysis: "reading the image (first analysis)", review: "checking (second opinion)", settle: "settling a disagreement between the two models", patterns: "finding patterns across games", recommend: "writing recommendations", "recommend-review": "checking the recommendations", "recommend-revise": "revising the recommendations", report: "writing the report" };
 
@@ -72,7 +79,7 @@ function runPanelHtml(s) {
   let head;
   if (s.running) head = '<h2><span class="spin" aria-hidden="true"></span>Running: ' + imageLine(p) + (cur.length ? " &mdash; " + esc(cur.join(", ")) : "") + "</h2>"
     + '<p class="now">Step: ' + esc(STEP_WORDS[p.phase] || p.phase) + '</p><p class="meta">' + esc(p.message) + "</p>"
-    + (s.stoppable ? '<p><button type="button" class="stopbtn" id="stopRun">Stop after this image</button> <span class="meta">Finished images are kept; you can continue later.</span></p>' : "");
+    + (s.stoppable ? '<p>' + stopButton("Stop after this image") + ' <span class="meta">Finished images are kept; you can continue later.</span></p>' : "");
   else if (!s.finishedAt) head = '<h2 class="warn">Interrupted</h2><p class="warn"><strong>The tool stopped during this run.</strong> Finished images are kept.</p>' + continueBox(s);
   else head = (s.error ? '<h2 class="warn">Stopped</h2><p class="warn"><strong>' + esc(s.error) + "</strong></p>" : '<h2 class="ok">Finished</h2>')
     + '<p class="meta">Run of ' + esc(new Date(s.startedAt).toLocaleString()) + ".</p>"
@@ -106,7 +113,7 @@ function renderRunbar(s) {
   if (!show) return;
   const p = s.progress || { done: 0, total: 0 };
   bar.className = s.running ? "" : s.error ? "stopped" : "finished";
-  bar.innerHTML = (s.running ? '<span class="spin" aria-hidden="true"></span>Running: ' + imageLine(p) + ' &middot; <span class="rt-elapsed">' + elapsed(s.startedAt) + "</span> &middot; " + money(s.spentUsd) + (s.stoppable ? ' <button type="button" id="stopRun" class="stopbtn">Stop</button>' : "") : (s.error ? "Stopped: " + esc(s.error) : "Finished") + (s.report ? ' &middot; <a href="#report" class="toreport">Show the report</a>' : ""))
+  bar.innerHTML = (s.running ? '<span class="spin" aria-hidden="true"></span>Running: ' + imageLine(p) + ' &middot; <span class="rt-elapsed">' + elapsed(s.startedAt) + "</span> &middot; " + money(s.spentUsd) + (s.stoppable ? " " + stopButton("Stop") : "") : (s.error ? "Stopped: " + esc(s.error) : "Finished") + (s.report ? ' &middot; <a href="#report" class="toreport">Show the report</a>' : ""))
     + ' <button type="button" id="runbarDetails">Details</button>' + (s.running ? "" : ' <button type="button" id="runbarClose" aria-label="Hide this bar">Hide</button>');
 }
 
@@ -144,7 +151,7 @@ function showRunInDialog() {
 async function pollStatus() {
   clearTimeout(pollTimer);
   try {
-    lastStatus = await (await fetch(API + "/analysis/status")).json();
+    lastStatus = await getJson(API + "/analysis/status");
     const done = lastStatus.progress ? lastStatus.progress.done : 0;
     if (doneSeen === -1 || (lastStatus.running && done !== doneSeen)) {
       doneSeen = done;
@@ -175,7 +182,8 @@ setInterval(tick, 1000);
 document.addEventListener("click", (e) => {
   if (e.target.id === "runbarDetails") { goTo("analysis"); const st = document.getElementById("status"); st.focus(); }
   if (e.target.id === "runbarClose") { runbarClosed = true; renderRunbar(lastStatus); }
-  if (e.target.id === "stopRun") { e.target.disabled = true; e.target.textContent = "Stopping after this image..."; apiPost(API + "/analysis/stop", {}).then((r) => { if (!r.ok) alert((r.body.problems || ["Could not stop."]).join(" ")); pollStatus(); }); }
+  const stop = e.target.closest && e.target.closest("button[data-stop]");
+  if (stop) act(stop, { key: "stop", busy: "Stopping after this image...", keep: true, run: async () => { const at = lastStatus && lastStatus.startedAt; await send(API + "/analysis/stop", {}); stopAsked = at; await pollStatus(); }, done: "Stopping: the run ends after the image in progress. Finished images are kept." });
   if (e.target.classList && e.target.classList.contains("toreport") && runInDialog) closeApproval();
 });
 `;
