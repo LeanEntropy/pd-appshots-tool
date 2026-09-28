@@ -70,7 +70,9 @@ function reportCardHtml(r) {
   return '<details class="rcard ' + (TYPE_CLS[r.type] || "") + '" data-rid="' + id + '" id="rc-' + id + '"><summary>' + summary + '</summary><div class="rc-b">'
     + (r.newer ? '<div class="banner stale"><p>' + pill("stale", "Newer data") + " " + esc(r.newer) + (r.canNow ? " Choose \\u201cNow\\u201d to see the report with the current data." : "") + "</p></div>" : "")
     + '<div class="rc-bar"><label>Version: <select class="rc-ver" data-rid="' + id + '">' + versionOptions(r) + "</select></label>"
+    + (r.status.kind === "draft" ? b("rc-setup primary", "Continue setting up") : "")
     + (r.versions.length || r.canNow ? b("rc-pdf", "Export PDF") : "")
+    + (r.versions.length || r.canNow ? b("rc-regen", "Regenerate") : "")
     + b("rc-rename", "Rename") + b("rc-archive", r.archived ? "Restore" : "Archive")
     + (r.deletable ? b("rc-delete danger", "Delete") : '<span class="meta">The ' + esc(r.typeName) + " can be archived, not deleted.</span>") + "</div>"
     + '<div class="rc-edit" id="re-' + id + '" hidden><label>New name: <input type="text" maxlength="120" class="rc-input" id="rn-' + id + '" data-rid="' + id + '"></label> '
@@ -121,6 +123,7 @@ async function loadReport() {
     const r = await getJson(API + "/reports");
     if (seq !== listSeq) return;
     if (line) line.hidden = true;
+    if (r.notice) toast(r.notice, "ok");
     reportList = r.reports || [];
     if (typeof setPdfDefaults === "function") setPdfDefaults(r.pdf);
     const deep = rsafe((/^#report\\/(r-[a-z0-9-]+)/.exec(location.hash) || [])[1]);
@@ -159,7 +162,16 @@ function showReportVersion(rid, r) {
   if (!box) return;
   box.classList.toggle("noimg", !showImgs);
   if (head) head.innerHTML = r.now ? "Now: computed from the saved analyses, with no AI call." : "Generated " + esc(fmtDate(r.generatedAt)) + (r.archived ? ". Earlier version (archived): kept as it was, never deleted." : ".");
-  if (r.data) { renderReport(box, r.data, rid, rep.type); return; }
+  if (r.data || r.countries) {
+    if (r.countries) {
+      box.innerHTML = r.countries.map((c, i) => '<details class="sec" open><summary><span class="sec-t">' + esc(c.label) + '</span></summary><div class="sec-b" id="rbc-' + rid + "-" + i + '"></div></details>').join("");
+      r.countries.forEach((c, i) => renderReport(document.getElementById("rbc-" + rid + "-" + i), c.data, rid + "-" + rsafe(c.gl), rep.type));
+    } else renderReport(box, r.data, rid, rep.type);
+    // Only the Pilot and the Full check are approved from the Analysis page.
+    if (rep.type !== "pilot" && rep.type !== "core") for (const x of box.querySelectorAll("button.reportApprove")) x.remove();
+    if (typeof researchHtml === "function") box.insertAdjacentHTML("beforeend", researchHtml(r.research || null));
+    return;
+  }
   box.innerHTML = '<div class="banner stale"><p>' + esc(r.note || "This version was saved in an older format: shown as written then.") + (r.file ? " (" + esc(r.file) + ")" : "") + '</p></div><div class="card">' + (r.html || "") + "</div>";
 }
 
@@ -228,6 +240,13 @@ document.addEventListener("click", (e) => {
     if (!version) { actLine(document.getElementById("rs-" + rid), "bad", "This report has no version to export yet."); return; }
     const hidden = [...hiddenImgSecs].filter((x) => x.startsWith(rid + ":")).map((x) => x.slice(rid.length + 1));
     exportReportPdf({ report: rid, version }, { button: b, status: "rs-" + rid, result: "rp-" + rid, images: showImgs && PDF_DEFAULTS.images, hiddenSections: hidden });
+  } else if (b.classList.contains("rc-setup")) {
+    act(b, { busy: "Opening the builder...", status: "rs-" + rid, run: async () => { const p = await getJson(url + "/plan"); await openBuilder({ id: rid, type: p.type, scope: p.scope, name: p.name }); }, done: "" });
+  } else if (b.classList.contains("rc-regen")) {
+    act(b, { busy: "Building a new version...", status: "rs-" + rid,
+      run: async () => { const r = await send(url + "/build", {}); await loadReport(); if (typeof loadSuggestions === "function") loadSuggestions(); return r; },
+      done: "Built a new version, from the saved analyses (no AI).",
+      fail: () => { getJson(url + "/plan").then((p) => openBuilder({ id: isPresetType(rep.type) ? null : rid, type: p.type, scope: p.scope, name: isPresetType(rep.type) ? "" : p.name })).catch(() => {}); } });
   } else if (b.classList.contains("rc-archive")) {
     const archived = !rep.archived;
     act(b, { busy: archived ? "Archiving..." : "Restoring...", status: "reportStatus",

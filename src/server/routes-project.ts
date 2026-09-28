@@ -39,7 +39,8 @@ const GETS: Record<string, Get> = {
   "/api/report": (l, q) => getReportCurrent(l, q.get("stage")),
   "/api/report/run": (l, q) => getReportRun(l, q.get("stage"), q.get("id")),
   "/api/expansion": (l) => getExpansion(l),
-  "/api/state": (l, _q, a) => ({ status: 200, body: stateFor(a, l) }),
+  // The home card asks for the top suggested research too (?home=1).
+  "/api/state": (l, q, a) => ({ status: 200, body: stateFor(a, l, q.get("home") === "1") }),
 };
 
 const POSTS: Record<string, Post> = {
@@ -54,8 +55,8 @@ const POSTS: Record<string, Post> = {
 };
 
 /** Derived state, with the home card's cached summary refreshed at the same time. */
-export function stateFor(app: AppContext, loaded: LoadedConfig): ProjectState {
-  const s = projectState(loaded, app.names);
+export function stateFor(app: AppContext, loaded: LoadedConfig, suggestion = false): ProjectState {
+  const s = projectState(loaded, app.names, { suggestion });
   app.remember(projectPaths(loaded).projectId, s);
   return s;
 }

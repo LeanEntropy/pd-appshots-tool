@@ -127,6 +127,17 @@ export function orderHistory(paths: ProjectPaths, appId: string, gl: string, hl:
     .map((f) => readJson(join(dir, f)) as OrderSnapshot);
 }
 
+/** The date of the newest saved store order (YYYY-MM-DD), without reading the files; null if none. */
+export function latestOrderDate(paths: ProjectPaths, appId: string, gl: string, hl: string) {
+  const dir = orderDir(paths, appId, gl, hl);
+  if (!existsSync(dir)) return null;
+  const last = readdirSync(dir)
+    .filter((f) => /^\d{4}-\d{2}-\d{2}\.json$/.test(f))
+    .sort()
+    .at(-1);
+  return last ? last.slice(0, 10) : null;
+}
+
 /** Plain-language differences between two snapshots of the same deck. */
 export function compareOrders(
   before: OrderSnapshot,
