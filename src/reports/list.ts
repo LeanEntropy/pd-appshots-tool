@@ -4,7 +4,7 @@ import { reportInputs } from "../analysis/report-inputs.ts";
 import { type LoadedConfig, projectPaths } from "../config/load.ts";
 import { legacyAnalysisJob, readJournal } from "../jobs/journal.ts";
 import { workspaceStorage } from "../storage/index.ts";
-import { mainMarket } from "./main-market.ts";
+import { mainMarketRef } from "./main-market.ts";
 import { syncPresetReports } from "./migrate.ts";
 import { newerReason } from "./stale.ts";
 import { listDefs, readVersionInputs, runFolders, versionFileKey } from "./store.ts";
@@ -54,7 +54,7 @@ const countriesOf = (markets: ReportDef["scope"]["markets"]) =>
 export function listReports(loaded: LoadedConfig): ReportSummary[] {
   const paths = projectPaths(loaded);
   const s = workspaceStorage(paths.workspace);
-  const main = mainMarket(loaded);
+  const main = mainMarketRef(loaded);
   syncPresetReports(s, paths, main);
   const folders = runFolders(s, paths);
   const job = readJournal(s, paths).jobs.ai ?? legacyAnalysisJob(s, paths) ?? undefined;

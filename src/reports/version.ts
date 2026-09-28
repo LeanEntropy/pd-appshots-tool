@@ -5,7 +5,7 @@ import { reportMarkdown } from "../analysis/report-md.ts";
 import { type LoadedConfig, projectPaths } from "../config/load.ts";
 import { workspaceStorage } from "../storage/index.ts";
 import { newRunId } from "../store/manifest.ts";
-import { mainMarket } from "./main-market.ts";
+import { mainMarketRef } from "./main-market.ts";
 import { presetId, syncPresetReports } from "./migrate.ts";
 import { addVersion, listDefs, versionFileKey, writeVersionInputs } from "./store.ts";
 import { isPreset, type ReportDef, type VersionInputs } from "./types.ts";
@@ -57,7 +57,7 @@ export function recordPresetRun(loaded: LoadedConfig, x: ReportInputs, runId: st
   try {
     const paths = projectPaths(loaded);
     const s = workspaceStorage(paths.workspace);
-    const main = mainMarket(loaded);
+    const main = mainMarketRef(loaded);
     const stage = x.plan.stage;
     // version.json first: the upkeep then lists the folder with this exact generation date.
     const reportId = presetId(listDefs(s, paths), stage, main);
@@ -91,7 +91,7 @@ export function buildPresetVersion(loaded: LoadedConfig, def: ReportDef, now = n
   const x = reportInputs(loaded, stage);
   const data = buildReportData(x);
   const versionId = newRunId(stage, now);
-  const main = def.scope.markets[0] ?? mainMarket(loaded);
+  const main = def.scope.markets[0] ?? mainMarketRef(loaded);
   const mdKey = versionFileKey(paths, versionId, "report.md");
   if (s.exists(mdKey)) throw new Error("A version was just built. Try again in a moment.");
   s.putJsonOnce(versionFileKey(paths, versionId, "report-data.json"), data);

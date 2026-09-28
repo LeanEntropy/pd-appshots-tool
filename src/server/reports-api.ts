@@ -4,7 +4,7 @@ import { buildReportData } from "../analysis/report-data.ts";
 import { reportInputs } from "../analysis/report-inputs.ts";
 import { type LoadedConfig, projectPaths } from "../config/load.ts";
 import { listReports } from "../reports/list.ts";
-import { mainMarket } from "../reports/main-market.ts";
+import { mainMarketRef } from "../reports/main-market.ts";
 import {
   deleteReport,
   listDefs,
@@ -35,7 +35,7 @@ function findDef(loaded: LoadedConfig, id: string) {
 export function getReports(loaded: LoadedConfig): ApiResponse {
   return {
     status: 200,
-    body: { reports: listReports(loaded), mainCountry: mainMarket(loaded).label },
+    body: { reports: listReports(loaded), mainCountry: mainMarketRef(loaded).label },
   };
 }
 

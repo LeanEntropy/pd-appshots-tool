@@ -1,6 +1,6 @@
 import { type LoadedConfig, projectPaths } from "../config/load.ts";
 import { workspaceStorage } from "../storage/index.ts";
-import { mainMarket } from "./main-market.ts";
+import { mainMarketRef } from "./main-market.ts";
 import { syncPresetReports } from "./migrate.ts";
 import { listDefs } from "./store.ts";
 import { buildPresetVersion, findReport } from "./version.ts";
@@ -13,7 +13,7 @@ export function reportCommand(
 ): number {
   const paths = projectPaths(loaded);
   const s = workspaceStorage(paths.workspace);
-  syncPresetReports(s, paths, mainMarket(loaded));
+  syncPresetReports(s, paths, mainMarketRef(loaded));
   const defs = listDefs(s, paths);
   const def = findReport(defs, nameOrId);
   if (!def) {
