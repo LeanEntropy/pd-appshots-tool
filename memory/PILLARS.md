@@ -127,7 +127,7 @@ Output per locale:
   - patterns (including order), each marked as fits or different;
   - a position table: row N = everyone's Nth image, ours first;
   - recommendations.
-- A title image is usually an in-game screenshot (the title screen).
+- Title screen / full-screen art is ONE category (user, 2026-09-28): the difference is often unclear, so never split by logo. Studios upload the title screen clean (no "Tap to start", no loading bars). Logo presence is NOT a category but IS a first-class attribute tracked on every image (per position and deck) that drives patterns and recommendations, so we know whether our images should carry the logo; images in this category are compared by message (logo only, headline or benefit, event or offer, character showcase).
 - NEVER claim an image is "not from the game" or has "no in-game screenshot". Any art screen may be the game's title, loading or splash screen. Describe what is visible instead.
 - The report ALWAYS includes the deterministic content (exact store order per game, position-by-position comparison, pattern stats with n, ours vs patterns), even if AI synthesis is missing.
 - EVERY button or action gives immediate on-screen feedback:
@@ -154,6 +154,9 @@ Output per locale:
 - A SETTINGS page inside the tool lets the user control the parameters: review on/off per AI step, early-stop values, suggestion thresholds, budget limits, models, etc. No config-file editing.
 - Main country: user-selectable per project (default US). The Pilot always runs on the main country. After the Pilot, EVERY report type is open. A Full check of the main country is HIGHLY recommended (a builder warning with its cost) but not a blocker; reports built on Pilot-only data say so.
 - Priorities: reports and analysis quality come FIRST. PDF export is low priority (basic version only for now).
+- Report quality bar (user, 2026-09-28): every report must be meaningful, to the point, actionable and insightful. Neither bloated nor too thin on details. Each claim ties to evidence and to a concrete action. Judge every report change against this bar before PDF or other polish.
+- Explain every classification (user, 2026-09-28): any image type or category a report uses (e.g. title image vs feature image) must be explained where it appears: a one-line plain definition, what sets it apart, and an example thumbnail, plus a short "How we sort images" part in each report. A difference the user cannot see explained must not drive a finding.
+- Store titles (user, 2026-09-28): a two-part store title "[game name] - [ASO words]" or "[game name]: [ASO words]" (also full-width ：, –, |) means the second part is ASO keywords, very likely NOT in the in-game logo. Match logos/brand against the first part only; treat the second part as keyword data for the store-text/keyword analysis per country.
 - Multiple reports per project: pilot, full, single-country, and multi-country comparison (chosen countries and competitors). All are listed folded in the Report tab, and each can be exported to PDF. Planned in `docs/plan-reports.md`.
 - Sharing without a website (planned milestone 3b): "Share project" exports one zip (Full / Core only / Light / Report only, with the size shown first; Light carries analysis-sized copies, D7 decided 2026-09-28), and the friend uses "Import project" (incremental). No live shared sync folders.
 - Web-readiness rule (not building web now): keep AI providers, storage and jobs each behind one interface, so a hosted website is cheap later. No direct filesystem calls from feature code.
@@ -179,3 +182,5 @@ Output per locale:
 
 ## Key references
 - Tool landscape research: `reports/Game store screenshot analysis tools.md`, with notes in `research_notes/`.
+- UI layout (user, 2026-09-29): optional panels (e.g. Suggested next research) start folded. Offer/suggestion cards are light-background boxes laid out side by side as width permits. Flags ONLY next to a country name in titles/headings, never in running text (real flag images; Windows can't render flag emojis). Cards must not be packed: title, one short line, a cost/status chip, one main button; details behind a disclosure. Offering a multi-country report lets the user add countries from a list; added countries are saved to the project and their images are fetched (free, with a confirm step).
+- Games library (user, 2026-09-29): a directory page (every game's list and details only) plus a game page (screenshots, store text, analysis). A nice-to-have, scheduled LAST, after everything else. Plan: docs/plan-games-library.md.
