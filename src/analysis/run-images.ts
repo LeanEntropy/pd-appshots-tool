@@ -120,57 +120,72 @@ export async function analyseImages(
         ]),
       );
       let recs: AnalysisRecord[] = [];
-      let share = 0;
+      let share: number | null = null;
+      const closed = new Set<string>();
+      // Closed only after the record is saved: a crash in between leaves the attempt "started",
+      // counted at its estimate, never a paid attempt without its result on disk.
+      const close = (id: string, ok: boolean) => {
+        const a = attempt.get(id);
+        if (!a || closed.has(id)) return;
+        closed.add(id);
+        endAttempt(d.paths, id, a, d.batchId, ok ? "finished" : "failed", share ?? 0);
+      };
       try {
         const chunk: ChunkImage[] = [];
         for (const it of part)
           chunk.push({ imageId: it.imageId, image: await d.image(it.imageId) });
         recs = await d.analyse(chunk, part, label);
-      } finally {
         share = (d.spent() - before) / part.length;
-        for (const [id, a] of attempt) {
-          const rec = recs.find((r) => r.imageId === id);
-          const ok = !!rec && (isUsable(rec) || rec.status === "disputed");
-          endAttempt(d.paths, id, a, d.batchId, ok ? "finished" : "failed", share);
-        }
-      }
-      for (const raw of recs) {
-        const paid =
-          !raw.paidBy && isUsable(raw)
-            ? {
-                ...raw,
-                paidBy: {
-                  projectId: d.paths.projectId,
-                  runId: d.runId,
-                  batchId: d.batchId,
-                  usd: Math.round(share * 10000) / 10000,
-                  at: raw.updatedAt,
-                },
-              }
-            : raw;
-        // Saved immediately (with its identity block), under the lock, before the next image.
-        const rec = await d.save(paid);
-        out.records.push(rec);
-        d.counter.done++;
-        const item = part.find((p) => p.imageId === rec.imageId);
-        if (isUsable(rec) || rec.status === "disputed") {
-          if (rec.status === "disputed")
-            d.fail(
-              `disagreement not settled: ${rec.differences.join("; ")}`,
-              item?.name ?? null,
-              rec.position,
-            );
-          streak = { key: "", n: 0 };
-          continue;
-        }
-        const msg = rec.problems.join("; ") || `status ${rec.status}`;
-        d.fail(msg, item?.name ?? null, rec.position);
-        const key = errorKey(msg);
-        streak = key === streak.key ? { key, n: streak.n + 1 } : { key, n: 1 };
-        if (streak.n >= d.stopAfterSameErrors) {
-          out.aborted = `Stopped: ${streak.n} images in a row failed with the same error: ${msg}`;
+        // Still ours? After a long pause (sleep) another job may have taken an image over: then
+        // nothing more is written, so its work is never overwritten.
+        if (leases.some((l) => !l.heartbeat())) {
+          out.aborted =
+            "Stopped: the computer paused during an analysis and another job took over the image. Nothing more was written.";
           return false;
         }
+        for (const raw of recs) {
+          const paid =
+            !raw.paidBy && isUsable(raw)
+              ? {
+                  ...raw,
+                  paidBy: {
+                    projectId: d.paths.projectId,
+                    runId: d.runId,
+                    batchId: d.batchId,
+                    usd: Math.round(share * 10000) / 10000,
+                    at: raw.updatedAt,
+                  },
+                }
+              : raw;
+          // Saved immediately (with its identity block), under the lock, before the next image.
+          const rec = await d.save(paid);
+          const ok = isUsable(rec) || rec.status === "disputed";
+          close(rec.imageId, ok);
+          out.records.push(rec);
+          d.counter.done++;
+          const item = part.find((p) => p.imageId === rec.imageId);
+          if (ok) {
+            if (rec.status === "disputed")
+              d.fail(
+                `disagreement not settled: ${rec.differences.join("; ")}`,
+                item?.name ?? null,
+                rec.position,
+              );
+            streak = { key: "", n: 0 };
+            continue;
+          }
+          const msg = rec.problems.join("; ") || `status ${rec.status}`;
+          d.fail(msg, item?.name ?? null, rec.position);
+          const key = errorKey(msg);
+          streak = key === streak.key ? { key, n: streak.n + 1 } : { key, n: 1 };
+          if (streak.n >= d.stopAfterSameErrors) {
+            out.aborted = `Stopped: ${streak.n} images in a row failed with the same error: ${msg}`;
+            return false;
+          }
+        }
+      } finally {
+        share ??= (d.spent() - before) / part.length;
+        for (const id of attempt.keys()) close(id, false);
       }
       d.progress("analysis", `${label}: saved`);
       return true;

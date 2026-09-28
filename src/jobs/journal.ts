@@ -26,6 +26,8 @@ export const JobSchema = z.object({
   kind: z.enum(["store-check", "download", "analysis"]),
   /** Idempotency key: the approved plan's fingerprint. */
   planHash: z.string(),
+  /** The approval screen the user accepted (fingerprint and when it was shown): used once. */
+  approvalId: z.string().default(""),
   stage: z.enum(["pilot", "core"]).optional(),
   batchId: z.string().nullable().default(null),
   /** Storage key of the frozen input (the immutable copy of the approved plan). */

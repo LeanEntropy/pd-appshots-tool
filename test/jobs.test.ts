@@ -8,6 +8,7 @@ import { savePick } from "../src/core/selection.ts";
 import { cancel, enqueue, list, status } from "../src/jobs/index.ts";
 import { readJournal, writeJournal } from "../src/jobs/journal.ts";
 import { postAnalysisPlan } from "../src/server/api.ts";
+import { startToolServer } from "../src/server/instance.ts";
 import { workspaceStorage } from "../src/storage/index.ts";
 import { LOCKS, tryAcquire } from "../src/storage/leases.ts";
 import { PICK } from "./helpers/imported.ts";
@@ -135,6 +136,7 @@ test("one AI job across all projects; never a download and an analysis in one pr
         id: "j1",
         kind: "analysis",
         planHash: "p",
+        approvalId: "",
         stage: "pilot",
         batchId: null,
         frozenInput: null,
@@ -218,4 +220,40 @@ test("a running job whose lock is gone shows as interrupted; the old status file
   assert.equal(s.running, false);
   assert.equal(s.finishedAt, null);
   assert.match(s.error ?? "", /stopped during this run/);
+});
+
+test("one approval starts one job: a replayed request after it ended is refused", async () => {
+  const loaded = await ready();
+  const shown = approve(loaded);
+  const opts = {
+    depsFor: (cb: Parameters<typeof fakeDeps>[0]) => fakeDeps(cb),
+    run: async () => outcome(),
+  };
+  const a = enqueue(loaded, "analysis", { stage: "pilot", planHash: shown.plan.planHash }, opts);
+  assert.ok(a.ok);
+  await a.done;
+  const again = enqueue(
+    loaded,
+    "analysis",
+    { stage: "pilot", planHash: shown.plan.planHash },
+    opts,
+  );
+  assert.match(!again.ok ? again.problem : "", /used already/);
+  const reshown = approve(loaded);
+  const b = enqueue(loaded, "analysis", { stage: "pilot", planHash: reshown.plan.planHash }, opts);
+  assert.ok(b.ok, "a new look at the approval screen may start it again");
+  await b.done;
+});
+
+test("a second start of the tool hands back the running server", async () => {
+  const loaded = await ready();
+  const first = await startToolServer({ root: loaded.root, port: 0 });
+  try {
+    assert.ok(first.server);
+    const second = await startToolServer({ root: loaded.root, port: 0 });
+    assert.equal(second.server, null);
+    assert.equal(second.origin, first.origin);
+  } finally {
+    first.server?.close();
+  }
 });

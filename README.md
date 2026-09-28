@@ -34,7 +34,7 @@ python -m venv .venv
 
 ## Usage
 
-All commands take `--config <file>` (default `configs/rogue-legend.json`). With npm, pass options
+All commands take `--project <id>` (default: the most recently opened project), or `--config <file>` (before a project is imported). With npm, pass options
 after `--`, e.g. `npm run download -- --yes`.
 
 | Step | Command | What it does |
@@ -44,7 +44,7 @@ after `--`, e.g. `npm run download -- --yes`.
 | Download | `npm run download` | Shows the preview again and asks for approval (type `yes`, or pass `-- --yes`). Downloads full-resolution screenshots politely, with a cache |
 | Our assets | `npm run own-assets` | Matches the local files in the assets folder to our live deck (reference only) and reads the PSD if psd-tools is installed |
 | Raw deck view | `npm run deck-view` | Writes offline markdown per game and country and a read-only `gallery.html` |
-| **Gallery (main screen)** | `npm run gallery` | Starts a small local server and opens the gallery: comparison grid (position N of every game in one column), competitor picker with drag-and-drop that saves automatically, and **Start analysis** (approval screen, then **Approve and run**). Run the same command to reopen it later |
+| **The tool (main screen)** | `npm start` (or `npm run gallery`) | Starts one local server for all projects and opens the projects home: a card per project with its status, progress and next step, a "Working now" strip, Archive, and the Import offer for a project made before the shared library. Each project opens on its workspace (comparison grid, competitor picker that saves automatically, **Start analysis** with its approval screen, **Stop**, and **Continue** after a stop). `-- --project <id>` opens one project directly. Running it again opens the running tool |
 | Pick competitors (fallback) | `npm run select -- --pick "Archero 2, Capybara Go, ..."` | Saves the pick from the terminal (names or package ids), or asks in the terminal |
 | Analysis approval | `npm run pilot` / `npm run core` | Shows the approval screen (games and positions, images by cost level, model passes, estimated cost). No AI call. In Claude Code: `/analyze pilot` |
 | Store overview (free) | `npm run overview` | Per country, from the downloaded images only: orientation mix, aspect ratios, deck lengths, reuse of US images, measured colours. Also shown and rebuildable in the gallery. No AI |
@@ -80,7 +80,9 @@ workspace/<project>/            run data (gitignored)
   objects/                      every model answer, cached by its full input
   orders/<app>/<gl-hl>/<date>.json   store order per game per date, with screen types
   reports/<run id>/report.md    final report (+ patterns.json, ours-vs.json, recommendations.json, review.json)
-  pending/analysis-status.json  last analysis status (shown in the gallery after a restart)
+  state/job.json                the job journal: the running or last analysis, approved batches and
+                                their spending limits, saved expansion choices
+  state/approved/               immutable copy of every approved analysis plan
   own/                          our local files matched to the live deck, PSD facts
   views/index.md, views/decks/  offline markdown
   views/gallery.html            raw deck gallery with the competitor picker

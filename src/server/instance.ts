@@ -22,10 +22,13 @@ async function healthy(info: z.infer<typeof ServerInfo>): Promise<boolean> {
   }
 }
 
-/** The running tool's address, if one answers with the nonce it recorded. */
-export async function runningServer(storage: Storage): Promise<string | null> {
+/**
+ * The running tool's address, if the server that holds the lock recorded it and answers with
+ * that same nonce (an old server that lost the lock is never reused).
+ */
+export async function runningServer(storage: Storage, lockNonce: string): Promise<string | null> {
   const info = ServerInfo.safeParse(storage.getJson(SERVER_INFO));
-  if (!info.success) return null;
+  if (!info.success || info.data.nonce !== lockNonce) return null;
   return (await healthy(info.data)) ? `http://127.0.0.1:${info.data.port}` : null;
 }
 
@@ -43,7 +46,7 @@ export async function startToolServer(o: {
   for (let attempt = 0; attempt < 5; attempt++) {
     const held = acquireAll(storage, [LOCKS.server], { projectId: null, kind: "server" });
     if ("heldBy" in held) {
-      const other = await runningServer(storage);
+      const other = held.heldBy ? await runningServer(storage, held.heldBy.nonce) : null;
       if (other) return { server: null, origin: other };
       // Held by a live process that does not answer yet (starting up): wait a moment.
       await new Promise((r) => setTimeout(r, 1000));

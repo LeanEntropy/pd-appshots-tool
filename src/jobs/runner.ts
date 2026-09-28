@@ -107,6 +107,13 @@ export function enqueueAnalysis(
   if (problem || !saved) return refuse(409, problem ?? "No approval screen was shown yet.");
 
   const journal = readJournal(storage, ctx);
+  // One approval starts one job: a repeated or replayed request never pays twice.
+  const approvalId = `${planHash}@${saved.createdAt}`;
+  if (journal.jobs.ai?.approvalId === approvalId)
+    return refuse(
+      409,
+      "This approval was used already. Press Start analysis to see the current numbers.",
+    );
   let batch: Batch | undefined;
   if (input.continueBatch) {
     batch = journal.batches.find((b) => b.id === input.continueBatch && b.stage === stage);
@@ -120,12 +127,15 @@ export function enqueueAnalysis(
       `This batch has used its spending limit of ${money(limit)}. Start a new batch to approve a new limit.`,
     );
 
-  const store = lockHolder(storage, LOCKS.store);
-  if (store?.projectId === ctx.projectId)
-    return refuse(409, "This project is downloading. Start the analysis when the download ends.");
   const held = acquireAll(storage, [LOCKS.ai], { projectId: ctx.projectId, kind: "analysis" });
   if ("heldBy" in held)
     return refuse(409, busyMessage(storage, held.heldBy, opts.names ?? ((id) => id)));
+  // Checked while holding the AI lane (a store job checks the AI lane the same way after taking
+  // its own), so a download and an analysis can never both start in one project.
+  if (lockHolder(storage, LOCKS.store)?.projectId === ctx.projectId) {
+    held.release();
+    return refuse(409, "This project is downloading. Start the analysis when the download ends.");
+  }
 
   const now = new Date().toISOString();
   const frozen = projectKey(ctx, "state", "approved", `analysis-${planHash}.json`);
@@ -148,6 +158,7 @@ export function enqueueAnalysis(
     id: randomBytes(8).toString("hex"),
     kind: "analysis",
     planHash,
+    approvalId,
     stage,
     batchId: batch.id,
     frozenInput: frozen,

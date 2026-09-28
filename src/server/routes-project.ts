@@ -33,6 +33,8 @@ const GETS: Record<string, Get> = {
   "/api/overview": (l) => getOverview(l),
   "/api/analyses": (l) => getAnalyses(l),
   "/api/report/current": (l, q) => getReportCurrent(l, q.get("stage")),
+  // The report endpoint of the single-project page before this version.
+  "/api/report": (l, q) => getReportCurrent(l, q.get("stage")),
   "/api/report/run": (l, q) => getReportRun(l, q.get("stage"), q.get("id")),
   "/api/expansion": (l) => getExpansion(l),
   "/api/state": (l, _q, a) => ({ status: 200, body: stateFor(a, l) }),
