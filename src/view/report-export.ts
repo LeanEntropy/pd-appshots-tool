@@ -106,7 +106,7 @@ async function exportReportPdf(ref, o) {
 }
 
 // The browser's own print of this page (Ctrl+P): the open reports print with every section open.
-// Only report bodies are opened (opening a folded report card would load it).
+// Only the shown report's body is opened.
 let pdfReopen = null;
 function pdfPrepare(roots) {
   const closed = [];
@@ -116,7 +116,7 @@ function pdfPrepare(roots) {
   }
   return closed;
 }
-window.addEventListener("beforeprint", () => { if (!pdfReopen) pdfReopen = pdfPrepare([...document.querySelectorAll(".rcard[open] .rbox")]); });
+window.addEventListener("beforeprint", () => { if (!pdfReopen) pdfReopen = pdfPrepare([...document.querySelectorAll(".rcard .rbox")]); });
 window.addEventListener("afterprint", () => { for (const d of pdfReopen || []) d.open = false; pdfReopen = null; });
 
 document.addEventListener("click", (e) => {

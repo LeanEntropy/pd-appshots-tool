@@ -1,20 +1,18 @@
 /**
- * Report tab (plan-reports 5): every report of the project as a folded card, newest first, with
- * its name, type, countries, competitor count, generation date, status and the "Newer data"
- * badge. Opening a card loads that report (nothing is fetched for folded cards) and draws it with
- * the report renderer inside the card. Per card: a version selector (earlier Pilot and Full check
- * versions are archived but readable), Rename, Archive or Restore, and Delete (not for the Pilot
- * or the Full check), and Export PDF of the version picked (report-export.ts). Every action gives
- * feedback through act(). #report/<id> opens that card.
+ * Report tab (plan-reports 5): the one report chosen from the cards (report-cards.ts), under a
+ * header band with its name, type, countries, competitor count, generation date, status and the
+ * "Newer data" badge, drawn with the report renderer. In its band: a version selector (earlier
+ * Pilot and Full check versions are archived but readable), Rename, Archive or Restore, and Delete
+ * (not for the Pilot or the Full check), and Export PDF of the version picked (report-export.ts).
+ * Every action gives feedback through act(). #report/<id> opens that report.
  */
 export const REPORT_LIST_CSS = `
 .rcard { margin-bottom: 14px; }
-.rcard > summary { cursor: pointer; display: flex; flex-wrap: wrap; gap: 6px 12px; align-items: center; }
-.rcard > summary .rc-desc { flex-basis: 100%; }
-.rcard .rc-full, .rcard[open] .rc-short { display: none; } .rcard[open] .rc-full { display: inline; }
+.rc-head { display: flex; flex-wrap: wrap; gap: 6px 12px; align-items: center; }
+.rc-head .rc-desc { flex-basis: 100%; }
 .rc-date { margin-left: auto; font-size: 13px; color: var(--muted); white-space: nowrap; }
 .rc-del { margin: 8px 0; padding: 10px 14px; border-radius: 8px; background: var(--card); color: var(--text); } .rc-del p { margin: 0 0 8px; }
-@media print { .rcard > summary { padding: 10px 14px; } .rcard > summary .rc-name { font-size: 17px; font-weight: 700; } .rcard > .rc-b { padding: 4px 14px 12px; } }
+@media print { .rc-head { padding: 10px 14px; } .rc-head .rc-name { font-size: 17px; font-weight: 700; } .rcard > .rc-b { padding: 4px 14px 12px; } }
 .rc-bar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 8px 0; }
 .pill.t-pilot { background: var(--accent); } .pill.t-core { background: var(--ok); } .pill.t-country { background: var(--mid); } .pill.t-compare { background: var(--accent-2); }
 .pill.newer { background: var(--warn); } .pill.none { background: var(--muted); }
@@ -25,7 +23,7 @@ export const REPORT_LIST_SCRIPT = `
 let reportList = [];
 let showArchived = false;
 let listSeq = 0;
-// Open cards: report id -> { version, seq, loaded }.
+// Loaded reports: report id -> { version, seq, loaded }.
 const openState = new Map();
 const TYPE_CLS = { pilot: "t-pilot", core: "t-core", country: "t-country", compare: "t-compare" };
 const STATUS_CLS = { ready: "following", partial: "stale", running: "stale", none: "none", draft: "none" };
@@ -62,8 +60,7 @@ function reportDescription(r) {
 
 function reportCardHtml(r) {
   const id = rsafe(r.id);
-  // Folded: one line (title, kind, status, date); the description shows when the card is open.
-  const summary = rowTitleHtml(r) + pill(TYPE_CLS[r.type] || "", r.typeName)
+  const head = '<span class="rc-name">' + flagText(r.name) + "</span>" + pill(TYPE_CLS[r.type] || "", r.typeName)
     + pill(STATUS_CLS[r.status.kind] || "none", r.status.text)
     + (r.newer ? '<span class="pill newer" title="' + esc(r.newer) + '">Newer data</span>' : "")
     + (r.archived ? pill("none", "Archived") : "")
@@ -71,7 +68,7 @@ function reportCardHtml(r) {
     + (r.generatedAt ? '<span class="rc-date" title="' + esc(fmtDate(r.generatedAt)) + '">' + esc(rowDate(r.generatedAt)) + "</span>" : "")
     + '<span class="rc-desc">' + esc(reportDescription(r)) + (r.sameAs ? ". Set up exactly like \\u201c" + esc(r.sameAs) + "\\u201d" : "") + "</span>";
   const b =(cls, label, extra) => '<button type="button" class="' + cls + '" data-rid="' + id + '" data-act-key="' + cls.split(" ")[0] + "-" + id + '"' + (extra || "") + ">" + label + "</button>";
-  return '<details class="rcard ' + (TYPE_CLS[r.type] || "") + '" data-rid="' + id + '" id="rc-' + id + '"><summary>' + summary + '</summary><div class="rc-b">'
+  return '<section class="rcard ' + (TYPE_CLS[r.type] || "") + '" data-rid="' + id + '" id="rc-' + id + '" aria-label="' + esc(r.name) + '"><div class="rc-head">' + head + '</div><div class="rc-b">'
     + (r.newer ? '<div class="banner stale"><p>' + pill("stale", "Newer data") + " " + esc(r.newer) + (r.canNow ? " Choose \\u201cNow\\u201d to see the report with the current data." : "") + "</p></div>" : "")
     + '<div class="rc-top"><div class="rc-bar"><label>Version: <select class="rc-ver" data-rid="' + id + '">' + versionOptions(r) + "</select></label>"
     + (r.status.kind === "draft" ? b("rc-setup primary", "Continue setting up") : "")
@@ -82,25 +79,24 @@ function reportCardHtml(r) {
     + (!r.deletable ? '<span class="meta">The ' + esc(r.typeName) + " can be archived, not deleted.</span>" : r.status.kind === "running" ? '<span class="meta">Stop the run before deleting this report.</span>' : b("rc-delete danger", "Delete")) + "</div>"
     + '<div class="rc-edit" id="re-' + id + '" hidden><label>New name: <input type="text" maxlength="120" class="rc-input" id="rn-' + id + '" data-rid="' + id + '"></label> '
     + b("rc-save primary", "Save name") + " " + b("rc-cancel", "Cancel") + "</div>" + (r.deletable && r.status.kind !== "running" ? deleteConfirmHtml(r, id) : "")
-    + '<p class="act-msg" id="rs-' + id + '" hidden></p><div class="rc-pdfres" id="rp-' + id + '"></div><p class="meta" id="rh-' + id + '"></p></div><div class="rbox" id="rb-' + id + '"></div></div></details>';
+    + '<p class="act-msg" id="rs-' + id + '" hidden></p><div class="rc-pdfres" id="rp-' + id + '"></div><p class="meta" id="rh-' + id + '"></p></div><div class="rbox" id="rb-' + id + '"></div></div></section>';
 }
 
-function renderReportList() {
+// The cards, and below them the one report chosen (deep: the report the link asks for).
+function renderReportList(deep) {
   const box = document.getElementById("reportList");
-  if (!box) return;
-  const archived = reportList.filter((r) => r.archived).length;
+  if (!box) return Promise.resolve();
   const shown = reportList.filter((r) => showArchived || !r.archived);
-  box.innerHTML = (shown.length ? shown.map(reportCardHtml).join("") : '<p class="meta">No reports yet. The Pilot appears here after its first run from the Analysis page.</p>')
-    + (archived ? '<p><button type="button" class="linkbtn" id="toggleArchived">' + (showArchived ? "Hide archived" : "Show archived (" + archived + ")") + "</button></p>" : "");
-  // Cards that were open stay open (their content reloads when the toggle event fires).
-  for (const [rid, st] of openState) {
-    const c = document.getElementById("rc-" + rid);
-    if (!c) { openState.delete(rid); continue; }
-    const sel = c.querySelector(".rc-ver");
-    if (sel && st.version && [...sel.options].some((o) => o.value === st.version)) sel.value = st.version;
-    st.loaded = false;
-    c.open = true;
-  }
+  openRid = chooseOpen(shown, deep);
+  cardsReady = true;
+  renderCards();
+  const r = shown.find((x) => x.id === openRid);
+  box.innerHTML = r ? reportCardHtml(r) : "";
+  if (!r) return Promise.resolve();
+  const st = openState.get(r.id);
+  const sel = document.querySelector('.rc-ver[data-rid="' + rsafe(r.id) + '"]');
+  if (st && sel && st.version && [...sel.options].some((o) => o.value === st.version)) sel.value = st.version;
+  return loadReportCard(r.id);
 }
 
 // The project step bar follows the saved reports (a finished run completes its step), without a reload.
@@ -133,9 +129,8 @@ async function loadReport() {
     if (typeof setPdfDefaults === "function") setPdfDefaults(r.pdf);
     const deep = rsafe((/^#report\\/(r-[a-z0-9-]+)/.exec(location.hash) || [])[1]);
     const target = deep && reportList.find((x) => x.id === deep);
-    if (target && !openState.has(deep)) { openState.set(deep, {}); if (target.archived) showArchived = true; }
-    renderReportList();
-    if (target) { const c = document.getElementById("rc-" + deep); if (c && c.scrollIntoView) c.scrollIntoView({ block: "start" }); }
+    if (target && target.archived) showArchived = true;
+    renderReportList(target ? deep : null);
   } catch (e) { if (seq === listSeq) actLine(line, "bad", "The reports could not be loaded: " + actReason(e)); }
 }
 
@@ -209,15 +204,6 @@ function saveName(btn, rid) {
     done: (r) => renameDone(rid, r) });
 }
 
-document.addEventListener("toggle", (e) => {
-  const c = e.target;
-  if (!c || !c.classList || !c.classList.contains("rcard")) return;
-  const rid = c.dataset.rid;
-  if (!c.open) { openState.delete(rid); return; }
-  const st = openState.get(rid);
-  if (!st || !st.loaded) loadReportCard(rid);
-}, true);
-
 document.addEventListener("change", (e) => {
   if (e.target.classList && e.target.classList.contains("rc-ver")) loadReportCard(e.target.dataset.rid);
 });
@@ -264,7 +250,7 @@ document.addEventListener("click", (e) => {
   } else if (b.classList.contains("rc-archive")) {
     const archived = !rep.archived;
     act(b, { busy: archived ? "Archiving..." : "Restoring...", status: "reportStatus",
-      run: async () => { const r = await sendReq("PATCH", url, { archived }); await loadReport(); return r; },
+      run: async () => { const r = await sendReq("PATCH", url, { archived }); if (archived) forgetOpen(rid); await loadReport(); return r; },
       done: archived ? "Archived \\u201c" + rep.name + "\\u201d. Find it under Show archived." : "Restored \\u201c" + rep.name + "\\u201d." });
   } else if (b.classList.contains("rc-delete")) {
     showDeleteConfirm(rid, true);
@@ -272,7 +258,7 @@ document.addEventListener("click", (e) => {
     showDeleteConfirm(rid, false);
   } else if (b.classList.contains("rc-delyes")) {
     act(b, { busy: "Deleting...", status: "reportStatus",
-      run: async () => { const r = await sendReq("DELETE", url, {}); openState.delete(rid); await loadReport(); return r; },
+      run: async () => { const r = await sendReq("DELETE", url, {}); openState.delete(rid); forgetOpen(rid); await loadReport(); return r; },
       done: "Deleted \\u201c" + rep.name + "\\u201d. Paid image analyses stay in the library." });
   }
 });
