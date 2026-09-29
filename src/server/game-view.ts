@@ -2,7 +2,8 @@ import { type AnalysisRecord, readRecord } from "../analysis/records.ts";
 import type { StoreTextView } from "../analysis/store-compare.ts";
 import { type LoadedConfig, projectPaths } from "../config/load.ts";
 import { mainMarket } from "../core/targets.ts";
-import { appIconSrc } from "../library/app-icon.ts";
+import { appIconSrc, appIconStale } from "../library/app-icon.ts";
+import { type Platform, platformOf, storesOf } from "../library/games-parts.ts";
 import { byRecent, projectInfos } from "../library/image-uses.ts";
 import { readFacts } from "../library/imagedb.ts";
 import { countryName, latestDecks, roleIn } from "../library/project-decks.ts";
@@ -46,6 +47,10 @@ export interface GamePage {
   appId: string;
   name: string;
   icon: string | null;
+  /** True when the page should ask for the icon in the background. */
+  iconStale: boolean;
+  /** The stores we hold pages for, with plain country names. */
+  stores: { platform: Platform; countries: string[] }[];
   category: string;
   images: number;
   analysed: number;
@@ -84,11 +89,21 @@ export async function gamePage(
     (x) => x.appId === appId,
   );
   if (!a) return null;
+  const own = latestDecks(app.storage, viewed.id).filter((d) => d.appId === appId);
+  // The strips are Google Play pages: their check dates come from Play decks only.
   const fetched = new Map(
-    latestDecks(app.storage, viewed.id)
-      .filter((d) => d.appId === appId)
+    own
+      .filter((d) => platformOf((d as { platform?: unknown }).platform) === "play")
       .map((d) => [`${d.gl}|${d.hl}`, (d.fetchedAt ?? "").slice(0, 10)]),
   );
+  const stores = storesOf(
+    own.map((d) => ({
+      gl: d.gl,
+      status: d.status,
+      images: (d.slots ?? []).filter((s) => s.imageId).length,
+      platform: (d as { platform?: unknown }).platform,
+    })),
+  ).map((s) => ({ ...s, countries: s.countries.map(countryName) }));
   const main = mainMarket(loaded.config);
   const decks = [...a.decks].sort(
     (x, y) =>
@@ -205,6 +220,8 @@ export async function gamePage(
     appId,
     name: a.name,
     icon: appIconSrc(app.storage, appId),
+    iconStale: appIconStale(app.storage, appId),
+    stores,
     category: storeText[0]?.category ?? "",
     images: shas.size,
     analysed: [...shas].filter((s) => info[s] && !info[s]?.pending).length,

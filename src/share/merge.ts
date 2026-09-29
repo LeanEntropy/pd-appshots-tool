@@ -64,5 +64,25 @@ export function mergeLibraryFile(storage: Storage, key: string, bytes: Buffer): 
     storage.putJson(key, { ...mine.data, attempts: [...mine.data.attempts, ...extra] });
     return "updated";
   }
+  if (/^library\/icons\/apps\/[^/]+\.json$/.test(key)) {
+    // A game's icon index here without a stored copy takes the package's (its icon file comes
+    // with it), keeping this computer's latest store-read URL: no download on the next view.
+    const mine = parse(local) as { sha?: unknown; url?: unknown } | undefined;
+    const theirs = parse(bytes) as { sha?: unknown; from?: unknown; checkedAt?: unknown };
+    const sha = typeof theirs?.sha === "string" && /^[0-9a-f]{64}$/.test(theirs.sha);
+    const held =
+      typeof mine?.sha === "string" &&
+      /^[0-9a-f]{64}$/.test(mine.sha) &&
+      storage.exists(`library/icons/${mine.sha}.webp`);
+    if (held || !sha || typeof theirs.from !== "string") return "kept";
+    const url = typeof mine?.url === "string" && mine.url ? mine.url : theirs.from;
+    storage.putJson(key, {
+      url,
+      sha: theirs.sha,
+      from: theirs.from,
+      ...(typeof theirs.checkedAt === "string" ? { checkedAt: theirs.checkedAt } : {}),
+    });
+    return "updated";
+  }
   return "kept";
 }

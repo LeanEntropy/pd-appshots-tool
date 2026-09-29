@@ -95,6 +95,7 @@ const LIBRARY_DIRS = new Set([
   "store-text",
   "concept-maps",
   "icons",
+  "english",
 ]);
 const IMAGE_DIRS = new Set(["orig", "thumb", "model", "crops", "facts", "pixels"]);
 

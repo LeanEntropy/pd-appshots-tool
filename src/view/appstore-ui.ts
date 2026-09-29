@@ -1,4 +1,5 @@
 import { escHtml } from "./shell.ts";
+import { STORE_MARK_CSS, STORE_MARKS } from "./store-marks.ts";
 
 /**
  * The small App Store parts of the project pages (plan-app-store 5; decision 5: generic store
@@ -7,14 +8,9 @@ import { escHtml } from "./shell.ts";
  * - Competitors tab: which games have App Store decks (store marks per game) and one confirm
  *   card per game whose match is not certain. Nothing is guessed: a card waits for one click.
  */
-const PLAY_SVG =
-  '<svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M4 2.5v11l9-5.5z" fill="currentColor"/></svg>';
-const APPLE_SVG =
-  '<svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M8 2 3 14h2.2l1-2.6h3.6l1 2.6H13zm0 3.4 1.2 4.2H6.8z" fill="currentColor"/></svg>';
-
 export const APPSTORE_CSS = `
-.store-mark { display: inline-flex; align-items: center; justify-content: center; width: 20px; height: 20px; border-radius: 5px; margin-left: 4px; vertical-align: -4px; color: #fff; }
-.store-mark.play { background: #1a8f5a; } .store-mark.appstore { background: #1f6fd1; }
+${STORE_MARK_CSS}
+.store-mark { margin-left: 4px; vertical-align: -3px; }
 #appstorePanel .as-games { display: flex; flex-wrap: wrap; gap: 6px 16px; margin: 6px 0; }
 #appstorePanel .as-cards { display: flex; flex-wrap: wrap; gap: 12px; }
 #appstorePanel .as-card { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; width: 300px; }
@@ -27,7 +23,7 @@ export const APPSTORE_CSS = `
 export function storeMarkHtml(platform: "play" | "appstore", countries: readonly string[]): string {
   const name = platform === "play" ? "Google Play" : "App Store";
   const tip = escHtml(countries.length ? `${name}: ${countries.join(", ")}` : name);
-  return `<span class="store-mark ${platform}" role="img" title="${tip}" aria-label="${tip}">${platform === "play" ? PLAY_SVG : APPLE_SVG}</span>`;
+  return `<span class="store-mark ${platform}" role="img" title="${tip}" aria-label="${tip}">${STORE_MARKS[platform].svg}</span>`;
 }
 
 /** Settings: the project's App Store switch (off by default; nothing Apple is read while off). */
@@ -64,7 +60,7 @@ export const APPSTORE_PANEL_SCRIPT = `
   if (!panel || !base.startsWith("/p/")) return;
   const esc = (s) => String(s == null ? "" : s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
   const mark = (p, list) => { const n = p === "play" ? "Google Play" : "App Store"; const tip = esc(list.length ? n + ": " + list.join(", ") : n);
-    return '<span class="store-mark ' + p + '" role="img" title="' + tip + '" aria-label="' + tip + '">' + (p === "play" ? ${JSON.stringify(PLAY_SVG)} : ${JSON.stringify(APPLE_SVG)}) + "</span>"; };
+    return '<span class="store-mark ' + p + '" role="img" title="' + tip + '" aria-label="' + tip + '">' + ${JSON.stringify(STORE_MARKS).replace(/</g, "\\u003c")}[p].svg + "</span>"; };
   function card(g, label) {
     const waiting = Object.entries(g.byCountry).filter(([, m]) => m.status === "needs_confirmation");
     if (!waiting.length) return "";

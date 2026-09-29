@@ -1,5 +1,7 @@
+import { englishKey } from "../analysis/english-store.ts";
 import { readSettings } from "../config/project.ts";
 import { LIB, refsKey } from "../library/layout.ts";
+import { latestDecks } from "../library/project-decks.ts";
 import { readRefs } from "../library/refs.ts";
 import { appSegment } from "../play/answers.ts";
 import { libraryKey, projectKey, type Storage } from "../storage/index.ts";
@@ -31,6 +33,17 @@ const SKIP_PROJECT =
   /^(cache|views|pending|images|analysis|_before-library|same-screen|layer-diff|pixel-check|layout)(\/|$)|^state\/(import(\.json|\/)|locks\/)|\/exports\/|\.bad-|\.tmp$|\.partial$|\.pdf$/;
 
 const SHA = /^[0-9a-f]{64}$/;
+
+/** The marketing texts of an analysis record (those the English step may have saved). */
+function englishTexts(r: unknown): { text: string; language: string }[] {
+  const texts = (r as { final?: { marketingLayer?: { texts?: unknown } } } | undefined)?.final
+    ?.marketingLayer?.texts;
+  if (!Array.isArray(texts)) return [];
+  return texts.filter(
+    (t): t is { text: string; language: string } =>
+      typeof t?.text === "string" && typeof t?.language === "string",
+  );
+}
 
 /** A file to carry; its size is read later, for all files at once (missing ones drop out). */
 function add(out: Map<string, PackFile>, _storage: Storage, key: string, fullOnly = false) {
@@ -116,6 +129,8 @@ export async function collectProject(storage: Storage, projectId: string): Promi
         if (folder !== "analysis" || !k.endsWith(".json")) continue;
         const r = storage.getJson(k) as Record<string, { object?: unknown } | null> | undefined;
         if (r && "status" in r) analyses++;
+        // The saved English of its marketing texts (the paid English step, never paid twice).
+        for (const t of englishTexts(r)) add(out, storage, englishKey(t.text, t.language));
         for (const part of ["producer", "reviewer", "adjudication"]) {
           const o = r?.[part]?.object;
           if (typeof o === "string" && /^[0-9a-f]{16,128}$/.test(o)) cited.add(o);
@@ -131,6 +146,8 @@ export async function collectProject(storage: Storage, projectId: string): Promi
   // Store text and icons of every game in the project; word maps of its languages.
   const appIds = new Set<string>([settings.ourApp.id, ...settings.competitors.map((c) => c.id)]);
   for (const r of Object.values(refs.images)) for (const s of r.sources) appIds.add(s.appId);
+  // Chart games and pages whose pictures all failed are in the decks only.
+  for (const d of latestDecks(storage, projectId)) appIds.add(d.appId);
   for (const appId of appIds) {
     for (const k of list(storage, libraryKey("store-text", appSegment(appId))))
       add(out, storage, k);
