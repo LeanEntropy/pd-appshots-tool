@@ -62,6 +62,7 @@ const summary = (o: Partial<ReportSummary>): ReportSummary => ({
   countries: "United States (English)",
   markets: ["us"],
   countryNames: ["United States"],
+  countryLabels: ["United States"],
   sameAs: null,
   competitors: 2,
   competitorNames: ["Archero 2", "Capybara Go"],

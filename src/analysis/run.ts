@@ -8,7 +8,7 @@ import { writeJsonOnce } from "../util/fsx.ts";
 import { endAttempt, SYNTHESIS, startAttempt } from "./attempts.ts";
 import { crashEstimate, STEP_CEILING_USD } from "./budget.ts";
 import { measuredRecords } from "./colour-store.ts";
-import { batchDataHash, batchEntries } from "./entries.ts";
+import { batchDataHash, batchEntries, planRepeats } from "./entries.ts";
 import { writeFinalReport } from "./final-report.ts";
 import { labeler } from "./labels.ts";
 import { enrichOrder, type OrderSnapshot, snapshotOrder } from "./orders.ts";
@@ -172,7 +172,7 @@ export async function runAnalysis(
 
   const all = await measuredRecords(paths, db, config, withCurrentMapping(readRecords(paths)));
   for (const s of snaps) enrichOrder(paths, s, all);
-  const entries = batchEntries(plan, all, db, config.ourApp.id);
+  const entries = batchEntries(plan, all, db, config.ourApp.id, planRepeats(paths, db, plan, all));
   let patterns: Patterns | null = null;
   let oursVs: OursVsPatterns | null = null;
   let synthesis: SynthesisResult | null = null;

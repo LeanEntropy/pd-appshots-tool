@@ -123,5 +123,5 @@ export function countryInputs(
 
 /** Every analysed image of one country slice, ours separated (the pattern code's entries). */
 export function sliceEntries(x: CountryInputs, s: CountrySlice) {
-  return batchEntries(s.inputs.plan, x.records, s.inputs.db, s.inputs.ourAppId);
+  return batchEntries(s.inputs.plan, x.records, s.inputs.db, s.inputs.ourAppId, s.inputs.repeats);
 }

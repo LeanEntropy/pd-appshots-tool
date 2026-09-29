@@ -1,5 +1,6 @@
 import { createHash } from "node:crypto";
 import gplay from "google-play-scraper";
+import { noteIconUrl } from "../library/app-icon.ts";
 import { key, type Storage } from "../storage/index.ts";
 import {
   appSegment,
@@ -148,6 +149,8 @@ export class PlayLookup {
     const d = toDetails(raw);
     // Only the fields we use are kept (the full answer holds the whole store page).
     this.remember(k, d);
+    // A new store read may bring a new icon: the stored copy is refreshed the next time it shows.
+    noteIconUrl(this.storage, d.appId, d.icon);
     return d;
   }
 

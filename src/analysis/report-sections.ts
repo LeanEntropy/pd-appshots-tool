@@ -133,6 +133,13 @@ export function patternSection(
   out.push(
     `Computed from ${p.images} screenshots of ${p.games.length} games. Deck length: ${p.deckLength.min} to ${p.deckLength.max} (median ${p.deckLength.median}).`,
     "",
+    ...(p.repeats?.length
+      ? [
+          "Same screen uploaded twice (each screen counted once):",
+          ...p.repeats.map((r) => `- ${r}`),
+          "",
+        ]
+      : []),
     "### Order: screen type per position",
     "",
     "| Image | Competitors | Most used screen types | Marketing layer | Game logo | Layout |",

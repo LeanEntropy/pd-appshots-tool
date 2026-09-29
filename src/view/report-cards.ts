@@ -2,8 +2,10 @@
  * The Reports tab's cards (user design, 2026-09-29): one card per report type, side by side and
  * wrapping by width. The Full check first, then Compare countries and one card per single-country
  * report country (flag in the title) by their newest report, and the Pilot always last. A card
- * shows its title, the date and status of the report picked (the newest by default), a dropdown
- * of its reports when it has more than one, and Open. The cards only choose what to read: the one
+ * shows its title, the date and status of the report picked (the newest by default), a meta line
+ * (its competitor count; for Compare countries, the Full check and the Pilot also the flags of its
+ * countries, named in tooltips), a dropdown of its reports when it has more than one, and Open
+ * ("Showing", disabled, for the report drawn below). The cards only choose what to read: the one
  * report opened is drawn below them (report-list.ts). The last opened report is kept per project
  * in this browser, and the URL hash names it (#report/<id>) so a reload keeps it.
  * The "What next?" options (gallery-expand.ts) follow as cards in a different colour.
@@ -11,18 +13,23 @@
 const S = 'section[data-page="report"]';
 
 export const REPORT_CARDS_CSS = `
-${S} .rtypes { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 230px), 1fr)); gap: 10px; margin: 0 0 12px; }
+${S} .rtypes { display: grid; align-items: start; grid-template-columns: repeat(auto-fill, minmax(min(100%, 230px), 1fr)); gap: 10px; margin: 0 0 12px; }
 ${S} .rtcard { display: flex; flex-direction: column; gap: 6px; min-width: 0; padding: 12px 14px; border-radius: 12px; border: 1px solid var(--a-div, var(--line)); background: var(--a-surface, var(--card)); }
 ${S} .rtcard.is-open { border-color: var(--a-accent, var(--accent)); box-shadow: inset 0 0 0 1px var(--a-accent, var(--accent)); }
 ${S} .rtcard.rt-act { border-color: transparent; background: var(--a-teal, var(--tint)); }
 ${S} .rt-top { display: flex; gap: 8px; align-items: flex-start; justify-content: space-between; }
 ${S} .rtcard h4 { margin: 0; min-width: 0; font-size: 15px; font-weight: 700; line-height: 1.3; color: var(--a-h, var(--text)); overflow-wrap: anywhere; }
 ${S} .rtcard h4 .cty { white-space: normal; }
-${S} .rtcard.rt-act .rt-top { flex-direction: column-reverse; align-items: flex-start; gap: 4px; }
+${S} .rtcard.rt-act .rt-top { flex-direction: column; align-items: flex-start; gap: 4px; }
 ${S} .rtcard .pill, ${S} .rtcard .chip { flex: none; font-size: 11.5px; padding: 1px 8px; white-space: nowrap; }
 ${S} .rt-date, ${S} .rtcard .why { margin: 0; font-size: 12.5px; line-height: 1.4; color: var(--muted); }
+${S} .rt-meta { margin: 0; display: flex; flex-wrap: wrap; align-items: center; gap: 2px 6px; font-size: 13px; line-height: 1.4; color: var(--muted); }
+${S} .rt-flags { display: inline-flex; flex-wrap: wrap; gap: 3px; }
+${S} .rt-flag { display: inline-flex; font-size: 11px; }
+${S} .rt-flag img.flag { margin: 0; }
+${S} .rtcard button.rt-open:disabled { cursor: default; opacity: 1; background: transparent; color: var(--muted); border-color: var(--a-div, var(--line)); }
 ${S} .rtcard select { width: 100%; max-width: 100%; font-size: 13px; padding: 3px 4px; border-radius: 6px; }
-${S} .rt-acts { margin-top: auto; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+${S} .rt-acts { margin-top: 2px; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
 ${S} .rtcard details.offer-more > summary { cursor: pointer; font-size: 12.5px; color: var(--muted); }
 ${S} .rtcard details.offer-more p { margin: 4px 0; font-size: 12.5px; }
 ${S} .rt-more { margin: -4px 0 12px; }
@@ -80,6 +87,39 @@ function cardTitle(g) {
 }
 const statusWord = (r) => (r.archived ? "Archived" : STATUS_WORD[r.status.kind] || r.status.text);
 const cardDate = (r) => (r.generatedAt ? rowDate(r.generatedAt) : "Not generated yet");
+const competitorsText = (n) => n + (n === 1 ? " competitor" : " competitors");
+
+// A small flag with the country's name (and language, when chosen) as its tooltip and label.
+function metaFlag(gl, label) {
+  const img = flagImg(gl);
+  return '<span class="rt-flag" role="img" title="' + esc(label) + '" aria-label="' + esc(label) + '">' + (img || esc(String(gl || "").toUpperCase())) + "</span>";
+}
+
+// The meta line of the report picked: its competitors, and the flags of its countries (Compare
+// countries: every one; the Full check and the Pilot: the main country; a one-country card has its
+// flag in the title already).
+function cardMeta(r) {
+  const markets = r.markets || [];
+  const labels = r.countryLabels || r.countryNames || [];
+  const gls = r.type === "compare" ? markets : r.type === "core" || r.type === "pilot" ? markets.slice(0, 1) : [];
+  const parts = [];
+  if (r.competitors != null) parts.push("<span>" + competitorsText(r.competitors) + "</span>");
+  if (gls.length) parts.push('<span class="rt-flags">' + gls.map((gl, i) => metaFlag(gl, labels[i] || FLAG_NAMES[gl] || gl)).join("") + "</span>");
+  return parts.length ? '<p class="rt-meta">' + parts.join("") + "</p>" : "";
+}
+
+// A dropdown option: short title, date and status, with the counts when the name does not give
+// them and the whole still fits the option (OPTION_FIT characters).
+const OPTION_FIT = 60;
+function optionText(r) {
+  const n = (r.markets || []).length;
+  const counts = /competitor/i.test(r.name || "") ? [] : [
+    ...(r.type === "compare" && n ? [n + (n === 1 ? " country" : " countries")] : []),
+    ...(r.competitors != null ? [competitorsText(r.competitors)] : []),
+  ];
+  const full = [shortTitle(r), ...counts, cardDate(r), statusWord(r)].join(" \\u00b7 ");
+  return full.length <= OPTION_FIT ? full : [shortTitle(r), cardDate(r), statusWord(r)].join(" \\u00b7 ");
+}
 
 function typeCardHtml(g) {
   const ids = g.reports.map((r) => r.id);
@@ -88,12 +128,14 @@ function typeCardHtml(g) {
   const k = rsafe(g.key.replace(":", "-"));
   const sel = g.reports.length > 1
     ? '<label><span class="sr">Which report</span><select class="rt-sel" data-group="' + esc(g.key) + '">' + g.reports.map((x) => '<option value="' + esc(x.id) + '"' + (x.id === pick ? " selected" : "") + ">"
-      + esc([shortTitle(x), cardDate(x), statusWord(x)].join(" \\u00b7 ")) + "</option>").join("") + "</select></label>"
+      + esc(optionText(x)) + "</option>").join("") + "</select></label>"
     : "";
   return '<div class="rtcard ' + (TYPE_CLS[r.type] || "") + (ids.includes(openRid) ? " is-open" : "") + '" data-group="' + esc(g.key) + '"' + (ids.includes(openRid) ? ' aria-current="true"' : "") + ">"
     + '<div class="rt-top"><h4>' + cardTitle(g) + "</h4>" + pill(STATUS_CLS[r.status.kind] || "none", statusWord(r)) + "</div>"
-    + '<p class="rt-date">' + esc(cardDate(r)) + "</p>" + sel
-    + '<div class="rt-acts"><button type="button" class="rt-open' + (pick === openRid ? "" : " primary") + '" data-rid="' + rsafe(pick) + '" data-act-key="rt-open-' + k + '">Open</button></div></div>';
+    + '<p class="rt-date">' + esc(cardDate(r)) + "</p>" + cardMeta(r) + sel
+    + '<div class="rt-acts">' + (pick === openRid
+      ? '<button type="button" class="rt-open" disabled data-rid="' + rsafe(pick) + '">Showing</button>'
+      : '<button type="button" class="rt-open primary" data-rid="' + rsafe(pick) + '" data-act-key="rt-open-' + k + '">Open</button>') + "</div></div>";
 }
 
 // The cards row: one card per report type, then the "What next?" options (another colour).
