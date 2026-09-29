@@ -28,9 +28,8 @@ const CASES = [
   {
     prefix: "98742f3c3a",
     name: "Capybara Go US #2",
-    right: ["Big Win !", "DAY 2", "LIVING IS FORTUNE"],
-    // The new block rule splits a two-colour title; the user has not ruled on this split yet.
-    alsoFine: ["Big Win !", "DAY 2", "FORTUNE", "LIVING IS"],
+    // The user ruled (2026-09-29) that the two-colour title is two blocks.
+    right: ["Big Win !", "DAY 2", "FORTUNE", "LIVING IS"],
   },
 ];
 
@@ -81,9 +80,7 @@ async function main(): Promise<void> {
       ? `FAILED ${r.failed.get(id) ?? ""}`
       : same(texts, c.right)
         ? "right"
-        : c.alsoFine && same(texts, c.alsoFine)
-          ? "split title (ask the user)"
-          : "wrong";
+        : "wrong";
     rows.push({ case: c.name, id, texts: sorted(texts), right: c.right, verdict, reading });
     console.log(`${c.name}: ${JSON.stringify(sorted(texts))} -> ${verdict}`);
   }
