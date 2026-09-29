@@ -23,6 +23,19 @@ export function watchWorkspace(workspaceRoot: string): void {
   markers.add(markerPath(workspaceRoot));
 }
 
+/** The marker time this process set last, per marker (its own touches are not news to it). */
+const ownTouch = new Map<string, number>();
+/** Per marker: the time last seen and how many times another process changed it. */
+const seen = new Map<string, { mtime: number; changes: number }>();
+
+const mtimeOf = (m: string): number => {
+  try {
+    return statSync(m).mtimeMs;
+  } catch {
+    return 0;
+  }
+};
+
 function touchAll(): void {
   const now = new Date();
   for (const m of markers) {
@@ -36,6 +49,7 @@ function touchAll(): void {
         // A read-only or missing workspace: the in-process counter still changes.
       }
     }
+    ownTouch.set(m, mtimeOf(m));
   }
 }
 
@@ -65,7 +79,7 @@ const LATER_MS = 10_000;
 
 /**
  * A write from a long background pass that writes many small results (the same-screen check):
- * counted once when the pass ends (dataChangedNow) or ten seconds later, so the page's cached
+ * counted once when the pass ends (flushDataChanges) or ten seconds later, so the page's cached
  * data is not recomputed after every one of its writes.
  */
 export function dataChangedLater(): void {
@@ -87,13 +101,19 @@ export function flushDataChanges(): void {
 process.once("exit", flushDataChanges);
 
 /**
- * The current stamp of a workspace: this process's write count plus the marker's time (writes
- * from other processes). Equal stamps mean no data was written in between. One file stat.
+ * The current stamp of a workspace: this process's write count plus how many times another
+ * process touched the marker (its writes). Equal stamps mean no data was written in between.
+ * One file stat. This process's own (trailing) touches do not change it, so a write costs one
+ * recomputation, not two.
  */
 export function dataStamp(workspaceRoot: string): string {
-  let mtime = 0;
-  try {
-    mtime = statSync(markerPath(workspaceRoot)).mtimeMs;
-  } catch {}
-  return `${generation}:${mtime}`;
+  const m = markerPath(workspaceRoot);
+  const mtime = mtimeOf(m);
+  const s = seen.get(m) ?? { mtime, changes: 0 };
+  if (mtime !== s.mtime) {
+    if (mtime !== ownTouch.get(m)) s.changes++;
+    s.mtime = mtime;
+  }
+  seen.set(m, s);
+  return `${generation}:${s.changes}`;
 }

@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { mkdtempSync } from "node:fs";
+import { mkdtempSync, utimesSync } from "node:fs";
 import { get } from "node:http";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
@@ -9,7 +9,7 @@ import { projectPaths } from "../src/config/load.ts";
 import { startAppServer } from "../src/server/app-server.ts";
 import { Computed } from "../src/server/computed.ts";
 import { viewModel } from "../src/steps/deck-view.ts";
-import { dataStamp, flushDataChanges } from "../src/storage/changes.ts";
+import { dataStamp, flushDataChanges, markerPath } from "../src/storage/changes.ts";
 import { workspaceStorage } from "../src/storage/index.ts";
 import { tempProject } from "./helpers/project.ts";
 
@@ -91,7 +91,12 @@ test("data stamp: data writes change it, the project registry does not", () => {
   s.putJsonOnce("library/same-screen/aa/bb.v1.json", { same: false });
   assert.equal(dataStamp(ws), b);
   flushDataChanges();
-  assert.notEqual(dataStamp(ws), b);
+  const c = dataStamp(ws);
+  assert.notEqual(c, b);
+  // Another process (a terminal command) wrote: it touched the marker.
+  const later = new Date(Date.now() + 60_000);
+  utimesSync(markerPath(ws), later, later);
+  assert.notEqual(dataStamp(ws), c, "a write by another process was not seen");
 });
 
 test("analysis records: read once per data change, and a new record is seen at once", async () => {
@@ -113,7 +118,7 @@ test("analysis records: read once per data change, and a new record is seen at o
   assert.equal(after.get("img-new")?.status, "failed");
 });
 
-/** The page's bytes as they arrive: the first part, then the whole page. */
+/** The page's bytes as they arrive: up to its loading line (or the end), then the whole page. */
 function stream(url: string): Promise<{ first: Promise<string>; all: Promise<string> }> {
   return new Promise((resolve, reject) => {
     get(url, (res) => {
@@ -125,9 +130,12 @@ function stream(url: string): Promise<{ first: Promise<string>; all: Promise<str
       const all = new Promise<string>((r) => {
         res.on("data", (c: Buffer) => {
           text += c.toString("utf8");
-          gotFirst(text);
+          if (text.includes('id="boot"')) gotFirst(text);
         });
-        res.on("end", () => r(text));
+        res.on("end", () => {
+          gotFirst(text);
+          r(text);
+        });
       });
       resolve({ first, all });
     }).on("error", reject);
