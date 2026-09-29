@@ -91,7 +91,8 @@ button.info:focus-visible { outline: 3px solid var(--text); outline-offset: 1px;
 #status progress, #approval progress { width: 100%; height: 14px; accent-color: var(--accent); }
 .runlist ol { margin: 4px 0; padding-left: 22px; font-size: 12px; } .runlist li .st { color: var(--muted); }
 .runlist li.done .st { color: var(--accent); font-weight: 600; } .runlist li.failed, .runlist li.failed .st { color: var(--warn); font-weight: 600; }
-.runlist li.current { font-weight: 600; } .runlist li.current .st { color: #c2410c; }
+.runlist li.current { font-weight: 600; } .runlist li.current .st { color: #c2410c; } .runlist li.info .st, .runlist li.stopped .st { font-style: italic; } .runlist li .note { color: var(--muted); }
+.runsteps ol { font-size: 13px; } .runsteps li.failed .note { color: var(--warn); }
 .gbadge.failed { background: var(--warn); } table.grid td.failed a.thumb { border: 3px solid var(--warn); }
 .gbadge .spin { width: 8px; height: 8px; border-width: 2px; border-color: #fff; border-right-color: transparent; margin-right: 3px; }
 #status h2 .spin { margin-right: 8px; }

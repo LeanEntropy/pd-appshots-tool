@@ -31,6 +31,9 @@ export interface AnalysisStatus {
   error: string | null;
   synthesisSkipped: string | null;
   batch: { estimateUsd: [number, number] | null; items: Job["items"] } | null;
+  /** Each image's state by image id, and the steps after the images (a report's batch). */
+  outcomes: Job["outcomes"];
+  steps: Job["steps"];
   /** The approved batch's spend ledger: what it spent across all its runs, and its limit. */
   ledger: { batchId: string; spentUsd: number; limitUsd: number; interrupted: number } | null;
   /** A stopped batch with work left: one click opens the approval for the rest. */
@@ -120,6 +123,8 @@ export function analysisStatus(
       : (job?.error ?? null),
     synthesisSkipped: job?.synthesisSkipped ?? null,
     batch: job ? { estimateUsd: job.estimateUsd, items: job.items } : null,
+    outcomes: job?.outcomes ?? {},
+    steps: job?.steps ?? [],
     ledger,
     continuable,
     otherAi,

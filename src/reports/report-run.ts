@@ -13,6 +13,7 @@ import type { RunDeps, RunError } from "../analysis/run.ts";
 import { analyseChunk, modelCopy } from "../analysis/run-chunk.ts";
 import { withOwnCost } from "../analysis/run-context.ts";
 import { analyseImages } from "../analysis/run-images.ts";
+import { STOPPED_STEP, stepTracker } from "../analysis/run-status.ts";
 import { type LoadedConfig, loadTaxonomy, projectPaths } from "../config/load.ts";
 import { projectKey, workspaceStorage } from "../storage/index.ts";
 import { openImageDb } from "../store/imagedb.ts";
@@ -21,6 +22,7 @@ import { cachedAi, callContext, paidAi } from "./country-ai.ts";
 import { buildCountryVersion } from "./country-version.ts";
 import { countryName } from "./names.ts";
 import { layerPixelFor } from "./pixel-pairs.ts";
+import { plannedSteps, stepKey, stopGuard } from "./run-steps.ts";
 import type { ScopePlan } from "./scope-plan.ts";
 import { researchSnapshot } from "./suggest.ts";
 import type { ReportDef } from "./types.ts";
@@ -98,6 +100,9 @@ export async function runReport(
     deps.onError?.(e);
   };
   const shouldStop = deps.shouldStop ?? (() => false);
+  // The steps after the images, all waiting from the start (the run panel lists them).
+  const steps = stepTracker(plannedSteps(loaded, plan), () => spent, deps.onSteps);
+  deps.onSteps?.(steps.list());
   // The store order of every deck in the report is saved first (kept if the run stops early).
   for (const d of plan.decks) {
     if (d.state !== "ok") continue;
@@ -141,6 +146,7 @@ export async function runReport(
     fail,
     counter,
     total,
+    item: deps.onItem,
   });
   let cancelled = produce.cancelled;
   let stoppedForBudget = produce.stoppedForBudget;
@@ -187,6 +193,7 @@ export async function runReport(
       counter,
       total,
       pixel: layerPixelFor(loaded, db),
+      item: deps.onItem,
     });
     cancelled = r.cancelled;
     stoppedForBudget = r.stoppedForBudget;
@@ -221,8 +228,15 @@ export async function runReport(
         batchId,
         estimateUsd: plan.text.usd[1],
       });
-  const ai = stopped ? cachedAi(loaded) : paidAi(loaded, ctx, report, make);
-  report("report", "Writing the report…");
+  // Stop during the written parts: the step running now finishes, no new call starts.
+  const guarded = stopGuard(
+    make ?? ((ref) => providerFor(ref, join(paths.objects, "schemas"))),
+    shouldStop,
+  );
+  const ai = stopped ? cachedAi(loaded) : { ...paidAi(loaded, ctx, report, guarded), steps };
+  const textStopped = () => steps.list().some((s) => s.note === STOPPED_STEP);
+  if (stopped) steps.skipWaiting(`the run ended before this step (${why})`);
+  report("text", stopped ? "Building the report…" : "Starting the text steps…");
   // The limit can also be reached during the written parts: then the version says so too.
   const textLimit = () => !stopped && budget - spent <= 0.01;
   const built = await buildCountryVersion(loaded, def, {
@@ -230,6 +244,11 @@ export async function runReport(
     partial: () =>
       [
         ...notes,
+        ...(textStopped()
+          ? [
+              "Partial version: you pressed Stop while the written parts were made. Press Review and approve on this report to write the rest.",
+            ]
+          : []),
         ...(textLimit()
           ? [
               "Partial version: the spending limit of this batch was reached while the written parts were made. Press Review and approve on this report to write the rest.",
@@ -239,13 +258,23 @@ export async function runReport(
     planHash: plan.planHash,
     aiRunId: runId,
     research: () => researchSnapshot(loaded),
+    onBuild: () => {
+      steps.start(stepKey.build);
+      report("report", "Building the report…");
+    },
   });
+  steps.end(stepKey.build, built.ok ? null : built.problem);
   if (attempt) endAttempt(paths, SYNTHESIS, attempt, batchId, "finished", spent - before);
   saveCalls();
-  for (const p of built.problems ?? []) fail(p, null, null);
-  if (textLimit()) stoppedForBudget = true;
-  const ended = stopped || stoppedForBudget;
-  const reason = stopped ? why : "the spending limit of this batch was reached";
+  for (const p of built.problems ?? []) if (!p.includes(STOPPED_STEP)) fail(p, null, null);
+  if (textStopped()) cancelled = true;
+  else if (textLimit()) stoppedForBudget = true;
+  const ended = stopped || stoppedForBudget || cancelled;
+  const reason = stopped
+    ? why
+    : cancelled
+      ? "you pressed Stop"
+      : "the spending limit of this batch was reached";
   report("done", ended ? `Stopped: ${reason}. Finished work is kept.` : "Finished.");
   return {
     runId,

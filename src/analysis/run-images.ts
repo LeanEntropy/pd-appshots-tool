@@ -6,6 +6,7 @@ import type { PlanItem } from "./plan.ts";
 import { rateLimitWait, runPool, sleepUnlessStopped, type TaskOutcome } from "./pool.ts";
 import { type AnalysisRecord, isUsable, readRecord } from "./records.ts";
 import { errorKey } from "./run-chunk.ts";
+import type { OnItem } from "./run-status.ts";
 
 export interface ImageLoopDeps {
   paths: ProjectPaths;
@@ -39,6 +40,8 @@ export interface ImageLoopDeps {
   minCallUsd?: number;
   /** Waiting after a rate limit (tests pass a fake). */
   sleep?: (ms: number, shouldStop: () => boolean) => Promise<void>;
+  /** Each image's state as it changes (the run panel's list). */
+  item?: OnItem;
 }
 
 export interface ImageLoopResult {
@@ -76,6 +79,14 @@ export async function analyseImages(
   let streak = { key: "", n: 0 };
   const many = (d.concurrency ?? 1) > 1 ? ` (${d.concurrency} at a time)` : "";
   const usable = (id: string) => isUsable(readRecord(d.paths, id));
+  // An image shared by two countries (Taiwan and Hong Kong) is analysed once; both count done.
+  const copies = new Map<string, number>();
+  for (const it of full) copies.set(it.imageId, (copies.get(it.imageId) ?? 0) + 1);
+  const unique = full.filter((it, i) => full.findIndex((x) => x.imageId === it.imageId) === i);
+  const mark: OnItem = (id, state, note) => d.item?.(id, state, note);
+  const count = (id: string) => {
+    d.counter.done += copies.get(id) ?? 1;
+  };
 
   const gate = (): boolean => {
     if (d.shouldStop()) out.cancelled = true;
@@ -91,29 +102,33 @@ export async function analyseImages(
     const part: PlanItem[] = [];
     for (const it of items) {
       if (usable(it.imageId)) {
-        d.counter.done++;
+        count(it.imageId);
+        mark(it.imageId, "reused", "analysed before: reused, free");
         continue;
       }
       const lock = lockRecord(d.paths, it.imageId, "analysis");
       if ("heldBy" in lock) {
         if (!last) deferred.push(it);
         else {
-          d.counter.done++;
+          count(it.imageId);
           const who = lock.heldBy?.projectId ?? "another job";
           out.heldElsewhere.push(`${it.name} #${it.position} (being analysed by ${who})`);
+          mark(it.imageId, "skipped", `being analysed by ${who}; it will be reused, not paid`);
         }
         continue;
       }
       if (usable(it.imageId)) {
         lock.release();
-        d.counter.done++;
+        count(it.imageId);
         out.reusedMeanwhile++;
+        mark(it.imageId, "reused", "analysed meanwhile by another job: reused, free");
         continue;
       }
       leases.push(lock);
       part.push(it);
     }
     if (!part.length) return { ok: true, paid: false };
+    for (const it of part) mark(it.imageId, "running");
     const beat = setInterval(() => {
       for (const l of leases) l.heartbeat();
     }, HEARTBEAT_MS);
@@ -182,8 +197,12 @@ export async function analyseImages(
           const ok = isUsable(rec) || rec.status === "disputed";
           close(rec.imageId, ok);
           out.records.push(rec);
-          d.counter.done++;
+          count(rec.imageId);
           const item = part.find((p) => p.imageId === rec.imageId);
+          const msg = rec.problems.join("; ") || `status ${rec.status}`;
+          if (rec.status === "disputed")
+            mark(rec.imageId, "ok", `disagreement not settled: ${rec.differences.join("; ")}`);
+          else mark(rec.imageId, ok ? "ok" : "failed", ok ? null : msg);
           if (ok) {
             if (rec.status === "disputed")
               d.fail(
@@ -194,7 +213,6 @@ export async function analyseImages(
             streak = { key: "", n: 0 };
             continue;
           }
-          const msg = rec.problems.join("; ") || `status ${rec.status}`;
           d.fail(msg, item?.name ?? null, rec.position);
           rateWait = rateLimitWait(msg) ?? rateWait;
           const key = errorKey(msg);
@@ -206,7 +224,10 @@ export async function analyseImages(
         }
       } finally {
         share ??= (own ?? d.spent() - before) / part.length;
-        for (const id of attempt.keys()) close(id, false);
+        for (const id of attempt.keys()) {
+          if (!closed.has(id)) mark(id, "failed", "the analysis did not finish");
+          close(id, false);
+        }
       }
       d.progress("analysis", `${label}: saved`);
       return { ok: true, paid: own !== null, retryAfterMs: rateWait };
@@ -217,7 +238,7 @@ export async function analyseImages(
   }
 
   const byApp = new Map<string, PlanItem[]>();
-  for (const it of full) byApp.set(it.appId, [...(byApp.get(it.appId) ?? []), it]);
+  for (const it of unique) byApp.set(it.appId, [...(byApp.get(it.appId) ?? []), it]);
   const chunks: PlanItem[][] = [];
   for (const [, appItems] of byApp)
     for (let i = 0; i < appItems.length; i += d.size) chunks.push(appItems.slice(i, i + d.size));

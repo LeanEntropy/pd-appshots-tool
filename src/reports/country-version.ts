@@ -28,6 +28,8 @@ export interface CountryBuildOptions {
   partial?: string | null | (() => string | null);
   planHash?: string | null;
   aiRunId?: string | null;
+  /** Told when the written parts are made and the report's files are built (the run panel). */
+  onBuild?: () => void;
 }
 
 /**
@@ -48,6 +50,7 @@ export async function buildCountryVersion(
   const plan = buildScopePlan(loaded, def.scope, { proposeDrop: false, ctx });
   const ai = o.ai ?? cachedAi(loaded);
   const { report, inputs, problems } = await assembleCountryReport(loaded, def, plan, ctx, ai, now);
+  o.onBuild?.();
   const partial = typeof o.partial === "function" ? o.partial() : o.partial;
   if (partial) report.banners.unshift(partial);
   const versionId = newRunId(def.id, now);

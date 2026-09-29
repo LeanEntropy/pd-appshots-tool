@@ -123,7 +123,13 @@ export function getAnalysisStatus(loaded: LoadedConfig, names?: Names): ApiRespo
 /** Stop after the current image (the page's Stop button). */
 export function postAnalysisStop(loaded: LoadedConfig): ApiResponse {
   if (cancel(loaded))
-    return { status: 202, body: { stopping: true, message: "Stopping after the current image." } };
+    return {
+      status: 202,
+      body: {
+        stopping: true,
+        message: "Stopping: nothing new starts; the work in progress finishes and is kept.",
+      },
+    };
   return {
     status: 409,
     body: {

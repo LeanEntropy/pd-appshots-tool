@@ -16,6 +16,7 @@ import type { Provider } from "./providers.ts";
 import { type AnalysisRecord, isUsable } from "./records.ts";
 import { errorKey } from "./run-chunk.ts";
 import { withOwnCost } from "./run-context.ts";
+import type { OnItem } from "./run-status.ts";
 import type { ImageAnalysis } from "./schema.ts";
 
 /** One image whose text layer is compared with its anchor (the same picture, analysed). */
@@ -62,6 +63,8 @@ export interface LayerLoopDeps {
     imageId: string,
     anchor: AnalysisRecord & { final: ImageAnalysis },
   ) => Promise<LayerPixel | null>;
+  /** Each image's state as it changes (the run panel's list). */
+  item?: OnItem;
 }
 
 export interface LayerLoopResult {
@@ -97,6 +100,16 @@ export async function compareLayers(
     noAnchor: [],
   };
   let streak = { key: "", n: 0 };
+  const mark: OnItem = (id, state, note) => d.item?.(id, state, note);
+  // An image shared by two countries (Taiwan and Hong Kong, the same picture and text) is
+  // compared once: before, both copies ran at the same time and the second one met the first
+  // one's lock ("being compared by another job"). Both count as done with the first.
+  const copies = new Map<string, number>();
+  for (const it of items) copies.set(it.imageId, (copies.get(it.imageId) ?? 0) + 1);
+  const unique = items.filter((it, i) => items.findIndex((x) => x.imageId === it.imageId) === i);
+  const count = (id: string) => {
+    d.counter.done += copies.get(id) ?? 1;
+  };
   const gate = () => {
     if (d.shouldStop()) out.cancelled = true;
     // What is left must fund one call's reserved ceiling (budget.ts).
@@ -109,7 +122,8 @@ export async function compareLayers(
     const anchor = d.records.get(it.anchorId);
     if (!isUsable(anchor)) {
       out.noAnchor.push(it.imageId);
-      d.counter.done++;
+      count(it.imageId);
+      mark(it.imageId, "skipped", "the same picture in the main country has no analysis");
       return { ok: true, paid: false };
     }
     const current = () =>
@@ -117,24 +131,34 @@ export async function compareLayers(
     const done = current();
     if (done) {
       if (done.status === "different-screen") out.differentScreens.push(it.imageId);
-      d.counter.done++;
+      count(it.imageId);
+      mark(
+        it.imageId,
+        done.status === "different-screen" ? "different" : "reused",
+        done.status === "different-screen"
+          ? "compared before: a different screen, it needs a full analysis"
+          : "compared before: reused, free",
+      );
       return { ok: true, paid: false };
     }
     const pseudo = layerAttemptId(it.imageId);
     const lock = lockRecord(d.paths, pseudo, "layer-diff");
     if ("heldBy" in lock) {
-      d.counter.done++;
-      d.fail("being compared by another job; it will be reused, not paid", it.name, it.position);
+      // Another run (a second server or the terminal) compares it now: nothing is wrong.
+      count(it.imageId);
+      mark(it.imageId, "skipped", "being compared by another run; it will be reused, not paid");
       return { ok: true, paid: false };
     }
     const beat = setInterval(() => lock.heartbeat(), HEARTBEAT_MS);
     beat.unref();
     try {
       if (current()) {
-        d.counter.done++;
+        count(it.imageId);
+        mark(it.imageId, "reused", "compared meanwhile by another run: reused, free");
         return { ok: true, paid: false };
       }
       const where = `${it.name} #${it.position} in ${it.label}`;
+      mark(it.imageId, "running");
       d.progress(
         "layer-diff",
         `Comparing text, image ${d.counter.done + 1} of ${d.total} — ${where}`,
@@ -177,7 +201,15 @@ export async function compareLayers(
         writeLayerDiff(d.paths, rec);
         ok = rec.status !== "failed";
         out.records.push(rec);
-        d.counter.done++;
+        count(it.imageId);
+        const why = rec.problems.join("; ") || "the comparison failed";
+        if (rec.status === "different-screen")
+          mark(
+            it.imageId,
+            "different",
+            "a different screen under the text: it needs a full analysis",
+          );
+        else mark(it.imageId, ok ? "text" : "failed", ok ? null : why);
         if (rec.status === "different-screen") {
           out.differentScreens.push(it.imageId);
           d.fail(
@@ -190,7 +222,7 @@ export async function compareLayers(
           streak = { key: "", n: 0 };
           return { ok: true, paid: own > 0 };
         }
-        const msg = rec.problems.join("; ") || "the comparison failed";
+        const msg = why;
         d.fail(msg, it.name, it.position);
         rateWait = rateLimitWait(msg) ?? rateWait;
         const key = errorKey(msg);
@@ -200,6 +232,9 @@ export async function compareLayers(
           return { ok: false, paid: own > 0 };
         }
         return { ok: true, paid: own > 0, retryAfterMs: rateWait };
+      } catch (e) {
+        mark(it.imageId, "failed", e instanceof Error ? e.message : String(e));
+        throw e;
       } finally {
         endAttempt(d.paths, pseudo, attempt, d.batchId, ok ? "finished" : "failed", own);
       }
@@ -208,7 +243,7 @@ export async function compareLayers(
       lock.release();
     }
   }
-  await runPool(items, {
+  await runPool(unique, {
     concurrency: Math.max(1, d.concurrency ?? 1),
     gate,
     run: one,

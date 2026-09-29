@@ -23,6 +23,7 @@ import { type AnalysisRecord, readRecords } from "./records.ts";
 import { analyseChunk, modelCopy } from "./run-chunk.ts";
 import { batchContext, withOwnCost } from "./run-context.ts";
 import { analyseImages } from "./run-images.ts";
+import type { OnItem, RunStep } from "./run-status.ts";
 import { type SynthesisResult, synthesise } from "./synthesis.ts";
 
 export { errorKey, reviewSample } from "./run-chunk.ts";
@@ -60,6 +61,9 @@ export interface RunDeps {
   batchId?: string | null;
   /** Checked before each image: true after the user pressed Stop. */
   shouldStop?: () => boolean;
+  /** Each image's state, and the steps after the images, for the run panel. */
+  onItem?: OnItem;
+  onSteps?: (steps: RunStep[]) => void;
 }
 
 export interface RunOutcome {
@@ -122,7 +126,6 @@ export async function runAnalysis(
     errors.push(e);
     deps.onError?.(e);
   };
-
   // The store order is saved first, so it is kept even if the run stops early.
   const snaps: OrderSnapshot[] = [];
   for (const g of plan.games) {
@@ -162,10 +165,10 @@ export async function runAnalysis(
     fail,
     counter,
     total: full.length,
+    item: deps.onItem,
   });
   records.push(...loop.records);
   const { stoppedForBudget, cancelled, aborted } = loop;
-  for (const h of loop.heldElsewhere) fail(`${h}; it will be reused, not paid`, null, null);
 
   const all = await measuredRecords(paths, db, config, withCurrentMapping(readRecords(paths)));
   for (const s of snaps) enrichOrder(paths, s, all);

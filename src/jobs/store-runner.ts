@@ -92,6 +92,8 @@ export function enqueueStore(
     items: [],
     estimateUsd: null,
     cancelled: false,
+    outcomes: {},
+    steps: [],
   };
   updateJournal(storage, ctx, (j) => {
     j.jobs.store = job;

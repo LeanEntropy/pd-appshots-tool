@@ -10,6 +10,7 @@ import { type LoadedConfig, loadTaxonomy } from "../config/load.ts";
 import type { PlayContext } from "./ab-section.ts";
 import type { CountrySlice } from "./build.ts";
 import type { ReportAi } from "./country-ai.ts";
+import { mainLabel, stepKey } from "./run-steps.ts";
 
 /**
  * The main country inside a One country or Compare countries report (for example the main
@@ -25,7 +26,10 @@ export async function mainSynthesis(
   play: PlayContext,
   generatedAt: string,
 ): Promise<{ data: ReportData | null; problems: string[] }> {
-  if (!e || e.competitors.length < 2 || e.missing.length) return { data: null, problems: [] };
+  if (!e || e.competitors.length < 2 || e.missing.length) {
+    ai.steps?.skipWaiting("not enough analysed competitors in this country", stepKey.main(""));
+    return { data: null, problems: [] };
+  }
   const { taxonomy } = loadTaxonomy(loaded);
   const label = labeler(taxonomy);
   const patterns = findPatterns(e.competitors, e.decks);
@@ -54,8 +58,16 @@ export async function mainSynthesis(
       ourDeckLength: e.ourDeckLength,
     },
     ai.ctx,
-    ai.report,
+    (phase, message) => {
+      ai.report(phase, message);
+      ai.steps?.start(stepKey.main(phase), mainLabel(phase, s.market.label));
+    },
   );
+  // The patterns' own problem belongs to that step (the recommendations still run after it).
+  const own = (p: string) => p.startsWith("pattern summary");
+  ai.steps?.endRunning(r.problems.filter((p) => !own(p)).join("; ") || null);
+  ai.steps?.end(stepKey.main("patterns"), r.problems.filter(own).join("; ") || null);
+  ai.steps?.skipWaiting("not needed", stepKey.main(""));
   if (!r.recommendations && !r.interpretation) return { data: null, problems: r.problems };
   const data = buildReportData({
     ...s.inputs,

@@ -21,6 +21,25 @@ const ErrorSchema = z.object({
   at: z.string(),
 });
 
+/** How one image of the batch ended (or that it runs now), for the run panel's list. */
+export const OutcomeSchema = z.object({
+  state: z.enum(["running", "ok", "text", "reused", "different", "skipped", "failed"]),
+  note: z.string().nullable().default(null),
+});
+export type Outcome = z.infer<typeof OutcomeSchema>;
+
+/** One step after the images (words used, advice per country, the report ...). */
+export const StepSchema = z.object({
+  key: z.string(),
+  label: z.string(),
+  state: z.enum(["waiting", "running", "done", "failed", "skipped"]),
+  startedAt: z.string().nullable().default(null),
+  endedAt: z.string().nullable().default(null),
+  usd: z.number().nullable().default(null),
+  note: z.string().nullable().default(null),
+});
+export type RunStep = z.infer<typeof StepSchema>;
+
 export const JobSchema = z.object({
   id: z.string(),
   kind: z.enum(["store-check", "download", "analysis"]),
@@ -53,6 +72,10 @@ export const JobSchema = z.object({
   estimateUsd: z.tuple([z.number(), z.number()]).nullable().default(null),
   /** True when the user pressed Stop. */
   cancelled: z.boolean().default(false),
+  /** Each image's state by image id (an image shared by two countries has one). */
+  outcomes: z.record(z.string(), OutcomeSchema).default({}),
+  /** The steps after the images, in order (a report's AI batch). */
+  steps: z.array(StepSchema).default([]),
 });
 export type Job = z.infer<typeof JobSchema>;
 

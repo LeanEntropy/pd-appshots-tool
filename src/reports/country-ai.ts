@@ -8,6 +8,7 @@ import {
   renderReportPrompt,
 } from "../analysis/prompts.ts";
 import { type Provider, providerFor } from "../analysis/providers.ts";
+import type { StepTracker } from "../analysis/run-status.ts";
 import { type LoadedConfig, loadTaxonomy, projectPaths } from "../config/load.ts";
 import { answerKey } from "../library/layout.ts";
 import { secondOpinionOn, settingsOf } from "../settings/access.ts";
@@ -40,6 +41,8 @@ export interface ReportAi {
     recommendReview: RenderedPrompt;
   };
   report: (phase: string, message: string) => void;
+  /** The paid run's step list (the run panel): each text step starts and ends here. */
+  steps?: StepTracker;
 }
 
 /** The model references of the report's text steps (Settings page). */

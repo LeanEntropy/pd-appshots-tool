@@ -39,8 +39,8 @@ export interface RunnerOptions {
   reportProvider?: (ref: string) => Provider;
 }
 
+export { busyMessage } from "./busy.ts";
 export type { RunEnd, StartSpec } from "./start-spec.ts";
-
 export type EnqueueResult =
   | { ok: true; jobId: string; done: Promise<Job>; existing: boolean }
   | { ok: false; status: number; problem: string };
@@ -57,8 +57,6 @@ export const running = new Map<string, Handle>();
 
 const round = (n: number) => Math.round(n * 100) / 100;
 const money = (n: number) => `$${n.toFixed(2)}`;
-
-export { busyMessage } from "./busy.ts";
 
 function refuse(status: number, problem: string): EnqueueResult {
   return { ok: false, status, problem };
@@ -207,6 +205,8 @@ export function startJob(
     items: spec.items,
     estimateUsd: spec.estimateUsd,
     cancelled: false,
+    outcomes: {},
+    steps: [],
   };
   journal.jobs.ai = job;
   writeJournal(storage, ctx, journal);
@@ -237,6 +237,12 @@ export function startJob(
         inner?.(e);
         save({ errors: [...errors] });
       };
+      const outcomes: Job["outcomes"] = {};
+      deps.onItem = (id, state, note) => {
+        outcomes[id] = { state, note: note ?? null };
+        save({ outcomes: { ...outcomes } });
+      };
+      deps.onSteps = (steps) => save({ steps });
       deps.budgetUsd = budget;
       deps.batchId = batchId;
       deps.shouldStop = () => {

@@ -18,6 +18,7 @@ import type { AdvicePart, CountryReport } from "./country-report-types.ts";
 import { dates, keyActions, shortAnswer, verdicts } from "./country-summary.ts";
 import { countryName } from "./names.ts";
 import { playContextOf } from "./play-context.ts";
+import { adviceFixLabel, stepKey } from "./run-steps.ts";
 import type { PlanContext, ScopePlan } from "./scope-plan.ts";
 import { mergedSorting } from "./sorting-merge.ts";
 import {
@@ -73,7 +74,9 @@ async function wordsUsed(
       continue;
     }
     ai.report("concept-map", `Grouping the words used (${hl})…`);
+    ai.steps?.start(stepKey.words(hl));
     const r = await writeConceptMap(set, ai.writers.concept, ai.prompts.concept, ai.ctx, storage);
+    ai.steps?.end(stepKey.words(hl), r.map ? null : r.problems.join("; ") || "not written");
     maps.set(hl, r.map);
     if (!r.map && r.problems.length) problems.push(`words used (${hl}): ${r.problems.join("; ")}`);
   }
@@ -131,7 +134,9 @@ export async function assembleCountryReport(
   const advice: AdvicePart[] = [];
   for (const p of parts) {
     if (isMainOf(plan, p.market.gl, p.market.hl)) continue;
+    const gl = p.market.gl;
     ai.report("country-advice", `Writing the advice for ${countryName(p.market.label)}…`);
+    ai.steps?.start(stepKey.advice(gl));
     const input = adviceInput(p, plan.main, x.localisation, {
       from: baseFrom,
       recommendations: x.base.recommendations,
@@ -142,10 +147,16 @@ export async function assembleCountryReport(
         reviewer: ai.writers.adviceReview,
         prompt: ai.prompts.advice,
         reviewPrompt: ai.prompts.adviceReview,
+        phase: (x) =>
+          x === "review"
+            ? ai.steps?.start(stepKey.adviceCheck(gl))
+            : ai.steps?.start(stepKey.adviceFix(gl), adviceFixLabel(p.market.label)),
       },
       input,
       ai.ctx,
     );
+    ai.steps?.endRunning(r.problems.join("; ") || null);
+    ai.steps?.skipWaiting("the advice was not written", stepKey.adviceCheck(gl));
     if (ai.mode === "paid") problems.push(...r.problems);
     advice.push({
       gl: p.market.gl,
@@ -180,6 +191,7 @@ export async function assembleCountryReport(
   let abOut = null;
   if (evidence.length && first) {
     ai.report("ab-tests", "Writing the A/B tests…");
+    ai.steps?.start(stepKey.ab);
     const r = await writeAbTests(
       ai.writers.ab,
       ai.prompts.ab,
@@ -201,9 +213,11 @@ export async function assembleCountryReport(
       ai.ctx,
     );
     abOut = r.value;
+    ai.steps?.end(stepKey.ab, r.value ? null : r.problems.join("; ") || "not written");
     if (!r.value && ai.mode === "paid" && r.problems.length)
       problems.push(`A/B tests: ${r.problems.join("; ")}`);
   }
+  ai.steps?.skipWaiting("no differences to test", stepKey.ab);
   const abTests = abTestsPart(
     {
       fit: first?.fit ?? null,

@@ -153,6 +153,8 @@ test("one AI job across all projects; never a download and an analysis in one pr
         items: [],
         estimateUsd: null,
         cancelled: false,
+        outcomes: {},
+        steps: [],
       },
     },
     batches: [],

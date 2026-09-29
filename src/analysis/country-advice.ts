@@ -49,6 +49,8 @@ export interface AdviceDeps {
   reviewer: Provider | null;
   prompt: RenderedPrompt;
   reviewPrompt: RenderedPrompt;
+  /** Told when the second opinion, then a fix after it, starts (the run panel's steps). */
+  phase?: (step: "review" | "revise") => void;
 }
 
 const block = (title: string, lines: readonly string[]) =>
@@ -104,6 +106,7 @@ export async function writeCountryAdvice(
   }
   out.advice = first.value;
   if (!d.reviewer) return out;
+  d.phase?.("review");
   const rev = await validatedCall(
     "country-advice-review",
     d.reviewer,
@@ -124,6 +127,7 @@ export async function writeCountryAdvice(
   const findings = major
     .map((f) => `- position ${f.position || "all"}: ${f.issue} Suggestion: ${f.suggestion}`)
     .join("\n");
+  d.phase?.("revise");
   const revised = await validatedCall(
     "country-advice-revise",
     d.writer,
