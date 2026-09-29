@@ -59,12 +59,28 @@ function put(id, html) {
   document.getElementById(id).innerHTML = html;
 }
 
+// Open (any link away) cancels the cards' requests still waiting: the project's page needs the tool now.
+let homeAbort = new AbortController();
+document.addEventListener("click", () => { if (actLeaving) homeAbort.abort(); });
+window.addEventListener("pagehide", () => homeAbort.abort());
+window.addEventListener("pageshow", () => { if (homeAbort.signal.aborted) homeAbort = new AbortController(); });
+const suggestionAsked = {};
+
 async function loadState(id) {
   // A project is opening: its page needs the tool now, and this page is about to go.
   if (actLeaving) return;
+  const url = "/p/" + encodeURIComponent(id) + "/api/state?home=1";
   try {
-    const r = await fetch("/p/" + encodeURIComponent(id) + "/api/state?home=1");
-    if (r.ok) { states[id] = await r.json(); render(); }
+    const r = await fetch(url, { signal: homeAbort.signal });
+    if (!r.ok) return;
+    const s = await r.json();
+    states[id] = s; render();
+    // The "Next" line was never worked out for this project: ask once (it costs the tool a few seconds).
+    if ((s.stage === "recommendations" || s.stage === "expand") && !("suggestion" in s) && !suggestionAsked[id] && !actLeaving) {
+      suggestionAsked[id] = true;
+      const r2 = await fetch(url + "&compute=1", { signal: homeAbort.signal });
+      if (r2.ok) { states[id] = await r2.json(); render(); }
+    }
   } catch {}
 }
 

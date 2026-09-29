@@ -11,6 +11,7 @@ import type { ProjectState } from "../projects/state.ts";
 import type { StoreDeps } from "../steps/add-competitor.ts";
 import { PROJECT_ID, type Storage, workspaceStorage } from "../storage/index.ts";
 import { statusPage } from "../view/pages-html.ts";
+import { Computed } from "./computed.ts";
 
 export type Loaded = { loaded: LoadedConfig } | { draft: ProjectSettings };
 
@@ -25,8 +26,14 @@ export interface AppContext {
   names: (id: string) => string;
   /** A project by id: its runnable config, or its draft settings; null when unknown. */
   load: (id: string) => Loaded | null;
-  /** Caches a project's derived state for the home screen. */
+  /** Caches a project's derived state for the home screen (with its suggestion when given). */
   remember: (id: string, s: ProjectState) => void;
+  /** The home card's last known suggestion (null: none; undefined: never computed). */
+  knownSuggestion: (id: string) => ProjectState["suggestion"] | undefined;
+  /** Keeps the newest top suggestion for the home card (only for a card with a summary). */
+  rememberSuggestion: (id: string, s: ProjectState["suggestion"]) => void;
+  /** Derived project data kept in memory while the data is unchanged (single flight). */
+  computed: Computed;
   opened: (id: string) => void;
   /** The most recently opened project (for old links), or null. */
   recent: () => string | null;
@@ -99,12 +106,33 @@ export function createAppContext(o: AppOptions): AppContext {
     },
     remember(id, s) {
       const e = entry(id);
-      if (!e || (e.summary?.line === s.line && e.summary.stage === s.stage)) return;
+      if (!e) return;
+      const was = e.summary?.suggestion;
+      const suggestion = s.suggestion === undefined ? was : s.suggestion;
+      const same =
+        e.summary?.line === s.line &&
+        e.summary.stage === s.stage &&
+        JSON.stringify(was ?? null) === JSON.stringify(suggestion ?? null);
+      if (same) return;
       upsertEntry(storage, {
         ...e,
-        summary: { stage: s.stage, line: s.line, updatedAt: new Date().toISOString() },
+        summary: {
+          stage: s.stage,
+          line: s.line,
+          updatedAt: new Date().toISOString(),
+          ...(suggestion === undefined ? {} : { suggestion }),
+        },
       });
     },
+    knownSuggestion: (id) => entry(id)?.summary?.suggestion,
+    rememberSuggestion(id, suggestion) {
+      const e = entry(id);
+      if (!e?.summary) return;
+      if (JSON.stringify(e.summary.suggestion ?? null) === JSON.stringify(suggestion ?? null))
+        return;
+      upsertEntry(storage, { ...e, summary: { ...e.summary, suggestion: suggestion ?? null } });
+    },
+    computed: new Computed(),
     opened(id) {
       lastOpened = id;
       if (entry(id)) markOpened(storage, id);

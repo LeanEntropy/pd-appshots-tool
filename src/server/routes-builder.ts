@@ -1,12 +1,11 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
 import type { LoadedConfig } from "../config/load.ts";
-import { ensurePixelChecks } from "../reports/pixel-pairs.ts";
-import { setDismissed, suggestionsView } from "../reports/suggest.ts";
+import { setDismissed } from "../reports/suggest.ts";
 import type { AppContext } from "./app-context.ts";
 import { send, writeRequest } from "./http-util.ts";
 import { postPairVerdicts } from "./pixel-api.ts";
+import { builderOptions, pixelChecked, suggestionsFor } from "./project-data.ts";
 import {
-  getBuilder,
   getMatchCheck,
   getReportPlan,
   postBuild,
@@ -28,7 +27,7 @@ async function suggestionsRoute(
   res: ServerResponse,
 ): Promise<void> {
   if (rest === "/api/suggestions" && req.method === "GET")
-    return send(res, 200, suggestionsView(loaded));
+    return send(res, 200, await suggestionsFor(app, loaded));
   const m = /^\/api\/suggestions\/(s-[0-9a-f]{12})\/(dismiss|restore)$/.exec(rest);
   if (!m || req.method !== "POST") return send(res, 404, { problems: ["Not found."] });
   if (!(await writeRequest(req, res, app.token))) return;
@@ -59,8 +58,9 @@ export async function builderRoute(
     return true;
   }
   const write = async () => (await writeRequest(req, res, app.token))?.body;
-  // A failed check never blocks the page: those pairs keep the fingerprint rule.
-  if (rest.startsWith("/api/reports/")) await ensurePixelChecks(loaded).catch(() => 0);
+  // Checked once per data change; a failed check never blocks the page (those pairs keep the
+  // fingerprint rule).
+  if (rest.startsWith("/api/reports/")) await pixelChecked(app, loaded).catch(() => 0);
   if (rest === "/api/reports/match-check/pairs" && req.method === "POST") {
     const body = await write();
     if (body === undefined) return true;
@@ -69,7 +69,7 @@ export async function builderRoute(
     return true;
   }
   if (rest === "/api/reports/builder" && req.method === "GET") {
-    const r = getBuilder(loaded);
+    const r = await builderOptions(app, loaded);
     send(res, r.status, r.body);
     return true;
   }

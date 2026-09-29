@@ -14,7 +14,15 @@ const EntrySchema = z.object({
   lastOpenedAt: z.string(),
   archived: z.boolean(),
   /** Cached for the home screen; recomputed from the disk whenever a project's state is read. */
-  summary: z.object({ stage: z.string(), line: z.string(), updatedAt: z.string() }).optional(),
+  summary: z
+    .object({
+      stage: z.string(),
+      line: z.string(),
+      updatedAt: z.string(),
+      /** The last top suggested research (null: none), kept so the home never computes it. */
+      suggestion: z.object({ text: z.string(), href: z.string() }).nullable().optional(),
+    })
+    .optional(),
 });
 export type RegistryEntry = z.infer<typeof EntrySchema>;
 

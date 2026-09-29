@@ -40,10 +40,19 @@ function findDef(loaded: LoadedConfig, id: string) {
 export function getReports(loaded: LoadedConfig): ApiResponse {
   // Saved expansion choices become draft reports, once (plan-reports 7).
   const drafts = draftsFromExpansion(loaded);
+  return reportsResponse(loaded, drafts, listReports(loaded));
+}
+
+/** The list answer, from drafts just made (first) and the report list (computed or kept). */
+export function reportsResponse(
+  loaded: LoadedConfig,
+  drafts: ReturnType<typeof draftsFromExpansion>,
+  reports: ReturnType<typeof listReports>,
+): ApiResponse {
   return {
     status: 200,
     body: {
-      reports: listReports(loaded),
+      reports,
       notice: drafts.length
         ? `Your saved expansion choice is now a draft report: ${drafts.map((d) => `“${d.name}”`).join(", ")}.`
         : null,

@@ -2,7 +2,8 @@ import type { IncomingMessage, ServerResponse } from "node:http";
 import type { LoadedConfig } from "../config/load.ts";
 import { projectPaths } from "../config/load.ts";
 import { type ProjectState, projectState } from "../projects/state.ts";
-import { renderGalleryHtml } from "../steps/deck-view.ts";
+import { GALLERY_BOOT, GALLERY_BOOT_DONE, galleryRest, galleryTop } from "../view/gallery-html.ts";
+import { escHtml } from "../view/shell.ts";
 import {
   type ApiResponse,
   getAnalyses,
@@ -20,6 +21,7 @@ import {
 import type { AppContext } from "./app-context.ts";
 import { exportRoute } from "./export-api.ts";
 import { redirect, send, sendHtml, writeRequest } from "./http-util.ts";
+import { homeSuggestion, pageView } from "./project-data.ts";
 import { getReportCurrent, getReportRun } from "./report-api.ts";
 import { isReportsPath, reportsRoute } from "./routes-reports.ts";
 import { serveStatic } from "./static.ts";
@@ -39,8 +41,6 @@ const GETS: Record<string, Get> = {
   "/api/report": (l, q) => getReportCurrent(l, q.get("stage")),
   "/api/report/run": (l, q) => getReportRun(l, q.get("stage"), q.get("id")),
   "/api/expansion": (l) => getExpansion(l),
-  // The home card asks for the top suggested research too (?home=1).
-  "/api/state": (l, q, a) => ({ status: 200, body: stateFor(a, l, q.get("home") === "1") }),
 };
 
 const POSTS: Record<string, Post> = {
@@ -55,10 +55,72 @@ const POSTS: Record<string, Post> = {
 };
 
 /** Derived state, with the home card's cached summary refreshed at the same time. */
-export function stateFor(app: AppContext, loaded: LoadedConfig, suggestion = false): ProjectState {
-  const s = projectState(loaded, app.names, { suggestion });
+export function stateFor(app: AppContext, loaded: LoadedConfig): ProjectState {
+  const s = projectState(loaded, app.names);
   app.remember(projectPaths(loaded).projectId, s);
   return s;
+}
+
+/**
+ * The same, kept a few seconds while the data is unchanged: opening a project asks for it three
+ * times (the redirect, the page's step bar, the Reports tab) and the home card once more.
+ */
+export async function stateNow(app: AppContext, loaded: LoadedConfig): Promise<ProjectState> {
+  const { workspace, projectId } = projectPaths(loaded);
+  const s = await app.computed.get(
+    workspace,
+    `${projectId}:state`,
+    () => projectState(loaded, app.names),
+    STATE_KEEP_MS,
+  );
+  app.remember(projectId, s);
+  return s;
+}
+const STATE_KEEP_MS = 5000;
+
+/**
+ * The state; the home card asks for its "Next" line too (?home=1): the suggestion computed for
+ * the current data, else the last one known. With &compute=1 (only when none was ever known) it
+ * is computed, unless the page went away meanwhile (the home stops asking when Open is pressed).
+ */
+async function getState(
+  app: AppContext,
+  loaded: LoadedConfig,
+  q: URLSearchParams,
+  res: ServerResponse,
+): Promise<void> {
+  const s = await stateNow(app, loaded);
+  if (q.get("home") !== "1") return send(res, 200, s);
+  const compute = q.get("compute") === "1";
+  if (compute) await new Promise((r) => setImmediate(r));
+  if (res.destroyed) return;
+  const suggestion = await homeSuggestion(app, loaded, s, compute);
+  send(res, 200, suggestion === undefined ? s : { ...s, suggestion });
+}
+
+/**
+ * The project page: its top (bar and steps) goes out at once, the rest when the view model is
+ * ready; the view model is kept while the data is unchanged, so a second visit is immediate.
+ */
+async function sendGallery(
+  app: AppContext,
+  loaded: LoadedConfig,
+  res: ServerResponse,
+): Promise<void> {
+  const id = projectPaths(loaded).projectId;
+  const s = await stateNow(app, loaded);
+  const served = { name: app.names(id), apiBase: `/p/${id}/api`, steps: s.steps, stage: s.stage };
+  res.writeHead(200, { "Content-Type": "text/html; charset=utf-8", "Cache-Control": "no-store" });
+  res.write(galleryTop(app.token, served) + GALLERY_BOOT);
+  try {
+    const vm = await pageView(app, loaded);
+    res.end(GALLERY_BOOT_DONE + galleryRest(vm, served));
+  } catch (e) {
+    console.error(`GET /p/${id}/views/gallery.html:`, e);
+    res.end(
+      `<p class="warn" role="alert">The project could not be loaded: ${escHtml(e instanceof Error ? e.message : String(e))} Reload the page; if it keeps happening, restart the tool (npm start).</p></body></html>`,
+    );
+  }
 }
 
 /** Where a project opens (plan 5.2): the workspace for every stage that has a download. */
@@ -79,20 +141,11 @@ export async function projectRoute(
   const id = projectPaths(loaded).projectId;
   if (rest === "/" || rest === "") {
     app.opened(id);
-    return redirect(res, landing(id, stateFor(app, loaded)));
+    return redirect(res, landing(id, await stateNow(app, loaded)));
   }
-  if (rest === "/views/gallery.html" && req.method === "GET") {
-    const s = stateFor(app, loaded);
-    return sendHtml(
-      res,
-      renderGalleryHtml(loaded, app.token, {
-        name: app.names(id),
-        apiBase: `/p/${id}/api`,
-        steps: s.steps,
-        stage: s.stage,
-      }),
-    );
-  }
+  if (rest === "/views/gallery.html" && req.method === "GET") return sendGallery(app, loaded, res);
+  if (rest === "/api/state" && req.method === "GET")
+    return getState(app, loaded, url.searchParams, res);
   if (rest === "/status" && req.method === "GET")
     return sendHtml(res, app.pages.status(id, app.names(id), stateFor(app, loaded), app.token));
   // Several reports per project (plan-reports R1).

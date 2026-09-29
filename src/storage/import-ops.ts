@@ -1,5 +1,6 @@
 import { copyFileSync, existsSync, linkSync, mkdirSync, renameSync, rmSync } from "node:fs";
 import { dirname } from "node:path";
+import { dataChanged } from "./changes.ts";
 import type { Storage } from "./types.ts";
 
 /**
@@ -18,12 +19,14 @@ export function linkOrCopy(
   mkdirSync(dirname(to), { recursive: true });
   try {
     linkSync(from, to);
+    dataChanged();
     return "linked";
   } catch (e) {
     if ((e as NodeJS.ErrnoException).code === "EEXIST") return "exists";
     const tmp = `${to}.${process.pid}.tmp`;
     copyFileSync(from, tmp);
     renameSync(tmp, to);
+    dataChanged();
     return "copied";
   }
 }
@@ -36,10 +39,12 @@ export function moveKey(storage: Storage, fromKey: string, toKey: string): boole
   if (existsSync(to)) throw new Error(`Cannot move ${fromKey}: ${toKey} exists already.`);
   mkdirSync(dirname(to), { recursive: true });
   renameSync(from, to);
+  dataChanged();
   return true;
 }
 
 /** Removes one entry the import created (rollback). */
 export function removeCreated(storage: Storage, k: string): void {
   rmSync(storage.localPath(k), { force: true });
+  dataChanged();
 }
