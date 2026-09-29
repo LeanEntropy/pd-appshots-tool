@@ -142,12 +142,22 @@ async function act(btn, o) {
   return result;
 }
 
-// A re-rendered button (or status line) of a running action is shown busy again at once.
+// The link being followed ({ href, text }) while the next page loads; pages stop refreshing then.
+let actLeaving = null;
+function actLinkBusy(a, text) {
+  if (a.dataset.actLabel === undefined) a.dataset.actLabel = a.innerHTML;
+  a.setAttribute("aria-busy", "true");
+  a.innerHTML = ACT_SPIN() + actEsc(text);
+}
+
+// A re-rendered button (or status line) of a running action, or the link being followed, is shown
+// busy again at once (a plain "Open" again would read as "nothing happened, press it again").
 new MutationObserver(() => {
   for (const [key, cur] of actRunning) {
     const el = actFind(key); if (el && el.getAttribute("aria-busy") !== "true") actBusy(el, cur.text);
     const line = cur.lineOf(); if (line && !line.classList.contains("busy")) actLine(line, "busy", cur.line[0], cur.line[1], cur.line[2]);
   }
+  if (actLeaving) document.querySelectorAll('a[href="' + CSS.escape(actLeaving.href) + '"]:not([aria-busy])').forEach((a) => actLinkBusy(a, actLeaving.text));
 }).observe(document.documentElement, { childList: true, subtree: true });
 
 // Links styled as buttons: "Opening..." while the next page loads.
@@ -157,11 +167,13 @@ document.addEventListener("click", (e) => {
   // A second click while the next page loads does nothing.
   if (a.getAttribute("aria-busy") === "true") { e.preventDefault(); return; }
   const href = a.getAttribute("href") || "";
-  if (!href || href.startsWith("#")) return;
-  if (a.dataset.actLabel === undefined) a.dataset.actLabel = a.innerHTML;
-  a.setAttribute("aria-busy", "true");
-  a.innerHTML = ACT_SPIN() + actEsc(a.dataset.busy || "Opening...");
+  if (!href || href.startsWith("#") || a.hasAttribute("download")) return;
+  // A link to a place on this same page does not leave it.
+  const to = new URL(a.href, location.href);
+  if (to.hash && to.origin + to.pathname + to.search === location.origin + location.pathname + location.search) return;
+  actLeaving = { href, text: a.dataset.busy || "Opening..." };
+  actLinkBusy(a, actLeaving.text);
 });
 // Back/forward cache: a page shown again has its links idle.
-window.addEventListener("pageshow", () => { document.querySelectorAll("a[aria-busy]").forEach((a) => { a.innerHTML = a.dataset.actLabel || a.innerHTML; delete a.dataset.actLabel; a.removeAttribute("aria-busy"); }); });
+window.addEventListener("pageshow", () => { actLeaving = null; document.querySelectorAll("a[aria-busy]").forEach((a) => { a.innerHTML = a.dataset.actLabel || a.innerHTML; delete a.dataset.actLabel; a.removeAttribute("aria-busy"); }); });
 `;

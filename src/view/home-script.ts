@@ -11,7 +11,9 @@ const LABEL = { setup: "Setting up", preview: "Ready to download", pick: "Pick c
 let projects = [];
 const states = {};
 let jobTimer = null;
-let lastLanes = "";
+// The first poll finds no jobs: the states loadProjects() asks for are enough (each costs the tool seconds).
+let lastLanes = "[]";
+const shown = {};
 
 function card(p) {
   const s = states[p.id];
@@ -34,8 +36,8 @@ function card(p) {
 function render() {
   const live = projects.filter((p) => !p.archived);
   const arch = projects.filter((p) => p.archived);
-  document.getElementById("cards").innerHTML = live.map(card).join("")
-    || '<div class="card empty"><p><strong>No projects yet.</strong></p><p class="meta">Import an existing project above, or start a new one with + New project.</p></div>';
+  put("cards", live.map(card).join("")
+    || '<div class="card empty"><p><strong>No projects yet.</strong></p><p class="meta">Import an existing project above, or start a new one with + New project.</p></div>');
   const t = document.getElementById("archivedToggle");
   t.hidden = !arch.length;
   const box = document.getElementById("archivedCards");
@@ -43,10 +45,19 @@ function render() {
   toggle.textContent = (box.hidden ? "Show archived (" : "Hide archived (") + arch.length + ")";
   toggle.setAttribute("aria-expanded", String(!box.hidden));
   toggle.setAttribute("aria-controls", "archivedCards");
-  box.innerHTML = arch.map(card).join("");
+  put("archivedCards", arch.map(card).join(""));
+}
+
+// Unchanged cards are left alone: a card rebuilt under the pointer loses the click on its buttons.
+function put(id, html) {
+  if (shown[id] === html) return;
+  shown[id] = html;
+  document.getElementById(id).innerHTML = html;
 }
 
 async function loadState(id) {
+  // A project is opening: its page needs the tool now, and this page is about to go.
+  if (actLeaving) return;
   try {
     const r = await fetch("/p/" + encodeURIComponent(id) + "/api/state?home=1");
     if (r.ok) { states[id] = await r.json(); render(); }
@@ -58,7 +69,7 @@ async function loadProjects() {
     projects = (await (await fetch("/api/projects")).json()).projects || [];
     render();
     for (const p of projects) if (!p.archived) loadState(p.id);
-  } catch { document.getElementById("cards").innerHTML = '<p class="warn">The tool is not running. Start it with: npm start</p>'; }
+  } catch { put("cards", '<p class="warn">The tool is not running. Start it with: npm start</p>'); }
 }
 
 async function pollJobs() {
