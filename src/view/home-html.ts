@@ -1,3 +1,4 @@
+import { APP_ICON_CSS } from "./app-icon.ts";
 import { HOME_SCRIPT } from "./home-script.ts";
 import { page } from "./pages-html.ts";
 import { appBar } from "./shell.ts";
@@ -42,6 +43,6 @@ ${appBar(null, '<a class="btn-new" href="/new">+ New project</a>')}
 <p id="archivedToggle" hidden><button type="button" class="linkbtn" id="showArchived"></button></p>
 <div id="archivedCards" class="cards" hidden></div>
 </main>
-<style>${HOME_CSS}</style>`;
+<style>${HOME_CSS}${APP_ICON_CSS}</style>`;
   return page("Store Screenshot Recipe", body, token, HOME_SCRIPT);
 }

@@ -7,6 +7,7 @@ import { wizardHtml } from "../view/wizard-html.ts";
 import type { ApiResponse } from "./api.ts";
 import { type AppContext, type AppOptions, createAppContext } from "./app-context.ts";
 import { redirect, send, sendHtml, writeRequest } from "./http-util.ts";
+import { appIconRoute } from "./routes-app-icon.ts";
 import { competitorsRoute } from "./routes-competitors.ts";
 import { countriesRoute } from "./routes-countries.ts";
 import { getImport, getJobs, getProjects, postArchive, postImport } from "./routes-home.ts";
@@ -51,6 +52,7 @@ async function globalRoute(
 ): Promise<boolean> {
   const p = url.pathname;
   const get = req.method === "GET";
+  if (await appIconRoute(app, req, res, p)) return true;
   if (p === "/" && get) {
     sendHtml(res, homeHtml(app.token));
     return true;
