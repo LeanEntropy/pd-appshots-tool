@@ -2,8 +2,13 @@ import type { MarketRef } from "../analysis/play-experiments.ts";
 import type { Config } from "../config/schema.ts";
 import { type AbSectionInput, abEvidence, type PlayContext } from "./ab-section.ts";
 /** The project's Play context for a report of these countries (traffic from the Settings page). */
-export function playContextOf(config: Config, reportMarkets: MarketRef[]): PlayContext {
+export function playContextOf(
+  config: Config,
+  reportMarkets: MarketRef[],
+  appStore = false,
+): PlayContext {
   return {
+    ...(appStore ? { platform: "appstore" as const } : {}),
     reportMarkets,
     projectMarkets: config.markets.map((m) => ({ gl: m.gl, hl: m.hl, label: m.label })),
     traffic: { ...config.options.traffic },

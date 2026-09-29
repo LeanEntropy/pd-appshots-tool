@@ -1,5 +1,5 @@
 ﻿import type { ProjectPaths } from "../config/load.ts";
-import { workspaceStorage } from "../storage/index.ts";
+import { projectKey, workspaceStorage } from "../storage/index.ts";
 import { LIB } from "./layout.ts";
 import { readRefs } from "./refs.ts";
 
@@ -29,7 +29,11 @@ function referenced(paths: ProjectPaths, refsKey: string): Set<string> {
 export function libraryImageKey(paths: ProjectPaths, rel: string): string | null {
   const lib = paths.library;
   const m = IMAGE.exec(rel);
-  if (!lib || !m || !referenced(paths, lib.refsKey).has(m[2] as string)) return null;
+  const sha = m?.[2] as string;
+  // The project's App Store images are its images too (refs-appstore.json, plan-app-store 3).
+  const apple = projectKey({ projectId: paths.projectId }, "refs-appstore.json");
+  if (!lib || !m || !(referenced(paths, lib.refsKey).has(sha) || referenced(paths, apple).has(sha)))
+    return null;
   const k = LIB.imageFile(rel.slice("images/".length));
   const storage = workspaceStorage(paths.workspace);
   if (storage.exists(k)) return k;

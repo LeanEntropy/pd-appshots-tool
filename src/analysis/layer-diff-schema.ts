@@ -224,6 +224,8 @@ export function layerDiffTask(
   anchor: ImageAnalysis,
   market: { label: string; hl: string },
   parts: LayerParts = ALL_PARTS,
+  /** The same screen in another shape (an App Store image against a Play anchor). */
+  reshaped = false,
 ): string {
   const m = anchor.marketingLayer;
   const layer = {
@@ -249,15 +251,17 @@ export function layerDiffTask(
       : { elements: "none" }),
     ...(parts.screen ? { screen: anchor.screenshot.description } : {}),
   };
-  const images = parts.whole
-    ? "The images, in order: every image but the last is the marketing-layer area of the country image; the last is the whole country image, small."
-    : "The images are cut-outs of the country image: where the anchor has its texts and where code found changed pixels. The whole image is not sent: code compared the pixels and found the same screen under the layer, so sameScreen is true unless a cut-out clearly shows otherwise.";
+  const images = reshaped
+    ? "The image is the whole country image. It shows the anchor's game screen in another shape (the App Store's format), so places and sizes differ: compare the texts, the band and the elements, not their exact positions; sameScreen is true when the game screen under the layer is the same."
+    : parts.whole
+      ? "The images, in order: every image but the last is the marketing-layer area of the country image; the last is the whole country image, small."
+      : "The images are cut-outs of the country image: where the anchor has its texts and where code found changed pixels. The whole image is not sent: code compared the pixels and found the same screen under the layer, so sameScreen is true unless a cut-out clearly shows otherwise.";
   const skipped = [
     ...(parts.band ? [] : ["the band"]),
     ...(parts.elements ? [] : ["the elements"]),
   ];
   return [
-    `Compare the marketing layer of this store image from ${market.label} (store language ${market.hl}) with the anchor: the same picture in another country, analysed in full.`,
+    `Compare the marketing layer of this store image from ${market.label} (store language ${market.hl}) with the anchor: the same picture in another country${reshaped ? " or store" : ""}, analysed in full.`,
     images,
     `The anchor's marketing layer${parts.screen ? " and screen" : ""} (JSON):\n${JSON.stringify(layer)}`,
     ...(skipped.length

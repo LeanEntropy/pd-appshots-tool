@@ -1,4 +1,5 @@
 import type { PlaySetup } from "../analysis/play-experiments.ts";
+import type { PpoSetup } from "../appstore/ppo.ts";
 import type { MainDim } from "./group-dims.ts";
 
 /**
@@ -95,7 +96,7 @@ export interface GroupRecommendation {
   variableName: string;
   positions: number[];
   hypothesis: string;
-  setup: PlaySetup;
+  setup: PlaySetup | PpoSetup;
   /** A country's advice that goes the other way (both shown for the user to decide). */
   conflicts: string[];
   sketch: string | null;

@@ -57,6 +57,7 @@ export async function mainSynthesis(
       ours: e.ours,
       competitors: e.competitors,
       ourDeckLength: e.ourDeckLength,
+      store: play.platform,
     },
     ctxForCountry(ai.ctx, s.market.gl),
     (phase, message) => {

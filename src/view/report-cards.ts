@@ -1,3 +1,5 @@
+import { STORE_MARKS } from "./store-marks.ts";
+
 /**
  * The Reports tab's cards (user design, 2026-09-29): one card per report type, side by side and
  * wrapping by width. The Full check first, then Compare countries, then one card per single-country
@@ -37,13 +39,19 @@ ${S} .rt-more { margin: -4px 0 12px; }
 `;
 
 export const REPORT_CARDS_SCRIPT = `
+// Store marks (plan-app-store 13.5: generic icons with the store's name as tooltip), in titles only.
+const RSTORE = ${JSON.stringify({ play: { name: STORE_MARKS.play.name, svg: STORE_MARKS.play.svg }, appstore: { name: STORE_MARKS.appstore.name, svg: STORE_MARKS.appstore.svg } }).replace(/</g, "\\u003c")};
+// Once a project has App Store reports, every card carries its store mark.
+const anyApple = () => typeof reportList !== "undefined" && reportList.some((r) => r.platform === "appstore" || r.type === "stores");
+function rMarks(r) { return r.type === "stores" ? rStoreMark("play") + rStoreMark("appstore") + " " : r.platform === "appstore" ? rStoreMark("appstore") + " " : anyApple() ? rStoreMark("play") + " " : ""; }
+function rStoreMark(p) { const m = RSTORE[p]; return m ? '<span class="store-mark ' + p + '" role="img" title="' + m.name + '" aria-label="' + m.name + '">' + m.svg + "</span>" : ""; }
 // The report drawn below the cards, and each card's dropdown choice (card key -> report id).
 let openRid = null;
 let cardsReady = false;
 const cardPick = {};
 const OPEN_KEY = "ssr.report.open:" + API;
 const STATUS_WORD = { draft: "Draft", partial: "Partial", ready: "Ready", running: "Running", none: "Not written yet" };
-const cardKey = (r) => (r.type === "country" ? "country:" + ((r.markets || [])[0] || "") : r.type);
+const cardKey = (r) => (r.platform === "appstore" ? "appstore:" : "") + (r.type === "country" ? "country:" + ((r.markets || [])[0] || "") : r.type);
 
 // One group per card, each with its reports newest first (the list's own order). Big reports first
 // (user, 2026-09-29): the Full check, Compare countries, the one-country cards in the order of the
@@ -56,7 +64,9 @@ function typeGroups(list) {
     if (!byKey[k]) { byKey[k] = { key: k, type: r.type, reports: [] }; groups.push(byKey[k]); }
     byKey[k].reports.push(r);
   }
-  const rank = (g) => (g.type === "core" ? 0 : g.type === "compare" ? 1 : g.type === "pilot" ? 3 : 2);
+  // Per store: Google Play's cards, then the App Store's, then Google Play vs App Store; the Pilot last.
+  const apple = (g) => (g.reports[0].platform === "appstore" ? 3 : 0);
+  const rank = (g) => (g.type === "pilot" ? 9 : g.type === "stores" ? 7 : apple(g) + (g.type === "core" ? 0 : g.type === "compare" ? 1 : 2));
   const cmpMarkets = (list.find((r) => r.type === "compare") || {}).markets || [];
   const inCmp = (g) => { const k = g.type === "country" ? cmpMarkets.indexOf((g.reports[0].markets || [])[0]) : -1; return k < 0 ? cmpMarkets.length : k; };
   return groups.map((g, i) => ({ g, i })).sort((a, b) => rank(a.g) - rank(b.g) || inCmp(a.g) - inCmp(b.g) || a.i - b.i).map((x) => x.g);
@@ -87,7 +97,7 @@ function chooseOpen(visible, deep) {
 
 function cardTitle(g) {
   const r = g.reports[0];
-  return g.type === "country" ? countryLabel((r.markets || [])[0], (r.countryNames || [])[0]) : esc(r.typeName);
+  return rMarks(r) + (g.type === "country" ? countryLabel((r.markets || [])[0], (r.countryNames || [])[0]) : esc(r.typeName));
 }
 const statusWord = (r) => (r.archived ? "Archived" : STATUS_WORD[r.status.kind] || r.status.text);
 const cardDate = (r) => (r.generatedAt ? rowDate(r.generatedAt) : "Not generated yet");
@@ -105,7 +115,7 @@ function metaFlag(gl, label) {
 function cardMeta(r) {
   const markets = r.markets || [];
   const labels = r.countryLabels || r.countryNames || [];
-  const gls = r.type === "compare" ? markets : r.type === "core" || r.type === "pilot" ? markets.slice(0, 1) : [];
+  const gls = r.type === "compare" || r.type === "stores" ? markets : r.type === "core" || r.type === "pilot" ? markets.slice(0, 1) : [];
   const parts = [];
   if (r.competitors != null) parts.push("<span>" + competitorsText(r.competitors) + "</span>");
   if (gls.length) parts.push('<span class="rt-flags">' + gls.map((gl, i) => metaFlag(gl, labels[i] || FLAG_NAMES[gl] || gl)).join("") + "</span>");

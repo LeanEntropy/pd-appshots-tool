@@ -25,7 +25,7 @@ let showArchived = false;
 let listSeq = 0;
 // Loaded reports: report id -> { version, seq, loaded }.
 const openState = new Map();
-const TYPE_CLS = { pilot: "t-pilot", core: "t-core", country: "t-country", compare: "t-compare" };
+const TYPE_CLS = { pilot: "t-pilot", core: "t-core", country: "t-country", compare: "t-compare", stores: "t-compare" };
 const STATUS_CLS = { ready: "following", partial: "stale", running: "stale", none: "none", draft: "none" };
 const rsafe = (id) => String(id || "").replace(/[^a-z0-9-]/g, "");
 function fmtDate(iso) {
@@ -60,7 +60,7 @@ function reportDescription(r) {
 
 function reportCardHtml(r) {
   const id = rsafe(r.id);
-  const head = '<span class="rc-name">' + flagText(r.name) + "</span>" + pill(TYPE_CLS[r.type] || "", r.typeName)
+  const head = '<span class="rc-name">' + (typeof rMarks === "function" ? rMarks(r) : "") + flagText(r.name) + "</span>" + pill(TYPE_CLS[r.type] || "", r.typeName)
     + pill(STATUS_CLS[r.status.kind] || "none", r.status.text)
     + (r.newer ? '<span class="pill newer" title="' + esc(r.newer) + '">Newer data</span>' : "")
     + (r.archived ? pill("none", "Archived") : "")
@@ -72,7 +72,7 @@ function reportCardHtml(r) {
     + (r.newer ? '<div class="banner stale"><p>' + pill("stale", "Newer data") + " " + esc(r.newer) + (r.canNow ? " Choose \\u201cNow\\u201d to see the report with the current data." : "") + "</p></div>" : "")
     + '<div class="rc-top"><div class="rc-bar"><label>Version: <select class="rc-ver" data-rid="' + id + '">' + versionOptions(r) + "</select></label>"
     + (r.status.kind === "draft" ? b("rc-setup primary", "Continue setting up") : "")
-    + (r.type === "country" || r.type === "compare" ? b("rc-approve" + (r.status.kind === "partial" || !r.versions.length ? " primary" : ""), "Review and approve") : "")
+    + (r.type === "country" || r.type === "compare" || r.type === "stores" || (r.type === "core" && r.platform === "appstore") ? b("rc-approve" + (r.status.kind === "partial" || !r.versions.length ? " primary" : ""), "Review and approve") : "")
     + (r.versions.length || r.canNow ? b("rc-pdf", "Export PDF") : "")
     + (r.versions.length || r.canNow ? b("rc-regen", "Regenerate") : "")
     + b("rc-rename", "Rename") + b("rc-archive", r.archived ? "Restore" : "Archive")
@@ -163,6 +163,8 @@ function showReportVersion(rid, r) {
   box.classList.toggle("noimg", !showImgs);
   // The version picker and the date already say which version this is: only an archived one is noted.
   if (head) head.innerHTML = r.archived ? "Earlier version (archived): kept as it was, never deleted." : "";
+  // "Google Play vs App Store": drawn by the server (escaped there), style A.
+  if (r.storesHtml) { box.innerHTML = r.storesHtml; return; }
   if (r.country && typeof renderCountryReport === "function") {
     const research = typeof researchBody === "function" && r.research && Array.isArray(r.research.items) ? researchBody(r.research) : "";
     renderCountryReport(box, r.country, rid, research);
@@ -247,7 +249,7 @@ document.addEventListener("click", (e) => {
     act(b, { busy: "Building a new version...", status: "rs-" + rid,
       run: async () => { const r = await send(url + "/build", {}); await loadReport(); if (typeof loadSuggestions === "function") loadSuggestions(); return r; },
       done: "Built a new version, from the saved analyses (no AI).",
-      fail: () => { getJson(url + "/plan").then((p) => openBuilder({ id: isPresetType(rep.type) ? null : rid, type: p.type, scope: p.scope, name: isPresetType(rep.type) ? "" : p.name })).catch(() => {}); } });
+      fail: () => { getJson(url + "/plan").then((p) => openBuilder({ id: isPresetType(rep.type, rep.platform) ? null : rid, type: p.type, scope: p.scope, name: isPresetType(rep.type, rep.platform) ? "" : p.name })).catch(() => {}); } });
   } else if (b.classList.contains("rc-archive")) {
     const archived = !rep.archived;
     act(b, { busy: archived ? "Archiving..." : "Restoring...", status: "reportStatus",

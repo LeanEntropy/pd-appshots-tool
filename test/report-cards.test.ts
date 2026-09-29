@@ -233,3 +233,33 @@ test("the served Reports tab: cards row, no helper sentence, no What next block"
   const script = html.split("<script>")[1]?.split("</script>")[0] ?? "";
   assert.doesNotThrow(() => new Function(script));
 });
+
+test("cards per store: Google Play, then the App Store, then Google Play vs App Store; the Pilot last; store marks", () => {
+  const { t, boxes } = page();
+  const apple = { platform: "appstore" as const };
+  const core = { type: "core" as const, typeName: "Full check", markets: ["us"] };
+  t.setList([
+    PILOT,
+    CORE,
+    rep({ id: "r-a-jp", name: "App Store: Japan", ...apple }),
+    rep({ id: "r-a-core", name: "App Store: Full check", ...core, ...apple }),
+    rep({
+      id: "r-st",
+      name: "GP vs AS",
+      type: "stores",
+      typeName: "Google Play vs App Store",
+      markets: ["us"],
+    }),
+    rep({ id: "r-jp", name: "Japan" }),
+  ]);
+  t.render();
+  const cards = boxes.reportCards?.innerHTML ?? "";
+  assert.deepEqual(
+    titles(cards).map((x) => x.trim()),
+    ["Full check", "Japan", "Full check", "Japan", "Google Play vs App Store", "Pilot"],
+  );
+  const h4 = [...cards.matchAll(/<h4>(.*?)<\/h4>/g)].map((m) => m[1] ?? "");
+  assert.match(h4[0] ?? "", /store-mark play/);
+  assert.match(h4[2] ?? "", /store-mark appstore/);
+  assert.match(h4[4] ?? "", /store-mark play.*store-mark appstore/);
+});

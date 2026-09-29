@@ -38,6 +38,8 @@ export function plannedSteps(
   loaded: LoadedConfig,
   plan: ScopePlan,
 ): { key: string; label: string }[] {
+  // "Google Play vs App Store": its written parts are made by code.
+  if (plan.type === "stores") return [{ key: stepKey.build, label: "Building the report" }];
   const m = reportModels(loaded);
   const isMain = (x: { gl: string; hl: string }) => x.gl === plan.main.gl && x.hl === plan.main.hl;
   const out: { key: string; label: string }[] = [];

@@ -221,3 +221,46 @@ test("the served page carries the builder, the suggestions and a script that par
   const script = html.split("<script>")[1]?.split("</script>")[0] ?? "";
   assert.doesNotThrow(() => new Function(script));
 });
+
+test("builder: the App Store choice once it is on; the Pilot stays on Google Play; per-store lines", () => {
+  const p = page();
+  (p as Record<string, unknown>).rStoreMark = (k: string) => `[${k}]`;
+  const o = {
+    ...opts(true),
+    appStore: true,
+    types: { ...opts(true).types, stores: { open: true, reason: "" } },
+    competitors: [
+      {
+        appId: "a.app",
+        name: "Capybara Go",
+        inPick: true,
+        sold: { us: "ok", tw: "ok" },
+        soldApple: { us: "ok", tw: "not-sold" },
+      },
+    ],
+  };
+  Object.assign(p.bld, {
+    opts: o,
+    type: "compare",
+    platform: "appstore",
+    markets: [US, TW],
+    comps: ["a.app"],
+  });
+  const html = p.builderHtml();
+  assert.match(html, /Which store\?/);
+  assert.match(html, /value="appstore" checked/);
+  assert.match(html, /Google Play vs App Store/);
+  assert.match(html, /value="pilot" disabled> Pilot <span class="meta">\(runs on Google Play\)/);
+  assert.match(html, /not sold in Taiwan/, "App Store availability");
+  Object.assign(p.bld, { opts: opts(true) });
+  assert.doesNotMatch(p.builderHtml(), /Google Play vs App Store|Which store/);
+  const needs = p.needsHtml({
+    ...plan,
+    byStore: {
+      play: { full: 0, layerDiff: 0, identical: 0, samePicture: 0, toConfirm: 0 },
+      appstore: { full: 3, layerDiff: 2, identical: 1, samePicture: 1, toConfirm: 2 },
+    },
+  });
+  assert.match(needs, /App Store: full analysis 3, text comparison 2, free 1/);
+  assert.doesNotMatch(needs, /Google Play: full analysis/);
+});

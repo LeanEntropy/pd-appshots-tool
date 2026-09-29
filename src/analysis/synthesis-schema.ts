@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { type Store, storeProblems } from "../appstore/store-prompts.ts";
 import type { Taxonomy } from "../config/load.ts";
 import { artWording } from "./art-wording.ts";
 import { isEventLine } from "./image-tags.ts";
@@ -150,8 +151,10 @@ export function recommendationProblems(
   minLen: number,
   maxLen: number,
   ours: ReadonlyMap<number, string> = new Map(),
+  /** The App Store: Guideline 2.3.3 is checked too (title art only is refused). */
+  store?: Store,
 ): string[] {
-  const problems: string[] = [];
+  const problems: string[] = [...storeProblems(store, r.positions)];
   const pos = r.positions.map((p) => p.position);
   const n = pos.length;
   if (n < minLen || n > maxLen)

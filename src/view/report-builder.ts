@@ -23,29 +23,35 @@ export const BUILDER_CSS = `
 `;
 
 export const BUILDER_SCRIPT = `
-const bld = { opts: null, id: null, type: "country", markets: [], comps: [], charts: [], leftOut: [], name: "", nameEdited: false, plan: null, seq: 0, timer: null };
-const BTYPES = [["pilot", "Pilot"], ["core", "Full check"], ["country", "One country"], ["compare", "Compare countries"]];
-const isPresetType = (t) => t === "pilot" || t === "core";
+const bld = { opts: null, id: null, type: "country", platform: "play", markets: [], comps: [], charts: [], leftOut: [], name: "", nameEdited: false, plan: null, seq: 0, timer: null };
+const BTYPES = [["pilot", "Pilot"], ["core", "Full check"], ["country", "One country"], ["compare", "Compare countries"], ["stores", "Google Play vs App Store"]];
+// The Pilot and the Google Play Full check run from the Analysis page; an App Store Full check is a report of the builder.
+const isPresetType = (t, p) => (t === "pilot" || t === "core") && (p === undefined ? bld.platform : p) !== "appstore";
+const isAppleType = (t) => t === "core" || t === "country" || t === "compare";
 const mkey = (m) => m.gl + "|" + m.hl;
 
 function builderScope() {
   if (isPresetType(bld.type)) return { type: bld.type, markets: [], competitors: [], includeCharts: [] };
-  const s = { type: bld.type, markets: bld.markets.map((m) => ({ gl: m.gl, hl: m.hl })), competitors: bld.comps.slice(), includeCharts: bld.charts.slice() };
+  const apple = bld.platform === "appstore" && isAppleType(bld.type) ? { platform: "appstore" } : {};
+  if (bld.type === "core") return { type: "core", markets: [], competitors: [], includeCharts: [], ...apple };
+  const s = { type: bld.type, ...apple, markets: bld.markets.map((m) => ({ gl: m.gl, hl: m.hl })), competitors: bld.comps.slice(), includeCharts: bld.charts.slice() };
   if (bld.leftOut.length) s.leftOut = bld.leftOut.slice();
   return s;
 }
 function scopeProblem() {
-  if (isPresetType(bld.type)) return "";
+  if (isPresetType(bld.type) || bld.type === "core") return "";
+  if (bld.type === "stores" && !bld.markets.length) return "Pick at least one country.";
   if (bld.type === "country" && bld.markets.length !== 1) return "Pick the country of this report.";
   if (bld.type === "compare" && bld.markets.length < 2) return "Tick at least two countries to compare.";
   return "";
 }
 
-function availability(sold) {
+function availability(c) {
+  const sold = bld.platform === "appstore" && bld.type !== "stores" ? c.soldApple || {} : c.sold;
   const bad = bld.markets.filter((m) => sold[m.gl] !== "ok");
   if (!bld.markets.length) return "";
   if (!bad.length) return '<span class="tag">' + (bld.markets.length > 1 ? "in all " + bld.markets.length : "sold here") + "</span>";
-  return bad.map((m) => '<span class="tag no">' + (sold[m.gl] === "not-sold" ? "not sold in " : "not downloaded in ") + esc(theCountryOf(m.label)) + "</span>").join("");
+  return bad.map((m) => '<span class="tag no">' + (sold[m.gl] === "not-sold" ? "not sold in " : bld.platform === "appstore" && bld.type !== "stores" ? "no App Store page read in " : "not downloaded in ") + esc(theCountryOf(m.label)) + "</span>").join("");
 }
 const countryOf = (label) => String(label || "").replace(/\\s*\\([^)]*\\)\\s*$/, "");
 // Inside a sentence: "the United States", "the Philippines", "Japan".
@@ -53,18 +59,23 @@ const theCountryOf = (label) => { const n = countryOf(label); return /^(United |
 
 function builderHtml() {
   const o = bld.opts;
-  const types = BTYPES.map(([k, l]) => {
-    const t = o.types[k];
+  // Google Play vs App Store only once the App Store is switched on for the project.
+  const types = BTYPES.filter(([k]) => o.types[k] && (k !== "stores" || o.appStore)).map(([k, l]) => {
+    const t = k === "pilot" && bld.platform === "appstore" ? { open: false, reason: "runs on Google Play" } : o.types[k];
     const locked = bld.id && k !== bld.type;
     return '<label class="' + (t.open ? "" : "off") + '"><input type="radio" name="btype" value="' + k + '"' + (bld.type === k ? " checked" : "") + (t.open && !locked ? "" : " disabled") + "> " + l + (t.open ? "" : ' <span class="meta">(' + esc(t.reason) + ")</span>") + "</label>";
   }).join("");
+  // The store (plan-app-store 7.1): Google Play by default; the App Store once it is switched on.
+  const stores = o.appStore && bld.type !== "stores" ? '<fieldset><legend>Which store?</legend>' + [["play", "Google Play"], ["appstore", "App Store"]].map(([k, l]) => '<label><input type="radio" name="bstore" value="' + k + '"' + (bld.platform === k ? " checked" : "") + (bld.id && k !== bld.platform ? " disabled" : "") + "> " + rStoreMark(k) + " " + l + "</label>").join("") + "</fieldset>" : "";
   let body;
-  if (isPresetType(bld.type)) {
+  if (bld.type === "core" && bld.platform === "appstore") {
+    body = "<p>" + esc(o.main.label) + ", the main country, on the App Store. Competitors: your pick on the Competitors page (" + o.pick.length + ").</p>";
+  } else if (isPresetType(bld.type)) {
     body = '<p>' + esc(o.main.label) + ", the main country, fixed. Competitors: your pick on the Competitors page (" + o.pick.length + "). " + (bld.type === "pilot" ? "The Pilot uses the first picked competitors." : "") + "</p>";
   } else {
     const input = bld.type === "country" ? "radio" : "checkbox";
     const countries = o.markets.map((m) => '<label><input type="' + input + '" name="bcountry" value="' + esc(mkey(m)) + '"' + (bld.markets.some((x) => mkey(x) === mkey(m)) ? " checked" : "") + "> " + countryLabel(m.gl, m.label) + "</label>").join("");
-    const comp = (c, name) => '<label class="bcomp"><input type="checkbox" name="' + name + '" value="' + esc(c.appId) + '"' + ((name === "bcomp" ? bld.comps : bld.charts).includes(c.appId) ? " checked" : "") + "> " + esc(c.name) + (c.inPick ? ' <span class="tag">in your pick</span>' : "") + availability(c.sold) + "</label>";
+    const comp = (c, name) => '<label class="bcomp"><input type="checkbox" name="' + name + '" value="' + esc(c.appId) + '"' + ((name === "bcomp" ? bld.comps : bld.charts).includes(c.appId) ? " checked" : "") + "> " + esc(c.name) + (c.inPick ? ' <span class="tag">in your pick</span>' : "") + availability(c) + "</label>";
     body = '<div class="bcols"><fieldset><legend>Countries</legend>' + countries
       + (bld.type === "compare" ? '<p class="meta">' + esc(o.main.label) + " (the main country) is used as the reference for what changed, ticked or not.</p>"
         + '<p><button type="button" class="cpOpen" data-act-key="cp-builder">Add countries to the project</button></p>' : "") + "</fieldset>"
@@ -74,7 +85,7 @@ function builderHtml() {
       + '<p><label>Name <input type="text" id="bName" maxlength="120" value="' + esc(bld.name) + '"></label> <span class="meta">(suggested, you can change it)</span></p>';
   }
   return '<h3 id="bTitle" tabindex="-1">' + (bld.id ? "Report setup (saved as a draft)" : "New report") + "</h3>"
-    + '<fieldset><legend>What kind?</legend>' + types + "</fieldset>"
+    + '<fieldset><legend>What kind?</legend>' + types + "</fieldset>" + stores
     + (o.warning && bld.type !== "core" && bld.type !== "pilot" ? '<p class="bwarn">' + esc(o.warning) + "</p>" : "")
     + body + '<div id="bSame" aria-live="polite"></div><div id="bNeeds" aria-live="polite"></div><p class="act-msg" id="bStatus" hidden></p><div class="bacts" id="bActs"></div>';
 }
@@ -120,6 +131,7 @@ async function openBuilder(pre) {
   const open = (t) => bld.opts.types[t] && bld.opts.types[t].open;
   bld.id = p.id || null;
   bld.type = p.type || sc.type || (open("country") ? "country" : "pilot");
+  bld.platform = sc.platform === "appstore" ? "appstore" : "play";
   if (!open(bld.type)) bld.type = "pilot";
   bld.markets = (sc.markets || []).map((m) => bld.opts.markets.find((x) => x.gl === m.gl)).filter(Boolean);
   if (bld.type === "country" && bld.markets.length > 1) bld.markets = bld.markets.slice(0, 1);
@@ -216,7 +228,13 @@ async function recompute(seq) {
 document.addEventListener("change", (e) => {
   const t = e.target;
   if (!t || !t.closest || !t.closest("#builder")) return;
-  if (t.name === "btype") {
+  if (t.name === "bstore") {
+    bld.platform = t.value === "appstore" ? "appstore" : "play";
+    if (bld.platform === "appstore" && bld.type === "pilot") bld.type = "core";
+    bld.leftOut = [];
+    renderBuilder();
+    builderChanged(!isPresetType(bld.type));
+  } else if (t.name === "btype") {
     bld.type = t.value;
     if (bld.type === "country" && bld.markets.length > 1) bld.markets = bld.markets.slice(0, 1);
     bld.leftOut = [];

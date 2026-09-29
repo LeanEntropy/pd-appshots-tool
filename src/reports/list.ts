@@ -12,11 +12,18 @@ import { eligibility } from "./eligibility.ts";
 import { mainMarketRef } from "./main-market.ts";
 import { syncPresetReports } from "./migrate.ts";
 import { countryName } from "./names.ts";
+import { forStore } from "./plan-context.ts";
 import { sameScope } from "./same-scope.ts";
 import { type PlanContext, planContext } from "./scope-plan.ts";
 import { newerReason } from "./stale.ts";
 import { listDefs, readVersionInputs, runFolders, versionFileKey } from "./store.ts";
-import { isPreset, type ReportDef, TYPE_NAMES } from "./types.ts";
+import {
+  isPresetDef,
+  platformOfScope,
+  type ReportDef,
+  type ReportPlatform,
+  TYPE_NAMES,
+} from "./types.ts";
 
 export interface VersionSummary {
   id: string;
@@ -29,6 +36,8 @@ export interface VersionSummary {
 export interface ReportSummary {
   id: string;
   name: string;
+  /** The store the report reads (its mark on the card). */
+  platform?: ReportPlatform;
   type: ReportDef["type"];
   typeName: string;
   countries: string;
@@ -126,11 +135,11 @@ export function listReports(loaded: LoadedConfig): ReportSummary[] {
         : null;
     let status: ReportSummary["status"] = newest
       ? { kind: "ready", text: "Ready" }
-      : isPreset(d.type)
+      : isPresetDef(d)
         ? { kind: "none", text: "Not run yet" }
         : { kind: "draft", text: "Draft" };
     let newer: string | null = null;
-    if (isPreset(d.type)) {
+    if (isPresetDef(d) && (d.type === "pilot" || d.type === "core")) {
       const x = current(d.type);
       names ??= x.plan.games.filter((g) => g.appId !== x.ourAppId).map((g) => g.name);
       if (newest && !files?.has("recommendations.json") && !saved?.hasRecommendations)
@@ -144,13 +153,15 @@ export function listReports(loaded: LoadedConfig): ReportSummary[] {
       if (newest) newer = newerReason(x, main, inputs, hash);
     } else if (!newest) {
       ctx ??= planContext(loaded);
-      status = { kind: "draft", text: draftStatus(loaded, d, ctx) };
-    } else {
+      const st = forStore(loaded, d.scope.platform, ctx);
+      status = { kind: "draft", text: draftStatus(st.loaded, d, st.ctx) };
+    } else if (d.type !== "stores") {
       elig ??= eligibility(loaded);
       ctx ??= planContext(loaded);
+      const st = forStore(loaded, d.scope.platform, ctx);
       newer = inputs?.derivedFrom
-        ? derivedNewer(loaded, d, inputs, defs, ctx)
-        : builderNewer(loaded, d, inputs, elig, ctx);
+        ? derivedNewer(st.loaded, d, inputs, defs, st.ctx)
+        : builderNewer(st.loaded, d, inputs, elig, st.ctx);
       const left =
         newest && files?.has("country-report.json") ? missingParts(s, paths, newest.id) : 0;
       if (left)
@@ -178,8 +189,9 @@ export function listReports(loaded: LoadedConfig): ReportSummary[] {
       status,
       newer,
       archived: d.archived,
-      deletable: !isPreset(d.type),
-      canNow: isPreset(d.type),
+      deletable: !isPresetDef(d),
+      canNow: isPresetDef(d),
+      platform: platformOfScope(d.scope),
       versions,
       derivedFrom: d.derivedFrom
         ? {

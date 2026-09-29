@@ -18,6 +18,8 @@ import {
   type PlaySetup,
   type TestVariable,
 } from "../analysis/play-experiments.ts";
+import type { PpoSetup } from "../appstore/ppo.ts";
+import { storeVariantProblems } from "../appstore/store-prompts.ts";
 import type { TrafficLevel } from "../settings/schema.ts";
 import { abCandidates, codeTestPositions, type Evidence } from "./ab-candidates.ts";
 import { card, cleanVariant, codeCard, noIds, plainReason } from "./ab-cards.ts";
@@ -30,6 +32,8 @@ export interface PlayContext {
   projectMarkets: MarketRef[];
   traffic: Record<string, TrafficLevel>;
   preRegistration: boolean;
+  /** An App Store report: tests are Product Page Optimization tests (missing: Google Play). */
+  platform?: "appstore";
 }
 
 export interface AbTestCard {
@@ -57,7 +61,7 @@ export interface AbTestCard {
   control: { position: number; screen: string; headline: string; orientation: string }[];
   metric: { name: string; meaning: string };
   guardrail: string;
-  setup: PlaySetup;
+  setup: PlaySetup | PpoSetup;
   impact: { size: string; reason: string } | null;
 }
 
@@ -123,7 +127,10 @@ export function abTestsPart(
     const seen = new Set<string>();
     const perCountry = new Map<string, number>();
     for (const t of x.ai.tests) {
-      const problems = testProblems(t, rules);
+      const problems = [
+        ...testProblems(t, rules),
+        ...storeVariantProblems(x.play.platform, t.variant.slots),
+      ];
       const key = `${t.variable}|${variantTargets(t.variant).join(",")}`;
       if (!problems.length && seen.has(key)) problems.push("the same change as an earlier test");
       const low = t.countries.filter(

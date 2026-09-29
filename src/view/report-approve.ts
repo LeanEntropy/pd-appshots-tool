@@ -37,6 +37,7 @@ function reportApprovalHtml(r) {
   const nothing = !paid.length && !p.text.parts.length;
   return '<h3 id="approvalTitle">Approve \\u201c' + esc(r.name) + "\\u201d?</h3>" + grouped + doubt
     + '<p class="big"><strong>' + paid.length + " images will be sent to AI</strong> (full analysis: " + p.counts.full + ", text comparison: " + p.counts.layerDiff + "). Already analysed or identical, free: " + p.counts.identical + ".</p>"
+    + (p.byStore ? '<table class="passes">' + storeLines(p.byStore).join("") + "</table>" : "")
     + blocks
     + '<table class="passes"><tr><th>Step</th><th>Model</th><th>Calls</th><th>Images</th><th>Cost</th></tr>' + passes + text + "</table>"
     + '<p class="big">Estimated total: <strong>' + usdRange(p.usd) + "</strong> (limit " + money(p.limitUsd) + " for this report). The run never spends more than the limit; it stops before and keeps what is finished.</p>"

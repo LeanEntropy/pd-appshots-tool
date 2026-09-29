@@ -49,7 +49,7 @@ export function groupsFor(
     main,
     saved: def.scope.groups,
     regions: loadCountries().groupRegions,
-    play: playContextOf(loaded.config, def.scope.markets),
+    play: playContextOf(loaded.config, def.scope.markets, def.scope.platform === "appstore"),
   });
 }
 

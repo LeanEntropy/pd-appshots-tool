@@ -1,3 +1,4 @@
+import { abStoreLines, type Store, storeVariantProblems } from "../appstore/store-prompts.ts";
 import type { KbRecord } from "../kb/step.ts";
 import { abKb } from "../kb/step-io.ts";
 import { kbPart, marksOf, withMarks } from "../kb/synthesis-kb.ts";
@@ -29,6 +30,8 @@ export interface AbTestsInput {
   /** One line per current screenshot (synthesis `brief`). */
   brief: (e: DeckEntry) => string;
   recommendations: Recommendations | null;
+  /** The App Store: PPO tests and Apple's rules (missing: Google Play). */
+  store?: Store;
 }
 
 /** The task text: the gaps (by code), our deck, the recommendations and the rules, as data. */
@@ -59,7 +62,7 @@ export function abTestsTask(x: AbTestsInput): string {
     : "none written yet";
   return [
     "Write the A/B tests to run next.",
-    `Store page: Google Play, ${x.market.label} (country code ${x.market.gl}, language ${languageName(x.market.hl)}). Store visitors per month: ${x.traffic}.`,
+    `Store page: ${x.store === "appstore" ? "App Store" : "Google Play"}, ${x.market.label} (country code ${x.market.gl}, language ${languageName(x.market.hl)}). Store visitors per month: ${x.traffic}.`,
     `Write ${most < 2 ? `at most ${most}` : `between 2 and ${most}`} tests, in leverage order (highest first). Our deck has ${r.ourDeckLength} screenshots; a variant has ${r.length.min} to ${r.length.max}.`,
     `The one variable a test changes: ${Object.entries(VARIABLE_NAMES)
       .map(([k, v]) => `${k} = ${v}`)
@@ -68,11 +71,16 @@ export function abTestsTask(x: AbTestsInput): string {
     `Gaps between our deck and the competitors, computed by code, most leverage first (JSON):\n${JSON.stringify(gaps)}`,
     `Our current screenshots, in store order (the control):\n${x.ours.map(x.brief).join("\n")}`,
     `The recommended deck (the full changes, for context):\n${recs}`,
+    ...abStoreLines(x.store),
   ].join("\n\n");
 }
 
-function problemList(v: AbTestsOutput, r: TestRules): string[] {
-  const per = v.tests.flatMap((t, i) => testProblems(t, r).map((p) => `test ${i + 1}: ${p}`));
+function problemList(v: AbTestsOutput, r: TestRules, store?: Store): string[] {
+  const per = v.tests.flatMap((t, i) =>
+    [...testProblems(t, r), ...storeVariantProblems(store, t.variant.slots)].map(
+      (p) => `test ${i + 1}: ${p}`,
+    ),
+  );
   const most = Math.min(5, r.evidence.size);
   const count =
     v.tests.length > most ? [`write at most ${most} tests (got ${v.tests.length})`] : [];
@@ -115,7 +123,7 @@ export async function writeAbTests(
     ctx,
   );
   if (!first.value) return { value: null, problems: first.problems, record: null };
-  const problems = [...problemList(first.value, x.rules), ...k.enforced(first.value)];
+  const problems = [...problemList(first.value, x.rules, x.store), ...k.enforced(first.value)];
   const retry = problems.length
     ? await validatedCall(
         "ab-tests-repair",
@@ -133,7 +141,7 @@ export async function writeAbTests(
   const marks = ctx.kb ? marksOf(ctx.kb, kept.record) : null;
   return {
     value: withMarks(kept.value, marks),
-    problems: kept.value ? problemList(kept.value, x.rules) : [],
+    problems: kept.value ? problemList(kept.value, x.rules, x.store) : [],
     record: kept.record,
   };
 }

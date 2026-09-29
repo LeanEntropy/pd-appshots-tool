@@ -21,12 +21,14 @@ import {
   setArchived,
   versionFileKey,
 } from "../reports/store.ts";
-import { isPreset } from "../reports/types.ts";
+import type { StoresReport } from "../reports/stores-types.ts";
+import { isPresetDef } from "../reports/types.ts";
 import { upgradeWordsMd } from "../reports/words-md.ts";
 import { withWordStatus } from "../reports/words-status.ts";
 import { settingsOf } from "../settings/access.ts";
 import { workspaceStorage } from "../storage/index.ts";
 import { markdownToHtml } from "../view/md-html.ts";
+import { storesReportHtml } from "../view/report-stores.ts";
 import type { ApiResponse } from "./api.ts";
 import { GroupsBody, safe, saveGroupsOf } from "./reports-groups-api.ts";
 
@@ -88,7 +90,7 @@ export function getReportVersion(loaded: LoadedConfig, id: string, vid: string):
   const def = findDef(loaded, id);
   if (!def) return gone();
   if (vid === "now") {
-    if (!isPreset(def.type))
+    if (!isPresetDef(def) || (def.type !== "pilot" && def.type !== "core"))
       return { status: 404, body: { problems: ["This report has no live view."] } };
     return {
       status: 200,
@@ -124,6 +126,11 @@ export function getReportVersion(loaded: LoadedConfig, id: string, vid: string):
     up ??= repeatUpgrader(loaded);
     return up;
   };
+  if (files.has("stores-report.json")) {
+    const raw = safe(() => s.getJson(versionFileKey(paths, entry.id, "stores-report.json")));
+    if ((raw as { kind?: unknown } | null)?.kind === "stores")
+      return { status: 200, body: { ...meta, storesHtml: storesReportHtml(raw as StoresReport) } };
+  }
   if (files.has("country-report.json")) {
     try {
       const raw = s.getJson(versionFileKey(paths, entry.id, "country-report.json")) as {

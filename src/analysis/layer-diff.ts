@@ -4,7 +4,7 @@ import type { ImageDb } from "../store/imagedb.ts";
 import type { PixelVerdict } from "../store/pixel-diff.ts";
 import { stableHash } from "../util/hash.ts";
 import { type CallContext, type ChunkImage, validatedCall } from "./call.ts";
-import { type LayerPixel, layerCrops, layerParts } from "./layer-crops.ts";
+import { type LayerPixel, layerCrops, layerParts, reshapedPair } from "./layer-crops.ts";
 import {
   CROP_VERSION,
   combinedReading,
@@ -142,8 +142,11 @@ export async function compareLayer(
   },
 ): Promise<LayerDiffRecord> {
   const input = keyInput(item.imageId, anchor, d.provider.model, d.prompt.hash);
-  const parts = layerParts(d.pixel);
-  const crops = await layerCrops(d.paths, d.db, item.imageId, anchor.final, d.pixel);
+  // An App Store image against a Play anchor of another shape: no pixel check, the whole image.
+  const reshaped = reshapedPair(d.db.get(item.imageId), d.db.get(anchor.imageId));
+  const pixel = reshaped ? null : d.pixel;
+  const parts = layerParts(pixel);
+  const crops = await layerCrops(d.paths, d.db, item.imageId, anchor.final, pixel, reshaped);
   const chunk: ChunkImage[] = crops.images.map((image, i) => ({
     imageId: `${item.imageId}-crop-${crops.hashes[i]?.slice(0, 16)}`,
     image,
@@ -152,7 +155,7 @@ export async function compareLayer(
     "layer-diff",
     d.provider,
     d.prompt,
-    layerDiffTask(anchor.final, item, parts),
+    layerDiffTask(anchor.final, item, parts, reshaped),
     chunk,
     layerAnswerSchema(parts),
     (v) => layerDiffProblems(v, anchor.final),
@@ -181,7 +184,7 @@ export async function compareLayer(
     schema: LAYER_DIFF_SCHEMA,
     crop: CROP_VERSION,
     cropHashes: crops.hashes,
-    ...(d.pixel ? { pixel: { verdict: d.pixel.verdict, outside: d.pixel.result.outside } } : {}),
+    ...(pixel ? { pixel: { verdict: pixel.verdict, outside: pixel.result.outside } } : {}),
     problems: r.problems,
     runId: d.runId,
     updatedAt: new Date().toISOString(),

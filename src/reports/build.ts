@@ -14,9 +14,10 @@ import { readDeck } from "../store/manifest.ts";
 import { stableHash } from "../util/hash.ts";
 import { buildCountryVersion } from "./country-version.ts";
 import { eligibility, eligibilityProblem, scopeIncomplete } from "./eligibility.ts";
+import { forStore } from "./plan-context.ts";
 import { buildScopePlan, type PlanContext, planContext, type ScopePlan } from "./scope-plan.ts";
 import { readDef } from "./store.ts";
-import { isPreset, type MarketRef, type ReportDef } from "./types.ts";
+import { isPresetDef, type MarketRef, type ReportDef } from "./types.ts";
 import { buildPresetVersion } from "./version.ts";
 
 /** One country of a builder report: the inputs the existing report builder reads. */
@@ -124,12 +125,15 @@ export async function buildReportVersion(
   o: { now?: Date; research?: (plan: ScopePlan) => { lines: string[]; saved: unknown } } = {},
 ): Promise<BuildResult> {
   const now = o.now ?? new Date();
+  // The report's store (plan-app-store 7.1): an App Store report reads the App Store decks.
+  const store = forStore(loaded, def.scope.platform);
+  loaded = store.loaded;
   const e = eligibility(loaded);
   const refused = eligibilityProblem(e, def.type);
   if (refused) return { ok: false, status: 409, problem: refused };
   const incomplete = scopeIncomplete(def.scope);
   if (incomplete) return { ok: false, status: 409, problem: incomplete };
-  const ctx = planContext(loaded);
+  const ctx = store.ctx;
   const plan = buildScopePlan(loaded, def.scope, { ctx });
   if (!plan.instant)
     return {
@@ -137,7 +141,7 @@ export async function buildReportVersion(
       status: 409,
       problem: `This report needs ${plan.counts.newImages} new ${plan.counts.newImages === 1 ? "image" : "images"} analysed first (about $${plan.usd[0].toFixed(2)} to $${plan.usd[1].toFixed(2)}). Nothing was sent.`,
     };
-  if (!isPreset(def.type))
+  if (!isPresetDef(def))
     return buildCountryVersion(loaded, def, {
       now,
       ctx,

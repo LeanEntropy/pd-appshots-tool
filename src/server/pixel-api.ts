@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { type LoadedConfig, projectPaths } from "../config/load.ts";
+import { crossStorePair } from "../reports/apple-scope.ts";
 import { savePairVerdicts } from "../reports/match-check.ts";
 import { openImageDb } from "../store/imagedb.ts";
 import { pixelCandidate } from "../store/pixel-diff.ts";
@@ -28,7 +29,8 @@ export function postPairVerdicts(loaded: LoadedConfig, raw: unknown): ApiRespons
   for (const p of b.data.pairs) {
     const a = db.get(p.image);
     const c = db.get(p.anchor);
-    if (!a || !c || a.id === c.id || !pixelCandidate(a, c))
+    const ok = !!a && !!c && a.id !== c.id && pixelCandidate(a, c);
+    if (!ok && !crossStorePair(loaded, p.image, p.anchor))
       return { status: 400, body: { problems: [reload] } };
   }
   savePairVerdicts(loaded, b.data.pairs);

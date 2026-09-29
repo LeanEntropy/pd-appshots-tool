@@ -48,6 +48,12 @@ export function storeMarksHtml(
   return `<span class="store-marks">${marks.join("")}</span>`;
 }
 
+/** One store's mark with the store's name as its tooltip (report titles and headings). */
+export function storeMarkHtml(platform: StoreMarkPlatform): string {
+  const n = STORE_MARKS[platform].name;
+  return `<span class="store-mark ${platform}" role="img" title="${n}" aria-label="${n}">${STORE_MARKS[platform].svg}</span>`;
+}
+
 /** The same in the pages' script: storeMark(platform, countryNames) builds one mark element. */
 export const STORE_MARK_SCRIPT = `
 const STORE_MARKS = ${JSON.stringify(STORE_MARKS).replace(/</g, "\\u003c")};

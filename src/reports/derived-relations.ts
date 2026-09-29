@@ -137,7 +137,7 @@ export function reconcileDerived(
       if (!report) continue;
       if (!isReady(report) && !entry.manual.includes(v.id)) continue;
       const parentInputs = readVersionInputs(s, paths, v.id);
-      const play = playContextOf(loaded.config, []);
+      const play = playContextOf(loaded.config, [], def.scope.platform === "appstore");
       for (const c of report.countries) {
         if (c.isMain) continue;
         let child = entry.children.find((x) => x.gl === c.gl);
@@ -210,6 +210,7 @@ function ensureChildDef(
       markets: [{ gl: country.gl, hl: country.hl, label: country.label }],
       competitors: parent.scope.competitors,
       includeCharts: parent.scope.includeCharts,
+      ...(parent.scope.platform ? { platform: parent.scope.platform } : {}),
       ...(parent.scope.leftOut
         ? { leftOut: parent.scope.leftOut.filter((x) => x.gl === country.gl) }
         : {}),

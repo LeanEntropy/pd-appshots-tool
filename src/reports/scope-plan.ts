@@ -1,23 +1,29 @@
-import { type SameCheck, sameCheck, withRepeatOf } from "../analysis/deck-repeats.ts";
-import type { LayerDiffRecord } from "../analysis/layer-diff.ts";
+import { withRepeatOf } from "../analysis/deck-repeats.ts";
 import { latestOrderDate } from "../analysis/orders.ts";
 import { buildAnalysisPlan } from "../analysis/plan.ts";
-import { type AnalysisRecord, isUsable, readRecords } from "../analysis/records.ts";
+import { isUsable } from "../analysis/records.ts";
 import { type LoadedConfig, projectPaths } from "../config/load.ts";
 import type { Market } from "../config/schema.ts";
 import { analysedSlots } from "../core/selection.ts";
 import { settingsOf } from "../settings/access.ts";
-import { type ImageDb, openImageDb } from "../store/imagedb.ts";
 import { readDeck } from "../store/manifest.ts";
 import { stableHash } from "../util/hash.ts";
-import { latestRun } from "../view/model.ts";
 import { type AnchorCandidate, type ScopeInput, type ScopeItem, tierScope } from "./anchors.ts";
-import { layerLookup, withLayerResults } from "./layer-lookup.ts";
-import { readDifferentPairs, readSamePairs } from "./match-check.ts";
+import { appleScope, storeCounts } from "./apple-scope.ts";
+import { withLayerResults } from "./layer-lookup.ts";
+import { readSamePairs } from "./match-check.ts";
 import { theCountry } from "./names.ts";
-import { pixelInput } from "./pixel-pairs.ts";
+import { forStore, type PlanContext } from "./plan-context.ts";
 import { type CostParts, costOf, dropProposal, presetCost } from "./scope-cost.ts";
-import type { MarketRef, ReportScope } from "./types.ts";
+import { buildStoresPlan } from "./stores-plan.ts";
+import { isPresetScope, type MarketRef, platformOfScope, type ReportScope } from "./types.ts";
+
+export {
+  chartGames,
+  gameNames,
+  type PlanContext,
+  planContext,
+} from "./plan-context.ts";
 
 /** One game's deck in one country of a report, as the builder shows it. */
 export interface ScopeDeck {
@@ -31,6 +37,8 @@ export interface ScopeDeck {
   positions: number[];
   /** The store-order snapshot date (YYYY-MM-DD), null when none was saved. */
   orderDate: string | null;
+  /** An App Store deck (missing: Google Play). */
+  platform?: "appstore";
 }
 
 export interface PlanImage extends ScopeItem {
@@ -51,6 +59,10 @@ export interface ScopePlan extends CostParts {
   /** Nothing new to analyse: the report is built at once, for free. */
   instant: boolean;
   planHash: string;
+  /** Plans with App Store images: the counts per store (the approval's lines). */
+  byStore?: ReturnType<typeof storeCounts>;
+  /** The store the report reads ("stores": both). */
+  platform?: "play" | "appstore" | "both";
 }
 
 const ref = (m: Market): MarketRef => ({ gl: m.gl, hl: m.hl, label: m.label });
@@ -62,56 +74,6 @@ export function projectMarkets(loaded: LoadedConfig): MarketRef[] {
   return [ref(main), ...all.filter((m) => !(m.gl === main.gl && m.hl === main.hl))];
 }
 
-/** Chart games of the latest download (never analysed unless the user ticks them). */
-export function chartGames(loaded: LoadedConfig): { appId: string; name: string }[] {
-  const seen = new Map<string, string>();
-  for (const d of latestRun(projectPaths(loaded).runs)?.decks ?? [])
-    if (d.group === "chart" && !seen.has(d.appId)) seen.set(d.appId, d.title ?? d.name);
-  return [...seen].map(([appId, name]) => ({ appId, name }));
-}
-
-/**
- * What every plan of one request reads from disk (the image database, the analyses, the pairs
- * marked different, the game names): read once and shared, so the suggestions can price many
- * scopes in one go.
- */
-export interface PlanContext {
-  db: ImageDb;
-  records: Map<string, AnalysisRecord>;
-  different: Set<string>;
-  names: Map<string, string>;
-  /** The current text-layer comparison of an image against an anchor (none: not compared). */
-  layer?: (imageId: string, anchorId: string) => LayerDiffRecord | undefined;
-  /** The pixel check (item 8); undefined when it is off (fingerprint only). */
-  pixel?: ReturnType<typeof pixelInput>;
-  /** The "same screen uploaded twice" check (cached pixel checks and headlines); none: never. */
-  same?: SameCheck;
-}
-
-export function planContext(loaded: LoadedConfig): PlanContext {
-  const paths = projectPaths(loaded);
-  const records = readRecords(paths);
-  return {
-    db: openImageDb(paths),
-    records,
-    different: readDifferentPairs(loaded),
-    names: gameNames(loaded),
-    layer: layerLookup(loaded, records),
-    pixel: pixelInput(loaded, records, readSamePairs(loaded)),
-    same: sameCheck(paths, records),
-  };
-}
-
-/** Plain name of a game of the project (ours, a named competitor or a chart game). */
-export function gameNames(loaded: LoadedConfig): Map<string, string> {
-  const { config } = loaded;
-  return new Map([
-    ...chartGames(loaded).map((g) => [g.appId, g.name] as const),
-    ...config.competitors.map((c) => [c.id, c.name] as const),
-    [config.ourApp.id, config.ourApp.name],
-  ]);
-}
-
 /**
  * What a report needs vs what exists (plan-reports 2.1), code only: every game and country of
  * the scope, each position's cost tier, the anchors, the store dates, the cost and the spending
@@ -121,15 +83,20 @@ export function gameNames(loaded: LoadedConfig): Map<string, string> {
 export function buildScopePlan(
   loaded: LoadedConfig,
   scope: ReportScope,
-  o: { proposeDrop?: boolean; ctx?: PlanContext } = {},
+  o: { proposeDrop?: boolean; ctx?: PlanContext; crossPlanned?: AnchorCandidate[] } = {},
 ): ScopePlan {
+  if (scope.type === "stores") return buildStoresPlan(loaded, scope, o);
+  // The report's store: an App Store report reads the App Store decks (plan-app-store 7.1).
+  const store = forStore(loaded, platformOfScope(scope), o.ctx);
+  if (store.loaded !== loaded || store.ctx !== o.ctx)
+    return buildScopePlan(store.loaded, scope, { ...o, ctx: store.ctx });
   const { config } = loaded;
   const paths = projectPaths(loaded);
-  const ctx = o.ctx ?? planContext(loaded);
+  const ctx = store.ctx;
   const { db, records, names } = ctx;
   const main = ref(settingsOf(config).mainMarket);
   const thumb = (id: string) => db.get(id)?.thumb ?? null;
-  if (scope.type === "pilot" || scope.type === "core") {
+  if ((scope.type === "pilot" || scope.type === "core") && isPresetScope(scope)) {
     const p = buildAnalysisPlan(loaded, scope.type);
     const items = p.items.map((i) => ({
       ...i,
@@ -176,6 +143,7 @@ export function buildScopePlan(
   ].map((g) => ({ ...g, name: names.get(g.appId) ?? g.appId }));
   const leftOut = new Set((scope.leftOut ?? []).map((x) => `${x.appId}|${x.gl}`));
   const analysedIds = new Set([...records.values()].filter(isUsable).map((r) => r.imageId));
+  const apple = ctx.apple ? appleScope(loaded, ctx, games, records, o.crossPlanned) : null;
   const decks: ScopeDeck[] = [];
   const inputs: ScopeInput[] = [];
   for (const m of markets)
@@ -192,6 +160,7 @@ export function buildScopePlan(
       const out = leftOut.has(`${g.appId}|${m.gl}`) && !g.ours;
       decks.push({
         ...base,
+        ...(apple ? { platform: "appstore" as const } : {}),
         state: out ? "left-out" : "ok",
         positions: slots.map((s) => s.position),
         orderDate,
@@ -208,6 +177,7 @@ export function buildScopePlan(
           phash: rec.phash,
           width: rec.width,
           height: rec.height,
+          ...(apple ? apple.input(rec.id) : {}),
         });
       }
     }
@@ -265,6 +235,7 @@ export function buildScopePlan(
     theCountry(main.label),
     ctx.different,
     ctx.pixel,
+    apple ? { ...apple.cross, same: readSamePairs(loaded) } : undefined,
   );
   const items: PlanImage[] = withLayerResults(tiered, ctx).map((t) => ({
     ...t,
@@ -290,6 +261,7 @@ export function buildScopePlan(
     cap: null,
     instant: counts.newImages === 0,
     ...cost,
+    ...(apple ? { byStore: storeCounts(items), platform: "appstore" as const } : {}),
   };
   const plan: ScopePlan = { ...body, planHash: stableHash(body) };
   if (o.proposeDrop !== false && plan.overLimit)

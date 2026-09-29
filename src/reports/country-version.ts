@@ -12,8 +12,10 @@ import { assembleCountryReport } from "./country-report.ts";
 import { reconcileDerived } from "./derived-relations.ts";
 import { eligibility } from "./eligibility.ts";
 import { mainMarketRef } from "./main-market.ts";
-import { buildScopePlan, type PlanContext, planContext, type ScopePlan } from "./scope-plan.ts";
+import { forStore } from "./plan-context.ts";
+import { buildScopePlan, type PlanContext, type ScopePlan } from "./scope-plan.ts";
 import { addVersion, versionFileKey, writeVersionInputs } from "./store.ts";
+import { buildStoresVersion } from "./stores-version.ts";
 import type { ReportDef, VersionInputs } from "./types.ts";
 
 export interface CountryBuildOptions {
@@ -44,10 +46,15 @@ export async function buildCountryVersion(
   def: ReportDef,
   o: CountryBuildOptions = {},
 ): Promise<BuildResult & { problems?: string[] }> {
+  // "Google Play vs App Store": its own report, made by code from both stores.
+  if (def.type === "stores") return buildStoresVersion(loaded, def, o);
   const now = o.now ?? new Date();
+  // The report's store: an App Store report reads its own decks and images.
+  const store = forStore(loaded, def.scope.platform, o.ctx);
+  loaded = store.loaded;
   const paths = projectPaths(loaded);
   const s = workspaceStorage(paths.workspace);
-  const ctx = o.ctx ?? planContext(loaded);
+  const ctx = store.ctx;
   const plan = buildScopePlan(loaded, def.scope, { proposeDrop: false, ctx });
   const ai = o.ai ?? cachedAi(loaded);
   const { report, inputs, problems } = await assembleCountryReport(loaded, def, plan, ctx, ai, now);

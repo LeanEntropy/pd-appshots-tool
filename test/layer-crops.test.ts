@@ -105,6 +105,12 @@ test("text comparison crops: native resolution up to 1024 px, nothing over 1568,
   }
   const last = (await sizes(plain.images)).at(-1);
   assert.equal(Math.max(last?.width ?? 0, last?.height ?? 0), 384);
+  // An App Store image against a Play anchor of another shape: one whole image, 1024 at most.
+  const reshaped = await layerCrops(paths, db, "big", anchor, pixel("same-new-text"), true);
+  assert.equal(reshaped.images.length, 1);
+  const [r] = await sizes(reshaped.images);
+  assert.equal(Math.max(r?.width ?? 0, r?.height ?? 0), 1024);
+  assert.match(layerDiffTask(anchor, { label: "US", hl: "en" }, undefined, true), /another shape/);
   assert.equal(CROP_VERSION, "layer-crop.v2");
 });
 
