@@ -1,0 +1,1845 @@
+{
+  "file": "entries-ab-cases",
+  "entries": [
+    {
+      "id": "hr-101",
+      "kind": "ab_case",
+      "claim": "Rovio Angry Birds 2 (App Store): portrait screenshots beat landscape at 99.7% confidence; the best asset combination gained 13% conversion.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [
+        {
+          "value": 13,
+          "unit": "% conversion improvement",
+          "of": "best asset combination vs others",
+          "context": "Rovio via SplitMetrics"
+        },
+        {
+          "value": 99.7,
+          "unit": "% confidence",
+          "of": "portrait beat landscape",
+          "context": "SplitMetrics case"
+        }
+      ],
+      "appliesWhen": "Pre-launch/launch testing of a casual mobile game on the App Store; audience explanation is the vendor's.",
+      "scope": {
+        "store": [
+          "app_store"
+        ],
+        "genre": [
+          "casual"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "screenshots"
+        ]
+      },
+      "tags": [
+        "orientation",
+        "characters",
+        "screenshots",
+        "experiments"
+      ],
+      "support": [
+        {
+          "sourceId": "hr-s010",
+          "excerpt": "Portrait screenshots did better in conversion with 99.7% confidence; familiar characters increased conversion; 13% conversion improvement; 2.5M additional installs attributed.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "single case; reported no date",
+      "abDetail": {
+        "game": "Angry Birds 2",
+        "store": "App Store",
+        "market": "not stated",
+        "control": "landscape gameplay screenshots without characters/colour frame",
+        "variant": "portrait screenshots with familiar characters and colour frame",
+        "metric": "conversion",
+        "result": "portrait won (99.7% confidence); best combination +13% conversion; 2.5M additional installs attributed",
+        "durationSample": "not stated",
+        "reportedBy": "SplitMetrics (vendor case study), Rovio ASO quote"
+      },
+      "reviewBy": "",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "Precedent for testing portrait vs landscape and hero characters.",
+      "researcherNote": "No duration/sample/date; later Apple talk shows Angry Birds 2 tests of seasonal creative, confirming heavy testing.",
+      "retired": false
+    },
+    {
+      "id": "hr-102",
+      "kind": "ab_case",
+      "claim": "ZiMAD Bubble Birds 4: a redesign with character overlay, rewritten captions and art overlays lifted install-button clicks by 32%.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [
+        {
+          "value": 32,
+          "unit": "% more install clicks",
+          "of": "redesigned vs plain screenshots",
+          "context": "ZiMAD via SplitMetrics"
+        }
+      ],
+      "appliesWhen": "Match-3 puzzle shooter; iOS implied; bundled changes.",
+      "scope": {
+        "store": [
+          "app_store"
+        ],
+        "genre": [
+          "casual",
+          "puzzle"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "screenshots"
+        ]
+      },
+      "tags": [
+        "characters",
+        "captions",
+        "composition",
+        "screenshots"
+      ],
+      "support": [
+        {
+          "sourceId": "hr-s011",
+          "excerpt": "'32% more users clicked the install button' after overlaying the main character, rewriting captions and adding art overlays.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "single case; reported date not stated",
+      "abDetail": {
+        "game": "Bubble Birds 4",
+        "store": "App Store (implied)",
+        "market": "not stated",
+        "control": "plain screenshots with descriptive captions ('Challenging and rewarding gameplay')",
+        "variant": "main character overlaid, action captions ('Birds challenge you!'), art overlays mixed with gameplay",
+        "metric": "install button clicks / conversion",
+        "result": "+32%",
+        "durationSample": "not stated",
+        "reportedBy": "SplitMetrics (vendor case study)"
+      },
+      "reviewBy": "",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "Template for a hero-plus-gameplay variant.",
+      "researcherNote": "Three changes bundled; no confidence, sample or date.",
+      "retired": false
+    },
+    {
+      "id": "hr-103",
+      "kind": "ab_case",
+      "claim": "ZiMAD Japan: a Japanese-style, effect-heavy screenshot set beat the original style by 36% conversion on the App Store.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [
+        {
+          "value": 36,
+          "unit": "% conversion uplift",
+          "of": "Japanese-style vs original screenshots",
+          "context": "ZiMAD via SplitMetrics"
+        }
+      ],
+      "appliesWhen": "App Store, Japan; game not named on the page.",
+      "scope": {
+        "store": [
+          "app_store"
+        ],
+        "genre": [
+          "casual"
+        ],
+        "countries": [
+          "JP"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "screenshots"
+        ]
+      },
+      "tags": [
+        "cultural_adaptation",
+        "localisation",
+        "text_density"
+      ],
+      "support": [
+        {
+          "sourceId": "hr-s012",
+          "excerpt": "Optimisation of screenshots resulted in a 36% conversion rate increase; the winner had 'lots of small elements' and 'special effects'; wins of 1% or less should not be shipped.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "single case; reported date not stated",
+      "abDetail": {
+        "game": "ZiMAD title (not named on the case page)",
+        "store": "App Store (inferred)",
+        "market": "Japan",
+        "control": "original European-style screenshots",
+        "variant": "Japanese-style with many small elements, special effects, emotional captures",
+        "metric": "conversion",
+        "result": "+36%",
+        "durationSample": "not stated",
+        "reportedBy": "SplitMetrics (vendor case study)"
+      },
+      "reviewBy": "",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "Evidence to test a denser, effect-heavy Japan set.",
+      "researcherNote": "Only controlled Japan test found. Not Google Play.",
+      "retired": false
+    },
+    {
+      "id": "hr-104",
+      "kind": "ab_case",
+      "claim": "MyTona Seekers Notes: Halloween icons with open-mouth characters beat a closed-mouth control by 9.3% (pumpkin) and 9.1% (witch).",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [
+        {
+          "value": 9.3,
+          "unit": "% vs control",
+          "of": "pumpkin head icon",
+          "context": "MyTona via SplitMetrics"
+        },
+        {
+          "value": 9.1,
+          "unit": "% vs control",
+          "of": "smiling witch icon",
+          "context": "second round"
+        },
+        {
+          "value": 3.5,
+          "unit": "% vs man",
+          "of": "pumpkin repeat",
+          "context": "second test"
+        }
+      ],
+      "appliesWhen": "App Store; hidden-object game; seasonal theme.",
+      "scope": {
+        "store": [
+          "app_store"
+        ],
+        "genre": [
+          "casual"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "icon"
+        ],
+        "asset": [
+          "icon"
+        ]
+      },
+      "tags": [
+        "icon",
+        "faces",
+        "characters",
+        "seasonal"
+      ],
+      "support": [
+        {
+          "sourceId": "hr-s013",
+          "excerpt": "Pumpkin head did 9,3% better than the control; witch showed 9.1% growth; only 3.5% in a second test against the man.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "single case; reported date not stated",
+      "abDetail": {
+        "game": "Seekers Notes: Hidden Mystery",
+        "store": "App Store (implied)",
+        "market": "not stated",
+        "control": "man in top hat/mask with closed mouth",
+        "variant": "smiling pumpkin head; smiling witch",
+        "metric": "conversion",
+        "result": "+9.3%; +9.1%; second test pumpkin +3.5%",
+        "durationSample": "not stated",
+        "reportedBy": "SplitMetrics (vendor case study)"
+      },
+      "reviewBy": "",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "Icon variants with expressive characters.",
+      "researcherNote": "Seasonal theme and character change confounded.",
+      "retired": false
+    },
+    {
+      "id": "hr-105",
+      "kind": "ab_case",
+      "claim": "Lab Cave Love & Dating Story: months of asset tests raised conversion 43% for the asset redesign and installs 314% on Google Play (49% on the App Store).",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [
+        {
+          "value": 43,
+          "unit": "% conversion",
+          "of": "asset redesign",
+          "context": "Lab Cave via SplitMetrics"
+        },
+        {
+          "value": 14.2,
+          "unit": "% conversion vs control",
+          "of": "final asset lineup",
+          "context": ""
+        },
+        {
+          "value": 314,
+          "unit": "% installs",
+          "of": "Google Play",
+          "context": "programme total"
+        },
+        {
+          "value": 49,
+          "unit": "% installs",
+          "of": "App Store",
+          "context": "programme total"
+        }
+      ],
+      "appliesWhen": "Multi-asset, multi-month programme from Sep 2019; install lift includes non-listing factors.",
+      "scope": {
+        "store": [
+          "google_play",
+          "app_store"
+        ],
+        "genre": [
+          "casual"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "experiments",
+        "icon",
+        "screenshots",
+        "cultural_adaptation"
+      ],
+      "support": [
+        {
+          "sourceId": "hr-s016",
+          "excerpt": "Asset redesign +43% conversion; final lineup +14.2% vs control; Google Play installs +314%; App Store installs +49%; testing began September 2019.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "single case; reported date not stated",
+      "abDetail": {
+        "game": "Love & Dating Story (formerly My High School Summer Party)",
+        "store": "Google Play and App Store",
+        "market": "not stated",
+        "control": "bright cartoon style, old title",
+        "variant": "mature realistic art, new title, emotional copy, redesigned icon/screenshots",
+        "metric": "conversion and installs",
+        "result": "+43% asset conversion; final lineup +14.2% vs control; installs +314% GP, +49% iOS",
+        "durationSample": "several months from September 2019",
+        "reportedBy": "SplitMetrics (vendor case study), Lab Cave ASO lead quote"
+      },
+      "reviewBy": "",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "Shows art-direction changes can matter more than layout tweaks.",
+      "researcherNote": "Bundled art-style/title/copy changes; installs are not conversion.",
+      "retired": false
+    },
+    {
+      "id": "hr-106",
+      "kind": "ab_case",
+      "claim": "Empire City Casino (social casino): a calmer gradient screenshot background beat an eye-catching template by 31% installs at 98.6% confidence.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [
+        {
+          "value": 31,
+          "unit": "% more installs",
+          "of": "calm gradient vs eye-catching background",
+          "context": "98.6% confidence"
+        }
+      ],
+      "appliesWhen": "App Store implied; social casino.",
+      "scope": {
+        "store": [
+          "app_store"
+        ],
+        "genre": [
+          "casual"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "screenshots"
+        ]
+      },
+      "tags": [
+        "composition",
+        "colour",
+        "screenshots"
+      ],
+      "support": [
+        {
+          "sourceId": "hr-s014",
+          "excerpt": "The calmer gradient version delivered '+31% more installs' at 98.6% confidence.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "single case; reported date not stated",
+      "abDetail": {
+        "game": "Empire City Casino",
+        "store": "App Store (implied)",
+        "market": "not stated",
+        "control": "eye-catching background template",
+        "variant": "calmer gradient background",
+        "metric": "installs/conversion",
+        "result": "+31% at 98.6% confidence",
+        "durationSample": "not stated",
+        "reportedBy": "SplitMetrics (vendor case study)"
+      },
+      "reviewBy": "",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "Counter-weight to busy backgrounds.",
+      "researcherNote": "No sample/duration.",
+      "retired": false
+    },
+    {
+      "id": "hr-107",
+      "kind": "ab_case",
+      "claim": "ŠKODA LittleDriver (kids' car game, iOS): reordering existing screenshots improved conversion by 15% in a SplitMetrics test.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [
+        {
+          "value": 15,
+          "unit": "% conversion improvement",
+          "of": "reordered screenshots",
+          "context": "SplitMetrics"
+        }
+      ],
+      "appliesWhen": "iOS screenshots; traffic from targeted Facebook clicks.",
+      "scope": {
+        "store": [
+          "app_store"
+        ],
+        "genre": [
+          "casual"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "screenshots"
+        ]
+      },
+      "tags": [
+        "order",
+        "screenshots",
+        "experiments"
+      ],
+      "support": [
+        {
+          "sourceId": "hr-s015",
+          "excerpt": "The winning iOS screenshot variation improved conversion by 15%; the alternative was reordered existing screenshots that took five minutes to set up.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "single case; reported date not stated",
+      "abDetail": {
+        "game": "ŠKODA LittleDriver",
+        "store": "App Store",
+        "market": "not stated",
+        "control": "designers' preferred original set",
+        "variant": "same screenshots reordered",
+        "metric": "conversion",
+        "result": "+15%",
+        "durationSample": "not stated",
+        "reportedBy": "SplitMetrics (vendor case study)"
+      },
+      "reviewBy": "",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "Cheap reorder test precedent.",
+      "researcherNote": "Conflicts with the Sensor Tower post (+6.4%).",
+      "retired": false
+    },
+    {
+      "id": "hr-108",
+      "kind": "ab_case",
+      "claim": "ŠKODA LittleDriver (July 2015 report): reordered screenshots gave a 6.4% install increase over 30 days with 1,200+ visitors.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [
+        {
+          "value": 6.4,
+          "unit": "% install increase",
+          "of": "reordered screenshots",
+          "context": "30 days, 1,200+ visitors"
+        },
+        {
+          "value": 16.6,
+          "unit": "% potential improvement (combined)",
+          "of": "up to, per the post",
+          "context": ""
+        }
+      ],
+      "appliesWhen": "App Store, July 2015; small sample.",
+      "scope": {
+        "store": [
+          "app_store"
+        ],
+        "genre": [
+          "casual"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "screenshots"
+        ]
+      },
+      "tags": [
+        "order",
+        "screenshots",
+        "test_duration"
+      ],
+      "support": [
+        {
+          "sourceId": "hr-s056",
+          "excerpt": "Reordered screenshots +6.4% installs; customised background +4.4%; 30 days with 1,200+ visitors; July 2015.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "single case; reported July 2015",
+      "abDetail": {
+        "game": "ŠKODA LittleDriver",
+        "store": "App Store",
+        "market": "not stated",
+        "control": "original screenshots",
+        "variant": "reordered; a 'lifestyle' design (lowest performer); a customised background (+4.4%)",
+        "metric": "installs",
+        "result": "reorder +6.4%; customised background +4.4%; up to 16.6% combined potential",
+        "durationSample": "30 days, 1,200+ visitors",
+        "reportedBy": "Sensor Tower blog post"
+      },
+      "reviewBy": "",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "Shows the spread of reported reorder gains.",
+      "researcherNote": "Numbers differ from SplitMetrics' case for the same game; relationship unclear.",
+      "retired": false
+    },
+    {
+      "id": "hr-109",
+      "kind": "ab_case",
+      "claim": "Kongregate Global Assault (Google Play): a new icon drove 92% more installs, variant screenshots +14%, and the improved page +45% installs.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [
+        {
+          "value": 92,
+          "unit": "% more installs",
+          "of": "new icon",
+          "context": "Kongregate, Google Play 2015"
+        },
+        {
+          "value": 14,
+          "unit": "% improvement",
+          "of": "variant screenshots",
+          "context": ""
+        },
+        {
+          "value": 45,
+          "unit": "% install increase",
+          "of": "improved page overall",
+          "context": ""
+        }
+      ],
+      "appliesWhen": "Google Play Store Listing Experiments, 2015; audience sizes and duration not stated.",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "casual"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "icon",
+          "1-3"
+        ],
+        "asset": [
+          "icon",
+          "screenshots"
+        ]
+      },
+      "tags": [
+        "icon",
+        "screenshots",
+        "experiments"
+      ],
+      "support": [
+        {
+          "sourceId": "hr-s051",
+          "excerpt": "Kongregate 'found a new icon that drove 92 percent more installs'; variant screenshots achieved 14 percent; installs increased 45 percent on the improved page.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "single case; reported 2015-10-28",
+      "abDetail": {
+        "game": "Global Assault",
+        "store": "Google Play",
+        "market": "not stated",
+        "control": "original page",
+        "variant": "new icon; variant screenshots; text/order changes",
+        "metric": "installs",
+        "result": "icon +92%; screenshots +14%; page +45%",
+        "durationSample": "not stated (varied audience sizes)",
+        "reportedBy": "Android Developers Blog (Google) case write-up"
+      },
+      "reviewBy": "",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "Google Play precedent that icons outpull screenshots.",
+      "researcherNote": "2015, old Play layout; Google-published success story.",
+      "retired": false
+    },
+    {
+      "id": "hr-110",
+      "kind": "ab_case",
+      "claim": "SGN Cookie Jam (Google Play): changing the icon background colour raised conversions by 8%.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [
+        {
+          "value": 8,
+          "unit": "% conversion increase",
+          "of": "icon background colour change",
+          "context": "SGN Cookie Jam"
+        }
+      ],
+      "appliesWhen": "Google Play Store Listing Experiments, 2015.",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "casual",
+          "puzzle"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "icon"
+        ],
+        "asset": [
+          "icon"
+        ]
+      },
+      "tags": [
+        "icon",
+        "colour",
+        "experiments"
+      ],
+      "support": [
+        {
+          "sourceId": "hr-s052",
+          "excerpt": "SGN saw an 8 percent increase in conversions for Cookie Jam simply by changing the background colour of its app icon.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "single case; reported 2015-12-09",
+      "abDetail": {
+        "game": "Cookie Jam",
+        "store": "Google Play",
+        "market": "not stated",
+        "control": "original icon",
+        "variant": "icon with changed background colour",
+        "metric": "conversion",
+        "result": "+8%",
+        "durationSample": "not stated",
+        "reportedBy": "Android Developers Blog (Google)"
+      },
+      "reviewBy": "",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "Small colour changes can matter.",
+      "researcherNote": "Also Panda Pop and Sugar Smash icon tests without figures.",
+      "retired": false
+    },
+    {
+      "id": "hr-111",
+      "kind": "ab_case",
+      "claim": "Tapps Games (Google Play): iterative store listing experiments on icons and screenshots averaged 5-50% variant changes and lifted install rates 20-30%.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [
+        {
+          "value": "5-50",
+          "unit": "% average variant performance change",
+          "of": "tested variants",
+          "context": "Tapps"
+        },
+        {
+          "value": "20-30",
+          "unit": "% install-rate increase",
+          "of": "after applying learnings",
+          "context": "Tapps"
+        }
+      ],
+      "appliesWhen": "Publisher-supplied Google case study; Brazilian publisher with about 70% Android installs.",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "casual"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "experiments",
+        "icon",
+        "screenshots",
+        "localisation"
+      ],
+      "support": [
+        {
+          "sourceId": "hr-s053",
+          "excerpt": "Store listing experiments on icon and screenshots: 'an average increase in performance between 5% and 50%'; 'install rates increase beyond 20-30%'.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "single case; reported date not stated",
+      "abDetail": {
+        "game": "Tapps Games portfolio",
+        "store": "Google Play",
+        "market": "global (Brazil-based)",
+        "control": "existing listings",
+        "variant": "icon colour, character positioning, graphic detail, message length, calls to action, localisations",
+        "metric": "install rate",
+        "result": "variants averaged 5-50% change; install rates beyond +20-30%",
+        "durationSample": "not stated",
+        "reportedBy": "Google Play Console case study"
+      },
+      "reviewBy": "",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "Google-published precedent for systematic Play testing.",
+      "researcherNote": "Portfolio result; direction of the 5-50% average is as phrased by Google.",
+      "retired": false
+    },
+    {
+      "id": "hr-112",
+      "kind": "ab_case",
+      "claim": "Wildlife Studios via PressPlay: 168 experiments and 322 variants in under two months produced 7 significant wins, up to +24.1% conversion.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [
+        {
+          "value": 7,
+          "unit": "significant wins",
+          "of": "168 experiments / 322 variants",
+          "context": "about 4% of experiments (computed here)"
+        },
+        {
+          "value": 24.1,
+          "unit": "% max conversion uplift",
+          "of": "best win",
+          "context": ""
+        }
+      ],
+      "appliesWhen": "GenAI-generated assets; store and markets not stated on the page.",
+      "scope": {
+        "store": [
+          "google_play",
+          "app_store"
+        ],
+        "genre": [
+          "casual"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "test_win_rate",
+        "experiments",
+        "refresh_cadence"
+      ],
+      "support": [
+        {
+          "sourceId": "hr-s023",
+          "excerpt": "168 experiments, 322 variants, 7 wins with GenAI, maximum uplift 24.1%, under two months, 12 million projected additional installs.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "single case; reported 2024-03",
+      "abDetail": {
+        "game": "Wildlife Studios titles (unspecified)",
+        "store": "not stated",
+        "market": "not stated",
+        "control": "existing icons/short descriptions/feature graphics/screenshots",
+        "variant": "GenAI-generated variants",
+        "metric": "conversion",
+        "result": "7 significant wins; max +24.1%; 12M projected extra installs (projection)",
+        "durationSample": "under 2 months",
+        "reportedBy": "Phiture (PressPlay), March 2024"
+      },
+      "reviewBy": "",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "Use as a base-rate hint: few tests win.",
+      "researcherNote": "Vendor sells the platform; win rate is a rare disclosure.",
+      "retired": false
+    },
+    {
+      "id": "hr-113",
+      "kind": "ab_case",
+      "claim": "Lion Studios Found It! (Google Play): 100 experiments in six weeks; a first icon gained 12% installs over 20 days and a second icon 8% after 8 days, for a 20% global install lift.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [
+        {
+          "value": 12,
+          "unit": "% install increase",
+          "of": "first winning icon",
+          "context": "20 days"
+        },
+        {
+          "value": 8,
+          "unit": "% additional increase",
+          "of": "second icon",
+          "context": "8 days"
+        },
+        {
+          "value": 20,
+          "unit": "% global install lift",
+          "of": "programme",
+          "context": "6 weeks, 100 experiments"
+        }
+      ],
+      "appliesWhen": "Google Play; GenAI-created icons and short descriptions; 2024.",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "casual",
+          "puzzle"
+        ],
+        "countries": [
+          "US",
+          "GB",
+          "CA",
+          "IN",
+          "JP"
+        ],
+        "position": [
+          "icon"
+        ],
+        "asset": [
+          "icon"
+        ]
+      },
+      "tags": [
+        "icon",
+        "experiments",
+        "test_duration"
+      ],
+      "support": [
+        {
+          "sourceId": "hr-s025",
+          "excerpt": "First icon test: 12% increase in installs over 20 days; second icon: additional 8% after 8 days; 20% lift in global installs; 100 experiments in six weeks.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "single case; reported 2024",
+      "abDetail": {
+        "game": "Found It! Hidden Object Game",
+        "store": "Google Play",
+        "market": "US, UK, Canada, India, Japan",
+        "control": "existing icon/short description",
+        "variant": "GenAI icon variants",
+        "metric": "installs",
+        "result": "+12% (20 days), +8% (8 days), +20% global installs",
+        "durationSample": "six weeks, 100 experiments",
+        "reportedBy": "Phiture (PressPlay) with AppLovin"
+      },
+      "reviewBy": "",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "Google Play icon-test precedent with durations.",
+      "researcherNote": "Vendor case; UK shown as GB in scope.",
+      "retired": false
+    },
+    {
+      "id": "hr-114",
+      "kind": "ab_case",
+      "claim": "Avakin Life (Google Play): AI-generated icons gave +19% conversion in month one, and a style-fine-tuned model +32% more in month two (57% combined).",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [
+        {
+          "value": 19,
+          "unit": "% conversion increase",
+          "of": "month-one icon",
+          "context": ""
+        },
+        {
+          "value": 32,
+          "unit": "% conversion increase",
+          "of": "month-two style-matched icon",
+          "context": ""
+        },
+        {
+          "value": 57,
+          "unit": "% total (vendor's figure)",
+          "of": "two months",
+          "context": ""
+        }
+      ],
+      "appliesWhen": "110 experiments over two months in 2024.",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "casual"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "icon"
+        ],
+        "asset": [
+          "icon"
+        ]
+      },
+      "tags": [
+        "icon",
+        "experiments",
+        "brightness_contrast"
+      ],
+      "support": [
+        {
+          "sourceId": "hr-s024",
+          "excerpt": "+19% conversion rate increase in month one; +32% after AI model fine-tuning in month two; 57% total; 110 experiments.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "single case; reported 2024",
+      "abDetail": {
+        "game": "Avakin Life",
+        "store": "Google Play",
+        "market": "not stated",
+        "control": "existing icon",
+        "variant": "AI-generated icons; then icons from a model fine-tuned to the game's art style",
+        "metric": "conversion rate",
+        "result": "+19% then +32%; 57% total",
+        "durationSample": "2 months, 110 experiments",
+        "reportedBy": "Phiture (PressPlay)"
+      },
+      "reviewBy": "",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "Style-matched icons outperform generic ones.",
+      "researcherNote": "The 57% adds the two; compounding assumptions not stated.",
+      "retired": false
+    },
+    {
+      "id": "hr-115",
+      "kind": "ab_case",
+      "claim": "Peak Brain Training (App Store PPO): a brain icon beat the control by 8% at over 98% confidence over 44 days, while a robot-character icon lost to the control.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [
+        {
+          "value": 8,
+          "unit": "% higher conversion",
+          "of": "brain icon vs control",
+          "context": "44 days, ~154,000 impressions per treatment, >98% confidence"
+        }
+      ],
+      "appliesWhen": "Apple product page optimization example; brain-training app.",
+      "scope": {
+        "store": [
+          "app_store"
+        ],
+        "genre": [
+          "casual"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "icon"
+        ],
+        "asset": [
+          "icon"
+        ]
+      },
+      "tags": [
+        "icon",
+        "characters",
+        "test_duration",
+        "ppo"
+      ],
+      "support": [
+        {
+          "sourceId": "hr-s006",
+          "excerpt": "Icon test ran 44 days with about 154,000 impressions per treatment; the brain icon won with 8% higher conversion and over 98% confidence; the robot icon performed worse than the control.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "single case; reported date not stated",
+      "abDetail": {
+        "game": "Peak - Brain Training",
+        "store": "App Store (PPO)",
+        "market": "not stated",
+        "control": "original icon",
+        "variant": "changed background; brain design; robot character",
+        "metric": "conversion",
+        "result": "brain +8% (>98% confidence); robot worse than control",
+        "durationSample": "44 days, ~154k impressions per treatment",
+        "reportedBy": "Apple (Tech Talk)"
+      },
+      "reviewBy": "",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "Character icons are not guaranteed winners.",
+      "researcherNote": "Brain-training app rather than a roguelike; Apple presentation.",
+      "retired": false
+    },
+    {
+      "id": "hr-116",
+      "kind": "ab_case",
+      "claim": "Simply Piano (App Store PPO): a screenshot treatment beat the app-preview control by 3.3% at 100% confidence over 12 days.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [
+        {
+          "value": 3.3,
+          "unit": "% higher conversion",
+          "of": "screenshot vs app preview",
+          "context": "12 days, ~430,000 impressions per treatment"
+        }
+      ],
+      "appliesWhen": "Apple example; music-learning app.",
+      "scope": {
+        "store": [
+          "app_store"
+        ],
+        "genre": [
+          "apps_general"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "video"
+        ],
+        "asset": [
+          "video"
+        ]
+      },
+      "tags": [
+        "video",
+        "experiments",
+        "ppo",
+        "test_duration"
+      ],
+      "support": [
+        {
+          "sourceId": "hr-s006",
+          "excerpt": "The screenshot treatment performed better with 3.3% higher conversion and 100% confidence, over 12 days with an average of 430,000 impressions per treatment.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "single case; reported date not stated",
+      "abDetail": {
+        "game": "Simply Piano (not a game)",
+        "store": "App Store (PPO)",
+        "market": "not stated",
+        "control": "original with app preview",
+        "variant": "screenshot instead of preview",
+        "metric": "conversion",
+        "result": "+3.3% for screenshots (100% confidence)",
+        "durationSample": "12 days, ~430k impressions per treatment",
+        "reportedBy": "Apple (Tech Talk)"
+      },
+      "reviewBy": "",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "Video does not always beat screenshots.",
+      "researcherNote": "Not a game.",
+      "retired": false
+    },
+    {
+      "id": "hr-117",
+      "kind": "ab_case",
+      "claim": "Angry Birds 2 (App Store PPO, December): evergreen creative beat holiday-themed creative by 1.5% over 20 days with about 2 million impressions per treatment.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [
+        {
+          "value": 1.5,
+          "unit": "% higher conversion",
+          "of": "evergreen vs seasonal",
+          "context": "20 days, ~2M impressions per treatment, 100% confidence"
+        }
+      ],
+      "appliesWhen": "Apple example; holiday period.",
+      "scope": {
+        "store": [
+          "app_store"
+        ],
+        "genre": [
+          "casual"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "screenshots"
+        ]
+      },
+      "tags": [
+        "seasonal",
+        "events",
+        "test_power",
+        "ppo"
+      ],
+      "support": [
+        {
+          "sourceId": "hr-s006",
+          "excerpt": "The evergreen creative control outperformed seasonal holiday-themed content by 1.5% with 100% confidence over 20 days in December.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "single case; reported date not stated",
+      "abDetail": {
+        "game": "Angry Birds 2",
+        "store": "App Store (PPO)",
+        "market": "not stated",
+        "control": "evergreen creative",
+        "variant": "holiday-themed creative",
+        "metric": "conversion",
+        "result": "control +1.5% (100% confidence)",
+        "durationSample": "20 days, ~2M impressions per treatment",
+        "reportedBy": "Apple (Tech Talk)"
+      },
+      "reviewBy": "",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "Seasonal lift is not guaranteed.",
+      "researcherNote": "Specific to this developer and creative, per Apple.",
+      "retired": false
+    },
+    {
+      "id": "hr-118",
+      "kind": "ab_case",
+      "claim": "Kabam Marvel Contest of Champions: testing the video poster frame (also the first screenshot) raised install conversion 66%.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [
+        {
+          "value": 66,
+          "unit": "% conversion increase",
+          "of": "poster-frame variants",
+          "context": "Storemaven / Kabam"
+        }
+      ],
+      "appliesWhen": "Reported second-hand from a Storemaven presentation; App Store testing mentioned, Google Play data referenced.",
+      "scope": {
+        "store": [
+          "app_store"
+        ],
+        "genre": [
+          "casual"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "video",
+          "1"
+        ],
+        "asset": [
+          "video"
+        ]
+      },
+      "tags": [
+        "video",
+        "first_images",
+        "experiments"
+      ],
+      "support": [
+        {
+          "sourceId": "hr-s041",
+          "excerpt": "Incipia: 'The Poster Frame Effect' testing raised Marvel Contest of Champions install conversion by 66%.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "single case; reported 2023-08",
+      "abDetail": {
+        "game": "Marvel Contest of Champions",
+        "store": "App Store (Google Play data also referenced)",
+        "market": "not stated",
+        "control": "original poster frame",
+        "variant": "poster-frame variants",
+        "metric": "install conversion",
+        "result": "+66%",
+        "durationSample": "not stated",
+        "reportedBy": "Storemaven CEO presentation, relayed by Incipia (Aug 2023)"
+      },
+      "reviewBy": "",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "Poster frame test precedent.",
+      "researcherNote": "Anecdote; original page unfetchable.",
+      "retired": false
+    },
+    {
+      "id": "hr-119",
+      "kind": "ab_case",
+      "claim": "Social Point Monster Legends: a banner-like landscape first screenshot reached 15.4% conversion against 4.7% for a competitor (not a controlled test).",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [
+        {
+          "value": 15.4,
+          "unit": "% conversion",
+          "of": "Monster Legends",
+          "context": ""
+        },
+        {
+          "value": 4.7,
+          "unit": "% conversion",
+          "of": "closest competitor",
+          "context": ""
+        }
+      ],
+      "appliesWhen": "Comparison against a competitor's page, not an A/B test.",
+      "scope": {
+        "store": [
+          "google_play",
+          "app_store"
+        ],
+        "genre": [
+          "casual"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "1"
+        ],
+        "asset": [
+          "screenshots"
+        ]
+      },
+      "tags": [
+        "first_images",
+        "orientation",
+        "composition"
+      ],
+      "support": [
+        {
+          "sourceId": "hr-s057",
+          "excerpt": "GameAnalytics: Social Point's banner-like landscape screenshot converted at 15.4% versus 4.7% for its closest competitor.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "single case; reported date not stated",
+      "abDetail": {
+        "game": "Monster Legends",
+        "store": "search results (store not specified)",
+        "market": "not stated",
+        "control": "competitor page",
+        "variant": "banner-like landscape first screenshot",
+        "metric": "conversion",
+        "result": "15.4% vs 4.7% (not like-for-like)",
+        "durationSample": "not stated",
+        "reportedBy": "GameAnalytics (origin unstated)"
+      },
+      "reviewBy": "",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "Idea generator only.",
+      "researcherNote": "Not an experiment; apples-to-oranges comparison.",
+      "retired": false
+    },
+    {
+      "id": "hr-120",
+      "kind": "ab_case",
+      "claim": "Frenzoo (Google Play, 2016): a dress-up game icon with a 'popstar feel' improved installs by more than 10% relative to the original.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [
+        {
+          "value": 10,
+          "unit": "% relative install improvement (over)",
+          "of": "popstar-feel icon",
+          "context": "Frenzoo"
+        }
+      ],
+      "appliesWhen": "Google Play Store Listing Experiments, 2016.",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "casual"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "icon"
+        ],
+        "asset": [
+          "icon"
+        ]
+      },
+      "tags": [
+        "icon",
+        "characters",
+        "experiments"
+      ],
+      "support": [
+        {
+          "sourceId": "hr-s062",
+          "excerpt": "Dress-up game icon with a popstar feel 'improved installs over 10% relative to the original'; another icon of a single avatar over a gameplay background outperformed the original with high confidence.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "single case; reported 2016-02-17",
+      "abDetail": {
+        "game": "Frenzoo dress-up game (unnamed)",
+        "store": "Google Play",
+        "market": "not stated",
+        "control": "original icon",
+        "variant": "icon with 'popstar feel'",
+        "metric": "installs",
+        "result": "over +10% relative",
+        "durationSample": "not stated",
+        "reportedBy": "Frenzoo on Game Developer (self-reported)"
+      },
+      "reviewBy": "",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "Character/avatar icon precedent on Play.",
+      "researcherNote": "Self-reported, old.",
+      "retired": false
+    },
+    {
+      "id": "hr-121",
+      "kind": "ab_case",
+      "claim": "SEGA (App Store, 2018 SplitMetrics blog): reordering screenshots gave a 25.6% conversion increase.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [
+        {
+          "value": 25.6,
+          "unit": "% conversion increase",
+          "of": "reordered screenshots",
+          "context": "SEGA, SplitMetrics 2018"
+        }
+      ],
+      "appliesWhen": "One-line mention in SplitMetrics' scroll-depth article; no test details.",
+      "scope": {
+        "store": [
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "screenshots"
+        ]
+      },
+      "tags": [
+        "order",
+        "screenshots"
+      ],
+      "support": [
+        {
+          "sourceId": "hr-s009",
+          "excerpt": "SEGA achieved a 25.6% conversion increase through reordering.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "single case; reported 2018-03",
+      "abDetail": {
+        "game": "SEGA title (unnamed)",
+        "store": "App Store",
+        "market": "not stated",
+        "control": "original order",
+        "variant": "reordered",
+        "metric": "conversion",
+        "result": "+25.6%",
+        "durationSample": "not stated",
+        "reportedBy": "SplitMetrics blog (vendor)"
+      },
+      "reviewBy": "",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "Reorder precedent.",
+      "researcherNote": "Anecdote.",
+      "retired": false
+    },
+    {
+      "id": "hr-122",
+      "kind": "ab_case",
+      "claim": "ZiMAD (App Store, 2018 SplitMetrics blog): landscape screenshot variations improved conversion by 18.4%.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [
+        {
+          "value": 18.4,
+          "unit": "% conversion improvement",
+          "of": "landscape variations",
+          "context": "ZiMAD, SplitMetrics 2018"
+        }
+      ],
+      "appliesWhen": "One-line mention in SplitMetrics' scroll-depth article; no test details.",
+      "scope": {
+        "store": [
+          "app_store"
+        ],
+        "genre": [
+          "casual"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "screenshots"
+        ]
+      },
+      "tags": [
+        "orientation",
+        "screenshots"
+      ],
+      "support": [
+        {
+          "sourceId": "hr-s009",
+          "excerpt": "ZiMAD saw an 18.4% conversion improvement with landscape variations.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "single case; reported 2018-03",
+      "abDetail": {
+        "game": "ZiMAD title (unnamed)",
+        "store": "App Store",
+        "market": "not stated",
+        "control": "not stated",
+        "variant": "landscape variations",
+        "metric": "conversion",
+        "result": "+18.4%",
+        "durationSample": "not stated",
+        "reportedBy": "SplitMetrics blog (vendor)"
+      },
+      "reviewBy": "",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "Shows orientation results diverge.",
+      "researcherNote": "Contrasts with Rovio's portrait win.",
+      "retired": false
+    },
+    {
+      "id": "hr-123",
+      "kind": "ab_case",
+      "claim": "Social Quantum Megapolis: organic installs rose 110% and conversion 82.7% after a package of changes that also included icon, keywords and December seasonality.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [
+        {
+          "value": 110,
+          "unit": "% organic installs",
+          "of": "after changes",
+          "context": ""
+        },
+        {
+          "value": 82.7,
+          "unit": "% conversion improvement",
+          "of": "after changes",
+          "context": "video contribution unmeasured"
+        }
+      ],
+      "appliesWhen": "Bundled changes; no date; AppFollow cites it for video.",
+      "scope": {
+        "store": [
+          "google_play",
+          "app_store"
+        ],
+        "genre": [
+          "casual"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "video",
+          "all"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "video",
+        "experiments"
+      ],
+      "support": [
+        {
+          "sourceId": "hr-s008",
+          "excerpt": "Social Quantum/Megapolis: organic installs +110%, conversion +82.7%; icon, keywords and December seasonality also changed; video contribution unmeasured.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "single case; reported date not stated",
+      "abDetail": {
+        "game": "Megapolis",
+        "store": "not stated",
+        "market": "not stated",
+        "control": "before",
+        "variant": "new video plus icon, keywords, seasonality",
+        "metric": "organic installs, conversion",
+        "result": "+110% installs, +82.7% CVR (confounded)",
+        "durationSample": "not stated",
+        "reportedBy": "AppFollow (vendor)"
+      },
+      "reviewBy": "",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "Do not attribute to video.",
+      "researcherNote": "Confounded before/after.",
+      "retired": false
+    },
+    {
+      "id": "hr-124",
+      "kind": "ab_case",
+      "claim": "Homa Games Investment Run: all character-featuring icon variants beat the original listing, and the screenshot sequence highlighting progression won (no figures disclosed).",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Publisher account; store not stated.",
+      "scope": {
+        "store": [
+          "google_play",
+          "app_store"
+        ],
+        "genre": [
+          "casual"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "icon",
+          "all"
+        ],
+        "asset": [
+          "icon",
+          "screenshots"
+        ]
+      },
+      "tags": [
+        "icon",
+        "characters",
+        "screenshots"
+      ],
+      "support": [
+        {
+          "sourceId": "hr-s058",
+          "excerpt": "All icon variations featured characters and all performed better than the initial listing; the progression-highlighting screenshot variation was the winning bet.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "single case; reported date not stated",
+      "abDetail": {
+        "game": "Investment Run",
+        "store": "not stated",
+        "market": "not stated",
+        "control": "initial listing",
+        "variant": "icons with characters; three screenshot sequences",
+        "metric": "conversion (qualitative)",
+        "result": "all character icons beat control; progression sequence won; no numbers",
+        "durationSample": "not stated",
+        "reportedBy": "Homa Games via GameAnalytics"
+      },
+      "reviewBy": "",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "Supports character icons and progression frames.",
+      "researcherNote": "No numbers, kept for direction only.",
+      "retired": false
+    },
+    {
+      "id": "hr-125",
+      "kind": "ab_case",
+      "claim": "Koo (Google Play, non-game): language-based custom store listings increased installs by 15%.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [
+        {
+          "value": 15,
+          "unit": "% install increase",
+          "of": "custom store listings",
+          "context": "Koo"
+        }
+      ],
+      "appliesWhen": "Social app in India; per Google's case study index.",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "apps_general"
+        ],
+        "countries": [
+          "IN"
+        ],
+        "position": [
+          "store_page"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "custom_listing",
+        "localisation"
+      ],
+      "support": [
+        {
+          "sourceId": "hr-s054",
+          "excerpt": "Index entry: 'Koo: Custom store listings increase installs 15%'.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "single case; reported date not stated",
+      "abDetail": {
+        "game": "Koo (not a game)",
+        "store": "Google Play",
+        "market": "India",
+        "control": "single listing",
+        "variant": "custom store listings per language",
+        "metric": "installs",
+        "result": "+15%",
+        "durationSample": "not stated",
+        "reportedBy": "Google Play Console case study (index only)"
+      },
+      "reviewBy": "",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "Custom listing precedent.",
+      "researcherNote": "Individual case page not fetched.",
+      "retired": false
+    },
+    {
+      "id": "hr-126",
+      "kind": "ab_case",
+      "claim": "Missbeez (non-game, App Store): a bundled redesign (video removed, 3-4 word captions, panoramic images) gave +36% page-view-to-install and +10% search-to-install one month later.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [
+        {
+          "value": 36,
+          "unit": "% page-view-to-install",
+          "of": "after redesign",
+          "context": "before/after"
+        },
+        {
+          "value": 10,
+          "unit": "% search-to-install",
+          "of": "after redesign",
+          "context": ""
+        }
+      ],
+      "appliesWhen": "Before/after comparison of the team's own redesign, April 2019.",
+      "scope": {
+        "store": [
+          "app_store"
+        ],
+        "genre": [
+          "apps_general"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "screenshots"
+        ]
+      },
+      "tags": [
+        "panoramic",
+        "captions",
+        "video",
+        "first_images"
+      ],
+      "support": [
+        {
+          "sourceId": "hr-s049",
+          "excerpt": "One month after the redesign: search-to-install +10% and page-view-to-install +36%.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "single case; reported 2019-04",
+      "abDetail": {
+        "game": "Missbeez (not a game)",
+        "store": "App Store",
+        "market": "not stated",
+        "control": "previous listing",
+        "variant": "video removed, large minimal text, panoramic screenshots, simpler description",
+        "metric": "conversion",
+        "result": "+36% view-to-install, +10% search-to-install after one month",
+        "durationSample": "one month before/after",
+        "reportedBy": "the app team on Mobilespoon"
+      },
+      "reviewBy": "",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "Do not attribute to panoramic alone.",
+      "researcherNote": "Not controlled.",
+      "retired": false
+    }
+  ]
+}

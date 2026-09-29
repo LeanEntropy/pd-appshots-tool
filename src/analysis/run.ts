@@ -21,7 +21,7 @@ import type { Provider } from "./providers.ts";
 import { recordWriter, withCurrentMapping } from "./record-refresh.ts";
 import { type AnalysisRecord, readRecords } from "./records.ts";
 import { analyseChunk, layoutAfterSave, modelCopy } from "./run-chunk.ts";
-import { batchContext, withOwnCost } from "./run-context.ts";
+import { batchContext, withKb, withOwnCost } from "./run-context.ts";
 import { analyseImages } from "./run-images.ts";
 import type { OnItem, RunStep } from "./run-status.ts";
 import { type SynthesisResult, synthesise } from "./synthesis.ts";
@@ -229,7 +229,7 @@ export async function runAnalysis(
           competitors: entries.competitors,
           ourDeckLength: entries.ourDeckLength,
         },
-        bc.ctx,
+        withKb(bc.ctx, loaded, plan.market.gl),
         report,
       );
       endAttempt(paths, SYNTHESIS, attempt, batchId, "finished", bc.spent() - before);

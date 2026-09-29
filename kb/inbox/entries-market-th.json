@@ -1,0 +1,1134 @@
+{
+  "file": "entries-market-th",
+  "entries": [
+    {
+      "id": "as-th-001",
+      "kind": "market_note",
+      "claim": "Thailand mobile web traffic is Android-majority: Android 64% and iOS 35.96% in August 2026.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [
+        {
+          "value": 64,
+          "unit": "% share",
+          "of": "Android mobile web traffic, Thailand",
+          "context": "Statcounter Aug 2026"
+        },
+        {
+          "value": 35.96,
+          "unit": "% share",
+          "of": "iOS",
+          "context": "Statcounter Aug 2026"
+        }
+      ],
+      "appliesWhen": "Web-traffic share from Statcounter; game revenue split by store not measured.",
+      "scope": {
+        "store": [
+          "google_play",
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "TH"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "store_share",
+        "platform_share"
+      ],
+      "support": [
+        {
+          "sourceId": "as-s003",
+          "excerpt": "Aug 2026: Android 64%, iOS 35.96%.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Snapshot 2026-09-29",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "Google Play is the main store but iOS is a large minority in Thailand.",
+      "researcherNote": "One source (Statcounter); no second independent origin found (web search quota exhausted).",
+      "retired": false
+    },
+    {
+      "id": "as-th-002",
+      "kind": "market_note",
+      "claim": "Thailand was the highest-revenue Southeast Asian game market in both Jan-Aug 2024 (over $400M) and Q1 2025 ($162M in-app purchase revenue).",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Sensor Tower-covered store revenue (App Store plus Google Play).",
+      "scope": {
+        "store": [
+          "google_play",
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "TH"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "audience",
+        "store_share"
+      ],
+      "support": [
+        {
+          "sourceId": "as-s019",
+          "excerpt": "Thailand: largest revenue market, over $400 million Jan-Aug 2024.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        },
+        {
+          "sourceId": "as-s018",
+          "excerpt": "Thailand takes the lead in the region, generating $162 million in IAP revenue during Q1 2025.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Data Jan-Aug 2024 and Q1 2025",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "Thailand listings carry disproportionate revenue weight in SEA.",
+      "researcherNote": "Both sources are Sensor Tower (one origin).",
+      "retired": false
+    },
+    {
+      "id": "as-th-003",
+      "kind": "market_note",
+      "claim": "In a Sensor Tower Southeast Asia report, Google Play took 91% of game downloads but 57% of game revenue in H1 2024, leaving the App Store 43% of revenue.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [
+        {
+          "value": 91,
+          "unit": "% of downloads",
+          "of": "Google Play, SEA H1 2024",
+          "context": "Sensor Tower"
+        },
+        {
+          "value": 57,
+          "unit": "% of revenue",
+          "of": "Google Play, SEA H1 2024",
+          "context": "Sensor Tower"
+        }
+      ],
+      "appliesWhen": "Region aggregate; the report names Thailand, Indonesia and Vietnam but does not define the region or give per-country splits.",
+      "scope": {
+        "store": [
+          "google_play",
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "TH",
+          "ID",
+          "VN"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "store_share",
+        "platform_share"
+      ],
+      "support": [
+        {
+          "sourceId": "as-s019",
+          "excerpt": "91% of downloads and 57% of revenue coming from Google Play (H1 2024).",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "H1 2024",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "Google Play dominates installs, but iOS is a sizeable revenue channel in SEA.",
+      "researcherNote": "Region-level only; the exact country list behind the aggregate is not stated, so scope lists the countries named.",
+      "retired": false
+    },
+    {
+      "id": "as-th-004",
+      "kind": "market_note",
+      "claim": "Thailand ranks 116th of 123 in EF EPI 2025 (score 402, Low band, down 13 points), so English proficiency in the population is very low.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [
+        {
+          "value": 116,
+          "unit": "rank of 123",
+          "of": "Thailand, EF EPI 2025",
+          "context": "EF"
+        }
+      ],
+      "appliesWhen": "General adult population test takers, not gamers.",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "TH"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "text"
+        ]
+      },
+      "tags": [
+        "localisation",
+        "audience",
+        "script"
+      ],
+      "support": [
+        {
+          "sourceId": "as-s020",
+          "excerpt": "Global ranking 116, EF EPI score 402, Low band, 2025 edition.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Snapshot 2026-09-29",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "English-only captions are unlikely to carry meaning for most Thai users; localise captions.",
+      "researcherNote": "EF test-taker samples are self-selected. LocalizeDirect quotes an older 101/113 ranking.",
+      "retired": false
+    },
+    {
+      "id": "as-th-005",
+      "kind": "market_note",
+      "claim": "In the 22 top-grossing games on Thailand Google Play (26 Sep 2026 chart), the first phone screenshot set was landscape in 15 and portrait in 7; the median was 8 screenshots (range 5 to 14).",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [
+        {
+          "value": 15,
+          "unit": "of 22 listings",
+          "of": "landscape, Thailand",
+          "context": "obs 2026-09-29"
+        },
+        {
+          "value": 8,
+          "unit": "median screenshots",
+          "of": "phone set, Thailand",
+          "context": "obs 2026-09-29"
+        }
+      ],
+      "appliesWhen": "Top-grossing games of all genres in Thailand.",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "TH"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "screenshots"
+        ]
+      },
+      "tags": [
+        "orientation",
+        "genre_convention",
+        "deck_length"
+      ],
+      "support": [
+        {
+          "sourceId": "as-s058",
+          "excerpt": "15 landscape, 7 portrait; median 8; range 5 to 14.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Snapshot 2026-09-29",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "Thai top grossing skews landscape because of its genre mix; a portrait roguelike deck is still what the direct competitors use.",
+      "researcherNote": "Chart order from Similarweb (used only to pick packages). Single snapshot of one chart on one day; chart mix is dominated by strategy, MOBA, casual and sports games, not roguelikes.",
+      "retired": false
+    },
+    {
+      "id": "as-th-006",
+      "kind": "market_note",
+      "claim": "Of six viewed top-grossing Thai listings (Whiteout Survival, RoV, Free Fire x Naruto, Ragnarok: The New World, Call of Duty: Mobile, CookieRun Classic), five had Thai captions on every screenshot and one kept English.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Top-grossing games in Thailand; captions read by eye.",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "TH"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "screenshots"
+        ]
+      },
+      "tags": [
+        "captions",
+        "localisation",
+        "script"
+      ],
+      "support": [
+        {
+          "sourceId": "as-s058",
+          "excerpt": "Thai captions on Whiteout, RoV, Free Fire x Naruto, Ragnarok New World, CODM; CookieRun Classic screenshot captions are English.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Snapshot 2026-09-29",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "Thai captions are the norm; English-only is possible for entrenched global brands.",
+      "researcherNote": "Six listings, hand-picked from the top 22 by variety, not random.",
+      "retired": false
+    },
+    {
+      "id": "as-th-007",
+      "kind": "market_note",
+      "claim": "Several viewed Thai top-grossing listings (RoV, Call of Duty: Mobile, Ragnarok: The New World, Free Fire x Naruto) use a Thai headline plus a smaller Thai sub-line on each screenshot, over character-led art.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Games with large IP/character rosters; a stylistic observation, not a performance finding.",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "TH"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "screenshots"
+        ]
+      },
+      "tags": [
+        "captions",
+        "text_density",
+        "characters",
+        "script"
+      ],
+      "support": [
+        {
+          "sourceId": "as-s058",
+          "excerpt": "Two-tier Thai captions (headline + sub-line) with characters on RoV, CODM, Ragnarok, Free Fire x Naruto screenshots.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Snapshot 2026-09-29",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "Thai text density of two lines per screenshot is common among top games, so a headline plus sub-line is not unusual.",
+      "researcherNote": "Four listings; density judged by eye.",
+      "retired": false
+    },
+    {
+      "id": "as-th-008",
+      "kind": "market_note",
+      "claim": "Habby's Capybara Go, Archero 2 and Survivor.io use Thai captions on their Thai Google Play screenshots, keeping the Latin game name (Archero 2, Survivor.io, Capybara Go!).",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Habby's three titles as of 2026-09-29.",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "roguelike",
+          "survivor_like",
+          "idle"
+        ],
+        "countries": [
+          "TH"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "screenshots",
+          "text"
+        ]
+      },
+      "tags": [
+        "captions",
+        "localisation",
+        "branding"
+      ],
+      "support": [
+        {
+          "sourceId": "as-s062",
+          "excerpt": "th listings: Thai captions; titles remain Latin (Archero 2, Survivor.io, Capybara Go!).",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Snapshot 2026-09-29",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "In Thailand competitors localise captions but keep the Latin brand name.",
+      "researcherNote": "Contrast with Taiwan, where the game names are localised into Chinese.",
+      "retired": false
+    },
+    {
+      "id": "as-th-009",
+      "kind": "market_note",
+      "claim": "In Thailand, Archero 2 and Survivor.io have Thai short descriptions while Capybara Go keeps the English tagline 'Don't worry, Be capy!'.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Habby's three titles as of 2026-09-29.",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "roguelike",
+          "survivor_like",
+          "idle"
+        ],
+        "countries": [
+          "TH"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "text"
+        ]
+      },
+      "tags": [
+        "localisation",
+        "lingo",
+        "captions"
+      ],
+      "support": [
+        {
+          "sourceId": "as-s062",
+          "excerpt": "th short descriptions: Archero 2 'Roguelike 2.0 ฟินกว่าเดิมหลายเท่า', Survivor.io 'รอดจากมอนสเตอร์ รอดจากความมันส์'; Capybara Go \"Don't worry, Be capy!\".",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Snapshot 2026-09-29",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "Short-description localisation is not universal even among strong competitors.",
+      "researcherNote": "Play may display an English default when a translation is missing.",
+      "retired": false
+    },
+    {
+      "id": "as-th-010",
+      "kind": "market_note",
+      "claim": "Capybara Go's Thai screenshots translate the headline into Thai but keep the English word stamps (Lucky!, Big Win!, Relax!, Oh No!, Survived!), unlike its Taiwan screenshots where the stamps are also translated.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Capybara Go listing as of 2026-09-29.",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "roguelike",
+          "idle"
+        ],
+        "countries": [
+          "TH"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "screenshots"
+        ]
+      },
+      "tags": [
+        "localisation",
+        "captions",
+        "script"
+      ],
+      "support": [
+        {
+          "sourceId": "as-s062",
+          "excerpt": "th set: Thai headlines above English stamps; zh_TW set translates the stamps too.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Snapshot 2026-09-29",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "Partial localisation (headline only) exists at the top of the market.",
+      "researcherNote": "Direct observation of five screenshots.",
+      "retired": false
+    },
+    {
+      "id": "as-th-011",
+      "kind": "market_note",
+      "claim": "Legend of Mushroom's Google Play screenshot set is identical, with English text, in the Taiwan, Hong Kong, Thai, Vietnamese, Indonesian, Philippine and US listings, while its short description is translated in all but the English-language ones.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Legend of Mushroom (com.mxdzzus.google), 2026-09-29.",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "rpg",
+          "idle"
+        ],
+        "countries": [
+          "TW",
+          "HK",
+          "TH",
+          "VN",
+          "ID",
+          "PH"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "screenshots"
+        ]
+      },
+      "tags": [
+        "localisation",
+        "captions",
+        "screenshots"
+      ],
+      "support": [
+        {
+          "sourceId": "as-s062",
+          "excerpt": "All seven locales return the same seven image identifiers; short descriptions translated for zh, th, vi, id.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Snapshot 2026-09-29",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "A direct competitor ships one English screenshot set everywhere; localised decks from Habby are the exception in this competitor set.",
+      "researcherNote": "Direct observation across locales; the seven images were viewed for zh_TW, th, vi, id and en_US.",
+      "retired": false
+    },
+    {
+      "id": "as-th-012",
+      "kind": "market_note",
+      "claim": "Legend of Mushroom's first landscape screenshot carries an anniversary gift code ('Gift Code: ANNIV2P5') and a later one an offer line ('Rich new player rewards / 3,000 Summons!'), in every locale.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Listing as of 2026-09-29; code text read from a 1400 px download.",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "rpg",
+          "idle"
+        ],
+        "countries": [
+          "TW",
+          "HK",
+          "TH",
+          "VN",
+          "ID",
+          "PH"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "screenshots"
+        ]
+      },
+      "tags": [
+        "offers",
+        "events",
+        "price_text",
+        "captions"
+      ],
+      "support": [
+        {
+          "sourceId": "as-s062",
+          "excerpt": "Screenshot 1 reads 'HAPPY 2.5 ANNIVERSARY! Gift Code: ANNIV2P5'; screenshot 2 'Rich new player rewards 3,000 Summons!'.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Snapshot 2026-09-29",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "Gift-code and reward-offer overlays are used by a live competitor in Asian listings.",
+      "researcherNote": "Direct observation. Whether this complies with Google Play's graphic policy on promotional and time-sensitive text is covered by the Play policy entries, not checked here.",
+      "retired": false
+    },
+    {
+      "id": "as-th-013",
+      "kind": "heuristic",
+      "claim": "A Thai typography site recommends line-height of at least 1.55 for Thai body text and 1.1-1.25 for display sizes, because stacked vowels and tone marks need vertical room.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Baked-in Thai caption text.",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "TH"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "text"
+        ]
+      },
+      "tags": [
+        "typography",
+        "legibility",
+        "script"
+      ],
+      "support": [
+        {
+          "sourceId": "as-s023",
+          "excerpt": "Thai body text needs a line-height of at least 1.55 ... to accommodate Thai's stacked vowels and tone marks.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Snapshot 2026-09-29",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "Give two-line Thai captions extra leading (~1.2 at display size); do not tighten to Latin defaults.",
+      "researcherNote": "Single font-vendor site; W3C Thai layout page read but gave no number. Test rendering on real captions.",
+      "retired": false
+    },
+    {
+      "id": "as-th-014",
+      "kind": "market_note",
+      "claim": "Thai text is written without spaces between words; spaces mark phrases, so caption line breaks should fall at phrase boundaries.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Any Thai text in screenshots.",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "TH"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "text"
+        ]
+      },
+      "tags": [
+        "typography",
+        "script",
+        "captions"
+      ],
+      "support": [
+        {
+          "sourceId": "as-s024",
+          "excerpt": "Spaces separate phrases, rather than words.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        },
+        {
+          "sourceId": "as-s025",
+          "excerpt": "Thai ... no spaces between words.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        },
+        {
+          "sourceId": "as-s026",
+          "excerpt": "Thai, you don't separate words with spaces like in most European languages.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Snapshot 2026-09-29",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "Have a Thai linguist place line breaks in captions rather than relying on automatic wrapping.",
+      "researcherNote": "The break-at-phrase-boundary recommendation is an inference from the W3C statement.",
+      "retired": false
+    },
+    {
+      "id": "as-th-015",
+      "kind": "market_note",
+      "claim": "Legend of Mushroom earned over $11M in Southeast Asia in Jan-Aug 2024, with Thailand and Vietnam each contributing over 25% of that revenue.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Sensor Tower estimates, Jan-Aug 2024.",
+      "scope": {
+        "store": [
+          "google_play",
+          "app_store"
+        ],
+        "genre": [
+          "rpg",
+          "idle"
+        ],
+        "countries": [
+          "TH",
+          "VN"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "audience",
+        "genre_convention"
+      ],
+      "support": [
+        {
+          "sourceId": "as-s019",
+          "excerpt": "Legend of Mushroom generated over $11 million in Southeast Asia; Thailand and Vietnam each contributing over 25% of the revenue.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Jan-Aug 2024",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "Thailand and Vietnam are the core SEA markets of a direct competitor.",
+      "researcherNote": "Single origin.",
+      "retired": false
+    },
+    {
+      "id": "as-th-016",
+      "kind": "market_note",
+      "claim": "In a Sensor Tower Southeast Asia report, Strategy (24%) and RPG (23%) were the two largest game revenue genres in Jan-Aug 2024.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [
+        {
+          "value": 23,
+          "unit": "% of revenue",
+          "of": "RPG, SEA Jan-Aug 2024",
+          "context": "Sensor Tower"
+        }
+      ],
+      "appliesWhen": "Region aggregate; countries named in the report are Thailand, Indonesia and Vietnam.",
+      "scope": {
+        "store": [
+          "google_play",
+          "app_store"
+        ],
+        "genre": [
+          "rpg",
+          "all_games"
+        ],
+        "countries": [
+          "TH",
+          "ID",
+          "VN"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "genre_convention",
+        "rpg"
+      ],
+      "support": [
+        {
+          "sourceId": "as-s019",
+          "excerpt": "Strategy 24% and RPG 23% of Jan-Aug 2024 revenue (47% combined).",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Jan-Aug 2024",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "An RPG-styled listing competes in a proven SEA monetising category.",
+      "researcherNote": "Region definition not stated.",
+      "retired": false
+    },
+    {
+      "id": "as-th-017",
+      "kind": "market_note",
+      "claim": "A localisation vendor says RPG is the most popular genre in Thailand at 29% of online gamers, with strong anime fandom, citing no primary source.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Thai online gamers.",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "rpg"
+        ],
+        "countries": [
+          "TH"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "screenshots"
+        ]
+      },
+      "tags": [
+        "genre_convention",
+        "rpg",
+        "audience"
+      ],
+      "support": [
+        {
+          "sourceId": "as-s025",
+          "excerpt": "RPG is the most popular genre in Thailand (29% of online gamers)... strong anime fanbase.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Snapshot 2026-09-29",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "Weak support for character-led RPG art in Thailand.",
+      "researcherNote": "Vendor claim, origin unknown; not corroborated.",
+      "retired": false
+    },
+    {
+      "id": "as-th-018",
+      "kind": "market_note",
+      "claim": "Under Thailand's Film and Video Act 2008, games are treated as videos and their exhibition or distribution requires prior approval from the Film and Video Committee.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Statute as summarised; practical enforcement against foreign mobile games not established.",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "TH"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "regulation",
+        "age_rating"
+      ],
+      "support": [
+        {
+          "sourceId": "as-s027",
+          "excerpt": "Games are classified as part of 'videos'... exhibition or distribution of games requires prior approval from the Film and Video Committee.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "As of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2027-03-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "Do not assume Thai mobile game approvals are enforced in practice; check with counsel.",
+      "researcherNote": "One legal-directory summary; the Act itself was not read.",
+      "retired": false
+    },
+    {
+      "id": "as-th-019",
+      "kind": "market_note",
+      "claim": "A 2023 Thai draft Film and Game Act with a rating system and advertising controls was abandoned after criticism, and a 2025 draft Game Industry Promotion Act proposes a rating system aligned with global standards.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Draft legislation; no rule in force.",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "TH"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "regulation",
+        "age_rating",
+        "advertising_law"
+      ],
+      "support": [
+        {
+          "sourceId": "as-s027",
+          "excerpt": "2023 draft ... ultimately leading to abandonment; 2025 draft includes a game rating system aligned with global standards.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "As of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2027-03-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "No Thai age-label requirement for store images today; watch for the 2025 draft.",
+      "researcherNote": "One source; a Bangkok Post headline on a ministry preparing gaming regulation was paywalled (not fetched).",
+      "retired": false
+    },
+    {
+      "id": "as-th-020",
+      "kind": "market_note",
+      "claim": "In March 2026 Thailand's Legislation Consideration Committee concluded that in-game loot boxes do not constitute gambling under the Gambling Act B.E. 2478.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Digital-only items with no cash conversion, per the committee.",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "TH"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "gacha",
+        "regulation",
+        "monetisation_messaging"
+      ],
+      "support": [
+        {
+          "sourceId": "as-s028",
+          "excerpt": "in-game loot boxes in online games do not constitute gambling under the Gambling Act B.E. 2478 (1935).",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Snapshot 2026-09-29",
+      "abDetail": null,
+      "reviewBy": "2027-03-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "Loot-box mechanics are not treated as gambling in Thailand, so no gambling-style restriction on store imagery follows from this.",
+      "researcherNote": "Law-firm note; no age-rating or advertising rules mentioned.",
+      "retired": false
+    },
+    {
+      "id": "as-th-021",
+      "kind": "heuristic",
+      "claim": "A localisation vendor suggests using Songkran and other national celebrations for promotional events and limited skins in Thailand, giving no effect data.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "April water festival; an EA FC Mobile Songkran event report could not be fetched.",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "TH"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "seasonal",
+        "events",
+        "cultural_adaptation"
+      ],
+      "support": [
+        {
+          "sourceId": "as-s026",
+          "excerpt": "Developers can use national celebrations like Songkran to create promotional events or release limited skins.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Snapshot 2026-09-29",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "A Songkran creative swap is plausible but unproven; A/B test rather than assume.",
+      "researcherNote": "Vendor recommendation, no measurement.",
+      "retired": false
+    }
+  ]
+}

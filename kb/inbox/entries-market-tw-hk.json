@@ -1,0 +1,1428 @@
+{
+  "file": "entries-market-tw-hk",
+  "entries": [
+    {
+      "id": "as-tw-001",
+      "kind": "market_note",
+      "claim": "Taiwan mobile web traffic is iOS-majority: iOS 60.17% and Android 39.82% in August 2026.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [
+        {
+          "value": 60.17,
+          "unit": "% share",
+          "of": "iOS mobile web traffic, Taiwan",
+          "context": "Statcounter Aug 2026"
+        },
+        {
+          "value": 39.82,
+          "unit": "% share",
+          "of": "Android mobile web traffic, Taiwan",
+          "context": "Statcounter Aug 2026"
+        }
+      ],
+      "appliesWhen": "Web-traffic share from Statcounter; game revenue split by store not measured.",
+      "scope": {
+        "store": [
+          "google_play",
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "TW"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "store_share",
+        "platform_share"
+      ],
+      "support": [
+        {
+          "sourceId": "as-s001",
+          "excerpt": "Aug 2026: iOS 60.17%, Android 39.82%.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Snapshot 2026-09-29",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "Do not assume Android-first in Taiwan; treat App Store listing parity as important.",
+      "researcherNote": "One source (Statcounter). No independent Taiwan store-revenue split found; second origin searched for but not found (web search quota exhausted).",
+      "retired": false
+    },
+    {
+      "id": "as-tw-002",
+      "kind": "market_note",
+      "claim": "Hong Kong mobile web traffic is close to an even split with Android slightly ahead: Android 52.44%, iOS 47.55% in August 2026.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [
+        {
+          "value": 52.44,
+          "unit": "% share",
+          "of": "Android mobile web traffic, Hong Kong",
+          "context": "Statcounter Aug 2026"
+        },
+        {
+          "value": 47.55,
+          "unit": "% share",
+          "of": "iOS mobile web traffic, Hong Kong",
+          "context": "Statcounter Aug 2026"
+        }
+      ],
+      "appliesWhen": "Web-traffic share from Statcounter; game revenue split by store not measured.",
+      "scope": {
+        "store": [
+          "google_play",
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "HK"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "store_share",
+        "platform_share"
+      ],
+      "support": [
+        {
+          "sourceId": "as-s002",
+          "excerpt": "Aug 2026: Android 52.44%, iOS 47.55%.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Snapshot 2026-09-29",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "Treat both stores as important in Hong Kong.",
+      "researcherNote": "One source (Statcounter); no second independent origin found.",
+      "retired": false
+    },
+    {
+      "id": "as-tw-003",
+      "kind": "market_note",
+      "claim": "Taiwan gave the roguelike Archero 2 about $10.3M, 16% of its lifetime player spending by early February 2025, second only to South Korea (23%) among the markets named.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [
+        {
+          "value": 16,
+          "unit": "% of lifetime spend",
+          "of": "Archero 2 in Taiwan",
+          "context": "AppMagic estimate, to early Feb 2025"
+        }
+      ],
+      "appliesWhen": "Roguelike/action title from Habby; spending estimates from AppMagic; Japan and Hong Kong not stated in the article.",
+      "scope": {
+        "store": [
+          "google_play",
+          "app_store"
+        ],
+        "genre": [
+          "roguelike"
+        ],
+        "countries": [
+          "TW"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "audience",
+        "genre_convention"
+      ],
+      "support": [
+        {
+          "sourceId": "as-s011",
+          "excerpt": "South Korea $14.7M (23%), Taiwan $10.3M (16%), US $9.9M (15%) of lifetime player spending.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Data to early February 2025",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "Taiwan is a priority market for a roguelike similar to Rogue Legend.",
+      "researcherNote": "Single origin (AppMagic via PocketGamer.biz). Estimates, App Store plus Google Play combined.",
+      "retired": false
+    },
+    {
+      "id": "as-tw-004",
+      "kind": "market_note",
+      "claim": "Per Sensor Tower data cited in a UA case study, Capybara Go's strongest countries were South Korea, Taiwan and Japan.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Capybara Go early global launch period (iOS 2024-08-30, Android/global 2024-11-06).",
+      "scope": {
+        "store": [
+          "google_play",
+          "app_store"
+        ],
+        "genre": [
+          "roguelike",
+          "idle"
+        ],
+        "countries": [
+          "TW"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "audience",
+        "genre_convention"
+      ],
+      "support": [
+        {
+          "sourceId": "as-s012",
+          "excerpt": "Per Sensor Tower data cited, the strongest countries are South Korea, Taiwan and Japan.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Launch-period data, late 2024",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "Supports treating Taiwan as a lead market for idle/roguelike hybrids.",
+      "researcherNote": "Blog secondhand of Sensor Tower; no figures given.",
+      "retired": false
+    },
+    {
+      "id": "as-tw-005",
+      "kind": "market_note",
+      "claim": "In the 22 top-grossing games on Taiwan Google Play (26 Sep 2026 chart), the first phone screenshot set was landscape in 14 and portrait in 8; the median was 6 screenshots (range 4 to 8).",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [
+        {
+          "value": 14,
+          "unit": "of 22 listings",
+          "of": "landscape first screenshot set, Taiwan",
+          "context": "obs 2026-09-29"
+        },
+        {
+          "value": 8,
+          "unit": "of 22 listings",
+          "of": "portrait",
+          "context": "obs 2026-09-29"
+        },
+        {
+          "value": 6,
+          "unit": "median screenshots",
+          "of": "phone screenshot set",
+          "context": "obs 2026-09-29"
+        }
+      ],
+      "appliesWhen": "Top-grossing games of all genres in Taiwan; genre mix is not roguelike.",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "TW"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "screenshots"
+        ]
+      },
+      "tags": [
+        "orientation",
+        "genre_convention",
+        "deck_length"
+      ],
+      "support": [
+        {
+          "sourceId": "as-s056",
+          "excerpt": "14 landscape, 8 portrait; median 6 screenshots; 4 to 8 range.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Snapshot 2026-09-29",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "Orientation in Taiwan top grossing is genre-driven; compare against the same-genre listings (see Habby entry) before choosing.",
+      "researcherNote": "Chart order from Similarweb (used only to pick packages). Single snapshot of one chart on one day; chart mix is dominated by strategy, MMO, casual and card games, not roguelikes. Orientation read from Play page data and confirmed on sampled images.",
+      "retired": false
+    },
+    {
+      "id": "as-tw-006",
+      "kind": "market_note",
+      "claim": "In the 22 top-grossing games on Hong Kong Google Play (26 Sep 2026 chart), the first phone screenshot set was portrait in 13 and landscape in 9; the median was 6 screenshots (range 5 to 8).",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [
+        {
+          "value": 13,
+          "unit": "of 22 listings",
+          "of": "portrait first screenshot set, Hong Kong",
+          "context": "obs 2026-09-29"
+        },
+        {
+          "value": 9,
+          "unit": "of 22 listings",
+          "of": "landscape",
+          "context": "obs 2026-09-29"
+        }
+      ],
+      "appliesWhen": "Top-grossing games of all genres in Hong Kong.",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "HK"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "screenshots"
+        ]
+      },
+      "tags": [
+        "orientation",
+        "genre_convention",
+        "deck_length"
+      ],
+      "support": [
+        {
+          "sourceId": "as-s057",
+          "excerpt": "13 portrait, 9 landscape; median 6 screenshots; 5 to 8 range.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Snapshot 2026-09-29",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "Do not infer an HK-specific orientation preference from this; it reflects chart genre mix.",
+      "researcherNote": "Chart order from Similarweb (used only to pick packages). Single snapshot of one chart on one day; chart mix is dominated by strategy, MMO, casual and card games, not roguelikes. HK chart mix differs from TW (more casual/merge titles), which probably explains the portrait lean.",
+      "retired": false
+    },
+    {
+      "id": "as-tw-007",
+      "kind": "market_note",
+      "claim": "Five viewed top-grossing Taiwan listings (Whiteout Survival, Last War, Kingshot, MapleStory Idle Adventure, Architect) carried a Traditional-Chinese caption on every screenshot; strategy titles used about 2 to 8 characters.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Top-grossing strategy/MMO/idle titles in Taiwan.",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "TW"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "screenshots"
+        ]
+      },
+      "tags": [
+        "captions",
+        "text_density",
+        "script",
+        "localisation"
+      ],
+      "support": [
+        {
+          "sourceId": "as-s056",
+          "excerpt": "Captions in Traditional Chinese on every screenshot of 5 viewed listings; Maple and Architect add a sub-line.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Snapshot 2026-09-29",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "Expect short Traditional-Chinese headline captions as the local norm; no English-only decks among the five viewed.",
+      "researcherNote": "Five listings read by eye; not a count of all 22.",
+      "retired": false
+    },
+    {
+      "id": "as-tw-008",
+      "kind": "market_note",
+      "claim": "Habby's Capybara Go, Archero 2 and Survivor.io each use Traditional-Chinese captions on their phone screenshots in the Taiwan Google Play listing (Archero 2's first image is logo key art only).",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Habby's three titles, listings as of 2026-09-29.",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "roguelike",
+          "survivor_like",
+          "idle"
+        ],
+        "countries": [
+          "TW"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "screenshots"
+        ]
+      },
+      "tags": [
+        "captions",
+        "localisation",
+        "script"
+      ],
+      "support": [
+        {
+          "sourceId": "as-s062",
+          "excerpt": "Captions in Traditional Chinese on the caption-bearing screenshots of the three Habby titles (zh_TW).",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Snapshot 2026-09-29",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "Direct competitors localise every caption for Taiwan; an English-only deck would be the exception.",
+      "researcherNote": "Three listings by one publisher; all read by eye.",
+      "retired": false
+    },
+    {
+      "id": "as-tw-009",
+      "kind": "market_note",
+      "claim": "Habby localises the game name for Taiwan on Google Play: Capybara Go is titled 卡皮巴拉 Go!, Archero 2 is 弓箭傳說2 and Survivor.io is 噠噠特攻.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "The three Habby titles, Play listing titles as of 2026-09-29.",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "roguelike",
+          "survivor_like",
+          "idle"
+        ],
+        "countries": [
+          "TW",
+          "HK"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "text"
+        ]
+      },
+      "tags": [
+        "localisation",
+        "branding",
+        "cultural_adaptation"
+      ],
+      "support": [
+        {
+          "sourceId": "as-s062",
+          "excerpt": "Play titles 卡皮巴拉 Go!, 弓箭傳說2, 噠噠特攻 for hl=zh_TW and hl=zh_HK.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Snapshot 2026-09-29",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "Plan a local Chinese title for Rogue Legend; the competitors do.",
+      "researcherNote": "Direct observation. An earlier Medium snippet spelled Survivor.io as 噠噠特工; the Play listing itself reads 噠噠特攻.",
+      "retired": false
+    },
+    {
+      "id": "as-tw-010",
+      "kind": "market_note",
+      "claim": "Capybara Go's Taiwan screenshots translate even the English word stamps in the art (Lucky!, Big Win!, Relax!, Oh No!, Survived!) into Chinese (幸運！, 大獲全勝！, 放輕鬆！, 糟糕！, 撐過去了！).",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Capybara Go listing as of 2026-09-29; same image set serves TW and HK.",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "roguelike",
+          "idle"
+        ],
+        "countries": [
+          "TW",
+          "HK"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "screenshots"
+        ]
+      },
+      "tags": [
+        "localisation",
+        "captions",
+        "cultural_adaptation"
+      ],
+      "support": [
+        {
+          "sourceId": "as-s062",
+          "excerpt": "zh_TW/zh_HK screenshots replace the English stamps with Chinese; the Thai screenshots keep the English stamps.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Snapshot 2026-09-29",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "Localisation depth can go into art-embedded text, not just overlay captions.",
+      "researcherNote": "Direct observation of five screenshots; compared with th and en_US image sets.",
+      "retired": false
+    },
+    {
+      "id": "as-tw-011",
+      "kind": "market_note",
+      "claim": "Survivor.io's Taiwan/Hong Kong screenshots show a Chinese game logo and Chinese in-game UI text, whereas its Thai and Indonesian screenshots keep the English logo and English UI text with only the caption localised.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Survivor.io listing as of 2026-09-29.",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "survivor_like"
+        ],
+        "countries": [
+          "TW",
+          "HK",
+          "TH",
+          "ID"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "screenshots"
+        ]
+      },
+      "tags": [
+        "localisation",
+        "gameplay_real",
+        "branding"
+      ],
+      "support": [
+        {
+          "sourceId": "as-s062",
+          "excerpt": "zh_TW set shows 噠噠特攻 logo and Chinese UI; th and id sets show SURVIVOR.IO logo, English UI and localised captions.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Snapshot 2026-09-29",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "Chinese-market listings may justify re-captured, fully translated UI; SEA listings may not.",
+      "researcherNote": "Direct observation of eight zh_TW screenshots vs the th/id sets.",
+      "retired": false
+    },
+    {
+      "id": "as-tw-012",
+      "kind": "market_note",
+      "claim": "Of 13 games in both the Taiwan and Hong Kong top-grossing charts, the zh_TW and zh_HK Play listings return the same description text in 13, the same title in 12 and the identical screenshot set in 10.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [
+        {
+          "value": 10,
+          "unit": "of 13 games",
+          "of": "identical screenshot set TW vs HK",
+          "context": "obs 2026-09-29"
+        }
+      ],
+      "appliesWhen": "Top-grossing titles present in both charts; a missing zh-HK text listing may fall back to zh-TW.",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "TW",
+          "HK"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "screenshots",
+          "text"
+        ]
+      },
+      "tags": [
+        "localisation",
+        "script",
+        "screenshots"
+      ],
+      "support": [
+        {
+          "sourceId": "as-s056",
+          "excerpt": "TW and HK listings identical in text for 13/13 and in title for 12/13; screenshots identical for 10/13.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        },
+        {
+          "sourceId": "as-s057",
+          "excerpt": "Same comparison from the HK side.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Snapshot 2026-09-29",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "One Traditional-Chinese set is the observed norm for both markets.",
+      "researcherNote": "Play may fall back to zh-TW text when no zh-HK version is supplied, so identity means 'no separate HK text is served', not necessarily 'publisher chose one set'.",
+      "retired": false
+    },
+    {
+      "id": "as-tw-013",
+      "kind": "heuristic",
+      "claim": "A localisation vendor says 草莓 (Taiwan wording) is widely understood in Hong Kong and often works for both, while Hong Kong may also use Cantonese-based wording such as 士多啤梨.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "General game text; not tested on store conversion.",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "TW",
+          "HK"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "text",
+          "screenshots"
+        ]
+      },
+      "tags": [
+        "localisation",
+        "lingo",
+        "typography"
+      ],
+      "support": [
+        {
+          "sourceId": "as-s016",
+          "excerpt": "In Traditional Chinese Taiwan, it is usually written as '草莓'... widely understood in Hong Kong and would often work well in games for both audiences. But in Hong Kong, it may also appear as '士多啤梨'.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Snapshot 2026-09-29",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "A single zh-Hant caption set is defensible; use a Hong Kong linguist for the hero caption if HK is a priority.",
+      "researcherNote": "Single vendor, no conversion data. Consistent with the observation that most publishers ship one Traditional set.",
+      "retired": false
+    },
+    {
+      "id": "as-tw-014",
+      "kind": "heuristic",
+      "claim": "Two localisation vendors warn that Simplified Chinese can be unfavourable or offensive to Hong Kong and Taiwan audiences, so Traditional Chinese should be used.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "General localisation advice; no test data.",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "TW",
+          "HK"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "text",
+          "screenshots"
+        ]
+      },
+      "tags": [
+        "localisation",
+        "script",
+        "cultural_adaptation"
+      ],
+      "support": [
+        {
+          "sourceId": "as-s014",
+          "excerpt": "In Hong Kong, localization that uses Simplified Chinese might even have an actively unfavorable impact.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        },
+        {
+          "sourceId": "as-s015",
+          "excerpt": "Natives of Hong Kong and Taiwan may actually be offended by the use of simplified characters.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Snapshot 2026-09-29",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "Never reuse mainland Simplified assets for TW/HK.",
+      "researcherNote": "Both vendors; OneSky article is from 2015. No measured effect.",
+      "retired": false
+    },
+    {
+      "id": "as-tw-015",
+      "kind": "market_note",
+      "claim": "Noto CJK ships separate region builds for Traditional Chinese (TC) and Hong Kong (HK) alongside JP, KR and SC.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Choosing a font for baked-in caption text.",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "TW",
+          "HK"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "text"
+        ]
+      },
+      "tags": [
+        "typography",
+        "script"
+      ],
+      "support": [
+        {
+          "sourceId": "as-s017",
+          "excerpt": "The two letter code is replaced ... TC -> Traditional Chinese, HK -> Hong Kong.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Snapshot 2026-09-29",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "Pick a TC (Taiwan) or HK build of the caption font for the market rather than a SC or JP build.",
+      "researcherNote": "README lists builds but does not describe glyph differences; do not claim visible glyph differences from this source.",
+      "retired": false
+    },
+    {
+      "id": "as-tw-016",
+      "kind": "market_note",
+      "claim": "Taiwan's game rating regulation requires game advertisements to disclose the game's rating level in a conspicuous place, and pre-release advertisements to state that rating is pending.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Game software advertising by persons with rating obligations; whether a Play listing counts as an advertisement was not established.",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "TW"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "age_rating",
+        "regulation",
+        "advertising_law"
+      ],
+      "support": [
+        {
+          "sourceId": "as-s007",
+          "excerpt": "有分級管理義務之人為遊戲軟體廣告者...並應於明顯處揭露遊戲軟體之分級級別 (Art. 14); pre-release: 本遊戲尚未上市，分級級別評定中.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Regulation as amended 2019-05-23, read 2026-09-29",
+      "abDetail": null,
+      "reviewBy": "2027-03-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "Put the Taiwanese rating mark on Taiwan ad creative; check with local counsel whether it is needed on store graphics.",
+      "researcherNote": "Official text read; penalty article and the online-store interpretation not checked. Amended 2019-05-23 per database.",
+      "retired": false
+    },
+    {
+      "id": "as-tw-017",
+      "kind": "market_note",
+      "claim": "For games without packaging, Taiwan requires the rating mark next to the game description, download or start page, at least 50x50 px for restricted-level games and 45x45 px for other levels.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [
+        {
+          "value": 50,
+          "unit": "px",
+          "of": "minimum side of rating mark, restricted level",
+          "context": "Art. 11"
+        },
+        {
+          "value": 45,
+          "unit": "px",
+          "of": "minimum side of rating mark, other levels",
+          "context": "Art. 11"
+        }
+      ],
+      "appliesWhen": "Applies to the obligated distributor's page (Art. 11).",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "TW"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "age_rating",
+        "regulation",
+        "policy_graphics"
+      ],
+      "support": [
+        {
+          "sourceId": "as-s007",
+          "excerpt": "無遊戲軟體產品包裝者，應於遊戲軟體說明、下載、起始網頁或連結處旁為明顯之標示；...不得小於五十像素乘以五十像素...四十五像素乘以四十五像素.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Snapshot 2026-09-29",
+      "abDetail": null,
+      "reviewBy": "2027-03-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "Rating marks are a legal size minimum, not an option, on Taiwan-facing distribution pages.",
+      "researcherNote": "Official text read; how this maps to Google Play's IARC-based label (IARC added a Taiwan authority in 2023 per a search snippet, not fetched) is unverified.",
+      "retired": false
+    },
+    {
+      "id": "as-tw-018",
+      "kind": "market_note",
+      "claim": "Since 1 January 2023 Taiwan requires paid random-reward (gacha) probabilities to be shown as numeric percentages on the official website home page, login page, purchase page and packaging.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Online games with paid chance-based items in Taiwan.",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "TW"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "gacha",
+        "loot_box_disclosure",
+        "regulation",
+        "monetisation_messaging"
+      ],
+      "support": [
+        {
+          "sourceId": "as-s008",
+          "excerpt": "Operators must display odds as numeric percentages on official website, login page, purchase page and packaging; effective 2023-01-01.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        },
+        {
+          "sourceId": "as-s009",
+          "excerpt": "Odds must be numeric percentages, not vague terms such as very high or very low.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Effective 2023-01-01",
+      "abDetail": null,
+      "reviewBy": "2027-03-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "Do not put vague drop-rate boasts in Taiwan store art or ads; show numeric odds inside the game and on the official site.",
+      "researcherNote": "Both sources restate the same MOEA contract rule (one origin). The rule names game-controlled pages, not the store listing.",
+      "retired": false
+    },
+    {
+      "id": "as-tw-019",
+      "kind": "market_note",
+      "claim": "Taiwan's chance-item rule is enforced by fines: NT$30,000 to 300,000 for a first violation after a correction deadline and NT$50,000 to 500,000 for repeat violations.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Non-compliance with the chance-item disclosure rule.",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "TW"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "gacha",
+        "loot_box_disclosure",
+        "regulation"
+      ],
+      "support": [
+        {
+          "sourceId": "as-s009",
+          "excerpt": "First violation NT$30,000-300,000 after correction deadline; subsequent violations NT$50,000-500,000.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Snapshot 2026-09-29",
+      "abDetail": null,
+      "reviewBy": "2027-03-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "Non-trivial penalties; comply before launch.",
+      "researcherNote": "Government explainer read; a consumer NGO page instead cites continuing fines under Consumer Protection Act Art. 56-1.",
+      "retired": false
+    },
+    {
+      "id": "as-tw-020",
+      "kind": "market_note",
+      "claim": "A 2021 Hong Kong Consumer Council survey of 11 mobile games found nearly 40% did not disclose winning odds, and it urged Hong Kong to follow Taiwan and Japan in requiring published win rates.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Survey of 11 popular mobile games; page first published 2021-01-17, updated 2025-02-13.",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "HK"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "gacha",
+        "loot_box_disclosure",
+        "regulation"
+      ],
+      "support": [
+        {
+          "sourceId": "as-s010",
+          "excerpt": "Nearly 40% of surveyed games failed to disclose winning odds; advocates following Taiwan and Japan in requiring published win rates.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Snapshot 2026-09-29",
+      "abDetail": null,
+      "reviewBy": "2027-03-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "Assume no mandatory HK odds rule but expect regulator interest; keep odds messaging conservative.",
+      "researcherNote": "A news report, secondhand. No statute requiring odds disclosure in Hong Kong was found, but absence was not proven; SCMP (Mar 2024) returned HTTP 403.",
+      "retired": false
+    },
+    {
+      "id": "as-tw-021",
+      "kind": "market_note",
+      "claim": "Titles are localised into Chinese in most top-grossing Play listings: 19 of 22 in Taiwan and 17 of 22 in Hong Kong carry a Chinese-script title.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [
+        {
+          "value": 19,
+          "unit": "of 22 titles",
+          "of": "Han-script title, Taiwan",
+          "context": "obs 2026-09-29"
+        },
+        {
+          "value": 17,
+          "unit": "of 22 titles",
+          "of": "Han-script title, Hong Kong",
+          "context": "obs 2026-09-29"
+        }
+      ],
+      "appliesWhen": "Top-grossing charts of 26 Sep 2026.",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "TW",
+          "HK"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "text"
+        ]
+      },
+      "tags": [
+        "localisation",
+        "branding",
+        "script"
+      ],
+      "support": [
+        {
+          "sourceId": "as-s056",
+          "excerpt": "19 of 22 titles in Han script; Latin titles: Fate/Grand Order, Kingshot, Pikmin Bloom.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        },
+        {
+          "sourceId": "as-s057",
+          "excerpt": "17 of 22 titles in Han script.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Snapshot 2026-09-29",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "A Chinese title is the norm; Latin-only titles are the exception and mostly global brands.",
+      "researcherNote": "Chart order from Similarweb (used only to pick packages). Single snapshot of one chart on one day; chart mix is dominated by strategy, MMO, casual and card games, not roguelikes.",
+      "retired": false
+    },
+    {
+      "id": "as-tw-022",
+      "kind": "market_note",
+      "claim": "Hong Kong's English proficiency is in the moderate band in EF EPI 2025 (538, 39th), so some English game terms may be tolerated, but no test of English captions was found.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "General population proficiency, not gamer proficiency.",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "HK"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "text"
+        ]
+      },
+      "tags": [
+        "localisation",
+        "audience",
+        "captions"
+      ],
+      "support": [
+        {
+          "sourceId": "as-s022",
+          "excerpt": "Hong Kong came next with 538, placing it in the moderate-proficiency tier.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Snapshot 2026-09-29",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "Keep captions Chinese by default; English only for brand terms.",
+      "researcherNote": "Proficiency is not a caption-performance measure.",
+      "retired": false
+    },
+    {
+      "id": "as-tw-023",
+      "kind": "market_note",
+      "claim": "An ad-intelligence vendor says Habby's ad creatives for Taiwan, Hong Kong, Macau and Japan lean on dancing women and TikTok trends, whereas Korea used a celebrity explaining gameplay.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "User-acquisition video ads, not store screenshots.",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "roguelike",
+          "idle"
+        ],
+        "countries": [
+          "TW",
+          "HK"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "video"
+        ]
+      },
+      "tags": [
+        "cultural_adaptation",
+        "celebrity",
+        "characters"
+      ],
+      "support": [
+        {
+          "sourceId": "as-s013",
+          "excerpt": "Creatives 'obviously use more elements like beautiful women appearing on the screen and popular trends on TikTok' in Taiwan, Hong Kong, Macau and Japan.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Snapshot 2026-09-29",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "Do not transplant ad-creative style into store images without evidence; shows Habby differentiates by region.",
+      "researcherNote": "Vendor observation of ads; Japan is also included so it is not TW/HK-specific.",
+      "retired": false
+    },
+    {
+      "id": "as-tw-024",
+      "kind": "market_note",
+      "claim": "A localisation vendor says mainland China requires all text in Simplified Chinese with no English words, and that Hong Kong and Taiwan use Traditional Chinese.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Mainland China app store submissions; stated without a primary source.",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "CN"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "text"
+        ]
+      },
+      "tags": [
+        "localisation",
+        "script",
+        "regulation"
+      ],
+      "support": [
+        {
+          "sourceId": "as-s015",
+          "excerpt": "The Chinese commission does not permit English words in apps... All text must absolutely be in simplified Chinese.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Snapshot 2026-09-29",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "Mainland assets are not reusable for TW/HK and vice versa.",
+      "researcherNote": "Undated vendor blog; regulation not verified. Mainland China is outside V1 scope.",
+      "retired": false
+    },
+    {
+      "id": "as-tw-025",
+      "kind": "heuristic",
+      "claim": "A localisation vendor advises against writing character names in red in Chinese-speaking markets (red name = curse) and notes 8 as lucky and 4 as unlucky.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Stated for China; no TW/HK-specific evidence found.",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "CN"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "screenshots"
+        ]
+      },
+      "tags": [
+        "cultural_adaptation",
+        "colour"
+      ],
+      "support": [
+        {
+          "sourceId": "as-s015",
+          "excerpt": "In Chinese culture a name written in red signifies a curse... Lucky numbers are 8 in China... The number 4 is considered unlucky.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Snapshot 2026-09-29",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "Low-cost precaution only; do not treat as a proven Taiwan/Hong Kong rule.",
+      "researcherNote": "Single undated vendor blog; cultural generalisation without data. Scoped to CN only.",
+      "retired": false
+    },
+    {
+      "id": "as-tw-026",
+      "kind": "heuristic",
+      "claim": "A localisation vendor says softening violent verbs ('Kill' to 'Defeat') may suit some mainland contexts while no change is needed for Taiwan or Hong Kong.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Text in game or listing copy.",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "CN",
+          "TW",
+          "HK"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "text"
+        ]
+      },
+      "tags": [
+        "localisation",
+        "lingo",
+        "cultural_adaptation"
+      ],
+      "support": [
+        {
+          "sourceId": "as-s016",
+          "excerpt": "In some mainland China contexts, a softer phrasing such as 'Defeat the enemies' may be more appropriate...no change may be needed for Taiwan or Hong Kong.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Snapshot 2026-09-29",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "Combat wording needs no softening for TW/HK captions.",
+      "researcherNote": "Single vendor, dated July 2026.",
+      "retired": false
+    }
+  ]
+}

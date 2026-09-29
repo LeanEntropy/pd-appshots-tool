@@ -1,0 +1,472 @@
+{
+  "file": "entries-market-ph",
+  "entries": [
+    {
+      "id": "as-ph-001",
+      "kind": "market_note",
+      "claim": "The Philippines is strongly Android: Android 85.55% and iOS 14.44% of mobile web traffic in August 2026.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [
+        {
+          "value": 85.55,
+          "unit": "% share",
+          "of": "Android mobile web traffic, Philippines",
+          "context": "Statcounter Aug 2026"
+        }
+      ],
+      "appliesWhen": "Web-traffic share; game revenue split not measured.",
+      "scope": {
+        "store": [
+          "google_play",
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "PH"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "store_share",
+        "platform_share"
+      ],
+      "support": [
+        {
+          "sourceId": "as-s006",
+          "excerpt": "Aug 2026: Android 85.55%, iOS 14.44%.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Snapshot 2026-09-29",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "Google Play is the primary store; App Store work is secondary.",
+      "researcherNote": "One source (Statcounter); no second independent origin found (web search quota exhausted).",
+      "retired": false
+    },
+    {
+      "id": "as-ph-002",
+      "kind": "market_note",
+      "claim": "The Philippines was second in Southeast Asian game downloads in Q1 2025 with 366 million, behind Indonesia (870M).",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Sensor Tower download estimates, both stores.",
+      "scope": {
+        "store": [
+          "google_play",
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "PH"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "audience",
+        "store_share"
+      ],
+      "support": [
+        {
+          "sourceId": "as-s018",
+          "excerpt": "The Philippines and Vietnam follow with 366 million and 329 million downloads respectively.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Q1 2025",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "High install volume; monetisation depth not shown.",
+      "researcherNote": "Single origin; the report gives no Philippine revenue rank.",
+      "retired": false
+    },
+    {
+      "id": "as-ph-003",
+      "kind": "market_note",
+      "claim": "The Philippines scores 569 in EF EPI 2025 (28th of 123, High band), the strongest English proficiency of the four SEA markets covered here.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [
+        {
+          "value": 569,
+          "unit": "EF EPI score",
+          "of": "Philippines 2025",
+          "context": "EF"
+        }
+      ],
+      "appliesWhen": "General adult population, not gamers.",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "PH"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "text"
+        ]
+      },
+      "tags": [
+        "localisation",
+        "audience",
+        "captions"
+      ],
+      "support": [
+        {
+          "sourceId": "as-s021",
+          "excerpt": "Global ranking 28, score 569, High band, 2025.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        },
+        {
+          "sourceId": "as-s022",
+          "excerpt": "The Philippines ranked second in Asia with a score of 569, also within the high-proficiency band.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Snapshot 2026-09-29",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "English captions are acceptable; a Filipino translation is not required for a broad audience.",
+      "researcherNote": "Both sources are EF EPI (one origin).",
+      "retired": false
+    },
+    {
+      "id": "as-ph-004",
+      "kind": "market_note",
+      "claim": "In the en_PH Google Play locale, 18 of 21 top-grossing listings share at least half their screenshots with the US listing, so publishers mostly reuse the English set for the Philippines.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Comparison by image identifier; 21 of the 22 packages had a US listing.",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "PH"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "screenshots"
+        ]
+      },
+      "tags": [
+        "localisation",
+        "screenshots"
+      ],
+      "support": [
+        {
+          "sourceId": "as-s061",
+          "excerpt": "Only 3 of 21 en_PH listings differ from the en_US screenshot set by more than half.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Snapshot 2026-09-29",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "An English deck is the norm for the Philippines; no separate Filipino set is needed.",
+      "researcherNote": "Chart order from Similarweb (used only to pick packages). Single snapshot of one chart on one day; chart mix is dominated by MOBA, battle-royale, casual and card games, not roguelikes.",
+      "retired": false
+    },
+    {
+      "id": "as-ph-005",
+      "kind": "market_note",
+      "claim": "In the 22 top-grossing games on Philippines Google Play (26 Sep 2026 chart), the first phone screenshot set was landscape in 16 and portrait in 6; the median was 7 screenshots (range 5 to 9).",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [
+        {
+          "value": 16,
+          "unit": "of 22 listings",
+          "of": "landscape, Philippines",
+          "context": "obs 2026-09-29"
+        }
+      ],
+      "appliesWhen": "Top-grossing games of all genres in the Philippines.",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "PH"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "screenshots"
+        ]
+      },
+      "tags": [
+        "orientation",
+        "genre_convention",
+        "deck_length"
+      ],
+      "support": [
+        {
+          "sourceId": "as-s061",
+          "excerpt": "16 landscape, 6 portrait; median 7; range 5 to 9.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Snapshot 2026-09-29",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "Landscape is the local top-grossing norm, driven by genre mix.",
+      "researcherNote": "Chart order from Similarweb (used only to pick packages). Single snapshot of one chart on one day; chart mix is dominated by MOBA, battle-royale, casual and card games, not roguelikes.",
+      "retired": false
+    },
+    {
+      "id": "as-ph-006",
+      "kind": "market_note",
+      "claim": "Habby's Capybara Go, Archero 2 and Survivor.io show the same English screenshot sets in the Philippine and US listings.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Habby's three titles as of 2026-09-29.",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "roguelike",
+          "survivor_like",
+          "idle"
+        ],
+        "countries": [
+          "PH"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "screenshots"
+        ]
+      },
+      "tags": [
+        "localisation",
+        "captions"
+      ],
+      "support": [
+        {
+          "sourceId": "as-s062",
+          "excerpt": "en_PH image sets are identical to en_US for all three Habby titles.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Snapshot 2026-09-29",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "Competitors do not localise for the Philippines.",
+      "researcherNote": "Direct observation by image identifier; English captions viewed for the US set.",
+      "retired": false
+    },
+    {
+      "id": "as-ph-007",
+      "kind": "market_note",
+      "claim": "A localisation vendor says Filipinos mix Tagalog and English (Taglish) fluidly, and that urban Gen Z and older users differ in platforms (TikTok/Instagram vs Facebook and long video).",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "General localisation advice; no game data.",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "PH"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "text"
+        ]
+      },
+      "tags": [
+        "localisation",
+        "lingo",
+        "audience"
+      ],
+      "support": [
+        {
+          "sourceId": "as-s048",
+          "excerpt": "a seamless, hybrid blend of Tagalog and English that shifts tone, pace, and nuance depending on context.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Snapshot 2026-09-29",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "English or Taglish captions are fine; no evidence for Tagalog-only art.",
+      "researcherNote": "An earlier note claimed provincial audiences prefer Tagalog; the fetched page does not say that.",
+      "retired": false
+    },
+    {
+      "id": "as-ph-008",
+      "kind": "market_note",
+      "claim": "A payments vendor reports digital wallets are the most popular Philippine game payment method, used by 39% of players, led by GCash, and that players are price-sensitive.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Filipino gamers; methodology and sample not disclosed.",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "PH"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "monetisation_messaging",
+        "audience"
+      ],
+      "support": [
+        {
+          "sourceId": "as-s047",
+          "excerpt": "Digital wallets have become the most popular payment method in the Philippines, used by 39% of players.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Snapshot 2026-09-29",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "Local wallet acceptance is a minor conversion hook, not a store-image finding.",
+      "researcherNote": "Vendor with a commercial interest; no methodology.",
+      "retired": false
+    },
+    {
+      "id": "as-ph-009",
+      "kind": "market_note",
+      "claim": "In March 2023 the Philippine MTRCB rejected expanding its mandate to video games, so no enforced game-rating or content law was found for the Philippines.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Senate Bill 1063 proposed extending MTRCB to games; status after 2023 not found.",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "PH"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "regulation",
+        "age_rating"
+      ],
+      "support": [
+        {
+          "sourceId": "as-s046",
+          "excerpt": "Hindi po kakayanin ng MTRCB kung isasama pa po ang video games.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "2023 statement",
+      "abDetail": null,
+      "reviewBy": "2027-03-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "No Philippine age label is required on store art as far as found.",
+      "researcherNote": "2023 news; absence of a law is not proven.",
+      "retired": false
+    }
+  ]
+}

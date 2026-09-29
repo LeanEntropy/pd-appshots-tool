@@ -1,0 +1,146 @@
+{
+  "importedAt": "2026-09-29T10:49:11.000Z",
+  "folders": [
+    "C:\\Users\\User\\AppData\\Local\\Temp\\claude\\C--projects-ai-pd-appstore-tool\\9b150f72-d30c-4d72-a5fa-2d1770596957\\scratchpad\\kb\\seed"
+  ],
+  "files": [
+    {
+      "name": "entries-ab-cases.json",
+      "format": "v2",
+      "entries": 26,
+      "imported": 26
+    },
+    {
+      "name": "entries-app-store.json",
+      "format": "v2",
+      "entries": 70,
+      "imported": 70
+    },
+    {
+      "name": "entries-genre-notes.json",
+      "format": "v2",
+      "entries": 20,
+      "imported": 20
+    },
+    {
+      "name": "entries-glossary.json",
+      "format": "v2",
+      "entries": 16,
+      "imported": 16
+    },
+    {
+      "name": "entries-google-play.json",
+      "format": "v2",
+      "entries": 84,
+      "imported": 84
+    },
+    {
+      "name": "entries-heuristics-images.json",
+      "format": "v2",
+      "entries": 64,
+      "imported": 64
+    },
+    {
+      "name": "entries-market-id.json",
+      "format": "v2",
+      "entries": 19,
+      "imported": 19
+    },
+    {
+      "name": "entries-market-jp.json",
+      "format": "v2",
+      "entries": 29,
+      "imported": 29
+    },
+    {
+      "name": "entries-market-kr.json",
+      "format": "v2",
+      "entries": 26,
+      "imported": 26
+    },
+    {
+      "name": "entries-market-ph.json",
+      "format": "v2",
+      "entries": 9,
+      "imported": 9
+    },
+    {
+      "name": "entries-market-th.json",
+      "format": "v2",
+      "entries": 21,
+      "imported": 21
+    },
+    {
+      "name": "entries-market-tw-hk.json",
+      "format": "v2",
+      "entries": 26,
+      "imported": 26
+    },
+    {
+      "name": "entries-market-us.json",
+      "format": "v2",
+      "entries": 7,
+      "imported": 7
+    },
+    {
+      "name": "entries-market-vn.json",
+      "format": "v2",
+      "entries": 22,
+      "imported": 22
+    },
+    {
+      "name": "sources-ap.json",
+      "format": "sources",
+      "entries": 29,
+      "imported": 29
+    },
+    {
+      "name": "sources-as.json",
+      "format": "sources",
+      "entries": 58,
+      "imported": 58
+    },
+    {
+      "name": "sources-gp.json",
+      "format": "sources",
+      "entries": 17,
+      "imported": 17
+    },
+    {
+      "name": "sources-hr.json",
+      "format": "sources",
+      "entries": 77,
+      "imported": 77
+    },
+    {
+      "name": "sources-jk.json",
+      "format": "sources",
+      "entries": 55,
+      "imported": 55
+    }
+  ],
+  "sources": 232,
+  "imported": 439,
+  "rejects": [],
+  "warnings": [],
+  "byTrust": {
+    "unverified": 231,
+    "corroborated": 57,
+    "established": 14,
+    "official": 137
+  },
+  "byRuleClass": {
+    "none": 302,
+    "enforced_rule": 36,
+    "official_guidance": 30,
+    "store_behaviour": 71
+  },
+  "byKind": {
+    "ab_case": 29,
+    "store_fact": 137,
+    "market_note": 146,
+    "genre_note": 20,
+    "glossary": 28,
+    "heuristic": 79
+  }
+}

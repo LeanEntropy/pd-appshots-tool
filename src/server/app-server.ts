@@ -11,6 +11,7 @@ import { appIconRoute } from "./routes-app-icon.ts";
 import { competitorsRoute } from "./routes-competitors.ts";
 import { countriesRoute } from "./routes-countries.ts";
 import { getImport, getJobs, getProjects, postArchive, postImport } from "./routes-home.ts";
+import { kbRoute } from "./routes-kb.ts";
 import { getCountries, getLookup, getSearch, postProject } from "./routes-play.ts";
 import { projectRoute } from "./routes-project.ts";
 import { settingsRoute } from "./routes-settings.ts";
@@ -53,6 +54,7 @@ async function globalRoute(
   const p = url.pathname;
   const get = req.method === "GET";
   if (await appIconRoute(app, req, res, p)) return true;
+  if (await kbRoute(app, req, res, p)) return true;
   if (p === "/" && get) {
     sendHtml(res, homeHtml(app.token));
     return true;

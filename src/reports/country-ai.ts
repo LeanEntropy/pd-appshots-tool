@@ -10,6 +10,8 @@ import {
 import { type Provider, providerFor } from "../analysis/providers.ts";
 import type { StepTracker } from "../analysis/run-status.ts";
 import { type LoadedConfig, loadTaxonomy, projectPaths } from "../config/load.ts";
+import { mainMarket } from "../core/targets.ts";
+import { openKbRun } from "../kb/open.ts";
 import { answerKey } from "../library/layout.ts";
 import { secondOpinionOn, settingsOf } from "../settings/access.ts";
 import { workspaceStorage } from "../storage/index.ts";
@@ -95,8 +97,12 @@ export function callContext(
 ): CallContext {
   const paths = projectPaths(loaded);
   const { taxonomy, hash } = loadTaxonomy(loaded);
+  const storage = workspaceStorage(paths.workspace);
+  // The knowledge base (Settings switch; off = none): each step narrows it to its country.
+  const kb = openKbRun(loaded.config, loaded.root, storage, mainMarket(loaded.config).gl);
   return {
-    storage: workspaceStorage(paths.workspace),
+    ...(kb ? { kb } : {}),
+    storage,
     answerKey: (step, key) => answerKey(paths, step, key),
     taxonomy,
     taxonomyHash: hash,

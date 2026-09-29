@@ -1,4 +1,5 @@
-import type { ProjectPaths, Taxonomy } from "../config/load.ts";
+import type { LoadedConfig, ProjectPaths, Taxonomy } from "../config/load.ts";
+import { openKbRun } from "../kb/open.ts";
 import { answerKey } from "../library/layout.ts";
 import { workspaceStorage } from "../storage/index.ts";
 import { type Ledger, ledger } from "./budget.ts";
@@ -39,6 +40,12 @@ export function batchContext(
     },
   };
   return { ctx, spent: () => spent, calls, ledger: book };
+}
+
+/** The context with the report's knowledge base (Settings switch; off = the context as is). */
+export function withKb(ctx: CallContext, loaded: LoadedConfig, gl: string): CallContext {
+  const kb = openKbRun(loaded.config, loaded.root, ctx.storage, gl);
+  return kb ? { ...ctx, kb } : ctx;
 }
 
 /** A copy of the context that also tells `onCost` the cost of its own calls. */

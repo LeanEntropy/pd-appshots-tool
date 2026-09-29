@@ -1,0 +1,4569 @@
+{
+  "file": "entries-google-play",
+  "entries": [
+    {
+      "id": "gp-001",
+      "kind": "store_fact",
+      "claim": "On the preview-assets page, items under \"Requirements\" are mandatory and failing them may lead to removal or suspension from Google Play.",
+      "ruleClass": "store_behaviour",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Reading any Requirements section of the Play preview-assets page",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "policy_graphics"
+      ],
+      "support": [
+        {
+          "sourceId": "gp-s001",
+          "excerpt": "\"Requirements\" listed on this page are mandatory; failure to meet requirements may result in removal or suspension from Google Play.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5-5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Play Console Help as read 2026-09-29",
+      "abDetail": null,
+      "reviewBy": "2027-03-29",
+      "addedBy": "agent:claude-sonnet-5-5 kb-research-v2",
+      "useFor": "Treat every item under a Requirements heading as a hard constraint; treat Highly recommended items as overridable guidance.",
+      "researcherNote": "This entry defines how the classification in this file was made.",
+      "retired": false
+    },
+    {
+      "id": "gp-002",
+      "kind": "store_fact",
+      "claim": "Items under \"Highly recommended\" do not affect the store listing page if broken, but may change how assets appear on Google Play or limit promotional opportunities.",
+      "ruleClass": "store_behaviour",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Reading any Highly recommended section of the Play preview-assets page",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "policy_graphics"
+      ],
+      "support": [
+        {
+          "sourceId": "gp-s001",
+          "excerpt": "Failure to comply with these guidelines will not impact your store listing page, but may result in changes to how your preview assets appear on Google Play or limit promotional opportunities.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5-5 kb-research-v2"
+        },
+        {
+          "sourceId": "gp-s014",
+          "excerpt": "Assets that don't meet our guidelines may be ineligible for promotion and recommendation on major Google Play surfaces like Apps and Games home.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5-5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Play Console Help as read 2026-09-29",
+      "abDetail": null,
+      "reviewBy": "2027-03-29",
+      "addedBy": "agent:claude-sonnet-5-5 kb-research-v2",
+      "useFor": "Screenshot, feature-graphic and video text guidance is soft: an agent may override it with evidence, accepting the risk of losing promotion/recommendation surfaces.",
+      "researcherNote": "",
+      "retired": false
+    },
+    {
+      "id": "gp-003",
+      "kind": "store_fact",
+      "claim": "Google says taglines on screenshots should not take up more than 20% of the image, and this sits under Highly recommended, not Requirements.",
+      "ruleClass": "official_guidance",
+      "enforcement": null,
+      "facts": [
+        {
+          "value": 20,
+          "unit": "% of image area",
+          "of": "tagline text on a screenshot",
+          "context": "Play preview assets, Highly recommended"
+        }
+      ],
+      "appliesWhen": "Screenshots uploaded to Play listing",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "screenshots"
+        ]
+      },
+      "tags": [
+        "captions",
+        "text_area",
+        "screenshots",
+        "policy_graphics"
+      ],
+      "support": [
+        {
+          "sourceId": "gp-s001",
+          "excerpt": "Add taglines only if necessary to convey the key characteristics of the app or game. Taglines should not take up more than 20% of the image.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5-5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Play Console Help as read 2026-09-29",
+      "abDetail": null,
+      "reviewBy": "2027-03-29",
+      "addedBy": "agent:claude-sonnet-5-5 kb-research-v2",
+      "useFor": "Default to captions under 20% of image area, but a caption-heavy test is allowed if evidence supports it; state the promotion risk.",
+      "researcherNote": "Classified guidance because the sentence is under \"Highly recommended\" (verified). No policy page found that enforces 20% with rejection. Older blogs call it a rule.",
+      "retired": false
+    },
+    {
+      "id": "gp-004",
+      "kind": "store_fact",
+      "claim": "Google recommends that screenshots contain nothing that suggests Play performance, ranking, accolades, awards, user testimonials or price and promotional information, such as Best, #1, Top, New, Discount, Sale or Million Downloads.",
+      "ruleClass": "official_guidance",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Text or badges placed on Play screenshots",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "screenshots"
+        ]
+      },
+      "tags": [
+        "ranking_claims",
+        "awards",
+        "price_text",
+        "social_proof",
+        "screenshots",
+        "policy_graphics"
+      ],
+      "support": [
+        {
+          "sourceId": "gp-s001",
+          "excerpt": "Do not include any content that reflects or suggests Google Play performance, ranking, accolades or awards, user testimonials, or price and promotional information. For example, do not use words like \"Best,\" \"#1,\" \"Top,\" \"New,\" \"Discount,\" \"Sale,\" or \"Million Downloads.\"",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5-5 kb-research-v2"
+        },
+        {
+          "sourceId": "gp-s003",
+          "excerpt": "Don't add images or text that indicate store performance or ranking, such as \"App of the year,\" \"#1, \"Best of Play 20XX,\" \"Popular,\" and text should not indicate price and promotional information",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5-5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [
+        {
+          "sourceId": "gp-s002",
+          "excerpt": "Metadata policy sentence: \"Don't use text or image in the app title, icon, or developer name that indicate store performance or ranking, price or promotional information\" (names title, icon, developer name only).",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5-5 kb-research-v2"
+        }
+      ],
+      "validFor": "Play Console Help as read 2026-09-29",
+      "abDetail": null,
+      "reviewBy": "2027-03-29",
+      "addedBy": "agent:claude-sonnet-5-5 kb-research-v2",
+      "useFor": "Avoid rank/award/price claims in screenshots by default; if a test uses them, note it is outside Google guidance and could risk promotion eligibility.",
+      "researcherNote": "Under Highly recommended in the preview-assets page. The enforced Metadata sentence covers title, icon and developer name; its examples list is not scoped. The best-practices page repeats it for screenshots as a listing-wide \"shouldn't\". Treat as strong guidance with policy-review risk, not proven rejection.",
+      "retired": false
+    },
+    {
+      "id": "gp-005",
+      "kind": "store_fact",
+      "claim": "Google recommends the feature graphic avoid content suggesting Play performance, ranking, user testimonials, awards, or price and promotional information such as Best, #1, Top, New, Free, Discount, Sale or Million Downloads.",
+      "ruleClass": "official_guidance",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Feature graphic 1024x500",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "feature_graphic"
+        ],
+        "asset": [
+          "feature_graphic"
+        ]
+      },
+      "tags": [
+        "ranking_claims",
+        "awards",
+        "price_text",
+        "feature_graphic",
+        "policy_graphics"
+      ],
+      "support": [
+        {
+          "sourceId": "gp-s001",
+          "excerpt": "Avoid any content that reflects or suggests Google Play performance, ranking, user testimonials, accolades or awards, or price and promotional information. For example, do not use words like \"Best,\" \"#1,\" \"Top,\" \"New,\" \"Free,\" \"Discount,\" \"Sale,\" or \"Million Downloads.\"",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5-5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Play Console Help as read 2026-09-29",
+      "abDetail": null,
+      "reviewBy": "2027-03-29",
+      "addedBy": "agent:claude-sonnet-5-5 kb-research-v2",
+      "useFor": "Keep the feature graphic free of rank/price words unless a test explicitly overrides guidance.",
+      "researcherNote": "Under Highly recommended.",
+      "retired": false
+    },
+    {
+      "id": "gp-006",
+      "kind": "store_fact",
+      "claim": "The app icon must not include badges or text that suggest ranking, price, Google Play categories, or otherwise mislead users.",
+      "ruleClass": "enforced_rule",
+      "enforcement": {
+        "consequence": "listing rejected or removed (Requirements section: removal or suspension)",
+        "exactWording": "Do not include badges or text that suggest ranking, price, Google Play categories, or otherwise mislead users. For more information, see Metadata policy.",
+        "policyUrl": "https://support.google.com/googleplay/android-developer/answer/9866151"
+      },
+      "facts": [],
+      "appliesWhen": "Any Play app icon",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "icon"
+        ],
+        "asset": [
+          "icon"
+        ]
+      },
+      "tags": [
+        "icon",
+        "ranking_claims",
+        "price_text",
+        "policy_graphics",
+        "policy_metadata"
+      ],
+      "support": [
+        {
+          "sourceId": "gp-s001",
+          "excerpt": "Do not include badges or text that suggest ranking, price, Google Play categories, or otherwise mislead users. For more information, see Metadata policy.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5-5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Play Console Help as read 2026-09-29",
+      "abDetail": null,
+      "reviewBy": "2027-03-29",
+      "addedBy": "agent:claude-sonnet-5-5 kb-research-v2",
+      "useFor": "Never put rank, price, Editor's choice or promo text/badges on the icon in any recommendation or A/B test.",
+      "researcherNote": "Listed under Requirements of the icon section (mandatory per same page) and mirrored in the Metadata policy.",
+      "retired": false
+    },
+    {
+      "id": "gp-007",
+      "kind": "store_fact",
+      "claim": "The Metadata policy forbids text or images in the app title, icon and developer name that indicate store performance or ranking, price or promotional information, or relations to Google Play programs.",
+      "ruleClass": "enforced_rule",
+      "enforcement": {
+        "consequence": "listing rejected or removed",
+        "exactWording": "Don’t use text or image in the app title, icon, or developer name that indicate store performance or ranking, price or promotional information, or that suggests relations to existing Google Play programs.",
+        "policyUrl": "https://support.google.com/googleplay/android-developer/answer/9898842"
+      },
+      "facts": [],
+      "appliesWhen": "App title, icon, developer name",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "icon",
+          "search_result"
+        ],
+        "asset": [
+          "icon",
+          "text"
+        ]
+      },
+      "tags": [
+        "policy_metadata",
+        "ranking_claims",
+        "price_text",
+        "icon",
+        "branding"
+      ],
+      "support": [
+        {
+          "sourceId": "gp-s002",
+          "excerpt": "Don’t use text or image in the app title, icon, or developer name that indicate store performance or ranking, price or promotional information, or that suggests relations to existing Google Play programs.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5-5 kb-research-v2"
+        },
+        {
+          "sourceId": "gp-s014",
+          "excerpt": "Prohibiting keywords that imply store performance, promotion in the icon, title and developer name",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5-5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Play Console Help as read 2026-09-29",
+      "abDetail": null,
+      "reviewBy": "2027-03-29",
+      "addedBy": "agent:claude-sonnet-5-5 kb-research-v2",
+      "useFor": "Applies to title/icon/developer name in this sentence; recommendations for these three elements must obey it absolutely.",
+      "researcherNote": "Policy summaries defer to full policy; the Enforcement page (gp-s013) gives general consequences (rejection, removal, suspension).",
+      "retired": false
+    },
+    {
+      "id": "gp-008",
+      "kind": "store_fact",
+      "claim": "The Metadata policy does not allow misleading, improperly formatted, non-descriptive, irrelevant, excessive, or inappropriate metadata, including screenshots and promotional images.",
+      "ruleClass": "enforced_rule",
+      "enforcement": {
+        "consequence": "listing rejected or removed",
+        "exactWording": "We don’t allow apps with misleading, improperly formatted, non-descriptive, irrelevant, excessive, or inappropriate metadata, including but not limited to the app's description, developer name, title, icon, screenshots, and promotional images.",
+        "policyUrl": "https://support.google.com/googleplay/android-developer/answer/9898842"
+      },
+      "facts": [],
+      "appliesWhen": "All store listing metadata including screenshots and promotional images",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "screenshots",
+          "feature_graphic",
+          "listing"
+        ]
+      },
+      "tags": [
+        "policy_metadata",
+        "policy_graphics",
+        "screenshots"
+      ],
+      "support": [
+        {
+          "sourceId": "gp-s002",
+          "excerpt": "We don’t allow apps with misleading, improperly formatted, non-descriptive, irrelevant, excessive, or inappropriate metadata, including but not limited to the app's description, developer name, title, icon, screenshots, and promotional images.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5-5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Play Console Help as read 2026-09-29",
+      "abDetail": null,
+      "reviewBy": "2027-03-29",
+      "addedBy": "agent:claude-sonnet-5-5 kb-research-v2",
+      "useFor": "Misleading imagery (fake gameplay, features the game lacks) in screenshots is an enforceable violation; never recommend it.",
+      "researcherNote": "Broad clause; only the general Enforcement-page consequences apply.",
+      "retired": false
+    },
+    {
+      "id": "gp-009",
+      "kind": "store_fact",
+      "claim": "The Metadata policy lists images or text indicating store performance or ranking (such as App of the year, #1, Best of Play 20XX, Popular, award icons) and price or promotional text as common violations.",
+      "ruleClass": "enforced_rule",
+      "enforcement": {
+        "consequence": "listing rejected or removed",
+        "exactWording": "Images or text that indicate store performance or ranking, such as 'App of the year,' '#1,' 'Best of Play 20XX,' 'Popular,' award icons, etc.",
+        "policyUrl": "https://support.google.com/googleplay/android-developer/answer/9898842"
+      },
+      "facts": [],
+      "appliesWhen": "Common-violation examples list in the Metadata policy (not narrowed to one asset in the list)",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "policy_metadata",
+        "ranking_claims",
+        "awards",
+        "price_text"
+      ],
+      "support": [
+        {
+          "sourceId": "gp-s002",
+          "excerpt": "Images or text that indicate store performance or ranking, such as 'App of the year,' '#1,' 'Best of Play 20XX,' 'Popular,' award icons, etc.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5-5 kb-research-v2"
+        },
+        {
+          "sourceId": "gp-s003",
+          "excerpt": "Your store listing shouldn't include text that indicates store performance or ranking, such as \"App of the year,\" \"#1,\" \"Best of Play 20XX,\" \"Popular,\" award icons, and so on.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5-5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [
+        {
+          "sourceId": "gp-s001",
+          "excerpt": "The preview-assets page puts the equivalent screenshot and feature-graphic wording under Highly recommended, not Requirements.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5-5 kb-research-v2"
+        }
+      ],
+      "validFor": "Play Console Help as read 2026-09-29",
+      "abDetail": null,
+      "reviewBy": "2027-03-29",
+      "addedBy": "agent:claude-sonnet-5-5 kb-research-v2",
+      "useFor": "Do not recommend rank/award/price claims in any store asset without flagging policy risk.",
+      "researcherNote": "SCOPE CONFLICT: the examples list follows the sentence limiting the ban to title, icon and developer name but is not itself scoped, and the preview-assets page treats screenshot/graphic wording as guidance. Cautious reading: rank/award/price claims are high-risk everywhere, hard-forbidden on icon/title/developer name.",
+      "retired": false
+    },
+    {
+      "id": "gp-010",
+      "kind": "store_fact",
+      "claim": "Google recommends avoiding any call-to-action such as Download now, Install now, Play now or Try now in screenshots.",
+      "ruleClass": "official_guidance",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Text on Play screenshots",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "screenshots"
+        ]
+      },
+      "tags": [
+        "captions",
+        "policy_graphics",
+        "screenshots"
+      ],
+      "support": [
+        {
+          "sourceId": "gp-s001",
+          "excerpt": "Avoid adding any form of call-to-action, for example, \"Download now,\" \"Install now,\" \"Play now,\" or \"Try now.\"",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5-5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Play Console Help as read 2026-09-29",
+      "abDetail": null,
+      "reviewBy": "2027-03-29",
+      "addedBy": "agent:claude-sonnet-5-5 kb-research-v2",
+      "useFor": "Do not add CTA text to caption overlays by default.",
+      "researcherNote": "Under Highly recommended.",
+      "retired": false
+    },
+    {
+      "id": "gp-011",
+      "kind": "store_fact",
+      "claim": "For text in the preview video, Google recommends no ranking, award, testimonial, price or promotional claims and no call-to-action, but Google Play \"Best Of\" awards may be displayed.",
+      "ruleClass": "official_guidance",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "On-screen copy in the YouTube preview video",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "video"
+        ],
+        "asset": [
+          "video"
+        ]
+      },
+      "tags": [
+        "video",
+        "ranking_claims",
+        "awards",
+        "policy_graphics"
+      ],
+      "support": [
+        {
+          "sourceId": "gp-s001",
+          "excerpt": "Awards from Google Play such as \"Best Of\" are allowed to be displayed.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5-5 kb-research-v2"
+        },
+        {
+          "sourceId": "gp-s001",
+          "excerpt": "Do not use call-to-actions, for example, \"Download now,\" \"Install now,\" \"Play now,\" or \"Try now.\"",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5-5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Play Console Help as read 2026-09-29",
+      "abDetail": null,
+      "reviewBy": "2027-03-29",
+      "addedBy": "agent:claude-sonnet-5-5 kb-research-v2",
+      "useFor": "A Google Play Best Of badge is the one ranking-type claim Google explicitly allows, in video copy.",
+      "researcherNote": "Under Highly recommended. The Best Of exception is stated in the video section only.",
+      "retired": false
+    },
+    {
+      "id": "gp-012",
+      "kind": "store_fact",
+      "claim": "Google recommends avoiding time-sensitive taglines or content in screenshots, feature graphics and videos, and swapping time-bound content such as holiday updates in and out in a timely manner.",
+      "ruleClass": "official_guidance",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Seasonal or event content in store assets",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "screenshots",
+          "feature_graphic",
+          "video"
+        ]
+      },
+      "tags": [
+        "seasonal",
+        "events",
+        "refresh_cadence",
+        "policy_graphics"
+      ],
+      "support": [
+        {
+          "sourceId": "gp-s001",
+          "excerpt": "Avoid time-sensitive tagline or content that can become outdated quickly to reduce the need to update.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5-5 kb-research-v2"
+        },
+        {
+          "sourceId": "gp-s001",
+          "excerpt": "Time-bound content (like holiday-specific updates) should be swapped in and out in a timely manner.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5-5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Play Console Help as read 2026-09-29",
+      "abDetail": null,
+      "reviewBy": "2027-03-29",
+      "addedBy": "agent:claude-sonnet-5-5 kb-research-v2",
+      "useFor": "Seasonal art is allowed but needs a scheduled removal date.",
+      "researcherNote": "",
+      "retired": false
+    },
+    {
+      "id": "gp-013",
+      "kind": "store_fact",
+      "claim": "Google recommends avoiding device imagery, third-party trademarked characters or logos without permission, and other stores' badges in screenshots and the feature graphic.",
+      "ruleClass": "official_guidance",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Phone, tablet, Chromebook screenshots and feature graphic",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "screenshots",
+          "feature_graphic"
+        ]
+      },
+      "tags": [
+        "device_frame",
+        "policy_graphics",
+        "screenshots",
+        "feature_graphic"
+      ],
+      "support": [
+        {
+          "sourceId": "gp-s001",
+          "excerpt": "Device imagery (as this can become obsolete quickly or alienate some users).",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5-5 kb-research-v2"
+        },
+        {
+          "sourceId": "gp-s001",
+          "excerpt": "Google Play or any other store's badge or icon.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5-5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [
+        {
+          "sourceId": "gp-s001",
+          "excerpt": "For Wear OS screenshots the page says listings must \"Not position the screenshots within device frames\", a Requirement for that device type only.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5-5 kb-research-v2"
+        }
+      ],
+      "validFor": "Play Console Help as read 2026-09-29",
+      "abDetail": null,
+      "reviewBy": "2027-03-29",
+      "addedBy": "agent:claude-sonnet-5-5 kb-research-v2",
+      "useFor": "Prefer frame-free screenshots; frames are not banned on phone listings.",
+      "researcherNote": "Device frames are guidance for phones; a hard requirement only for Wear OS. Summaries saying \"no device frames\" for all screenshots overstate it.",
+      "retired": false
+    },
+    {
+      "id": "gp-014",
+      "kind": "store_fact",
+      "claim": "Google recommends screenshots show the actual in-app or in-game experience captured from the app itself, and not people interacting with the device.",
+      "ruleClass": "official_guidance",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Play screenshots",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "screenshots"
+        ]
+      },
+      "tags": [
+        "gameplay_real",
+        "art_vs_gameplay",
+        "screenshots",
+        "policy_graphics"
+      ],
+      "support": [
+        {
+          "sourceId": "gp-s001",
+          "excerpt": "Screenshots must demonstrate the actual in-app or in-game experience, focusing on the core features and content so users can anticipate what the app or game experience will be like.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5-5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Play Console Help as read 2026-09-29",
+      "abDetail": null,
+      "reviewBy": "2027-03-29",
+      "addedBy": "agent:claude-sonnet-5-5 kb-research-v2",
+      "useFor": "Pure key-art screenshots risk lower promotion eligibility; keep real gameplay in the first three.",
+      "researcherNote": "Under Highly recommended, but the Metadata policy forbids misleading screenshots (see that entry).",
+      "retired": false
+    },
+    {
+      "id": "gp-015",
+      "kind": "store_fact",
+      "claim": "Google allows stylized screenshots that break the UI across multiple uploaded images, but asks to prioritise UI in the first three screenshots.",
+      "ruleClass": "official_guidance",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Panoramic or split-UI screenshot sets",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "1-3"
+        ],
+        "asset": [
+          "screenshots"
+        ]
+      },
+      "tags": [
+        "panoramic",
+        "landscape_composite",
+        "composition",
+        "first_images",
+        "screenshots"
+      ],
+      "support": [
+        {
+          "sourceId": "gp-s001",
+          "excerpt": "Stylized screenshots that break UI across multiple uploaded images are allowed, but prioritize UI in the first three screenshots as much as possible.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5-5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Play Console Help as read 2026-09-29",
+      "abDetail": null,
+      "reviewBy": "2027-03-29",
+      "addedBy": "agent:claude-sonnet-5-5 kb-research-v2",
+      "useFor": "Panoramic/split designs are permitted; keep UI visible in shots 1-3.",
+      "researcherNote": "",
+      "retired": false
+    },
+    {
+      "id": "gp-016",
+      "kind": "store_fact",
+      "claim": "A Play listing needs a minimum of two screenshots across device types to publish, and up to 8 screenshots can be added per supported device type.",
+      "ruleClass": "enforced_rule",
+      "enforcement": {
+        "consequence": "upload refused",
+        "exactWording": "You must provide a minimum of two screenshots across different device types to publish your store listing",
+        "policyUrl": "https://support.google.com/googleplay/android-developer/answer/9866151"
+      },
+      "facts": [
+        {
+          "value": 2,
+          "unit": "screenshots",
+          "of": "minimum across device types",
+          "context": "publish"
+        },
+        {
+          "value": 8,
+          "unit": "screenshots",
+          "of": "maximum per device type",
+          "context": "up to 8 per supported device type"
+        }
+      ],
+      "appliesWhen": "Publishing a Play listing",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "screenshots"
+        ]
+      },
+      "tags": [
+        "screenshots",
+        "deck_length"
+      ],
+      "support": [
+        {
+          "sourceId": "gp-s001",
+          "excerpt": "You must provide a minimum of two screenshots across different device types to publish your store listing",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5-5 kb-research-v2"
+        },
+        {
+          "sourceId": "gp-s001",
+          "excerpt": "You can add up to 8 screenshots for each supported device type.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5-5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Play Console Help as read 2026-09-29",
+      "abDetail": null,
+      "reviewBy": "2027-03-29",
+      "addedBy": "agent:claude-sonnet-5-5 kb-research-v2",
+      "useFor": "Plan 2-8 phone screenshots; the count for promotion eligibility is separate (3+ at 1080px).",
+      "researcherNote": "The maximum sentence is not under a Requirements heading; treated as a technical limit.",
+      "retired": false
+    },
+    {
+      "id": "gp-017",
+      "kind": "store_fact",
+      "claim": "Play screenshots must be JPEG or 24-bit PNG with no alpha, with minimum dimension 320px and maximum dimension 3840px, and the long side no more than twice the short side.",
+      "ruleClass": "enforced_rule",
+      "enforcement": {
+        "consequence": "upload refused",
+        "exactWording": "JPEG or 24-bit PNG (no alpha) Minimum dimension: 320px Maximum dimension: 3840px The maximum dimension of your screenshot can't be more than twice as long as the minimum dimension.",
+        "policyUrl": "https://support.google.com/googleplay/android-developer/answer/9866151"
+      },
+      "facts": [
+        {
+          "value": 320,
+          "unit": "px",
+          "of": "minimum dimension",
+          "context": ""
+        },
+        {
+          "value": 3840,
+          "unit": "px",
+          "of": "maximum dimension",
+          "context": ""
+        }
+      ],
+      "appliesWhen": "Phone screenshots",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "screenshots"
+        ]
+      },
+      "tags": [
+        "screenshots",
+        "orientation"
+      ],
+      "support": [
+        {
+          "sourceId": "gp-s001",
+          "excerpt": "JPEG or 24-bit PNG (no alpha) Minimum dimension: 320px Maximum dimension: 3840px The maximum dimension of your screenshot can't be more than twice as long as the minimum dimension.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5-5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Play Console Help as read 2026-09-29",
+      "abDetail": null,
+      "reviewBy": "2027-03-29",
+      "addedBy": "agent:claude-sonnet-5-5 kb-research-v2",
+      "useFor": "Export flattened PNG/JPEG; 9:16 or 16:9 meets the 2x rule.",
+      "researcherNote": "AppRadar (vendor) also states an 8 MB max; not on Google's page, not recorded.",
+      "retired": false
+    },
+    {
+      "id": "gp-018",
+      "kind": "store_fact",
+      "claim": "To be eligible for recommendation in Play formats that use screenshots, games need at least three 16:9 landscape screenshots (minimum 1920x1080) or three 9:16 portrait screenshots (minimum 1080x1920) that depict the in-game experience.",
+      "ruleClass": "enforced_rule",
+      "enforcement": {
+        "consequence": "ineligible for a surface (recommendation formats that use screenshots)",
+        "exactWording": "For games you must provide at least three 16:9 landscape screenshots (minimum 1920x1080px) or three 9:16 portrait screenshots (minimum 1080x1920px). Make sure that these screenshots depict the in-game experience",
+        "policyUrl": "https://support.google.com/googleplay/android-developer/answer/9866151"
+      },
+      "facts": [
+        {
+          "value": 3,
+          "unit": "screenshots",
+          "of": "minimum for games, 1920x1080 landscape or 1080x1920 portrait",
+          "context": "recommendation eligibility"
+        }
+      ],
+      "appliesWhen": "Games seeking large-format recommendation placements",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "1-3"
+        ],
+        "asset": [
+          "screenshots"
+        ]
+      },
+      "tags": [
+        "screenshots",
+        "orientation",
+        "first_images",
+        "store_page_layout"
+      ],
+      "support": [
+        {
+          "sourceId": "gp-s001",
+          "excerpt": "To be eligible for recommendations in formats that use screenshots, the following guidelines are a requirement:",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5-5 kb-research-v2"
+        },
+        {
+          "sourceId": "gp-s001",
+          "excerpt": "For games you must provide at least three 16:9 landscape screenshots (minimum 1920x1080px) or three 9:16 portrait screenshots (minimum 1080x1920px).",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5-5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Play Console Help as read 2026-09-29",
+      "abDetail": null,
+      "reviewBy": "2027-03-29",
+      "addedBy": "agent:claude-sonnet-5-5 kb-research-v2",
+      "useFor": "Upload at least 3 shots at 1080px+ in one orientation matching the game.",
+      "researcherNote": "Sits under the Highly recommended heading but the page states these guidelines \"are a requirement\" for eligibility. Classified enforced only for the eligibility surface (no listing rejection). Portrait OR landscape both accepted (older blogs say landscape).",
+      "retired": false
+    },
+    {
+      "id": "gp-019",
+      "kind": "store_fact",
+      "claim": "A feature graphic is required to publish a Play listing and must be JPEG or 24-bit PNG (no alpha) at 1024px by 500px.",
+      "ruleClass": "enforced_rule",
+      "enforcement": {
+        "consequence": "upload refused",
+        "exactWording": "You must provide a feature graphic to publish your store listing. JPEG or 24-bit PNG (no alpha) Dimensions: 1024px by 500px",
+        "policyUrl": "https://support.google.com/googleplay/android-developer/answer/9866151"
+      },
+      "facts": [
+        {
+          "value": "1024x500",
+          "unit": "px",
+          "of": "feature graphic",
+          "context": "required"
+        }
+      ],
+      "appliesWhen": "Every Play listing",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "feature_graphic"
+        ],
+        "asset": [
+          "feature_graphic"
+        ]
+      },
+      "tags": [
+        "feature_graphic"
+      ],
+      "support": [
+        {
+          "sourceId": "gp-s001",
+          "excerpt": "You must provide a feature graphic to publish your store listing.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5-5 kb-research-v2"
+        },
+        {
+          "sourceId": "gp-s001",
+          "excerpt": "JPEG or 24-bit PNG (no alpha) Dimensions: 1024px by 500px",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5-5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Play Console Help as read 2026-09-29",
+      "abDetail": null,
+      "reviewBy": "2027-03-29",
+      "addedBy": "agent:claude-sonnet-5-5 kb-research-v2",
+      "useFor": "Always deliver 1024x500 no-alpha.",
+      "researcherNote": "",
+      "retired": false
+    },
+    {
+      "id": "gp-020",
+      "kind": "store_fact",
+      "claim": "The feature graphic is shown as the cover image of the preview video, and in large-format collections and recommended game groups that feature preview videos and screenshots.",
+      "ruleClass": "store_behaviour",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Play surfaces using the feature graphic",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "feature_graphic",
+          "store_page"
+        ],
+        "asset": [
+          "feature_graphic"
+        ]
+      },
+      "tags": [
+        "feature_graphic",
+        "video",
+        "store_page_layout",
+        "search_result"
+      ],
+      "support": [
+        {
+          "sourceId": "gp-s001",
+          "excerpt": "As a cover image for your preview video, if present.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5-5 kb-research-v2"
+        },
+        {
+          "sourceId": "gp-s001",
+          "excerpt": "For games, we show groups of recommended games in a large format featuring preview videos and screenshots, where we show your feature graphic.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5-5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Play Console Help as read 2026-09-29",
+      "abDetail": null,
+      "reviewBy": "2027-03-29",
+      "addedBy": "agent:claude-sonnet-5-5 kb-research-v2",
+      "useFor": "When a video exists, the feature graphic is what users see before pressing play; design it as the video poster.",
+      "researcherNote": "",
+      "retired": false
+    },
+    {
+      "id": "gp-021",
+      "kind": "store_fact",
+      "claim": "Google recommends keeping key elements of the feature graphic (logo, app name, slogan, main UI) towards the centre and out of cutoff zones, noting formats may add UI overlays.",
+      "ruleClass": "official_guidance",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Feature graphic layout",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "feature_graphic"
+        ],
+        "asset": [
+          "feature_graphic"
+        ]
+      },
+      "tags": [
+        "feature_graphic",
+        "composition",
+        "branding",
+        "logo"
+      ],
+      "support": [
+        {
+          "sourceId": "gp-s001",
+          "excerpt": "Avoid placing key elements (for example, brand logo, app name, primary slogan, and main UI) in the cutoff zones (the red areas in the example below), it may be cut off depending on the UI format.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5-5 kb-research-v2"
+        },
+        {
+          "sourceId": "gp-s001",
+          "excerpt": "Failure to comply with the focal point and cutoff zones may result in ineligibility to appear in these formats.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5-5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Play Console Help as read 2026-09-29",
+      "abDetail": null,
+      "reviewBy": "2027-03-29",
+      "addedBy": "agent:claude-sonnet-5-5 kb-research-v2",
+      "useFor": "Centre the focal point; edges only for background.",
+      "researcherNote": "Page also says avoid pure white/dark grey backgrounds and prominent branding duplicating the icon.",
+      "retired": false
+    },
+    {
+      "id": "gp-022",
+      "kind": "store_fact",
+      "claim": "The Play app icon must be a 32-bit PNG with alpha, 512px by 512px, maximum 1024KB.",
+      "ruleClass": "enforced_rule",
+      "enforcement": {
+        "consequence": "upload refused",
+        "exactWording": "32-bit PNG (with alpha) Dimensions: 512px by 512px Maximum file size: 1024KB",
+        "policyUrl": "https://support.google.com/googleplay/android-developer/answer/9866151"
+      },
+      "facts": [
+        {
+          "value": "512x512",
+          "unit": "px",
+          "of": "icon",
+          "context": ""
+        },
+        {
+          "value": 1024,
+          "unit": "KB",
+          "of": "max file size",
+          "context": ""
+        }
+      ],
+      "appliesWhen": "Every Play listing",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "icon"
+        ],
+        "asset": [
+          "icon"
+        ]
+      },
+      "tags": [
+        "icon"
+      ],
+      "support": [
+        {
+          "sourceId": "gp-s001",
+          "excerpt": "32-bit PNG (with alpha) Dimensions: 512px by 512px Maximum file size: 1024KB Meets Google Play's icon design specifications",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5-5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Play Console Help as read 2026-09-29",
+      "abDetail": null,
+      "reviewBy": "2027-03-29",
+      "addedBy": "agent:claude-sonnet-5-5 kb-research-v2",
+      "useFor": "Deliver icon at 512x512 PNG.",
+      "researcherNote": "",
+      "retired": false
+    },
+    {
+      "id": "gp-023",
+      "kind": "store_fact",
+      "claim": "The app icon is used in various Play locations including the store listing, search results and top charts.",
+      "ruleClass": "store_behaviour",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Icon display",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "icon",
+          "search_result"
+        ],
+        "asset": [
+          "icon"
+        ]
+      },
+      "tags": [
+        "icon",
+        "search_result",
+        "store_page_layout"
+      ],
+      "support": [
+        {
+          "sourceId": "gp-s001",
+          "excerpt": "Your app icon is used in various locations on Google Play, including your store listing, search results, and top charts.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5-5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Play Console Help as read 2026-09-29",
+      "abDetail": null,
+      "reviewBy": "2027-03-29",
+      "addedBy": "agent:claude-sonnet-5-5 kb-research-v2",
+      "useFor": "Icon is visible in search results next to the listing; test icon variants.",
+      "researcherNote": "",
+      "retired": false
+    },
+    {
+      "id": "gp-024",
+      "kind": "store_fact",
+      "claim": "A Play preview video must have ads disabled, be public or unlisted (not private), not be age-restricted, and be embeddable on Google Play.",
+      "ruleClass": "enforced_rule",
+      "enforcement": {
+        "consequence": "ineligible for a surface (video not shown on Google Play)",
+        "exactWording": "Disable ads for your video to be shown on Google Play. Set your video's privacy setting to public or unlisted. Do not set it to private. Do not use an age-restricted video. Make sure that your video is embeddable on Google Play.",
+        "policyUrl": "https://support.google.com/googleplay/android-developer/answer/9866151"
+      },
+      "facts": [],
+      "appliesWhen": "Adding a YouTube preview video",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "video"
+        ],
+        "asset": [
+          "video"
+        ]
+      },
+      "tags": [
+        "video",
+        "monetisation_messaging"
+      ],
+      "support": [
+        {
+          "sourceId": "gp-s001",
+          "excerpt": "Disable ads for your video to be shown on Google Play.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5-5 kb-research-v2"
+        },
+        {
+          "sourceId": "gp-s001",
+          "excerpt": "Do not use an age-restricted video.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5-5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Play Console Help as read 2026-09-29",
+      "abDetail": null,
+      "reviewBy": "2027-03-29",
+      "addedBy": "agent:claude-sonnet-5-5 kb-research-v2",
+      "useFor": "Violent roguelike combat can trigger YouTube age restriction; check before submitting.",
+      "researcherNote": "Listed under video Requirements.",
+      "retired": false
+    },
+    {
+      "id": "gp-025",
+      "kind": "store_fact",
+      "claim": "The preview video is added as one YouTube URL, not a playlist or channel URL and without extra parameters like timecodes; a localized video per market is advised.",
+      "ruleClass": "official_guidance",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Preview video field",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "video"
+        ],
+        "asset": [
+          "video"
+        ]
+      },
+      "tags": [
+        "video",
+        "localisation"
+      ],
+      "support": [
+        {
+          "sourceId": "gp-s001",
+          "excerpt": "You can add one preview video to your store listing by entering a YouTube URL in the \"preview video\" field. Use a video's YouTube URL, not a YouTube playlist or channel URL.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5-5 kb-research-v2"
+        },
+        {
+          "sourceId": "gp-s001",
+          "excerpt": "Provide a localized video tailored for users in different markets around the world.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5-5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Play Console Help as read 2026-09-29",
+      "abDetail": null,
+      "reviewBy": "2027-03-29",
+      "addedBy": "agent:claude-sonnet-5-5 kb-research-v2",
+      "useFor": "Supply a separate localized video URL per language.",
+      "researcherNote": "Not under a Requirements heading.",
+      "retired": false
+    },
+    {
+      "id": "gp-026",
+      "kind": "store_fact",
+      "claim": "On the store listing page the preview video is shown before the screenshots, and users play it via a play button overlaid on the feature graphic.",
+      "ruleClass": "store_behaviour",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Store listing page with a video",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "store_page"
+        ],
+        "asset": [
+          "video",
+          "screenshots"
+        ]
+      },
+      "tags": [
+        "video",
+        "store_page_layout",
+        "order",
+        "feature_graphic",
+        "first_images"
+      ],
+      "support": [
+        {
+          "sourceId": "gp-s001",
+          "excerpt": "Your preview video is displayed before your screenshots on your app's store listing on Google Play. Users can watch your preview video by tapping on the play button that overlays on your feature graphic.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5-5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Play Console Help as read 2026-09-29",
+      "abDetail": null,
+      "reviewBy": "2027-03-29",
+      "addedBy": "agent:claude-sonnet-5-5 kb-research-v2",
+      "useFor": "With a video the gallery starts with the video; screenshots follow.",
+      "researcherNote": "",
+      "retired": false
+    },
+    {
+      "id": "gp-027",
+      "kind": "store_fact",
+      "claim": "A preview video may autoplay inline muted for up to 30 seconds on home and search pages, depending on device, setting, network connection and surface area.",
+      "ruleClass": "store_behaviour",
+      "enforcement": null,
+      "facts": [
+        {
+          "value": 30,
+          "unit": "seconds",
+          "of": "max muted autoplay",
+          "context": ""
+        }
+      ],
+      "appliesWhen": "Videos on Play home and search",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "search_result",
+          "store_page"
+        ],
+        "asset": [
+          "video"
+        ]
+      },
+      "tags": [
+        "video",
+        "autoplay",
+        "search_result",
+        "video_first_seconds"
+      ],
+      "support": [
+        {
+          "sourceId": "gp-s001",
+          "excerpt": "Your preview video may autoplay inline with muted audio up to 30 seconds depending on the user device, setting, network connection, and surface area.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5-5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Play Console Help as read 2026-09-29",
+      "abDetail": null,
+      "reviewBy": "2027-03-29",
+      "addedBy": "agent:claude-sonnet-5-5 kb-research-v2",
+      "useFor": "Make the first seconds legible without sound.",
+      "researcherNote": "",
+      "retired": false
+    },
+    {
+      "id": "gp-028",
+      "kind": "store_fact",
+      "claim": "Google recommends showing the actual in-game experience within the first 10 seconds of the video and making at least 80% of the video representative of the user experience.",
+      "ruleClass": "official_guidance",
+      "enforcement": null,
+      "facts": [
+        {
+          "value": 10,
+          "unit": "seconds",
+          "of": "show core experience early",
+          "context": ""
+        },
+        {
+          "value": 80,
+          "unit": "% of video",
+          "of": "representative of user experience",
+          "context": "aim"
+        }
+      ],
+      "appliesWhen": "Preview video content",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "video"
+        ],
+        "asset": [
+          "video"
+        ]
+      },
+      "tags": [
+        "video",
+        "video_first_seconds",
+        "gameplay_real"
+      ],
+      "support": [
+        {
+          "sourceId": "gp-s001",
+          "excerpt": "Show the actual in-app or in-game experience, focusing on the core features and content as early as possible within the first 10 seconds of the video.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5-5 kb-research-v2"
+        },
+        {
+          "sourceId": "gp-s001",
+          "excerpt": "Aim for at least 80% of the video to be representative of the user experience.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5-5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Play Console Help as read 2026-09-29",
+      "abDetail": null,
+      "reviewBy": "2027-03-29",
+      "addedBy": "agent:claude-sonnet-5-5 kb-research-v2",
+      "useFor": "Cutscene-heavy trailers conflict with this guidance.",
+      "researcherNote": "",
+      "retired": false
+    },
+    {
+      "id": "gp-029",
+      "kind": "store_fact",
+      "claim": "Google supports both landscape and portrait preview videos on the store listing page and asks not to leave black bars on a portrait video.",
+      "ruleClass": "official_guidance",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Video orientation",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "video"
+        ],
+        "asset": [
+          "video"
+        ]
+      },
+      "tags": [
+        "video",
+        "orientation"
+      ],
+      "support": [
+        {
+          "sourceId": "gp-s001",
+          "excerpt": "Create a video in either landscape or portrait, both orientations are supported on the store listing page.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5-5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Play Console Help as read 2026-09-29",
+      "abDetail": null,
+      "reviewBy": "2027-03-29",
+      "addedBy": "agent:claude-sonnet-5-5 kb-research-v2",
+      "useFor": "Match video orientation to the game orientation.",
+      "researcherNote": "",
+      "retired": false
+    },
+    {
+      "id": "gp-030",
+      "kind": "store_fact",
+      "claim": "Google reported early results that portrait videos with a full-screen store listing experience gave +7% total watch time, +9% video completions and +5% conversions.",
+      "ruleClass": "store_behaviour",
+      "enforcement": null,
+      "facts": [
+        {
+          "value": 5,
+          "unit": "% conversions increase",
+          "of": "portrait full-screen video",
+          "context": "Google early results 2024-10"
+        }
+      ],
+      "appliesWhen": "Portrait video on Play store listing (Oct 2024 announcement)",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "store_page"
+        ],
+        "asset": [
+          "video"
+        ]
+      },
+      "tags": [
+        "video",
+        "orientation",
+        "store_page_layout",
+        "conversion_benchmark"
+      ],
+      "support": [
+        {
+          "sourceId": "gp-s015",
+          "excerpt": "Our early results are promising: portrait videos drive +7% increase in total watch time, a +9% increase in video completion count, and a +5% increase in conversions.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5-5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Google early results announced Oct 2024; methodology not stated",
+      "abDetail": null,
+      "reviewBy": "2027-03-29",
+      "addedBy": "agent:claude-sonnet-5-5 kb-research-v2",
+      "useFor": "Supports a portrait video for portrait games; do not extrapolate the % to Rogue Legend.",
+      "researcherNote": "Baseline and sample not given.",
+      "retired": false
+    },
+    {
+      "id": "gp-031",
+      "kind": "market_note",
+      "claim": "Vendor Gummicube reported in January 2020 that mobile games in Japan showed videos in Play search results more often than other markets.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Play layout as of January 2020",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "JP"
+        ],
+        "position": [
+          "search_result"
+        ],
+        "asset": [
+          "video"
+        ]
+      },
+      "tags": [
+        "video",
+        "autoplay",
+        "search_result"
+      ],
+      "support": [
+        {
+          "sourceId": "gp-s017",
+          "excerpt": "mobile games available in Japan are seeing more Google Play Videos in their search results. In these instances, every app has a video displayed in the search results",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5-5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "January 2020 observation, layout may have changed",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:claude-sonnet-5-5 kb-research-v2",
+      "useFor": "Weak support that videos can appear in Play search for Japan games.",
+      "researcherNote": "Fetched via summarising tool; a 2020 vendor observation. Google page now says video \"may also be displayed on both home and search page\".",
+      "retired": false
+    },
+    {
+      "id": "gp-032",
+      "kind": "store_fact",
+      "claim": "Play screenshots may be displayed on search and the home page as well as the store listing.",
+      "ruleClass": "store_behaviour",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Play surfaces",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "search_result",
+          "store_page"
+        ],
+        "asset": [
+          "screenshots"
+        ]
+      },
+      "tags": [
+        "screenshots",
+        "search_result",
+        "first_images",
+        "store_page_layout"
+      ],
+      "support": [
+        {
+          "sourceId": "gp-s001",
+          "excerpt": "Screenshots may be displayed throughout Google Play, for instance in search or on the homepage, in addition to your store listing on Google Play.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5-5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Play Console Help as read 2026-09-29",
+      "abDetail": null,
+      "reviewBy": "2027-03-29",
+      "addedBy": "agent:claude-sonnet-5-5 kb-research-v2",
+      "useFor": "Early screenshots are shown outside the listing page as well.",
+      "researcherNote": "How many screenshots show in search is not stated on this page.",
+      "retired": false
+    },
+    {
+      "id": "gp-033",
+      "kind": "store_fact",
+      "claim": "When a video and screenshots are both shown, screenshots follow the video, ordered left-to-right by those best suited for the device.",
+      "ruleClass": "store_behaviour",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Store listing gallery",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "store_page"
+        ],
+        "asset": [
+          "screenshots"
+        ]
+      },
+      "tags": [
+        "screenshots",
+        "order",
+        "store_page_layout"
+      ],
+      "support": [
+        {
+          "sourceId": "gp-s001",
+          "excerpt": "if your preview video is available then your screenshots will be shown after the preview video, followed left-to-right by the screenshots best suited for the device the user is browsing on.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5-5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Play Console Help as read 2026-09-29",
+      "abDetail": null,
+      "reviewBy": "2027-03-29",
+      "addedBy": "agent:claude-sonnet-5-5 kb-research-v2",
+      "useFor": "Google may choose the screenshots best suited for the device; do not rely on fixed order.",
+      "researcherNote": "",
+      "retired": false
+    },
+    {
+      "id": "gp-034",
+      "kind": "store_fact",
+      "claim": "Google recommends localizing screenshot taglines and text overlays per market, while in-game UI itself does not need to be localized.",
+      "ruleClass": "official_guidance",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Multi-country listings",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "screenshots"
+        ]
+      },
+      "tags": [
+        "localisation",
+        "captions",
+        "screenshots"
+      ],
+      "support": [
+        {
+          "sourceId": "gp-s001",
+          "excerpt": "In-game UI does not need to be localized per market, but any additional taglines or text overlays should be localized.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5-5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Play Console Help as read 2026-09-29",
+      "abDetail": null,
+      "reviewBy": "2027-03-29",
+      "addedBy": "agent:claude-sonnet-5-5 kb-research-v2",
+      "useFor": "Localise caption overlays for JP/KR/TW/TH/VN/ID; real gameplay UI may stay in one language.",
+      "researcherNote": "",
+      "retired": false
+    },
+    {
+      "id": "gp-035",
+      "kind": "store_fact",
+      "claim": "Play best-practices says the store listing must suit a general audience regardless of content rating, and that graphic violence should not be prominent in icons, promotional images or videos.",
+      "ruleClass": "official_guidance",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "All Play listings",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "icon",
+          "feature_graphic",
+          "video",
+          "listing"
+        ]
+      },
+      "tags": [
+        "age_rating",
+        "policy_metadata",
+        "policy_graphics"
+      ],
+      "support": [
+        {
+          "sourceId": "gp-s003",
+          "excerpt": "No matter what your app content rating is, your store listing should be suitable for a general audience.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5-5 kb-research-v2"
+        },
+        {
+          "sourceId": "gp-s003",
+          "excerpt": "Avoid graphic violence prominently depicted in app icons, promotional images, or videos.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5-5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Play Console Help as read 2026-09-29",
+      "abDetail": null,
+      "reviewBy": "2027-03-29",
+      "addedBy": "agent:claude-sonnet-5-5 kb-research-v2",
+      "useFor": "Roguelike/survivor-like art: avoid gore or sexualised imagery in the icon, feature graphic and video.",
+      "researcherNote": "The Metadata policy also lists graphic violence prominently depicted in icons, promotional images or videos as inappropriate (enforced entry).",
+      "retired": false
+    },
+    {
+      "id": "gp-036",
+      "kind": "store_fact",
+      "claim": "The Metadata policy lists sexually suggestive imagery and graphic violence prominently depicted in icons, promotional images or videos as inappropriate content in a store listing.",
+      "ruleClass": "enforced_rule",
+      "enforcement": {
+        "consequence": "listing rejected or removed",
+        "exactWording": "Imagery or videos with sexually suggestive content. Avoid suggestive imagery containing breasts, buttocks, genitalia, or other fetishized anatomy or content, whether illustrated or real.",
+        "policyUrl": "https://support.google.com/googleplay/android-developer/answer/9898842"
+      },
+      "facts": [],
+      "appliesWhen": "Icon, screenshots, promotional images, videos",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "icon",
+          "screenshots",
+          "feature_graphic",
+          "video"
+        ]
+      },
+      "tags": [
+        "policy_metadata",
+        "policy_graphics",
+        "characters",
+        "age_rating"
+      ],
+      "support": [
+        {
+          "sourceId": "gp-s002",
+          "excerpt": "Imagery or videos with sexually suggestive content. Avoid suggestive imagery containing breasts, buttocks, genitalia, or other fetishized anatomy or content, whether illustrated or real.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5-5 kb-research-v2"
+        },
+        {
+          "sourceId": "gp-s002",
+          "excerpt": "Graphic violence prominently depicted in app icons, promotional images, or videos.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5-5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Play Console Help as read 2026-09-29",
+      "abDetail": null,
+      "reviewBy": "2027-03-29",
+      "addedBy": "agent:claude-sonnet-5-5 kb-research-v2",
+      "useFor": "Sexualised character art (common in Asia gacha art) is an enforced risk on icon, screenshots and video.",
+      "researcherNote": "Listed as examples of inappropriate text, images or videos within a listing; illustrated content is explicitly included.",
+      "retired": false
+    },
+    {
+      "id": "gp-037",
+      "kind": "store_fact",
+      "claim": "App title must be 30 characters or less and the short description 80 characters or less.",
+      "ruleClass": "enforced_rule",
+      "enforcement": {
+        "consequence": "upload refused",
+        "exactWording": "Your app title must be 30 characters or less.",
+        "policyUrl": "https://support.google.com/googleplay/android-developer/answer/9898842"
+      },
+      "facts": [
+        {
+          "value": 30,
+          "unit": "characters",
+          "of": "app title max",
+          "context": ""
+        },
+        {
+          "value": 80,
+          "unit": "characters",
+          "of": "short description max",
+          "context": ""
+        }
+      ],
+      "appliesWhen": "Title and short description",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "text"
+        ]
+      },
+      "tags": [
+        "policy_metadata",
+        "captions"
+      ],
+      "support": [
+        {
+          "sourceId": "gp-s002",
+          "excerpt": "Your app title must be 30 characters or less.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5-5 kb-research-v2"
+        },
+        {
+          "sourceId": "gp-s001",
+          "excerpt": "80 character limit",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5-5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Play Console Help as read 2026-09-29",
+      "abDetail": null,
+      "reviewBy": "2027-03-29",
+      "addedBy": "agent:claude-sonnet-5-5 kb-research-v2",
+      "useFor": "Keep the title within 30 characters in every language.",
+      "researcherNote": "",
+      "retired": false
+    },
+    {
+      "id": "gp-038",
+      "kind": "store_fact",
+      "claim": "For each app Play allows either one default graphics experiment or up to five localized experiments at the same time.",
+      "ruleClass": "store_behaviour",
+      "enforcement": null,
+      "facts": [
+        {
+          "value": 5,
+          "unit": "concurrent localized experiments",
+          "of": "per app",
+          "context": "or one default graphics experiment"
+        }
+      ],
+      "appliesWhen": "Play Console store listing experiments",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "experiment"
+        ]
+      },
+      "tags": [
+        "experiments"
+      ],
+      "support": [
+        {
+          "sourceId": "gp-s004",
+          "excerpt": "For each app, you can run one default graphics experiment or up to five localized experiments at the same time.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5-5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Play Console Help as read 2026-09-29",
+      "abDetail": null,
+      "reviewBy": "2027-03-29",
+      "addedBy": "agent:claude-sonnet-5-5 kb-research-v2",
+      "useFor": "Plan test queue: one graphics test on default listing, or up to five language-specific tests in parallel.",
+      "researcherNote": "",
+      "retired": false
+    },
+    {
+      "id": "gp-039",
+      "kind": "store_fact",
+      "claim": "A default graphics experiment can test the icon, feature graphic and screenshots in the default store listing language, while a localized experiment can also test descriptions in up to five languages.",
+      "ruleClass": "store_behaviour",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Choosing experiment type",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "experiment"
+        ]
+      },
+      "tags": [
+        "experiments",
+        "localisation"
+      ],
+      "support": [
+        {
+          "sourceId": "gp-s004",
+          "excerpt": "Using a default graphics experiment, you can experiment with graphics in your app's default Store Listing language. You can include variants of your app's icon, feature graphic, and screenshots.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5-5 kb-research-v2"
+        },
+        {
+          "sourceId": "gp-s004",
+          "excerpt": "Using a localized experiment, you can experiment with your app's icon, feature graphic, screenshots, and/or your app's descriptions in up to five languages.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5-5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Play Console Help as read 2026-09-29",
+      "abDetail": null,
+      "reviewBy": "2027-03-29",
+      "addedBy": "agent:claude-sonnet-5-5 kb-research-v2",
+      "useFor": "Video variants cannot be assumed testable; icon, feature graphic, screenshots are.",
+      "researcherNote": "The Google page does not list the preview video as testable; AppTweak (vendor) says video can be tested, not verified here.",
+      "retired": false
+    },
+    {
+      "id": "gp-040",
+      "kind": "store_fact",
+      "claim": "Users who see a localized graphic asset in a language are excluded from the default graphics experiment, even when testing the icon.",
+      "ruleClass": "store_behaviour",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Listings with localized graphics",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "experiment"
+        ]
+      },
+      "tags": [
+        "experiments",
+        "localisation"
+      ],
+      "support": [
+        {
+          "sourceId": "gp-s004",
+          "excerpt": "users viewing your app in French will be excluded from the experiment (even if you're testing your icon).",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5-5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Play Console Help as read 2026-09-29",
+      "abDetail": null,
+      "reviewBy": "2027-03-29",
+      "addedBy": "agent:claude-sonnet-5-5 kb-research-v2",
+      "useFor": "For multi-country tests use localized experiments per language, not the default experiment.",
+      "researcherNote": "",
+      "retired": false
+    },
+    {
+      "id": "gp-041",
+      "kind": "store_fact",
+      "claim": "Play experiments can test up to 2 variants against the current store listing.",
+      "ruleClass": "store_behaviour",
+      "enforcement": null,
+      "facts": [
+        {
+          "value": 2,
+          "unit": "variants",
+          "of": "max vs current listing",
+          "context": "Google help page 2026-09"
+        }
+      ],
+      "appliesWhen": "Advanced settings on experiment setup",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "experiment"
+        ]
+      },
+      "tags": [
+        "experiments"
+      ],
+      "support": [
+        {
+          "sourceId": "gp-s004",
+          "excerpt": "Number of variants: The number of experimental variants to test against the current store listing (you can choose up to 2 variants).",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5-5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [
+        {
+          "sourceId": "gp-s016",
+          "excerpt": "AppTweak (last updated 2024-09-19): \"Select how many (up to 3) variants you want to test against your control.\"",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5-5 kb-research-v2"
+        }
+      ],
+      "validFor": "Play Console Help as read 2026-09-29",
+      "abDetail": null,
+      "reviewBy": "2027-03-29",
+      "addedBy": "agent:claude-sonnet-5-5 kb-research-v2",
+      "useFor": "Design at most 2 variants + control.",
+      "researcherNote": "Contradiction: AppTweak says up to 3 (older UI); Google page now says up to 2. Trust Google.",
+      "retired": false
+    },
+    {
+      "id": "gp-042",
+      "kind": "store_fact",
+      "claim": "The experiment target metric is chosen from Unique user install clicks, Unique user open clicks or Unique user pre-registration clicks.",
+      "ruleClass": "store_behaviour",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Experiment setup",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "experiment"
+        ]
+      },
+      "tags": [
+        "experiments",
+        "metrics"
+      ],
+      "support": [
+        {
+          "sourceId": "gp-s004",
+          "excerpt": "Target metric: The metric used to determine your experiment's result. Choose Unique user install clicks, Unique user open clicks or Unique user pre-registration clicks.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5-5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [
+        {
+          "sourceId": "gp-s016",
+          "excerpt": "AppTweak lists \"First-time installers\" and \"Retained first-time installers (1 day)\" as target metrics (older setup).",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5-5 kb-research-v2"
+        }
+      ],
+      "validFor": "Play Console Help as read 2026-09-29",
+      "abDetail": null,
+      "reviewBy": "2027-03-29",
+      "addedBy": "agent:claude-sonnet-5-5 kb-research-v2",
+      "useFor": "Describe experiment results in terms of install-click CTR, not retained installers.",
+      "researcherNote": "Contradiction with vendor: Google now names click-based metrics. Retained-installer metrics are not on the current Google page.",
+      "retired": false
+    },
+    {
+      "id": "gp-043",
+      "kind": "store_fact",
+      "claim": "Advanced experiment settings let you change number of variants, audience percentage, minimum detectable effect and confidence level, and changing them can make an experiment run longer.",
+      "ruleClass": "store_behaviour",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Experiment setup, optional advanced settings",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "experiment"
+        ]
+      },
+      "tags": [
+        "experiments",
+        "test_power",
+        "test_duration"
+      ],
+      "support": [
+        {
+          "sourceId": "gp-s004",
+          "excerpt": "The default experiment settings will give you results in the shortest time with reasonable accuracy, and changing them can make your experiment run for longer before providing useful results",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5-5 kb-research-v2"
+        },
+        {
+          "sourceId": "gp-s004",
+          "excerpt": "Minimum detectable effect: The minimum difference between variants and control required to declare which performs better. If the difference is less than this, your experiment will be considered a draw.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5-5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Play Console Help as read 2026-09-29",
+      "abDetail": null,
+      "reviewBy": "2027-03-29",
+      "addedBy": "agent:claude-sonnet-5-5 kb-research-v2",
+      "useFor": "Keep defaults unless the traffic is large; smaller MDE needs more traffic.",
+      "researcherNote": "",
+      "retired": false
+    },
+    {
+      "id": "gp-044",
+      "kind": "market_note",
+      "claim": "AppTweak (vendor, 2024-09) states the MDE can be selected between 0.5% and 6% and the confidence level as 90%, 95%, 98% or 99%.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Vendor description of the Play setup as of 2024-09",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "experiment"
+        ]
+      },
+      "tags": [
+        "experiments",
+        "test_power"
+      ],
+      "support": [
+        {
+          "sourceId": "gp-s016",
+          "excerpt": "You can currently select an MDE between 0.5% and 6%. You can select a confidence level of 90%, 95%, 98%, or 99%.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5-5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "AppTweak page updated 2024-09-19; Google page (2026) states no ranges",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:claude-sonnet-5-5 kb-research-v2",
+      "useFor": "Treat ranges as unverified.",
+      "researcherNote": "Not on the Google page; UI may have changed since the banner on Google page about recent changes.",
+      "retired": false
+    },
+    {
+      "id": "gp-045",
+      "kind": "store_fact",
+      "claim": "Store listing experiments stop automatically after running for 6 months, and the console estimates the time and number of installs needed for a significant result.",
+      "ruleClass": "store_behaviour",
+      "enforcement": null,
+      "facts": [
+        {
+          "value": 6,
+          "unit": "months",
+          "of": "automatic experiment stop",
+          "context": ""
+        }
+      ],
+      "appliesWhen": "Running experiments",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "experiment"
+        ]
+      },
+      "tags": [
+        "experiments",
+        "test_duration"
+      ],
+      "support": [
+        {
+          "sourceId": "gp-s004",
+          "excerpt": "Store listing experiments stop automatically after running for 6 months.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5-5 kb-research-v2"
+        },
+        {
+          "sourceId": "gp-s004",
+          "excerpt": "The experiment creation page estimates the time and number of acquisition, opens or pre-registrations your experiment will need to show a statistically significant result.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5-5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Play Console Help as read 2026-09-29",
+      "abDetail": null,
+      "reviewBy": "2027-03-29",
+      "addedBy": "agent:claude-sonnet-5-5 kb-research-v2",
+      "useFor": "No fixed minimum duration on Google page; rely on the estimator.",
+      "researcherNote": "",
+      "retired": false
+    },
+    {
+      "id": "gp-046",
+      "kind": "store_fact",
+      "claim": "Experiment results can be \"More data needed\" or \"Draw\", and Google advises if less than a week remains before a result is expected.",
+      "ruleClass": "store_behaviour",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Reviewing experiment results",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "experiment"
+        ]
+      },
+      "tags": [
+        "experiments",
+        "test_power",
+        "test_duration"
+      ],
+      "support": [
+        {
+          "sourceId": "gp-s004",
+          "excerpt": "You may receive the result \"More data needed\" if not enough data has been collected to return a result.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5-5 kb-research-v2"
+        },
+        {
+          "sourceId": "gp-s004",
+          "excerpt": "We will advise if you have less than a week before we expect a result to be ready.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5-5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Play Console Help as read 2026-09-29",
+      "abDetail": null,
+      "reviewBy": "2027-03-29",
+      "addedBy": "agent:claude-sonnet-5-5 kb-research-v2",
+      "useFor": "A Draw means difference below MDE, not proven equality.",
+      "researcherNote": "",
+      "retired": false
+    },
+    {
+      "id": "gp-047",
+      "kind": "store_fact",
+      "claim": "Google recommends testing changes to one asset at a time in a store listing experiment.",
+      "ruleClass": "official_guidance",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Experiment setup",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "experiment"
+        ]
+      },
+      "tags": [
+        "experiments",
+        "test_power"
+      ],
+      "support": [
+        {
+          "sourceId": "gp-s004",
+          "excerpt": "We recommend testing changes to one asset at a time, so you can be as certain as possible of what causes any changes to your store listing performance.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5-5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Play Console Help as read 2026-09-29",
+      "abDetail": null,
+      "reviewBy": "2027-03-29",
+      "addedBy": "agent:claude-sonnet-5-5 kb-research-v2",
+      "useFor": "A/B suggestions should isolate one asset (icon, or feature graphic, or screenshot set).",
+      "researcherNote": "",
+      "retired": false
+    },
+    {
+      "id": "gp-048",
+      "kind": "heuristic",
+      "claim": "AppTweak (vendor) recommends running a Play store listing experiment for at least one week to cover weekly seasonality.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Vendor advice",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "experiment"
+        ]
+      },
+      "tags": [
+        "experiments",
+        "test_duration"
+      ],
+      "support": [
+        {
+          "sourceId": "gp-s016",
+          "excerpt": "Run your test for at least one week",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5-5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Play Console Help as read 2026-09-29",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:claude-sonnet-5-5 kb-research-v2",
+      "useFor": "Use at least 7 days for tests unless evidence says otherwise.",
+      "researcherNote": "Fetched via summarising tool. Google's own best-practices page was not found so this is single-vendor.",
+      "retired": false
+    },
+    {
+      "id": "gp-049",
+      "kind": "store_fact",
+      "claim": "Play experiments can be run for both default and custom store listings.",
+      "ruleClass": "store_behaviour",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Experiments",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "experiment"
+        ]
+      },
+      "tags": [
+        "experiments",
+        "custom_listing"
+      ],
+      "support": [
+        {
+          "sourceId": "gp-s004",
+          "excerpt": "You can run experiments for your default and custom Store Listings.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5-5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Play Console Help as read 2026-09-29",
+      "abDetail": null,
+      "reviewBy": "2027-03-29",
+      "addedBy": "agent:claude-sonnet-5-5 kb-research-v2",
+      "useFor": "A/B tests can target a country-specific custom listing.",
+      "researcherNote": "",
+      "retired": false
+    },
+    {
+      "id": "gp-050",
+      "kind": "store_fact",
+      "claim": "You can create up to 50 custom store listings per app.",
+      "ruleClass": "store_behaviour",
+      "enforcement": null,
+      "facts": [
+        {
+          "value": 50,
+          "unit": "custom store listings",
+          "of": "max per app",
+          "context": ""
+        }
+      ],
+      "appliesWhen": "Play Console custom store listings",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "custom_listing"
+      ],
+      "support": [
+        {
+          "sourceId": "gp-s005",
+          "excerpt": "You can create up to 50 custom store listing pages.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5-5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Play Console Help as read 2026-09-29",
+      "abDetail": null,
+      "reviewBy": "2027-03-29",
+      "addedBy": "agent:claude-sonnet-5-5 kb-research-v2",
+      "useFor": "Enough for per-country listings for the 9 target markets plus audience variants.",
+      "researcherNote": "",
+      "retired": false
+    },
+    {
+      "id": "gp-051",
+      "kind": "store_fact",
+      "claim": "Custom store listings can target countries, pre-registration users, search keywords, churned/lapsed users, non-buyers/buyers, Google Ads traffic and custom audiences.",
+      "ruleClass": "store_behaviour",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Custom listing targeting",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "custom_listing",
+        "pre_registration",
+        "localisation"
+      ],
+      "support": [
+        {
+          "sourceId": "gp-s005",
+          "excerpt": "You can use custom store listings to target users in different countries, users who have pre-registered, users who search for specific keywords, or inactive users.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5-5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Play Console Help as read 2026-09-29",
+      "abDetail": null,
+      "reviewBy": "2027-03-29",
+      "addedBy": "agent:claude-sonnet-5-5 kb-research-v2",
+      "useFor": "Country targeting allows JP/KR/TW/HK/etc. specific screenshots.",
+      "researcherNote": "",
+      "retired": false
+    },
+    {
+      "id": "gp-052",
+      "kind": "store_fact",
+      "claim": "A country can be targeted by only one custom store listing at a time.",
+      "ruleClass": "store_behaviour",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Country targeting",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "custom_listing"
+      ],
+      "support": [
+        {
+          "sourceId": "gp-s005",
+          "excerpt": "You can target multiple countries with a custom store listing, but you can only target a country with one custom store listing at a time.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5-5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Play Console Help as read 2026-09-29",
+      "abDetail": null,
+      "reviewBy": "2027-03-29",
+      "addedBy": "agent:claude-sonnet-5-5 kb-research-v2",
+      "useFor": "Cannot run two competing country listings in parallel.",
+      "researcherNote": "",
+      "retired": false
+    },
+    {
+      "id": "gp-053",
+      "kind": "store_fact",
+      "claim": "Custom store listings are not auto-translated; users see them in the listing default language unless a translation is added.",
+      "ruleClass": "store_behaviour",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Custom listing language",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "custom_listing",
+        "localisation"
+      ],
+      "support": [
+        {
+          "sourceId": "gp-s005",
+          "excerpt": "Custom store listings aren't automatically translated, so you need to choose a default language when you create them.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5-5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Play Console Help as read 2026-09-29",
+      "abDetail": null,
+      "reviewBy": "2027-03-29",
+      "addedBy": "agent:claude-sonnet-5-5 kb-research-v2",
+      "useFor": "Provide per-language translations for CSLs in multilingual countries.",
+      "researcherNote": "",
+      "retired": false
+    },
+    {
+      "id": "gp-054",
+      "kind": "store_fact",
+      "claim": "A custom store listing can customize name, icon, descriptions and graphic assets, and is reachable by a URL with a listing parameter.",
+      "ruleClass": "store_behaviour",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Custom listing content",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "custom_listing",
+        "icon"
+      ],
+      "support": [
+        {
+          "sourceId": "gp-s005",
+          "excerpt": "For each custom store listing, you can customize your app's name, icon, descriptions, and graphic assets.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5-5 kb-research-v2"
+        },
+        {
+          "sourceId": "gp-s005",
+          "excerpt": "https://play.google.com/store/apps/details?id=[packageName]&listing=[parameter]",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5-5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Play Console Help as read 2026-09-29",
+      "abDetail": null,
+      "reviewBy": "2027-03-29",
+      "addedBy": "agent:claude-sonnet-5-5 kb-research-v2",
+      "useFor": "CSL can carry its own icon and screenshots per market or campaign.",
+      "researcherNote": "",
+      "retired": false
+    },
+    {
+      "id": "gp-055",
+      "kind": "store_fact",
+      "claim": "Custom store listing targeting for Google Ads traffic currently shows only on AdMob and excludes ads on Google Play search.",
+      "ruleClass": "store_behaviour",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Ads traffic CSL",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "custom_listing",
+        "cpp"
+      ],
+      "support": [
+        {
+          "sourceId": "gp-s005",
+          "excerpt": "ads CSL are only currently showing on AdMob and also notably exclude ads on Google Play search",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5-5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Play Console Help as read 2026-09-29",
+      "abDetail": null,
+      "reviewBy": "2027-03-29",
+      "addedBy": "agent:claude-sonnet-5-5 kb-research-v2",
+      "useFor": "Google Ads-linked CSL covers part of UAC traffic only.",
+      "researcherNote": "",
+      "retired": false
+    },
+    {
+      "id": "gp-056",
+      "kind": "store_fact",
+      "claim": "From mid-2026 Play store listing performance reports are based on unique clicks on Install, Open and Pre-register buttons, and Click-through Rate replaces the legacy Conversion Rate metric.",
+      "ruleClass": "store_behaviour",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Play Console store listing reports as of 2026-09",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "metrics",
+        "conversion_benchmark"
+      ],
+      "support": [
+        {
+          "sourceId": "gp-s006",
+          "excerpt": "This replaces the legacy \"Conversion Rate\" metric.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5-5 kb-research-v2"
+        },
+        {
+          "sourceId": "gp-s006",
+          "excerpt": "From June 2026, the primary metrics for store listing performance are based on unique clicks.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5-5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Play Console Help as read 2026-09-29",
+      "abDetail": null,
+      "reviewBy": "2027-03-29",
+      "addedBy": "agent:claude-sonnet-5-5 kb-research-v2",
+      "useFor": "Refer to CTR (click-through) not conversion rate when quoting current Play Console store metrics; older data and vendor articles use conversion rate.",
+      "researcherNote": "The page says \"From July 2026\" in one note and \"From June 2026\" in another; exact start date unclear.",
+      "retired": false
+    },
+    {
+      "id": "gp-057",
+      "kind": "store_fact",
+      "claim": "Store-listing visitors are users who visited the listing and did not already have the app installed on any device, counted once per day and per dimension.",
+      "ruleClass": "store_behaviour",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Play Console store listing reports",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "metrics"
+      ],
+      "support": [
+        {
+          "sourceId": "gp-s006",
+          "excerpt": "The number of users that visited your Store Listing who didn’t already have your app installed on any of their devices.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5-5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Play Console Help as read 2026-09-29",
+      "abDetail": null,
+      "reviewBy": "2027-03-29",
+      "addedBy": "agent:claude-sonnet-5-5 kb-research-v2",
+      "useFor": "Denominator of CTR.",
+      "researcherNote": "",
+      "retired": false
+    },
+    {
+      "id": "gp-058",
+      "kind": "store_fact",
+      "claim": "Store listing acquisitions count users who visited the listing and installed the app without it installed on any other device, so they are lower than installs.",
+      "ruleClass": "store_behaviour",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Play Console metric definitions",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "metrics"
+      ],
+      "support": [
+        {
+          "sourceId": "gp-s006",
+          "excerpt": "The number of users who visited your Store Listing and installed your app, who didn't have it installed on any other devices at the time.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5-5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Play Console Help as read 2026-09-29",
+      "abDetail": null,
+      "reviewBy": "2027-03-29",
+      "addedBy": "agent:claude-sonnet-5-5 kb-research-v2",
+      "useFor": "Acquisitions are unique-user based, not device installs.",
+      "researcherNote": "",
+      "retired": false
+    },
+    {
+      "id": "gp-059",
+      "kind": "store_fact",
+      "claim": "Store listing reports exclude visitors and acquisitions from other Play surfaces such as Promotional Content.",
+      "ruleClass": "store_behaviour",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Reading store listing CTR",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "metrics",
+        "events"
+      ],
+      "support": [
+        {
+          "sourceId": "gp-s006",
+          "excerpt": "The Store listing reports do not include visitors or acquisitions from other surfaces on Google Play (such as Promotional Content).",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5-5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Play Console Help as read 2026-09-29",
+      "abDetail": null,
+      "reviewBy": "2027-03-29",
+      "addedBy": "agent:claude-sonnet-5-5 kb-research-v2",
+      "useFor": "LiveOps-driven installs do not appear in listing CTR.",
+      "researcherNote": "",
+      "retired": false
+    },
+    {
+      "id": "gp-060",
+      "kind": "store_fact",
+      "claim": "Play Console offers click-through rate benchmarks comparing a listing's daily CTR to peer median, 25th and 75th percentile.",
+      "ruleClass": "store_behaviour",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Store listing performance page",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "conversion_benchmark",
+        "metrics"
+      ],
+      "support": [
+        {
+          "sourceId": "gp-s006",
+          "excerpt": "The store listing click-through rate chart allows you to compare your daily conversion performance to your peers' median, 25th and 75th percentile.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5-5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Play Console Help as read 2026-09-29",
+      "abDetail": null,
+      "reviewBy": "2027-03-29",
+      "addedBy": "agent:claude-sonnet-5-5 kb-research-v2",
+      "useFor": "Benchmarks are peer-relative; absolute peer CTR values are not published.",
+      "researcherNote": "",
+      "retired": false
+    },
+    {
+      "id": "gp-061",
+      "kind": "store_fact",
+      "claim": "Curated peer groups use at least 100 apps and only give aggregate data (median, 25th, 50th, 75th percentiles), and exclude low-performing and abandoned apps.",
+      "ruleClass": "store_behaviour",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Play Console peer group comparisons",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "conversion_benchmark",
+        "metrics"
+      ],
+      "support": [
+        {
+          "sourceId": "gp-s007",
+          "excerpt": "they use at least 100 apps, and data is only provided in aggregate (median, or 25th, 50th, and 75th percentiles).",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5-5 kb-research-v2"
+        },
+        {
+          "sourceId": "gp-s007",
+          "excerpt": "they exclude low-performing and abandoned apps.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5-5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Play Console Help as read 2026-09-29",
+      "abDetail": null,
+      "reviewBy": "2027-03-29",
+      "addedBy": "agent:claude-sonnet-5-5 kb-research-v2",
+      "useFor": "Benchmark group composition is not published; do not treat as exact competitor set.",
+      "researcherNote": "",
+      "retired": false
+    },
+    {
+      "id": "gp-062",
+      "kind": "store_fact",
+      "claim": "In store listing reports, Google Play explore traffic includes home page, suggestions, top charts and category searches, while Google Play search is a search for the app's name or closely associated brand.",
+      "ruleClass": "store_behaviour",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Traffic source dimension",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "metrics",
+        "search_result"
+      ],
+      "support": [
+        {
+          "sourceId": "gp-s006",
+          "excerpt": "Users who visited your store listing by performing a search on Google Play for your app’s name or closely associated brand",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5-5 kb-research-v2"
+        },
+        {
+          "sourceId": "gp-s006",
+          "excerpt": "This includes users who clicked on search autocomplete suggestions and users who searched for a category of apps, for example, 'racing game.'",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5-5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Play Console Help as read 2026-09-29",
+      "abDetail": null,
+      "reviewBy": "2027-03-29",
+      "addedBy": "agent:claude-sonnet-5-5 kb-research-v2",
+      "useFor": "Generic genre searches count as explore, branded searches as search.",
+      "researcherNote": "",
+      "retired": false
+    },
+    {
+      "id": "gp-063",
+      "kind": "store_fact",
+      "claim": "Promotional content (events, offers, major updates) appears in Apps or Games tab, the Events tab, search results and the store listing page, and the Events tab is available for games in select regions including Hong Kong, Indonesia, Japan, Korea, Taiwan and the US.",
+      "ruleClass": "store_behaviour",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Play promotional content (LiveOps)",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "events",
+        "offers",
+        "seasonal",
+        "search_result"
+      ],
+      "support": [
+        {
+          "sourceId": "gp-s010",
+          "excerpt": "Promotional content appears across the Google Play Store, including the Apps or Games tab, the Events tab, search results, and your store listing page.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5-5 kb-research-v2"
+        },
+        {
+          "sourceId": "gp-s010",
+          "excerpt": "The Events tab is only available for games in select regions: Australia, Brazil, Canada, France, Germany, Hong Kong, India, Indonesia, Italy, Japan, Korea, Mexico, Russia, Taiwan, Türkiye, the UK, and the US.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5-5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Play Console Help as read 2026-09-29",
+      "abDetail": null,
+      "reviewBy": "2027-03-29",
+      "addedBy": "agent:claude-sonnet-5-5 kb-research-v2",
+      "useFor": "LiveOps events reach JP/KR/TW/HK/ID/US but not TH/VN/PH events tab.",
+      "researcherNote": "Thailand, Vietnam and Philippines are not in the Events tab list on the page read.",
+      "retired": false
+    },
+    {
+      "id": "gp-064",
+      "kind": "store_fact",
+      "claim": "A promotional content event can run at most four weeks, can be submitted 60 days before start, and can take up to four days to approve.",
+      "ruleClass": "store_behaviour",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Creating events",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "events",
+        "offers",
+        "refresh_cadence"
+      ],
+      "support": [
+        {
+          "sourceId": "gp-s011",
+          "excerpt": "The start and end dates and times for your event, which can have a maximum duration of four weeks.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5-5 kb-research-v2"
+        },
+        {
+          "sourceId": "gp-s011",
+          "excerpt": "Promotional content event can be created at any time, but the earliest they can be submitted is 60 days before the event start date. It can take up to four days to approve your event",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5-5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Play Console Help as read 2026-09-29",
+      "abDetail": null,
+      "reviewBy": "2027-03-29",
+      "addedBy": "agent:claude-sonnet-5-5 kb-research-v2",
+      "useFor": "Plan event calendar with 4-week max and 4-day review buffer.",
+      "researcherNote": "",
+      "retired": false
+    },
+    {
+      "id": "gp-065",
+      "kind": "store_fact",
+      "claim": "Games get 4 featuring requests per quarter for broad-audience events and 2 for specific-audience events, and events with featuring requested must be submitted at least 14 days before start.",
+      "ruleClass": "store_behaviour",
+      "enforcement": null,
+      "facts": [
+        {
+          "value": 4,
+          "unit": "featuring requests per quarter",
+          "of": "game developers, broad audience",
+          "context": ""
+        }
+      ],
+      "appliesWhen": "Promotional content featuring",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "events",
+        "offers"
+      ],
+      "support": [
+        {
+          "sourceId": "gp-s011",
+          "excerpt": "Game developers: 4 featuring requests per quarter",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5-5 kb-research-v2"
+        },
+        {
+          "sourceId": "gp-s011",
+          "excerpt": "Events with featuring requested must be submitted at least 14 days prior to the event start date.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5-5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Play Console Help as read 2026-09-29",
+      "abDetail": null,
+      "reviewBy": "2027-03-29",
+      "addedBy": "agent:claude-sonnet-5-5 kb-research-v2",
+      "useFor": "Featuring is limited and not guaranteed.",
+      "researcherNote": "",
+      "retired": false
+    },
+    {
+      "id": "gp-066",
+      "kind": "store_fact",
+      "claim": "In promotional content, the primary image must not include any text, including brand logos, slogans or app/game names.",
+      "ruleClass": "enforced_rule",
+      "enforcement": {
+        "consequence": "listing rejected or removed (event fails quality review)",
+        "exactWording": "Don't include any text on images (including brand logos, slogans, or app/game names), and don't include critical visual elements into cutoff zones.",
+        "policyUrl": "https://support.google.com/googleplay/android-developer/answer/12932541"
+      },
+      "facts": [],
+      "appliesWhen": "Promotional content event images",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "events",
+        "text_density",
+        "policy_graphics"
+      ],
+      "support": [
+        {
+          "sourceId": "gp-s011",
+          "excerpt": "Primary image (required): Make sure your image is relevant to the event and helps users to visualize the event. Don't include any text on images (including brand logos, slogans, or app/game names)",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5-5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Play Console Help as read 2026-09-29",
+      "abDetail": null,
+      "reviewBy": "2027-03-29",
+      "addedBy": "agent:claude-sonnet-5-5 kb-research-v2",
+      "useFor": "Event art is text-free; the tagline field carries the text.",
+      "researcherNote": "Stated as a setup instruction on the create page; consequence is event rejection by review (page says rejections occur, e.g., wrong language). Applies to event assets only, not the store listing.",
+      "retired": false
+    },
+    {
+      "id": "gp-067",
+      "kind": "store_fact",
+      "claim": "Promotional content taglines are limited to 80 characters, must name the offer value for offers, and offer taglines must emphasise the limited-time nature.",
+      "ruleClass": "enforced_rule",
+      "enforcement": {
+        "consequence": "event rejected in review",
+        "exactWording": "Taglines should be concise (80-character limit), easy to understand, accurate and only represent the value of the specific promotional content being promoted.",
+        "policyUrl": "https://support.google.com/googleplay/android-developer/answer/12929944"
+      },
+      "facts": [],
+      "appliesWhen": "Promotional content taglines",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "text"
+        ]
+      },
+      "tags": [
+        "events",
+        "offers",
+        "price_text",
+        "captions"
+      ],
+      "support": [
+        {
+          "sourceId": "gp-s012",
+          "excerpt": "Taglines should be concise (80-character limit), easy to understand, accurate and only represent the value of the specific promotional content being promoted.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5-5 kb-research-v2"
+        },
+        {
+          "sourceId": "gp-s012",
+          "excerpt": "The tagline must emphasise the limited-time nature of the offer within the app or game.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5-5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Play Console Help as read 2026-09-29",
+      "abDetail": null,
+      "reviewBy": "2027-03-29",
+      "addedBy": "agent:claude-sonnet-5-5 kb-research-v2",
+      "useFor": "Offers and discounts belong in promotional content, not in screenshots.",
+      "researcherNote": "Content guidelines listed as Requirements on the page; consequence \"failed quality review\" per page 12932541 (resubmit after failing). Price/promo text is expected here, unlike store listing assets.",
+      "retired": false
+    },
+    {
+      "id": "gp-068",
+      "kind": "store_fact",
+      "claim": "Promotional content must be new, noteworthy and user-facing, and evergreen content or routine events are not accepted.",
+      "ruleClass": "enforced_rule",
+      "enforcement": {
+        "consequence": "event rejected in review",
+        "exactWording": "Promotional content must be new, noteworthy, and user-facing. Do not submit promotions for general service descriptions, evergreen content, or routine events.",
+        "policyUrl": "https://support.google.com/googleplay/android-developer/answer/12929944"
+      },
+      "facts": [],
+      "appliesWhen": "Promotional content submissions",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "events",
+        "offers",
+        "seasonal"
+      ],
+      "support": [
+        {
+          "sourceId": "gp-s012",
+          "excerpt": "Promotional content must be new, noteworthy, and user-facing. Do not submit promotions for general service descriptions, evergreen content, or routine events.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5-5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Play Console Help as read 2026-09-29",
+      "abDetail": null,
+      "reviewBy": "2027-03-29",
+      "addedBy": "agent:claude-sonnet-5-5 kb-research-v2",
+      "useFor": "Only genuinely new events/updates qualify for LiveOps.",
+      "researcherNote": "Consequence inferred from the review process described on the page.",
+      "retired": false
+    },
+    {
+      "id": "gp-069",
+      "kind": "store_fact",
+      "claim": "Google Play Payments policy requires apps and games with randomized virtual items from a purchase, including loot boxes, to disclose the odds in advance of and in close proximity to the purchase.",
+      "ruleClass": "enforced_rule",
+      "enforcement": {
+        "consequence": "app rejected or removed (policy violation, see Enforcement)",
+        "exactWording": "Apps and games offering mechanisms to receive randomized virtual items from a purchase including, but not limited to, “loot boxes” must clearly disclose the odds of receiving those items in advance of, and in close and timely proximity to, that purchase.",
+        "policyUrl": "https://support.google.com/googleplay/android-developer/answer/9858738"
+      },
+      "facts": [],
+      "appliesWhen": "Games with paid random items (gacha, loot boxes) distributed on Play",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "loot_box_disclosure",
+        "gacha",
+        "regulation",
+        "monetisation_messaging"
+      ],
+      "support": [
+        {
+          "sourceId": "gp-s008",
+          "excerpt": "Apps and games offering mechanisms to receive randomized virtual items from a purchase including, but not limited to, “loot boxes” must clearly disclose the odds of receiving those items in advance of, and in close and timely proximity to, that purchase.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5-5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Play Console Help as read 2026-09-29",
+      "abDetail": null,
+      "reviewBy": "2027-03-29",
+      "addedBy": "agent:claude-sonnet-5-5 kb-research-v2",
+      "useFor": "Any gacha/loot mechanic in Rogue Legend needs an in-app odds disclosure before purchase.",
+      "researcherNote": "Applies in-app; consequence stated generically on the Enforcement page, not on the Payments page itself. Store-listing imagery of gacha is not covered by this sentence.",
+      "retired": false
+    },
+    {
+      "id": "gp-070",
+      "kind": "store_fact",
+      "claim": "Google Play does not allow apps to enable wagering or participating with real money, including in-app items bought with money, to obtain a real-world prize, unless the app is a licensed gambling app approved by Google.",
+      "ruleClass": "enforced_rule",
+      "enforcement": {
+        "consequence": "listing rejected or removed",
+        "exactWording": "we don't allow content or services that enable or facilitate users' ability to wager, stake, or participate using real money (including in-app items purchased with money) to obtain a prize of real world monetary value",
+        "policyUrl": "https://support.google.com/googleplay/android-developer/answer/9877032"
+      },
+      "facts": [],
+      "appliesWhen": "Games where paid items can win real-world monetary prizes",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "regulation",
+        "gacha",
+        "loot_box_disclosure"
+      ],
+      "support": [
+        {
+          "sourceId": "gp-s009",
+          "excerpt": "we don't allow content or services that enable or facilitate users’ ability to wager, stake, or participate using real money (including in-app items purchased with money) to obtain a prize of real world monetary value",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5-5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Play Console Help as read 2026-09-29",
+      "abDetail": null,
+      "reviewBy": "2027-03-29",
+      "addedBy": "agent:claude-sonnet-5-5 kb-research-v2",
+      "useFor": "Avoid any real-money prize mechanic or \"BET\"/\"COMPETE for cash\" calls to action.",
+      "researcherNote": "Ordinary virtual gacha with virtual prizes is not addressed by this sentence; the page targets real-world monetary prizes. Excerpt trimmed in my read at \"monetary value\".",
+      "retired": false
+    },
+    {
+      "id": "gp-071",
+      "kind": "store_fact",
+      "claim": "Play gambling policy ads may not promote gambling to apps that provide simulated gambling content such as social casino apps or virtual slot machines.",
+      "ruleClass": "enforced_rule",
+      "enforcement": {
+        "consequence": "app rejected or removed",
+        "exactWording": "App must not provide simulated gambling content (for example, social casino apps; apps with virtual slot machines);",
+        "policyUrl": "https://support.google.com/googleplay/android-developer/answer/9877032"
+      },
+      "facts": [],
+      "appliesWhen": "Apps serving gambling or real-money game ads",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "regulation",
+        "advertising_law"
+      ],
+      "support": [
+        {
+          "sourceId": "gp-s009",
+          "excerpt": "App must not provide simulated gambling content (for example, social casino apps; apps with virtual slot machines);",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5-5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Play Console Help as read 2026-09-29",
+      "abDetail": null,
+      "reviewBy": "2027-03-29",
+      "addedBy": "agent:claude-sonnet-5-5 kb-research-v2",
+      "useFor": "A game with slot/casino-like mini-games should not carry real-money gambling ads.",
+      "researcherNote": "Applies to apps that show gambling ads; not a store-listing rule. Slot-machine imagery in a roguelike listing is not addressed on this page.",
+      "retired": false
+    },
+    {
+      "id": "gp-072",
+      "kind": "store_fact",
+      "claim": "Google Play enforcement actions include Rejection, Removal, Suspension, Limited Visibility and Limited Regions.",
+      "ruleClass": "store_behaviour",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Policy violations",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "regulation",
+        "policy_metadata"
+      ],
+      "support": [
+        {
+          "sourceId": "gp-s013",
+          "excerpt": "Rejection A new app or app update submitted for review will not be made available on Google Play.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5-5 kb-research-v2"
+        },
+        {
+          "sourceId": "gp-s013",
+          "excerpt": "Suspension can occur as the result of egregious or multiple policy violations, as well as repeated app rejections or removals.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5-5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Play Console Help as read 2026-09-29",
+      "abDetail": null,
+      "reviewBy": "2027-03-29",
+      "addedBy": "agent:claude-sonnet-5-5 kb-research-v2",
+      "useFor": "Defines the consequence vocabulary for enforced_rule entries.",
+      "researcherNote": "",
+      "retired": false
+    },
+    {
+      "id": "gp-073",
+      "kind": "glossary",
+      "claim": "Store listing visitors (Play): the number of users that visited the store listing who did not already have the app installed on any of their devices.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Play Console reports",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "metrics"
+      ],
+      "support": [
+        {
+          "sourceId": "gp-s006",
+          "excerpt": "The number of users that visited your Store Listing who didn’t already have your app installed on any of their devices.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5-5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Play Console help as read 2026-09-29",
+      "abDetail": null,
+      "reviewBy": "2028-09-29",
+      "addedBy": "agent:claude-sonnet-5-5 kb-research-v2",
+      "useFor": "Use these definitions when quoting Play metrics.",
+      "researcherNote": "",
+      "retired": false
+    },
+    {
+      "id": "gp-074",
+      "kind": "glossary",
+      "claim": "Store listing acquisitions (Play): visitors who visited the listing and installed the app without it installed on another device.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Play Console reports",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "metrics"
+      ],
+      "support": [
+        {
+          "sourceId": "gp-s006",
+          "excerpt": "The number of users who visited your Store Listing and installed your app, who didn't have it installed on any other devices at the time.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5-5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Play Console help as read 2026-09-29",
+      "abDetail": null,
+      "reviewBy": "2028-09-29",
+      "addedBy": "agent:claude-sonnet-5-5 kb-research-v2",
+      "useFor": "Use these definitions when quoting Play metrics.",
+      "researcherNote": "",
+      "retired": false
+    },
+    {
+      "id": "gp-075",
+      "kind": "glossary",
+      "claim": "Click-through rate (Play): the percentage of store listing visitors who clicked Install, Open or Pre-register; it replaces the legacy Conversion Rate metric.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Play Console store listing reports 2026",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "metrics",
+        "conversion_benchmark"
+      ],
+      "support": [
+        {
+          "sourceId": "gp-s006",
+          "excerpt": "The percentage of store listing visitors who clicked on a button (Install, Open, or Pre-register). This replaces the legacy \"Conversion Rate\" metric.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5-5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Play Console help as read 2026-09-29",
+      "abDetail": null,
+      "reviewBy": "2028-09-29",
+      "addedBy": "agent:claude-sonnet-5-5 kb-research-v2",
+      "useFor": "Use these definitions when quoting Play metrics.",
+      "researcherNote": "",
+      "retired": false
+    },
+    {
+      "id": "gp-076",
+      "kind": "glossary",
+      "claim": "Unique user install clicks (Play): the number of users who installed the app and did not have it installed on any other device at the time (experiment metric definition).",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Play experiments target metric",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "metrics",
+        "experiments"
+      ],
+      "support": [
+        {
+          "sourceId": "gp-s004",
+          "excerpt": "The number of users who installed your app, who didn't have it installed on any other devices at the time.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5-5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Play Console help as read 2026-09-29",
+      "abDetail": null,
+      "reviewBy": "2028-09-29",
+      "addedBy": "agent:claude-sonnet-5-5 kb-research-v2",
+      "useFor": "Use these definitions when quoting Play metrics.",
+      "researcherNote": "",
+      "retired": false
+    },
+    {
+      "id": "gp-077",
+      "kind": "glossary",
+      "claim": "Custom store listing (Play): a version of the store listing tailored to a user segment or reached by a unique URL parameter, up to 50 per app.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Play Console",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "custom_listing"
+      ],
+      "support": [
+        {
+          "sourceId": "gp-s005",
+          "excerpt": "With custom store listings, you can tailor your app’s store listing to appeal to specific user segments or to users who visit your listing via a unique custom store listing URL.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5-5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Play Console help as read 2026-09-29",
+      "abDetail": null,
+      "reviewBy": "2028-09-29",
+      "addedBy": "agent:claude-sonnet-5-5 kb-research-v2",
+      "useFor": "Use these definitions when quoting Play metrics.",
+      "researcherNote": "",
+      "retired": false
+    },
+    {
+      "id": "gp-078",
+      "kind": "glossary",
+      "claim": "Localized experiment (Play): a store listing experiment on icon, feature graphic, screenshots and descriptions shown only to users viewing the listing in up to five chosen languages.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Play Console experiments",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "experiments",
+        "localisation"
+      ],
+      "support": [
+        {
+          "sourceId": "gp-s004",
+          "excerpt": "Experiment variants will only be shown to users viewing your app's store listing in the languages you choose.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5-5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Play Console help as read 2026-09-29",
+      "abDetail": null,
+      "reviewBy": "2028-09-29",
+      "addedBy": "agent:claude-sonnet-5-5 kb-research-v2",
+      "useFor": "Use these definitions when quoting Play metrics.",
+      "researcherNote": "",
+      "retired": false
+    },
+    {
+      "id": "gp-079",
+      "kind": "glossary",
+      "claim": "Default graphics experiment (Play): an experiment on icon, feature graphic and screenshots in the default store listing language (formerly a global experiment).",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Play Console experiments",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "experiments"
+      ],
+      "support": [
+        {
+          "sourceId": "gp-s004",
+          "excerpt": "Global experiments have been renamed to default graphics experiments. They maintain the same functionality that they had prior to being renamed.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5-5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Play Console help as read 2026-09-29",
+      "abDetail": null,
+      "reviewBy": "2028-09-29",
+      "addedBy": "agent:claude-sonnet-5-5 kb-research-v2",
+      "useFor": "Use these definitions when quoting Play metrics.",
+      "researcherNote": "",
+      "retired": false
+    },
+    {
+      "id": "gp-080",
+      "kind": "glossary",
+      "claim": "Feature graphic (Play): the 1024x500 image used as the video cover and in large-format recommended groups.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Play listing assets",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "feature_graphic"
+      ],
+      "support": [
+        {
+          "sourceId": "gp-s001",
+          "excerpt": "Your feature graphic is displayed in various places on Google Play, including: As a cover image for your preview video, if present.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5-5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Play Console help as read 2026-09-29",
+      "abDetail": null,
+      "reviewBy": "2028-09-29",
+      "addedBy": "agent:claude-sonnet-5-5 kb-research-v2",
+      "useFor": "Use these definitions when quoting Play metrics.",
+      "researcherNote": "",
+      "retired": false
+    },
+    {
+      "id": "gp-081",
+      "kind": "glossary",
+      "claim": "Peer group (Play): a set of similar apps used for benchmark comparisons in Play Console; curated groups use at least 100 apps and report aggregate percentiles.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Play Console benchmarks",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "conversion_benchmark"
+      ],
+      "support": [
+        {
+          "sourceId": "gp-s007",
+          "excerpt": "Peer groups, which are sets of similar apps such as \"Match-3 games,\" or sets that you've selected.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5-5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Play Console help as read 2026-09-29",
+      "abDetail": null,
+      "reviewBy": "2028-09-29",
+      "addedBy": "agent:claude-sonnet-5-5 kb-research-v2",
+      "useFor": "Use these definitions when quoting Play metrics.",
+      "researcherNote": "",
+      "retired": false
+    },
+    {
+      "id": "gp-082",
+      "kind": "glossary",
+      "claim": "Tagline (promotional content): an event description of up to 80 characters that must state what the offer or event is.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Play promotional content",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "events",
+        "captions"
+      ],
+      "support": [
+        {
+          "sourceId": "gp-s012",
+          "excerpt": "Taglines should be concise (80-character limit), easy to understand, accurate and only represent the value of the specific promotional content being promoted.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5-5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Play Console help as read 2026-09-29",
+      "abDetail": null,
+      "reviewBy": "2028-09-29",
+      "addedBy": "agent:claude-sonnet-5-5 kb-research-v2",
+      "useFor": "Use these definitions when quoting Play metrics.",
+      "researcherNote": "",
+      "retired": false
+    },
+    {
+      "id": "gp-083",
+      "kind": "glossary",
+      "claim": "Churned users and lapsed users (Play): churned users uninstalled the app; lapsed users have not opened it in the last 28 days.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Custom listings and promotional content audiences",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "custom_listing",
+        "events"
+      ],
+      "support": [
+        {
+          "sourceId": "gp-s005",
+          "excerpt": "Churned users: Users who uninstalled your app. Lapsed users: Users who haven’t opened your app in the last 28 days.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5-5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Play Console help as read 2026-09-29",
+      "abDetail": null,
+      "reviewBy": "2028-09-29",
+      "addedBy": "agent:claude-sonnet-5-5 kb-research-v2",
+      "useFor": "Use these definitions when quoting Play metrics.",
+      "researcherNote": "",
+      "retired": false
+    },
+    {
+      "id": "gp-084",
+      "kind": "glossary",
+      "claim": "Minimum detectable effect (Play experiments): the minimum difference between a variant and control required to declare a winner; below it the result is a draw.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Play experiments",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "experiments",
+        "test_power"
+      ],
+      "support": [
+        {
+          "sourceId": "gp-s004",
+          "excerpt": "Minimum detectable effect: The minimum difference between variants and control required to declare which performs better. If the difference is less than this, your experiment will be considered a draw.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5-5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Play Console help as read 2026-09-29",
+      "abDetail": null,
+      "reviewBy": "2028-09-29",
+      "addedBy": "agent:claude-sonnet-5-5 kb-research-v2",
+      "useFor": "Use these definitions when quoting Play metrics.",
+      "researcherNote": "",
+      "retired": false
+    }
+  ]
+}

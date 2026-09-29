@@ -54,6 +54,7 @@ export function settingsPage(
 <main><h1>Settings</h1>
 <p class="meta">Every change is saved at once. A change that costs money (for example a new model, which means analysing images again) shows the number of images and the cost first and asks you.</p>
 ${view ? '<div id="settings"></div>' : `<div class="card"><p>${escHtml(fixedText)}</p></div>`}
+<p class="meta">The knowledge base is shared by all projects: <a href="/knowledge">review and approve its entries</a>.</p>
 ${archived === null ? "" : archiveBoxHtml(id, name, archived)}
 </main>
 <dialog id="confirmDlg" aria-labelledby="confirmTitle"><h2 id="confirmTitle">Before this is saved</h2><div id="confirmBody"></div>

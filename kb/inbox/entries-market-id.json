@@ -1,0 +1,1034 @@
+{
+  "file": "entries-market-id",
+  "entries": [
+    {
+      "id": "as-id-001",
+      "kind": "market_note",
+      "claim": "Statcounter shows Indonesia's mobile web traffic at Android 77.07% and iOS 22.88% in August 2026, well below the 87-90% Android figures quoted by two vendors.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [
+        {
+          "value": 77.07,
+          "unit": "% share",
+          "of": "Android mobile web traffic, Indonesia",
+          "context": "Statcounter Aug 2026"
+        }
+      ],
+      "appliesWhen": "Web-traffic share; game revenue split not measured.",
+      "scope": {
+        "store": [
+          "google_play",
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "ID"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "store_share",
+        "platform_share"
+      ],
+      "support": [
+        {
+          "sourceId": "as-s005",
+          "excerpt": "Aug 2026: Android 77.07%, iOS 22.88%.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [
+        {
+          "sourceId": "as-s037",
+          "excerpt": "Android dominates the Indonesian market with almost 90% market share as of October 2022.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        },
+        {
+          "sourceId": "as-s026",
+          "excerpt": "Vendor states 87% Android (older, unsourced).",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "validFor": "Snapshot 2026-09-29",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "Android is still the majority store; do not use 90% as the planning number.",
+      "researcherNote": "Vendor figures are older (AppTweak: almost 90% as of Oct 2022; LocalizeDirect: 87%, undated).",
+      "retired": false
+    },
+    {
+      "id": "as-id-002",
+      "kind": "market_note",
+      "claim": "Indonesia led Southeast Asia in game downloads in Q1 2025 with 870 million (up 9% quarter on quarter) and held 41% of regional downloads in Jan-Aug 2024.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Sensor Tower download estimates, both stores.",
+      "scope": {
+        "store": [
+          "google_play",
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "ID"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "audience",
+        "store_share"
+      ],
+      "support": [
+        {
+          "sourceId": "as-s018",
+          "excerpt": "Indonesia stands out as the leader in mobile game downloads, reaching 870 million in Q1 2025.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        },
+        {
+          "sourceId": "as-s019",
+          "excerpt": "Indonesia 41% of the total downloads in SEA (Jan-Aug 2024).",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "2024-2025",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "Indonesia is a volume market: large installs, thin revenue per install.",
+      "researcherNote": "Both sources are Sensor Tower.",
+      "retired": false
+    },
+    {
+      "id": "as-id-003",
+      "kind": "market_note",
+      "claim": "In the 22 top-grossing games on Indonesia Google Play (26 Sep 2026 chart), the first phone screenshot set was landscape in 13 and portrait in 9; the median was 7 screenshots (range 4 to 14).",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [
+        {
+          "value": 13,
+          "unit": "of 22 listings",
+          "of": "landscape, Indonesia",
+          "context": "obs 2026-09-29"
+        }
+      ],
+      "appliesWhen": "Top-grossing games of all genres in Indonesia.",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "ID"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "screenshots"
+        ]
+      },
+      "tags": [
+        "orientation",
+        "genre_convention",
+        "deck_length"
+      ],
+      "support": [
+        {
+          "sourceId": "as-s060",
+          "excerpt": "13 landscape, 9 portrait; median 7; range 4 to 14.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Snapshot 2026-09-29",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "The top-grossing norm is landscape; portrait is common in casual and the Habby competitors.",
+      "researcherNote": "Chart order from Similarweb (used only to pick packages). Single snapshot of one chart on one day; chart mix is dominated by MOBA, battle-royale, casual and card games, not roguelikes. Orientation is genre-driven.",
+      "retired": false
+    },
+    {
+      "id": "as-id-004",
+      "kind": "market_note",
+      "claim": "AppTweak says Indonesian app creatives favour portrait screenshots and neon colours with gradients (electric blue, bright red, magenta, bright purple); its statement is about apps generally, not games.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Observational; last updated 2024-02; not specific to games.",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "ID"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "screenshots"
+        ]
+      },
+      "tags": [
+        "orientation",
+        "colour",
+        "genre_convention"
+      ],
+      "support": [
+        {
+          "sourceId": "as-s037",
+          "excerpt": "Portrait orientation screenshots ... Neon colors with gradients are particularly popular.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [
+        "as-id-003"
+      ],
+      "counterSupport": [
+        {
+          "sourceId": "as-s060",
+          "excerpt": "13 of 22 top-grossing Indonesian games use a landscape first screenshot set.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "validFor": "Snapshot 2026-09-29",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "Do not treat neon-gradient portrait as an Indonesia rule for games.",
+      "researcherNote": "Not confirmed for games: in the top-grossing games chart landscape is more common (see as-id-003).",
+      "retired": false
+    },
+    {
+      "id": "as-id-005",
+      "kind": "market_note",
+      "claim": "Indonesian captions are commonly Indonesian mixed with English game terms: AppTweak says screenshots mix the two languages, and viewed top-grossing listings (Mobile Legends, Ragnarok, PUBG Mobile, Clash of Clans, Whiteout Survival, Higgs Domino) use Indonesian captions with English names and terms.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Indonesia top-grossing listings; captions read by eye on six.",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "ID"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "screenshots"
+        ]
+      },
+      "tags": [
+        "captions",
+        "localisation",
+        "lingo",
+        "script"
+      ],
+      "support": [
+        {
+          "sourceId": "as-s037",
+          "excerpt": "Screenshot captions frequently mix Indonesian and English text.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        },
+        {
+          "sourceId": "as-s060",
+          "excerpt": "Six viewed listings use Indonesian captions; PUBG keeps English headlines with Indonesian sub-lines.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Snapshot 2026-09-29",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "Bilingual captions are locally normal; keep genre words (Hero, Class, PvP, Boss) in English if that is how players say them.",
+      "researcherNote": "Two origins; the vendor claim covers apps generally.",
+      "retired": false
+    },
+    {
+      "id": "as-id-006",
+      "kind": "market_note",
+      "claim": "Habby's Capybara Go, Archero 2 and Survivor.io use Indonesian captions on their Indonesian Google Play screenshots, while keeping the Latin game name.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Habby's three titles as of 2026-09-29.",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "roguelike",
+          "survivor_like",
+          "idle"
+        ],
+        "countries": [
+          "ID"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "screenshots"
+        ]
+      },
+      "tags": [
+        "captions",
+        "localisation",
+        "branding"
+      ],
+      "support": [
+        {
+          "sourceId": "as-s062",
+          "excerpt": "id listings show Indonesian headlines and Latin game names.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Snapshot 2026-09-29",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "Competitors localise the caption layer only for Indonesia.",
+      "researcherNote": "Three listings by one publisher.",
+      "retired": false
+    },
+    {
+      "id": "as-id-007",
+      "kind": "market_note",
+      "claim": "Archero 2's Indonesian listing has Spanish text on screenshot 3: the caption reads 'Combos de Habilidad Infinitos / ¡Suerte + Habilidad = Dominación!' and the in-game UI is Spanish ('¡Has conocido a un ángel!').",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Archero 2 listing as of 2026-09-29. The Thai listing's equivalent image shows Thai UI text.",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "roguelike"
+        ],
+        "countries": [
+          "ID"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "screenshots"
+        ]
+      },
+      "tags": [
+        "localisation",
+        "captions",
+        "gameplay_real"
+      ],
+      "support": [
+        {
+          "sourceId": "as-s062",
+          "excerpt": "id set image 3: Spanish caption and Spanish UI text, while other id captions are Indonesian.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Snapshot 2026-09-29",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "Have a native reviewer check every caption and the UI language in each screenshot before upload.",
+      "researcherNote": "Direct observation, viewed at 900 px; a localisation QA slip at a top competitor, not a market convention.",
+      "retired": false
+    },
+    {
+      "id": "as-id-008",
+      "kind": "market_note",
+      "claim": "AppTweak reports that about 54% of the top 500 Indonesian games include a promotional video, compared with 24% of apps.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Snapshot from the 2022-2024 period (article last updated 2024-02).",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "ID"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "video"
+        ]
+      },
+      "tags": [
+        "video",
+        "genre_convention"
+      ],
+      "support": [
+        {
+          "sourceId": "as-s037",
+          "excerpt": "Approximately 54% of top 500 games include promotional videos, compared to just 24% of apps.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Snapshot 2026-09-29",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "A promo video is the majority practice in Indonesian top games.",
+      "researcherNote": "Single vendor; dated.",
+      "retired": false
+    },
+    {
+      "id": "as-id-009",
+      "kind": "market_note",
+      "claim": "AppTweak found that only 2 of the top 10 free and grossing Indonesian games have no multiplayer component.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Snapshot from the 2022-2024 period.",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "ID"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "genre_convention",
+        "audience"
+      ],
+      "support": [
+        {
+          "sourceId": "as-s037",
+          "excerpt": "Only 2 in the top 10 free and grossing games do not include any multiplayer component.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Snapshot 2026-09-29",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "A solo roguelike may need to show social/PvP hooks in its Indonesian listing.",
+      "researcherNote": "Single vendor; dated.",
+      "retired": false
+    },
+    {
+      "id": "as-id-010",
+      "kind": "market_note",
+      "claim": "Indonesia's Communications Ministry Regulation No. 2 of 2024 requires the game classification certificate to be quoted in packaging, game descriptions, advertising and digital storefronts.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "IGRS; wording as reported Dec 2025. Enforcement currently suspended (see as-id-011).",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "ID"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "age_rating",
+        "regulation",
+        "advertising_law",
+        "policy_metadata"
+      ],
+      "support": [
+        {
+          "sourceId": "as-s038",
+          "excerpt": "The classification certificate must then be quoted in all relevant packaging, game descriptions, advertising, digital storefronts and official distribution platforms.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Regulation text as reported Dec 2025",
+      "abDetail": null,
+      "reviewBy": "2027-03-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "Plan to show an IGRS rating in Indonesian descriptions and ads once the system is reactivated.",
+      "researcherNote": "Law-firm newsletter, pre-suspension. The regulation text itself was not read.",
+      "retired": false
+    },
+    {
+      "id": "as-id-011",
+      "kind": "market_note",
+      "claim": "Komdigi temporarily suspended IGRS rating processes on 17 April 2026 and as of 9 August 2026 said reactivation was targeted for 2026 without a firm date.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Government statements; status may have changed after 2026-09-29.",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "ID"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "age_rating",
+        "regulation"
+      ],
+      "support": [
+        {
+          "sourceId": "as-s041",
+          "excerpt": "Sambil menunggu semua proses investigasi dan evaluasi selesai, kami memutuskan untuk menunda sementara proses rating IGRS secara keseluruhan.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        },
+        {
+          "sourceId": "as-s042",
+          "excerpt": "Reaktivasi pasti setelah semuanya selesai baru kembali dilakukan.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        },
+        {
+          "sourceId": "as-s043",
+          "excerpt": "IGRS reactivation targeted for 2026 after comprehensive evaluation.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        },
+        {
+          "sourceId": "as-s040",
+          "excerpt": "IGRS temporarily suspended by Komdigi on 17 April 2026.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [
+        {
+          "sourceId": "as-s039",
+          "excerpt": "IGRS has been fully enforced since January 24, 2026, meaning every game accessible in Indonesia must have an official age rating.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "validFor": "Status 2026-08-09",
+      "abDetail": null,
+      "reviewBy": "2027-03-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "Do not build an Indonesia rating badge into store art yet; re-check before launch.",
+      "researcherNote": "Contradicted by Cekindo (3 Aug 2026), which says IGRS has been fully enforced since 24 Jan 2026 and omits the suspension; government-quoting outlets are treated as more reliable.",
+      "retired": false
+    },
+    {
+      "id": "as-id-012",
+      "kind": "market_note",
+      "claim": "During the IGRS suspension the ministry said it would not block or restrict access to unrated games in Indonesia.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "While the suspension lasts.",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "ID"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "age_rating",
+        "regulation"
+      ],
+      "support": [
+        {
+          "sourceId": "as-s042",
+          "excerpt": "tidak akan memblokir atau membatasi akses terhadap gim-gim tanpa rating.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        },
+        {
+          "sourceId": "as-s043",
+          "excerpt": "will not block or restrict access to unrated games circulating in Indonesia.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        },
+        {
+          "sourceId": "as-s041",
+          "excerpt": "tetap bisa main ... ga ada yang diblokir game-game.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Snapshot 2026-09-29",
+      "abDetail": null,
+      "reviewBy": "2027-03-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "No IGRS rating is needed on a listing today; a future reactivation could change this.",
+      "researcherNote": "The two 9 Aug articles share one Komdigi statement; the April CNBC article is a separate statement (two origins).",
+      "retired": false
+    },
+    {
+      "id": "as-id-013",
+      "kind": "market_note",
+      "claim": "IGRS's April 2026 rollout produced erratic ratings on Steam (for example Call of Duty 3+, Story of Seasons 18+) that Komdigi called unofficial, and Steam removed the IGRS ratings.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Steam rating display; Google Play not involved in the reported incident.",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "ID"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "age_rating",
+        "regulation"
+      ],
+      "support": [
+        {
+          "sourceId": "as-s040",
+          "excerpt": "April 2-5, 2026: erratic classifications; April 6: Komdigi says ratings unofficial; Steam removes IGRS ratings.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Snapshot 2026-09-29",
+      "abDetail": null,
+      "reviewBy": "2027-03-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "Shows the rating regime is unstable; avoid depending on IGRS labels.",
+      "researcherNote": "Single Niko Partners timeline; Google Play/IARC handling not covered.",
+      "retired": false
+    },
+    {
+      "id": "as-id-014",
+      "kind": "market_note",
+      "claim": "On 16 September 2026 Komdigi gave 25 private-scope electronic system operators until 22 September to register (PSE) or face warnings and termination of service access.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Announced to 25 named sectors (transport, e-commerce, property, professional services); no games among them.",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "ID"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "regulation"
+      ],
+      "support": [
+        {
+          "sourceId": "as-s044",
+          "excerpt": "penerapan sanksi administratif berupa pemutusan akses layanan.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Announced 2026-09-16",
+      "abDetail": null,
+      "reviewBy": "2027-03-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "PSE registration is a live obligation; confirm the publisher's status before launch.",
+      "researcherNote": "Shows the enforcement mechanism (access termination); it does not show games being targeted.",
+      "retired": false
+    },
+    {
+      "id": "as-id-015",
+      "kind": "market_note",
+      "claim": "A compliance consultancy says PSE licensing applies to games with user accounts, in-app purchases, online access or user interaction, and that games without PSE or IGRS compliance risk warnings, fines, delisting or blocking.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Indonesia; consultancy view.",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "ID"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "regulation"
+      ],
+      "support": [
+        {
+          "sourceId": "as-s039",
+          "excerpt": "PSE license applies if a game includes features such as user accounts, in-app purchases, online access, personal data processing, or user interactions.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Snapshot 2026-09-29",
+      "abDetail": null,
+      "reviewBy": "2027-03-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "Treat as a checklist item, not an authoritative interpretation.",
+      "researcherNote": "Vendor source; also asserts IGRS is fully enforced, which conflicts with government statements.",
+      "retired": false
+    },
+    {
+      "id": "as-id-016",
+      "kind": "market_note",
+      "claim": "Garena ran a large Ramadan 2026 Free Fire event in Indonesia (19 Feb to 5 Mar, in-game Ramadan tokens donated via four creators, over Rp650 million, plus a THR voucher raffle).",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Publisher event coverage; effect on installs or store conversion not measured.",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "ID"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "seasonal",
+        "events",
+        "community"
+      ],
+      "support": [
+        {
+          "sourceId": "as-s045",
+          "excerpt": "Event started 2026-02-19; donation period 25 Feb - 5 Mar 2026; donation over Rp650 million; THR Voucher raffle 6-24 March.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Snapshot 2026-09-29",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "Ramadan is a major event season; assume big publishers run themed creatives.",
+      "researcherNote": "Publisher-driven news; no effect data found.",
+      "retired": false
+    },
+    {
+      "id": "as-id-017",
+      "kind": "market_note",
+      "claim": "AppTweak notes Indonesian apps change icons during Ramadan with elements reminiscent of Islam (Muslims are about 87% of the population).",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Apps generally; games not specified.",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "ID"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "icon"
+        ]
+      },
+      "tags": [
+        "seasonal",
+        "cultural_adaptation",
+        "icon"
+      ],
+      "support": [
+        {
+          "sourceId": "as-s037",
+          "excerpt": "Apps celebrate religious observances - updating icons during Ramadan with elements reminiscent of Islam.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Snapshot 2026-09-29",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "A Ramadan icon variant is a cheap test, not a proven lift.",
+      "researcherNote": "Vendor observation, no effect data.",
+      "retired": false
+    },
+    {
+      "id": "as-id-018",
+      "kind": "market_note",
+      "claim": "Indonesia scores 471 in EF EPI 2025 (80th globally, Low band).",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "General adult population.",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "ID"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "text"
+        ]
+      },
+      "tags": [
+        "localisation",
+        "audience",
+        "captions"
+      ],
+      "support": [
+        {
+          "sourceId": "as-s022",
+          "excerpt": "Indonesia (471) fell into the low-proficiency band.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Snapshot 2026-09-29",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "English-only captions are risky; local leaders localise.",
+      "researcherNote": "EF test-taker samples.",
+      "retired": false
+    },
+    {
+      "id": "as-id-019",
+      "kind": "heuristic",
+      "claim": "Indonesian text runs about 8-12% longer than English (AppTweak); another vendor says Indonesian phrases take more space without a figure.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "English-to-Indonesian caption translation.",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "ID"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "text"
+        ]
+      },
+      "tags": [
+        "typography",
+        "text_area",
+        "localisation"
+      ],
+      "support": [
+        {
+          "sourceId": "as-s037",
+          "excerpt": "Indonesian is between 8% and 12% longer to write than English.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        },
+        {
+          "sourceId": "as-s026",
+          "excerpt": "Indonesian phrases take more space; use dynamic resizing.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Snapshot 2026-09-29",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "Allow 10-15% extra caption width.",
+      "researcherNote": "Vendor rules of thumb.",
+      "retired": false
+    }
+  ]
+}

@@ -1,0 +1,403 @@
+{
+  "file": "entries-market-us",
+  "entries": [
+    {
+      "id": "ap-101",
+      "kind": "market_note",
+      "claim": "In the United States, iOS accounted for about 60.7% and Android about 39.3% of mobile page views in August 2026.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [
+        {
+          "value": 60.68,
+          "unit": "%",
+          "of": "iOS share of US mobile OS page views",
+          "context": "StatCounter Aug 2026"
+        },
+        {
+          "value": 39.29,
+          "unit": "%",
+          "of": "Android share",
+          "context": "StatCounter Aug 2026"
+        }
+      ],
+      "appliesWhen": "Web page-view share; not installed base, downloads or spend.",
+      "scope": {
+        "store": [
+          "app_store",
+          "google_play"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "US"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "platform_share",
+        "store_share",
+        "audience"
+      ],
+      "support": [
+        {
+          "sourceId": "ap-s025",
+          "excerpt": "iOS: 60.68%, Android: 39.29%, period August 2026, based on page views",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "StatCounter, August 2026",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "US is iOS-majority in traffic: give App Store creative equal weight to Play.",
+      "researcherNote": "Single independent source found; the search tool budget was exhausted so a second independent origin (Counterpoint, Comscore, Sensor Tower) could not be added. Page-view methodology overstates iOS relative to device counts in some markets.",
+      "retired": false
+    },
+    {
+      "id": "ap-102",
+      "kind": "ab_case",
+      "claim": "In a published SplitMetrics test on Angry Birds 2 (App Store), portrait screenshots outperformed landscape at 99.7% confidence.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [
+        {
+          "value": 99.7,
+          "unit": "% confidence",
+          "of": "portrait vs landscape screenshot test",
+          "context": "Rovio / SplitMetrics"
+        },
+        {
+          "value": 13,
+          "unit": "% conversion improvement",
+          "of": "optimised screenshot combination",
+          "context": "vendor case study"
+        }
+      ],
+      "appliesWhen": "Casual game, App Store, single vendor case.",
+      "scope": {
+        "store": [
+          "app_store"
+        ],
+        "genre": [
+          "casual"
+        ],
+        "countries": [
+          "US"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "screenshots"
+        ]
+      },
+      "tags": [
+        "orientation",
+        "experiments",
+        "test_win_rate",
+        "genre_convention"
+      ],
+      "support": [
+        {
+          "sourceId": "ap-s026",
+          "excerpt": "Portrait-oriented screenshots outperformed landscape, contrary to industry standards ... 99.7% confidence level on portrait orientation test",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Test date not stated on the page (Angry Birds 2 launch period)",
+      "abDetail": null,
+      "reviewBy": "",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "Do not assume landscape wins for games; test orientation for the roguelike audience.",
+      "researcherNote": "Country of test not stated (filed under US baseline by earlier work). Vendor case study of its own customer; casual audience, not roguelike. One case = one origin.",
+      "retired": false
+    },
+    {
+      "id": "ap-103",
+      "kind": "heuristic",
+      "claim": "AppsFlyer advises keeping screenshot text to about four or five words per line, because users will not enlarge screenshots to read.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Vendor advice for App Store screenshots.",
+      "scope": {
+        "store": [
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "US"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "screenshots"
+        ]
+      },
+      "tags": [
+        "captions",
+        "text_density",
+        "legibility"
+      ],
+      "support": [
+        {
+          "sourceId": "ap-s027",
+          "excerpt": "keep text to just four or five words per line",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "AppsFlyer page updated 2025-11-27",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "Short captions; treat as a starting rule, test it.",
+      "researcherNote": "Advice without a stated dataset.",
+      "retired": false
+    },
+    {
+      "id": "ap-104",
+      "kind": "market_note",
+      "claim": "Phiture research, cited by AppsFlyer, found 17% of users scroll through screenshots for games versus 9% for apps overall.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [
+        {
+          "value": 17,
+          "unit": "% users scrolling screenshots",
+          "of": "games",
+          "context": "Phiture via AppsFlyer"
+        },
+        {
+          "value": 9,
+          "unit": "% users scrolling screenshots",
+          "of": "apps",
+          "context": "Phiture via AppsFlyer"
+        }
+      ],
+      "appliesWhen": "Second-hand statistic; date and country of the study not shown.",
+      "scope": {
+        "store": [
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "US"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "screenshots"
+        ]
+      },
+      "tags": [
+        "deck_length",
+        "first_images",
+        "genre_convention"
+      ],
+      "support": [
+        {
+          "sourceId": "ap-s028",
+          "excerpt": "Only 9% of app users scroll through screenshots vs. 17% for games (Phiture research cited)",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Undated Phiture research cited Nov 2025",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "Most users see only the first screenshots; games get somewhat more scrolling.",
+      "researcherNote": "Original Phiture study not read; store not specified.",
+      "retired": false
+    },
+    {
+      "id": "ap-105",
+      "kind": "market_note",
+      "claim": "SplitMetrics states that users typically decide whether to download within 7 seconds of visiting a product page.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [
+        {
+          "value": 7,
+          "unit": "seconds",
+          "of": "typical download decision time",
+          "context": "SplitMetrics guide"
+        }
+      ],
+      "appliesWhen": "Vendor guide statement.",
+      "scope": {
+        "store": [
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "US"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "first_images",
+        "store_page_layout"
+      ],
+      "support": [
+        {
+          "sourceId": "ap-s029",
+          "excerpt": "Users typically make download decisions within 7 seconds of visiting a product page",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        },
+        {
+          "sourceId": "ap-s027",
+          "excerpt": "The 7-second data is cited to Phiture research",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "App Store Connect / Apple Developer pages as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "Justifies front-loading the first screenshots.",
+      "researcherNote": "Provenance unclear: AppsFlyer attributes a 7-second figure to Phiture; SplitMetrics gives no dataset.",
+      "retired": false
+    },
+    {
+      "id": "ap-106",
+      "kind": "heuristic",
+      "claim": "Phiture advises treating screenshot captions as keyword-aware content while warning that keyword-stuffed screenshots look desperate and convert poorly.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Phiture ASO trends 2026 (March 2026).",
+      "scope": {
+        "store": [
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "US"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "screenshots"
+        ]
+      },
+      "tags": [
+        "captions",
+        "text_density",
+        "conversion_benchmark"
+      ],
+      "support": [
+        {
+          "sourceId": "ap-s021",
+          "excerpt": "Treat screenshot captions as keyword-aware content. That means keyword-stuffed screenshots look desperate and convert poorly.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Phiture 2026-03-19",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "Write captions for humans first.",
+      "researcherNote": "Depends on the unproven caption-indexing claim (see ap-070).",
+      "retired": false
+    },
+    {
+      "id": "ap-107",
+      "kind": "market_note",
+      "claim": "SplitMetrics advises that for games, actual gameplay in previews is essential to conversion.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Vendor guide.",
+      "scope": {
+        "store": [
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "US"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "video",
+          "screenshots"
+        ]
+      },
+      "tags": [
+        "gameplay_real",
+        "art_vs_gameplay",
+        "video"
+      ],
+      "support": [
+        {
+          "sourceId": "ap-s029",
+          "excerpt": "For games specifically, actual gameplay previews are essential for positively impacting conversion rates.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "App Store Connect / Apple Developer pages as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "Show real gameplay in the App Store preview.",
+      "researcherNote": "Consistent with Apple guidance (ap-025); vendor origin only.",
+      "retired": false
+    }
+  ]
+}

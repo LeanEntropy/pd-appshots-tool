@@ -1,0 +1,33 @@
+{
+  "checks": [
+    {
+      "id": "gp-ranking-claims",
+      "kind": "banned_text",
+      "store": "google_play",
+      "entryIds": ["gp-009"],
+      "policyUrls": [],
+      "patterns": [
+        "(^|\\s)#\\s?1(\\s|$|[!.,])",
+        "\\bno\\.?\\s?1\\b",
+        "\\bapp of the year\\b",
+        "\\bbest of play\\b",
+        "\\d+\\s?%\\s*off\\b"
+      ],
+      "message": "Google Play's Metadata policy lists text that indicates store performance or ranking (such as 'App of the year', '#1', 'Best of Play') and price or promotional text as violations",
+      "confirmedBy": "",
+      "note": "Draft, derived from the exact wording of gp-009. Inactive until gp-009 is approved and released AND a person confirms these patterns (set confirmedBy)."
+    },
+    {
+      "id": "gp-screenshot-count",
+      "kind": "deck_length",
+      "store": "google_play",
+      "entryIds": ["gp-016"],
+      "policyUrls": [],
+      "min": 2,
+      "max": 8,
+      "message": "Google Play needs at least 2 screenshots and takes up to 8 per device type",
+      "confirmedBy": "",
+      "note": "Draft, from gp-016. Inactive until gp-016 is approved and released AND a person confirms it (set confirmedBy)."
+    }
+  ]
+}

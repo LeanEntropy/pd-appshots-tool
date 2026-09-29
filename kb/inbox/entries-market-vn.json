@@ -1,0 +1,1191 @@
+{
+  "file": "entries-market-vn",
+  "entries": [
+    {
+      "id": "as-vn-001",
+      "kind": "market_note",
+      "claim": "Statcounter shows Vietnam's mobile web traffic at Android 57.33% and iOS 42.64% in August 2026, a lower Android share than the 65-70% quoted by two vendors.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [
+        {
+          "value": 57.33,
+          "unit": "% share",
+          "of": "Android mobile web traffic, Vietnam",
+          "context": "Statcounter Aug 2026"
+        },
+        {
+          "value": 42.64,
+          "unit": "% share",
+          "of": "iOS",
+          "context": "Statcounter Aug 2026"
+        }
+      ],
+      "appliesWhen": "Web-traffic share; game revenue split not measured.",
+      "scope": {
+        "store": [
+          "google_play",
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "VN"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "store_share",
+        "platform_share"
+      ],
+      "support": [
+        {
+          "sourceId": "as-s004",
+          "excerpt": "Aug 2026: Android 57.33%, iOS 42.64%.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [
+        {
+          "sourceId": "as-s036",
+          "excerpt": "Android dominates with almost 70% of the market share in Vietnam.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        },
+        {
+          "sourceId": "as-s026",
+          "excerpt": "Vendor states Android 65% / iOS 35% (older, unsourced figure).",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "validFor": "Snapshot 2026-09-29",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "Vietnam's iOS share is large enough that App Store parity matters more than in ID/PH.",
+      "researcherNote": "Vendor figures are older (AppTweak Feb 2024: almost 70% Android; LocalizeDirect Oct 2024: 65/35) and unsourced.",
+      "retired": false
+    },
+    {
+      "id": "as-vn-002",
+      "kind": "market_note",
+      "claim": "Vietnam ranked third in Southeast Asian game downloads in Q1 2025 with 329 million, behind Indonesia (870M) and the Philippines (366M).",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Sensor Tower download estimates, both stores.",
+      "scope": {
+        "store": [
+          "google_play",
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "VN"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "audience",
+        "store_share"
+      ],
+      "support": [
+        {
+          "sourceId": "as-s018",
+          "excerpt": "The Philippines and Vietnam follow with 366 million and 329 million downloads respectively.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Q1 2025",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "Vietnam is a high-volume install market.",
+      "researcherNote": "Single origin.",
+      "retired": false
+    },
+    {
+      "id": "as-vn-003",
+      "kind": "market_note",
+      "claim": "Vietnam's Decree 147/2024 took effect on 25 December 2024 and requires offshore entities providing online games to Vietnamese users to establish an enterprise in Vietnam.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Publishers offering online games to Vietnam users.",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "VN"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "regulation",
+        "advertising_law"
+      ],
+      "support": [
+        {
+          "sourceId": "as-s029",
+          "excerpt": "Offshore entities providing online game services to users in Vietnam must establish an enterprise in compliance with the decree.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        },
+        {
+          "sourceId": "as-s031",
+          "excerpt": "Offshore game publishers must establish a local entity in Vietnam to operate legally.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        },
+        {
+          "sourceId": "as-s032",
+          "excerpt": "Decree effective December 25, 2024 following its November 9th issuance.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Decree in force since 2024-12-25",
+      "abDetail": null,
+      "reviewBy": "2027-03-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "Vietnam release needs a local entity; treat any Vietnam store creative as gated on licensing.",
+      "researcherNote": "Three law-firm/trade summaries of the same decree (one origin); decree text not read, and the government-portal page was not re-fetched.",
+      "retired": false
+    },
+    {
+      "id": "as-vn-004",
+      "kind": "market_note",
+      "claim": "Vietnam splits online games into G1 (multiplayer via central servers, needing a licence and a Decision to Publish) and G2-G4 (needing a Notice of Publishing Confirmation).",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Online games under Decree 147.",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "VN"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "regulation"
+      ],
+      "support": [
+        {
+          "sourceId": "as-s032",
+          "excerpt": "G1 titles need a Decision to Publish and G2, G3, and G4 games require a Notice of Publishing Confirmation.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        },
+        {
+          "sourceId": "as-s029",
+          "excerpt": "Government decisions/notifications required per tier (Tilleke summary).",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Snapshot 2026-09-29",
+      "abDetail": null,
+      "reviewBy": "2027-03-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "Identify the tier before any Vietnam creative work.",
+      "researcherNote": "Secondary sources; tier for Rogue Legend must be determined with counsel.",
+      "retired": false
+    },
+    {
+      "id": "as-vn-005",
+      "kind": "market_note",
+      "claim": "Decree 147 bars advertising an online game in Vietnam without a G1 release decision or a G2-G4 notification confirmation.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Any advertising of an online game to Vietnam users; whether pre-registration store pages count as advertising is not settled by the sources.",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "VN"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "regulation",
+        "advertising_law",
+        "pre_registration"
+      ],
+      "support": [
+        {
+          "sourceId": "as-s029",
+          "excerpt": "Not advertising online games without a decision on G1 game release or notification confirmation of G2, G3, or G4 game release.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        },
+        {
+          "sourceId": "as-s030",
+          "excerpt": "Businesses cannot advertise games without proper authorization documentation.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Snapshot 2026-09-29",
+      "abDetail": null,
+      "reviewBy": "2027-03-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "Do not run Vietnam store creative or pre-registration before the licence document exists.",
+      "researcherNote": "Two secondary sources, one decree (one origin). Enforcement against store pages not verified.",
+      "retired": false
+    },
+    {
+      "id": "as-vn-006",
+      "kind": "market_note",
+      "claim": "Decree 147 requires game classification results to be displayed continuously on the game screen and in advertising content, as a symbol of recognisable size and colour.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Online games offered in Vietnam; paraphrase of 'recognizable size and colour' comes from the same page.",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "VN"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "age_rating",
+        "regulation",
+        "advertising_law",
+        "policy_graphics"
+      ],
+      "support": [
+        {
+          "sourceId": "as-s030",
+          "excerpt": "Hiển thị liên tục kết quả phân loại trò chơi trong màn hình thiết bị trò chơi và trong các nội dung quảng cáo.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Snapshot 2026-09-29",
+      "abDetail": null,
+      "reviewBy": "2027-03-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "Reserve space for a Vietnamese age mark in any Vietnam ad or store graphic.",
+      "researcherNote": "One fetched source (Vietnamese); a second (Tilleke) mentions the display on the provider's website only. Whether Play screenshots count as advertising content is unverified.",
+      "retired": false
+    },
+    {
+      "id": "as-vn-007",
+      "kind": "market_note",
+      "claim": "Decree 147 classifies online games into four age tiers (all ages, 12+, 16+, 18+), but sources disagree whether the lowest tier is labelled 00+ or 6+.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Age labelling of Vietnam releases.",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "VN"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "age_rating",
+        "regulation"
+      ],
+      "support": [
+        {
+          "sourceId": "as-s030",
+          "excerpt": "Four categories: 00+ (all ages), 12+, 16+, 18+.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        },
+        {
+          "sourceId": "as-s031",
+          "excerpt": "New age rating introduced for users 16+.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [
+        {
+          "sourceId": "as-s065",
+          "excerpt": "Search summary lists the tiers as 6+, 12+, 16+, 18+ (Article 38); page not fetched.",
+          "excerptType": "paraphrase",
+          "fetched": false,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "validFor": "Snapshot 2026-09-29",
+      "abDetail": null,
+      "reviewBy": "2027-03-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "Confirm the exact label set from the decree before designing the mark.",
+      "researcherNote": "Contradiction: a search summary of thuvienphapluat.vn (page returned HTTP 403, not fetched) lists 6+/12+/16+/18+. Verify against the decree.",
+      "retired": false
+    },
+    {
+      "id": "as-vn-008",
+      "kind": "market_note",
+      "claim": "In August 2026 Ho Chi Minh City's Department of Culture and Sports told publishers that games approved as 18+ must not be shown as 12+ or 13+ on app stores, with 15 days to correct or risk distribution suspension.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Games with an official Vietnamese age approval; consequences: distribution suspension or revoked publishing approval.",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "VN"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "age_rating",
+        "regulation",
+        "policy_metadata"
+      ],
+      "support": [
+        {
+          "sourceId": "as-s033",
+          "excerpt": "Games officially approved for players aged 18 and above must not be displayed as suitable for younger audiences, such as 12+ or 13+, on app stores.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Directive reported 2026-08-05",
+      "abDetail": null,
+      "reviewBy": "2027-03-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "Vietnam store age rating must equal the approved Vietnamese classification.",
+      "researcherNote": "One news report (5 Aug 2026 per page), one origin. This is the only found instance of Vietnamese authorities directing app-store age labels.",
+      "retired": false
+    },
+    {
+      "id": "as-vn-009",
+      "kind": "market_note",
+      "claim": "Decree 147 prohibits online games with content and scenarios resembling casino prize games or using images of playing cards.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Games released in Vietnam.",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "VN"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "regulation",
+        "policy_graphics"
+      ],
+      "support": [
+        {
+          "sourceId": "as-s029",
+          "excerpt": "Prohibit the release of online games that feature content and scenarios resembling prizewinning games in casinos or games using images of playing cards.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Snapshot 2026-09-29",
+      "abDetail": null,
+      "reviewBy": "2027-03-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "Avoid casino or playing-card imagery in Vietnam-facing art.",
+      "researcherNote": "Secondary source. Not directly aimed at store images but the same imagery would be a risk.",
+      "retired": false
+    },
+    {
+      "id": "as-vn-010",
+      "kind": "market_note",
+      "claim": "For 12+ games, Decree 147 requires no suggestive material and limits combat to animated, non-human or unrealistic human depictions with non-realistic weapons.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Games classified 12+.",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "VN"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "regulation",
+        "age_rating",
+        "policy_graphics"
+      ],
+      "support": [
+        {
+          "sourceId": "as-s032",
+          "excerpt": "animated, non-human or unrealistic human portrayals, with non-realistic weapons, minimal close-up effects, and restrained sounds.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Snapshot 2026-09-29",
+      "abDetail": null,
+      "reviewBy": "2027-03-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "Cartoon combat art fits a 12+ tier; realistic or suggestive art pushes the tier up.",
+      "researcherNote": "One trade-press summary of the decree.",
+      "retired": false
+    },
+    {
+      "id": "as-vn-011",
+      "kind": "market_note",
+      "claim": "Under Decree 147 foreign app stores must remove illegal applications within 24 hours of a written request and verify that game providers hold valid approval certificates before upload.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Google Play and App Store as foreign app stores.",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "VN"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "regulation"
+      ],
+      "support": [
+        {
+          "sourceId": "as-s031",
+          "excerpt": "Foreign app stores must 'remove illegal applications within 24 hours' and verify online game providers hold valid approval certificates before upload.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        },
+        {
+          "sourceId": "as-s032",
+          "excerpt": "Platform providers must remove violating applications upon authorized request.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Snapshot 2026-09-29",
+      "abDetail": null,
+      "reviewBy": "2027-03-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "An unlicensed game can be delisted in Vietnam.",
+      "researcherNote": "Two law/trade summaries of one decree.",
+      "retired": false
+    },
+    {
+      "id": "as-vn-012",
+      "kind": "market_note",
+      "claim": "An analysis piece says 288 Vietnamese G1 licences had been issued by Q1 2026 and only 184 remained active, a 36% revocation rate.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "G1 licences.",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "VN"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "regulation"
+      ],
+      "support": [
+        {
+          "sourceId": "as-s034",
+          "excerpt": "As of Q1 2026, 288 G1 licences have been issued with only 184 remaining active - a 36% revocation rate.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Q1 2026",
+      "abDetail": null,
+      "reviewBy": "2027-03-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "Suggests active enforcement, but unverified.",
+      "researcherNote": "No named primary source for the numbers.",
+      "retired": false
+    },
+    {
+      "id": "as-vn-013",
+      "kind": "market_note",
+      "claim": "On 2026-09-29 Capybara Go, Archero 2 and Survivor.io returned HTTP 404 on Google Play with gl=VN (in both vi and en); Capybara Go resolved for Singapore and Malaysia, and Legend of Mushroom was available in Vietnam.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Fetched anonymously from a non-Vietnamese IP; Habby games are not listed for Vietnam.",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "roguelike",
+          "survivor_like",
+          "idle"
+        ],
+        "countries": [
+          "VN"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "regulation",
+        "localisation"
+      ],
+      "support": [
+        {
+          "sourceId": "as-s062",
+          "excerpt": "com.habby.capybara, com.xq.archeroii, com.dxx.firenow: 404 at gl=VN; com.mxdzzus.google: 200 at gl=VN.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Snapshot 2026-09-29",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "The three Habby competitors are not served in Vietnam; Vietnam competition is local publishers and Legend of Mushroom.",
+      "researcherNote": "Fact is an observation; the cause (Decree 147 licensing, publisher choice) is not established. Singapore/Malaysia check done for Capybara Go only.",
+      "retired": false
+    },
+    {
+      "id": "as-vn-014",
+      "kind": "market_note",
+      "claim": "In the 22 top-grossing games on Vietnam Google Play (26 Sep 2026 chart), the first phone screenshot set was landscape in 15 and portrait in 7; the median was 7 screenshots (range 5 to 8).",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [
+        {
+          "value": 15,
+          "unit": "of 22 listings",
+          "of": "landscape, Vietnam",
+          "context": "obs 2026-09-29"
+        }
+      ],
+      "appliesWhen": "Top-grossing games of all genres in Vietnam.",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "VN"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "screenshots"
+        ]
+      },
+      "tags": [
+        "orientation",
+        "genre_convention",
+        "deck_length"
+      ],
+      "support": [
+        {
+          "sourceId": "as-s059",
+          "excerpt": "15 landscape, 7 portrait; median 7; range 5 to 8.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Snapshot 2026-09-29",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "Landscape is the local top-grossing norm, driven by MOBA/MMO/strategy genres.",
+      "researcherNote": "Chart order from Similarweb (used only to pick packages). Single snapshot of one chart on one day; chart mix is dominated by Vietnam-published MMO, MOBA and casual titles, not roguelikes.",
+      "retired": false
+    },
+    {
+      "id": "as-vn-015",
+      "kind": "market_note",
+      "claim": "All six viewed Vietnam top-grossing listings (Lien Quan Mobile, OMG 3Q, Rise of Kingdoms VN, Thu Cung Bao Dan, Play Together VNG, Wild Rift VN) use Vietnamese captions on their screenshots.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Mostly Vietnam-published titles (local partner listings) in the top-grossing chart.",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "VN"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "screenshots"
+        ]
+      },
+      "tags": [
+        "captions",
+        "localisation",
+        "script"
+      ],
+      "support": [
+        {
+          "sourceId": "as-s059",
+          "excerpt": "Vietnamese captions on all six viewed listings.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Snapshot 2026-09-29",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "Vietnamese captions are the norm; English-only screenshots are unusual among locally published leaders.",
+      "researcherNote": "Six hand-picked listings, all locally published.",
+      "retired": false
+    },
+    {
+      "id": "as-vn-016",
+      "kind": "market_note",
+      "claim": "In viewed Vietnam listings, headlines often carry a Vietnamese sub-line (Thu Cung Bao Dan, Rise of Kingdoms, Play Together), while OMG 3Q pairs bold headlines with name-labelled real-person portraits.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Viewed listings only; density judged by eye.",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "VN"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "screenshots"
+        ]
+      },
+      "tags": [
+        "captions",
+        "text_density",
+        "faces",
+        "celebrity"
+      ],
+      "support": [
+        {
+          "sourceId": "as-s059",
+          "excerpt": "Two-tier Vietnamese captions in Thu Cung Bao Dan, Rise of Kingdoms and Play Together; OMG 3Q shows name-labelled real-person portraits in five of six screenshots.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Snapshot 2026-09-29",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "Two-line Vietnamese captions and human-face endorsers are locally normal.",
+      "researcherNote": "Stylistic observation from six listings.",
+      "retired": false
+    },
+    {
+      "id": "as-vn-017",
+      "kind": "market_note",
+      "claim": "Local celebrities appear in Vietnamese game promotion: a vendor cites footballer Doan Van Hau accompanying Call of Dragons announcements, and OMG 3Q's Play screenshots feature name-labelled real people.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Vietnam game marketing; store-image effect not measured.",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "VN"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "screenshots"
+        ]
+      },
+      "tags": [
+        "celebrity",
+        "faces",
+        "collaboration_ip"
+      ],
+      "support": [
+        {
+          "sourceId": "as-s026",
+          "excerpt": "famous Vietnamese footballer Doan Van Hau accompanied announcements of the Call of Dragons game.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        },
+        {
+          "sourceId": "as-s059",
+          "excerpt": "OMG 3Q screenshots 2 to 6 show named real-person portraits.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Snapshot 2026-09-29",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "Endorser portraits are a local option; test as a variant, not a default.",
+      "researcherNote": "Two origins but only one store-image example; the people in OMG 3Q were not identified as KOLs by the listing.",
+      "retired": false
+    },
+    {
+      "id": "as-vn-018",
+      "kind": "market_note",
+      "claim": "Publisher gift codes are a mainstream Vietnamese game marketing mechanic: aggregator GameK lists launch and event codes (newest 16 Sep 2026), and Legend of Mushroom's Vietnam listing shows a gift code in its first screenshot.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Vietnam PC/mobile game marketing.",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "VN"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "screenshots",
+          "listing"
+        ]
+      },
+      "tags": [
+        "offers",
+        "events",
+        "pre_registration"
+      ],
+      "support": [
+        {
+          "sourceId": "as-s049",
+          "excerpt": "Aggregator page lists gift codes for many games; newest dated 2026-09-16.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        },
+        {
+          "sourceId": "as-s062",
+          "excerpt": "Legend of Mushroom vi listing screenshot 1 shows 'Gift Code: ANNIV2P5'.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Snapshot 2026-09-29",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "Gift codes are a familiar Vietnamese hook, but keep them out of store graphics unless policy allows.",
+      "researcherNote": "Two origins; promotional codes in Play graphics may conflict with Play's graphic policy (see Play policy entries).",
+      "retired": false
+    },
+    {
+      "id": "as-vn-019",
+      "kind": "heuristic",
+      "claim": "Vietnamese text typically needs about 30% more space than English (30-35% per AppTweak, about 30% per LocalizeDirect).",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "English-to-Vietnamese caption translation.",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "VN"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "text"
+        ]
+      },
+      "tags": [
+        "typography",
+        "text_area",
+        "localisation"
+      ],
+      "support": [
+        {
+          "sourceId": "as-s036",
+          "excerpt": "Expect a 30-35% increase in space requirements when converting from English.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        },
+        {
+          "sourceId": "as-s026",
+          "excerpt": "Text typically expands approximately 30% compared to English.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Snapshot 2026-09-29",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "Leave 30-35% caption room in the caption band.",
+      "researcherNote": "Two vendors, likely both rule-of-thumb; not a measurement.",
+      "retired": false
+    },
+    {
+      "id": "as-vn-020",
+      "kind": "heuristic",
+      "claim": "Vietnamese diacritics stack on a single letter and change meaning (bạn 'friend' vs bắn 'shoot'), so caption fonts must support the full Vietnamese set.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Any baked-in Vietnamese text.",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "VN"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "text"
+        ]
+      },
+      "tags": [
+        "typography",
+        "script",
+        "legibility"
+      ],
+      "support": [
+        {
+          "sourceId": "as-s036",
+          "excerpt": "Many Vietnamese words take on a completely different meaning when their accent is changed - bạn vs bắn.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        },
+        {
+          "sourceId": "as-s026",
+          "excerpt": "Multiple diacritical symbols can be stacked on a single letter.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Snapshot 2026-09-29",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "Check every caption in a Vietnamese-capable display font and have a native review.",
+      "researcherNote": "Vendor sources; the font-support part is an inference. Test on real captions.",
+      "retired": false
+    },
+    {
+      "id": "as-vn-021",
+      "kind": "market_note",
+      "claim": "AppTweak describes Vietnamese game creatives as more crowded than apps, with elaborate illustrations and characters prominently displayed.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Observational, no data; last updated 2024-02.",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "VN"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "screenshots"
+        ]
+      },
+      "tags": [
+        "genre_convention",
+        "characters",
+        "text_density"
+      ],
+      "support": [
+        {
+          "sourceId": "as-s036",
+          "excerpt": "Games: more crowded designs with elaborate illustrations and characters prominently displayed.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Snapshot 2026-09-29",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "Character-forward, busy art is locally normal.",
+      "researcherNote": "Vendor description; consistent with the viewed OMG 3Q and Rise of Kingdoms listings but not measured.",
+      "retired": false
+    },
+    {
+      "id": "as-vn-022",
+      "kind": "market_note",
+      "claim": "Vietnam scores 500 in EF EPI 2025 (64th globally, Moderate band).",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "General adult population.",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "VN"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "text"
+        ]
+      },
+      "tags": [
+        "localisation",
+        "audience",
+        "captions"
+      ],
+      "support": [
+        {
+          "sourceId": "as-s022",
+          "excerpt": "Vietnam recorded 500, reflecting moderate proficiency levels.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Snapshot 2026-09-29",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "English brand terms may pass, but captions are localised by the local leaders.",
+      "researcherNote": "EF test-taker samples.",
+      "retired": false
+    }
+  ]
+}

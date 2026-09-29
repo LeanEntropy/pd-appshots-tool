@@ -1,5 +1,8 @@
 import type { z } from "zod";
 import type { Taxonomy } from "../config/load.ts";
+import type { KbRecord } from "../kb/step.ts";
+import { patternsKb, recommendKb, reviewKb, type SynthesisKb, withKbMarks } from "../kb/step-io.ts";
+import { type KbOpts, kbPart } from "../kb/synthesis-kb.ts";
 import { type AbTestsInput, writeAbTests } from "./ab-tests.ts";
 import type { AbTestsOutput } from "./ab-tests-schema.ts";
 import { type CallContext, cachedAnswer, validatedCall } from "./call.ts";
@@ -48,6 +51,8 @@ export interface SynthesisResult {
   /** The AI's A/B tests as written (checked again when the report is built). */
   abTests: AbTestsOutput | null;
   problems: string[];
+  /** What each step cited from the knowledge base (all null when its Settings switch is off). */
+  kb: SynthesisKb;
 }
 
 const L = reportLabeler(plainLabel);
@@ -107,7 +112,7 @@ export async function synthesise(
   report: (phase: string, message: string) => void,
 ): Promise<SynthesisResult> {
   const out = await writeAndReview(deps, taxonomy, input, ctx, report);
-  if (!deps.ab || !input.ab?.evidence.length) return out;
+  if (!deps.ab || !input.ab?.evidence.length) return withKbMarks(out, ctx.kb);
   report("ab-tests", "Writing the A/B tests…");
   const ab = await writeAbTests(
     deps.ab.writer,
@@ -116,8 +121,9 @@ export async function synthesise(
     ctx,
   );
   out.abTests = ab.value;
+  out.kb.abTests = ab.record;
   if (!ab.value) out.problems.push(`A/B tests: ${ab.problems.join("; ")}`);
-  return out;
+  return withKbMarks(out, ctx.kb);
 }
 
 async function writeAndReview(
@@ -141,6 +147,7 @@ async function writeAndReview(
     review: null,
     abTests: null,
     problems: [],
+    kb: { interpretation: null, recommendations: null, abTests: null },
   };
   const facts = [
     `How we sort images, and the plain name and definition of every screen category and tag code below (write the plain names, never the codes):\n${HOW_WE_SORT.join(" ")}\n${JSON.stringify(Object.values({ ...CATEGORIES, ...TAGS }))}`,
@@ -165,8 +172,10 @@ async function writeAndReview(
             `keyPoints must have exactly ${input.fit.keyPoints.length} items, one per computed key point`,
           ],
     ctx,
+    patternsKb(input.fit),
   );
   out.interpretation = interp.value;
+  out.kb.interpretation = interp.record ?? null;
   if (!interp.value) out.problems.push(`pattern summary: ${interp.problems.join("; ")}`);
 
   const minLen = Math.max(1, Math.min(input.ourDeckLength, input.patterns.deckLength.min || 1));
@@ -196,8 +205,10 @@ async function writeAndReview(
     schema,
     check,
     ctx,
+    recommendKb(input.fit),
   );
   out.recommendations = rec.value;
+  out.kb.recommendations = rec.record ?? null;
   if (!rec.value) {
     out.problems.push(`recommendations: ${rec.problems.join("; ")}`);
     return out;
@@ -217,6 +228,7 @@ async function writeAndReview(
     reviewSchema,
     () => [],
     ctx,
+    reviewKb(input.fit),
   );
   out.review = rev.value;
   if (!rev.value) {
@@ -242,10 +254,12 @@ async function writeAndReview(
     schema,
     check,
     ctx,
+    recommendKb(input.fit),
   );
   if (revised.value) {
     out.draft = rec.value;
     out.recommendations = revised.value;
+    out.kb.recommendations = revised.record ?? null;
   } else out.problems.push(`revision: ${revised.problems.join("; ")}`);
   return out;
 }
@@ -263,9 +277,18 @@ export async function textStep<T>(
   schema: z.ZodType<T>,
   check: (value: T) => string[],
   ctx: CallContext,
-): Promise<{ value: T | null; key: string; problems: string[] }> {
-  const q = { step, model: provider.model, system, images: [], ctx };
-  const old = cachedAnswer(q, task.before, schema, check);
-  if (old) return { value: old.value, key: old.key, problems: [] };
-  return validatedCall(step, provider, system, task.now, [], schema, check, ctx);
+  kb?: KbOpts<T>,
+): Promise<{ value: T | null; key: string; problems: string[]; record?: KbRecord | null }> {
+  // The knowledge base (Settings switch): with it off, every argument passes through unchanged.
+  const k = kb ? kbPart({ ...kb, run: ctx.kb, system, task, schema, check }) : null;
+  if (k && "blocked" in k) return { value: null, key: "", problems: [k.blocked] };
+  const s = k ?? { system, task, schema, check };
+  const q = { step, model: provider.model, system: s.system, images: [], ctx };
+  const old = cachedAnswer(q, s.task.before, s.schema, s.check);
+  const r = old
+    ? { value: old.value, key: old.key, problems: [] }
+    : await validatedCall(step, provider, s.system, s.task.now, [], s.schema, s.check, ctx);
+  if (!k) return r;
+  const f = k.finish(r.value);
+  return { ...r, value: f.value, record: f.record };
 }

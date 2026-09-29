@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "reports": [
+    { "name": "Pilot, United States", "main": true, "abroad": 0 },
+    { "name": "Full check, United States", "main": true, "abroad": 0 },
+    { "name": "Compare Japan, South Korea, Taiwan, Hong Kong, Thailand", "main": false, "abroad": 5 }
+  ],
+  "crafted": [
+    "A clear competitor pattern that a corroborated entry disagrees with (conflict becomes a test idea)",
+    "Thin data: fewer than 5 games with a known value at a position",
+    "A stale store fact (past its review date)",
+    "A contested claim (a corroborated counter-claim exists)",
+    "A regulation-heavy country (South Korea)",
+    "A script-heavy country (Thailand)"
+  ],
+  "heldOut": "The next real comparison (for example Vietnam, Indonesia, Philippines), used only for a second run"
+}

@@ -1,0 +1,102 @@
+{
+  "version": 1,
+  "map": {
+    "^position-[123](-|$)": [
+      "first_images",
+      "order"
+    ],
+    "-logo$|^logo-": [
+      "logo",
+      "branding"
+    ],
+    "-message$": [
+      "captions",
+      "art_vs_gameplay"
+    ],
+    "^before-": [
+      "order"
+    ],
+    "^uses-": [
+      "screenshots",
+      "gameplay_real"
+    ],
+    "^layer$": [
+      "captions",
+      "text_density",
+      "text_area",
+      "legibility"
+    ],
+    "^layer-colours$": [
+      "colour",
+      "brightness_contrast"
+    ],
+    "^deck-length": [
+      "deck_length"
+    ],
+    "^group:order$": [
+      "order",
+      "first_images"
+    ],
+    "^group:content$": [
+      "gameplay_real",
+      "art_vs_gameplay",
+      "characters"
+    ],
+    "^group:layer$": [
+      "captions",
+      "text_density",
+      "typography"
+    ],
+    "^group:format$": [
+      "orientation",
+      "composition",
+      "landscape_composite"
+    ],
+    "^category:full_screen_art$": [
+      "art_vs_gameplay",
+      "logo",
+      "characters"
+    ],
+    "^category:gameplay": [
+      "gameplay_real"
+    ],
+    "^category:metagame": [
+      "gameplay_real",
+      "monetisation_messaging"
+    ],
+    "^variable:screenshot$": [
+      "screenshots"
+    ],
+    "^variable:order$": [
+      "order",
+      "first_images"
+    ],
+    "^variable:text$": [
+      "captions",
+      "typography",
+      "text_density",
+      "localisation"
+    ],
+    "^variable:composition$": [
+      "composition",
+      "orientation",
+      "landscape_composite"
+    ],
+    "^advice:habit$": [
+      "localisation",
+      "cultural_adaptation"
+    ],
+    "^advice:words$": [
+      "lingo",
+      "localisation",
+      "script"
+    ],
+    "^advice:pattern$": [
+      "screenshots",
+      "order"
+    ],
+    "^advice:base$": [
+      "localisation"
+    ]
+  }
+}

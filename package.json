@@ -26,6 +26,7 @@
     "report": "tsx src/cli.ts report",
     "projects": "tsx src/cli.ts projects",
     "migrate": "tsx src/cli.ts migrate",
+    "kb": "tsx src/kb/cli.ts",
     "typecheck": "tsc --noEmit",
     "lint": "biome check .",
     "format": "biome format --write .",

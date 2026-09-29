@@ -1,6 +1,7 @@
 import { type Estimate, estimate } from "../analysis/estimate.ts";
 import type { AnalysisPlan } from "../analysis/plan.ts";
 import type { Config } from "../config/schema.ts";
+import { kbApprovalLine } from "../kb/cost.ts";
 import { secondOpinionOn, settingsOf } from "../settings/access.ts";
 import type { ScopeItem } from "./anchors.ts";
 import type { MarketRef, ReportScope } from "./types.ts";
@@ -114,6 +115,19 @@ export function costOf(
       usd: [...TEXT_USD.abTests],
     },
   );
+  // The knowledge base's share (Settings switch; off = no line), within its cap per report.
+  const kb = kbApprovalLine(config, {
+    main: abroad.length < markets.length,
+    abroad: abroad.length,
+    abTests: true,
+  });
+  if (kb)
+    parts.push({
+      label: kb.text,
+      model: modelName(config.models.recommend),
+      calls: 0,
+      usd: kb.usd,
+    });
   const textUsd = parts.reduce<[number, number]>((a, p) => sum(a, p.usd), [0, 0]);
   const usd = sum(images.usd, textUsd);
   const limitUsd = settingsOf(config).spending.perReportUsd;
