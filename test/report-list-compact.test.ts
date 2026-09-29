@@ -116,7 +116,7 @@ const partial: ReportSummary = {
   ],
 };
 
-test("a folded report is one line: short title, kind, status and date; the rest when open", () => {
+test("the shown report's header band: full name, kind, status, date and description", () => {
   const p = page();
   assert.equal(
     p.shortTitle(partial),
@@ -126,22 +126,19 @@ test("a folded report is one line: short title, kind, status and date; the rest 
   assert.equal(p.shortTitle({ ...partial, name: "My own name" }), "My own name");
   assert.equal(p.shortTitle({ ...partial, countryNames: ["Japan", "South Korea"] }), partial.name);
   const html = p.card(partial);
-  const summary = html.split("</summary>")[0] ?? "";
-  assert.match(summary, /class="rc-name" title="Japan, South Korea, Taiwan, Hong Kong, Thailand/);
-  assert.match(summary, /class="rc-short">.*Taiwan<\/span> \+2 vs 8 competitors \(2\)<\/span>/);
-  assert.match(summary, /class="rc-full">.*Thailand<\/span> vs 8 competitors \(2\)<\/span>/);
-  assert.match(summary, />Partial · 11 parts missing</);
-  assert.match(summary, /class="pill same" title="Set up exactly like/);
-  assert.match(summary, /<span class="rc-date" title="[^"]+">[^<]*2026<\/span>/);
-  // The description stays in the markup, shown only when the card is open (CSS).
-  assert.match(summary, /class="rc-desc">Compare countries · Japan/);
-  assert.doesNotMatch(summary.split('class="rc-desc"')[1] ?? "", /class="cty"/);
-  assert.match(REPORTS_A_CSS, /\.rcard:not\(\[open\]\) > summary \.rc-desc \{ display: none; \}/);
+  assert.match(html, /^<section class="rcard t-compare" data-rid="r-japan-vs-8-competitors-3"/);
+  const head = html.split('<div class="rc-b">')[0] ?? "";
   assert.match(
-    REPORTS_A_CSS,
-    /\.rcard > summary \{ position: relative; flex-wrap: nowrap;[^}]*9px/,
+    head,
+    /<div class="rc-head"><span class="rc-name">.*Thailand<\/span> vs 8 competitors \(2\)<\/span>/,
   );
-  assert.match(REPORTS_A_CSS, /\.rc-name \{[^}]*font-size: 16px; font-weight: 500;/);
+  assert.match(head, />Partial · 11 parts missing</);
+  assert.match(head, /class="pill same" title="Set up exactly like/);
+  assert.match(head, /<span class="rc-date" title="[^"]+">[^<]*2026<\/span>/);
+  assert.match(head, /class="rc-desc">Compare countries · Japan/);
+  assert.doesNotMatch(head.split('class="rc-desc"')[1] ?? "", /class="cty"/);
+  assert.doesNotMatch(html, /<details class="rcard|<summary/, "never folded");
+  assert.match(REPORTS_A_CSS, /\.rc-head \{ gap: 8px; background: var\(--a-head\);/);
 });
 
 test("Delete asks in the page and says what is kept; no browser dialog", () => {

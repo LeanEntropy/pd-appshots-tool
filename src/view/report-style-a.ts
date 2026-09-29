@@ -1,7 +1,7 @@
 /**
- * The Reports tab's look ("Tinted bands", chosen by the user on 2026-09-29): a warm canvas, "What
- * next?" and "Suggested next research" as tinted blocks with rows inside, report cards as tinted
- * blocks (dark teal header band when open), and each report section as a full-width band tinted
+ * The Reports tab's look ("Tinted bands", chosen by the user on 2026-09-29): a warm canvas,
+ * "Suggested next research" as a tinted block with rows inside, the report shown as a tinted
+ * block under a dark teal header band, and each report section as a full-width band tinted
  * by its kind (data-sec). No side bands and no boxes inside boxes. Scoped to the Reports tab
  * (section[data-page="report"]): the other tabs and the print page keep their own styles.
  */
@@ -30,10 +30,10 @@ body:has(${S}:not([hidden])) { background: var(--a-canvas); }
 ${S} { container-type: inline-size; --muted: var(--a-muted); }
 main.pages > ${S} > h2.ph { font-size: 28px; font-weight: 800; color: var(--a-h); letter-spacing: -.015em; margin: 0 0 12px; }
 ${S} > .card:has(#newReport) { background: none; border: 0; padding: 0; margin: 0 0 16px; }
-${S} .rcard > summary, ${S} #sgSec > summary, ${S} .rbox details.sec > summary { list-style: none; }
-${S} .rcard > summary::-webkit-details-marker, ${S} #sgSec > summary::-webkit-details-marker, ${S} .rbox details.sec > summary::-webkit-details-marker { display: none; }
-${S} .rcard > summary::after, ${S} #sgSec > summary::after, ${S} .rbox details.sec > summary::after { content: ""; flex: none; width: 8px; height: 8px; border-right: 2px solid currentColor; border-bottom: 2px solid currentColor; transform: rotate(45deg); opacity: .7; margin: 0 4px 4px; }
-${S} .rcard[open] > summary::after, ${S} #sgSec[open] > summary::after, ${S} .rbox details.sec[open] > summary::after { transform: rotate(-135deg); margin: 4px 4px 0; }
+${S} #sgSec > summary, ${S} .rbox details.sec > summary { list-style: none; }
+${S} #sgSec > summary::-webkit-details-marker, ${S} .rbox details.sec > summary::-webkit-details-marker { display: none; }
+${S} #sgSec > summary::after, ${S} .rbox details.sec > summary::after { content: ""; flex: none; width: 8px; height: 8px; border-right: 2px solid currentColor; border-bottom: 2px solid currentColor; transform: rotate(45deg); opacity: .7; margin: 0 4px 4px; }
+${S} #sgSec[open] > summary::after, ${S} .rbox details.sec[open] > summary::after { transform: rotate(-135deg); margin: 4px 4px 0; }
 
 /* Buttons and chips */
 ${S} button:where(:not(.linkbtn, .info, .sgd, .covc, .stopbtn)) { font-size: 13px; padding: 5px 12px; border-radius: 8px; border: 1px solid var(--a-line); background: var(--a-surface); color: var(--text); }
@@ -64,22 +64,14 @@ ${S} .offer h4 { font-size: 15px; font-weight: 650; }
 ${S} .offer .chip { font-size: 11.5px; padding: 1px 8px; }
 ${S} .bwarn { border-left: 0; border-radius: 8px; background: var(--a-bad-bg); }
 
-/* Report cards */
+/* The report shown: a dark teal header band (name, kind, status, date, description) */
 ${S} .rcard { margin: 0 0 6px; border: 0; border-radius: 10px; overflow: clip; background: var(--a-grey); }
 ${S} .rcard.t-pilot { background: var(--a-blue); } ${S} .rcard.t-compare { background: var(--a-grey2); }
-/* Folded: one line (title, kind chip, status chip, date at the right); the description only when open */
-${S} .rcard > summary { position: relative; flex-wrap: nowrap; gap: 8px; padding: 9px 40px 9px 18px; color: var(--a-h); }
-${S} .rcard > summary::after { position: absolute; right: 16px; top: calc(50% - 7px); margin: 0; }
-${S} .rcard[open] > summary::after { top: 26px; margin: 0; }
-${S} .rcard > summary .pill { flex: none; font-size: 11.5px; font-weight: 600; padding: 1px 8px; white-space: nowrap; }
-${S} .rc-name { flex: 0 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 16px; font-weight: 500; color: var(--a-h); }
-${S} .rc-desc { font-size: 13px; color: var(--muted); } ${S} .rcard:not([open]) > summary .rc-desc { display: none; }
-${S} .rc-date { font-size: 12.5px; }
-${S} .rcard[open] > summary { flex-wrap: wrap; background: var(--a-head); color: #fff; padding: 18px 44px 8px 24px; }
-${S} .rcard[open] .rc-name { flex-basis: 100%; white-space: normal; color: #fff; font-size: 22px; font-weight: 800; }
-${S} .rcard[open] > summary .rc-date { color: rgba(255,255,255,.75); margin-left: 0; }
-${S} .rcard[open] > summary .rc-desc { color: rgba(255,255,255,.8); }
-${S} .rcard[open] > summary .pill { background: rgba(255,255,255,.16); color: #fff; }
+${S} .rc-head { gap: 8px; background: var(--a-head); color: #fff; padding: 18px 24px 8px; }
+${S} .rc-head .pill { flex: none; font-size: 11.5px; font-weight: 600; padding: 1px 8px; white-space: nowrap; background: rgba(255,255,255,.16); color: #fff; }
+${S} .rc-name { flex-basis: 100%; min-width: 0; overflow-wrap: anywhere; color: #fff; font-size: 22px; font-weight: 800; }
+${S} .rc-head .rc-date { font-size: 12.5px; color: rgba(255,255,255,.75); margin-left: 0; }
+${S} .rc-head .rc-desc { font-size: 13px; color: rgba(255,255,255,.8); }
 ${S} .rcard > .rc-b { padding: 0; border: 0; }
 ${S} .rc-b > .banner { margin: 0; padding: 12px 24px; border: 0; border-radius: 0; background: var(--a-bad-bg); }
 ${S} .rc-b > .banner p { margin: 0; }
@@ -162,13 +154,10 @@ ${S} table.rt tr.ourrow td { background: var(--a-our); }
 }
 @container (max-width: 560px) {
   ${S} .expand, ${S} #sgSec, ${S} #builder, ${S} .rc-top, ${S} .rc-b > .banner, ${S} .rbox > p, ${S} .rbox > .card, ${S} .rbox nav.toc, ${band()} { padding-left: 14px; padding-right: 14px; }
-  ${S} .rcard > summary, ${S} .rcard[open] > summary { flex-wrap: wrap; padding-left: 14px; padding-right: 40px; }
-  ${S} .rcard > summary .rc-name { flex-basis: 100%; white-space: normal; }
-  ${S} .rcard > summary::after { top: 16px; }
+  ${S} .rc-head { padding-left: 14px; padding-right: 14px; }
   ${S} .offer { grid-template-columns: minmax(0, 1fr); grid-template-areas: "top" "why" "acts" "more"; }
-  ${S} .rcard > summary::after { right: 14px; }
   ${S} .rbox > details.sec:not([data-sec]):not(.research) > summary { padding-left: 14px; padding-right: 14px; }
-  ${band(" .sec-t")} { font-size: 21px; } ${S} .rcard[open] .rc-name { font-size: 20px; }
+  ${band(" .sec-t")} { font-size: 21px; } ${S} .rc-name { font-size: 20px; }
 }
 @container (max-width: 600px) {
   ${S} table.rt.fit, ${S} table.rt.fit tbody { display: block; }

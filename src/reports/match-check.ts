@@ -57,15 +57,19 @@ export function savePairVerdict(loaded: LoadedConfig, a: string, b: string, same
   savePairVerdicts(loaded, [{ image: a, anchor: b, same }]);
 }
 
-/** Several answers in one write (the pixel check's "Confirm all"). */
+/** Several answers in one write (the pixel check's "Confirm all"); null removes an answer (Undo). */
 export function savePairVerdicts(
   loaded: LoadedConfig,
-  pairs: readonly { image: string; anchor: string; same: boolean }[],
+  pairs: readonly { image: string; anchor: string; same: boolean | null }[],
 ): void {
   const paths = projectPaths(loaded);
   const s = read(loaded);
   const at = new Date().toISOString();
-  for (const p of pairs) s.pairs[pairKey(p.image, p.anchor)] = { same: p.same, at };
+  for (const p of pairs) {
+    const k = pairKey(p.image, p.anchor);
+    if (p.same === null) delete s.pairs[k];
+    else s.pairs[k] = { same: p.same, at };
+  }
   workspaceStorage(paths.workspace).putJson(fileKey(paths), s);
 }
 
