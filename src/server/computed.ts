@@ -27,7 +27,7 @@ export class Computed {
   ) {}
 
   private current(workspace: string, key: string): Entry | undefined {
-    const e = this.entries.get(key);
+    const e = this.entries.get(`${workspace}|${key}`);
     if (!e || e.stamp !== this.stampOf(workspace) || this.now() - e.at >= e.ttlMs) return;
     return e;
   }
@@ -38,6 +38,8 @@ export class Computed {
     key: string,
     compute: () => T | Promise<T>,
     ttlMs = this.ttlMs,
+    /** For a pass whose own writes are its result: kept under the stamp it ends with. */
+    keepAfterOwnWrites = false,
   ): Promise<T> {
     const hit = this.current(workspace, key);
     if (hit) return hit.value as Promise<T>;
@@ -61,15 +63,17 @@ export class Computed {
       (v) => {
         entry.settled = true;
         entry.result = v;
+        if (keepAfterOwnWrites) entry.stamp = this.stampOf(workspace);
         return v;
       },
       (e: unknown) => {
         // A failure is never kept: the next ask tries again.
-        if (this.entries.get(key) === entry) this.entries.delete(key);
+        if (this.entries.get(`${workspace}|${key}`) === entry)
+          this.entries.delete(`${workspace}|${key}`);
         throw e;
       },
     );
-    this.entries.set(key, entry);
+    this.entries.set(`${workspace}|${key}`, entry);
     return entry.value as Promise<T>;
   }
 
