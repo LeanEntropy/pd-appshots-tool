@@ -1,6 +1,7 @@
 import { join } from "node:path";
 import { z } from "zod";
 import { type LoadedConfig, loadTaxonomy, projectPaths } from "../config/load.ts";
+import { priceOf } from "../kb/cost.ts";
 import { layoutStatus, readOlderLayout } from "../layout/store.ts";
 import { answerKey } from "../library/layout.ts";
 import { workspaceStorage } from "../storage/index.ts";
@@ -17,16 +18,24 @@ import { isUsable, readRecords } from "./records.ts";
 /**
  * "Add English" (plan-games-library I1b, user decision D3): the marketing texts of the
  * project's analysed pictures that have no English saved anywhere yet, translated text only
- * (no picture) by a small model, 40 texts per call, behind the usual approval screen (count,
+ * (no picture) by the translation model, 40 texts per call, behind the usual approval screen (count,
  * cost, limit first). Each answer is saved per exact text and language in the shared library,
  * so the same words are never paid for twice. Nothing runs until the user approves.
  */
 export const ENGLISH_STEP = "english-texts";
-/** The smallest text model the tool offers (Haiku is kept for zero-importance tasks only). */
-export const ENGLISH_MODEL = "claude:claude-sonnet-5";
+/** Translation is the config's "translate" role (Opus 5.5 by default), never Sonnet. */
+export const englishModel = (loaded: LoadedConfig): string => loaded.config.models.translate;
 export const TEXTS_PER_CALL = 40;
-/** Per call of up to 40 short texts (text only; the CLI's own overhead dominates). */
-export const ENGLISH_USD_PER_CALL: readonly [number, number] = [0.03, 0.08];
+/**
+ * Per call of up to 40 short texts (text only; the CLI's own overhead dominates), measured on
+ * Sonnet 5 ($10 per million output tokens); scaled by the chosen model's price (Opus 5.5: 2x).
+ */
+const SONNET_USD_PER_CALL: readonly [number, number] = [0.03, 0.08];
+const SONNET_OUTPUT_USD_PER_MTOK = 10;
+export function englishUsdPerCall(model: string): [number, number] {
+  const k = priceOf(model).output / SONNET_OUTPUT_USD_PER_MTOK;
+  return [round(SONNET_USD_PER_CALL[0] * k), round(SONNET_USD_PER_CALL[1] * k)];
+}
 
 export interface EnglishItem {
   text: string;
@@ -78,11 +87,9 @@ export function englishScope(loaded: LoadedConfig): EnglishScope {
     .map(({ ids: _, ...it }) => it)
     .sort((a, b) => a.language.localeCompare(b.language) || a.text.localeCompare(b.text));
   const calls = Math.ceil(items.length / TEXTS_PER_CALL);
-  const usd: [number, number] = [
-    round(calls * ENGLISH_USD_PER_CALL[0]),
-    round(calls * ENGLISH_USD_PER_CALL[1]),
-  ];
-  const limitUsd = calls ? Math.max(usd[1], ENGLISH_USD_PER_CALL[1]) : 0;
+  const per = englishUsdPerCall(englishModel(loaded));
+  const usd: [number, number] = [round(calls * per[0]), round(calls * per[1])];
+  const limitUsd = calls ? Math.max(usd[1], per[1]) : 0;
   return {
     items,
     pictures: pics.size,
@@ -164,7 +171,7 @@ export function startEnglish(
   const storage = workspaceStorage(paths.workspace);
   const { taxonomy, hash } = loadTaxonomy(loaded);
   const prompt = renderEnglishPrompt(loaded.root, paths.objects, taxonomy);
-  const provider = make(ENGLISH_MODEL);
+  const provider = make(englishModel(loaded));
   const held = acquireAll(storage, [LOCKS.ai], { projectId: paths.projectId, kind: ENGLISH_STEP });
   if ("heldBy" in held)
     return {

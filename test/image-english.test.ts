@@ -1,9 +1,11 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 import {
+  englishModel,
   englishProblems,
   englishScope,
   englishTask,
+  englishUsdPerCall,
   startEnglish,
 } from "../src/analysis/english-run.ts";
 import { readEnglish, saveEnglish } from "../src/analysis/english-store.ts";
@@ -91,6 +93,9 @@ test("English step: count and cost first, approval of the exact list, answers sa
   assert.equal(scope.items.length, 2);
   assert.equal(scope.calls, 1);
   assert.ok(scope.usd[0] > 0 && scope.usd[1] >= scope.usd[0]);
+  assert.equal(englishModel(t.loaded), "claude:claude-opus-5-5", "translation is Opus 5.5");
+  assert.deepEqual(englishUsdPerCall("claude:claude-opus-5-5"), [0.06, 0.16]);
+  assert.deepEqual(scope.usd, [0.06, 0.16], "one Opus call");
   assert.match(englishTask(scope.items), /1\. \[ja\] /);
   assert.deepEqual(englishProblems({ items: [{ n: 1, english: "x" }] }, 2), ["text 2 is missing"]);
   assert.ok(englishProblems({ items: [{ n: 3, english: "x" }] }, 1).length > 1);
@@ -98,7 +103,12 @@ test("English step: count and cost first, approval of the exact list, answers sa
   const stale = startEnglish(t.loaded, "0".repeat(64), () => fake);
   assert.equal(stale.ok, false);
   assert.equal(fake.calls.length, 0, "nothing is sent without the approved list");
-  const run = startEnglish(t.loaded, scope.scopeHash, () => fake);
+  const asked: string[] = [];
+  const run = startEnglish(t.loaded, scope.scopeHash, (ref) => {
+    asked.push(ref);
+    return fake;
+  });
+  assert.deepEqual(asked, ["claude:claude-opus-5-5"]);
   assert.ok(run.ok);
   const p = await run.done;
   assert.equal(p.state, "finished");
