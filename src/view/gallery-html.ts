@@ -58,7 +58,7 @@ export function galleryTop(token = "", served?: GalleryServed): string {
 <meta charset="utf-8">
 <meta name="ssr-token" content="${escHtml(token)}">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Store Screenshot Recipe</title>
+<title>App Shots Optimizer</title>
 <style>${CSS}${REPORT_LIST_CSS}${REPORT_SUMMARY_CSS}${ADD_CSS}${BUILDER_CSS}${PAIR_GROUP_CSS}${SUGGEST_CSS}${FLAG_CSS}${COUNTRY_ADD_CSS}${REPORT_COUNTRY_CSS}${REPORT_WORDS_CSS}${REPORTS_A_CSS}${REPORT_CARDS_CSS}${SHARE_PANEL_CSS}${APPSTORE_CSS}</style>
 </head>
 <body>
@@ -72,7 +72,7 @@ export function galleryRest(vm: ViewModel, served?: GalleryServed): string {
   const data = JSON.stringify(vm).replace(/</g, "\\u003c");
   const app = JSON.stringify({ apiBase: served?.apiBase ?? "/api", stage: served?.stage ?? "" });
   return `<header class="top">
-<div class="titlebar"><h1>${served ? escHtml(served.name) : `Store Screenshot Recipe: ${escHtml(vm.project)}`}</h1><span class="meta grow">Downloaded run ${escHtml(vm.runId)}. Market for the analysis: ${escHtml(vm.coreMarket.label)}.</span><label>Show country: <select id="locale"></select></label></div>
+<div class="titlebar"><h1>${served ? escHtml(served.name) : `App Shots Optimizer: ${escHtml(vm.project)}`}</h1><span class="meta grow">Downloaded run ${escHtml(vm.runId)}. Market for the analysis: ${escHtml(vm.coreMarket.label)}.</span><label>Show country: <select id="locale"></select></label></div>
 <nav class="tabs" aria-label="Pages"><a href="#overview" data-tab="overview">Overview</a><a href="#competitors" data-tab="competitors">Competitors</a><a href="#screenshots" data-tab="screenshots">Screenshots</a><a href="#analysis" data-tab="analysis">Analysis</a><a href="#report" data-tab="report">Report</a></nav>
 </header>
 <main class="pages">

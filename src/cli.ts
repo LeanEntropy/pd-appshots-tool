@@ -1,4 +1,4 @@
-﻿import { existsSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { refreshAllRecords } from "./analysis/record-refresh.ts";
 import { writeCurrentReport } from "./analysis/report-inputs.ts";
@@ -24,7 +24,7 @@ import { type Args, confirm, parseArgs } from "./util/cli-io.ts";
 
 const log = (s: string) => console.log(s);
 
-const HELP = `Store Screenshot Recipe: setup commands (no AI analysis)
+const HELP = `App Shots Optimizer: setup commands (no AI analysis)
 
   npm run doctor      Check this computer: Node, Python, PSD reader, disk space, Claude and Codex CLIs
                       (add -- --skip-ai to skip the two tiny AI connectivity prompts)
@@ -127,7 +127,7 @@ async function start(args: Args): Promise<number> {
     );
     return 0;
   }
-  log(`Store Screenshot Recipe: ${url}
+  log(`App Shots Optimizer: ${url}
 Everything you choose saves automatically. Keep this window open while you use the page; press Ctrl+C to stop.`);
   await new Promise(() => {});
   return 0;

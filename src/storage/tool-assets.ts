@@ -39,3 +39,22 @@ export function flagSvg(gl: string): Buffer | undefined {
   cache.set(gl, bytes);
   return bytes ?? undefined;
 }
+
+const FONT_FILE = /^space-grotesk-(latin|latin-ext)-700\.woff2$/;
+const fontCache = new Map<string, Buffer | null>();
+
+/** A Space Grotesk (SIL OFL, @fontsource package) bold woff2 for the app name, or undefined. */
+export function fontWoff2(name: string): Buffer | undefined {
+  if (!FONT_FILE.test(name)) return undefined;
+  const hit = fontCache.get(name);
+  if (hit !== undefined) return hit ?? undefined;
+  let bytes: Buffer | null = null;
+  try {
+    const pkg = createRequire(import.meta.url).resolve("@fontsource/space-grotesk/package.json");
+    bytes = readFileSync(join(dirname(pkg), "files", name.replace("-700.", "-700-normal.")));
+  } catch {
+    bytes = null;
+  }
+  fontCache.set(name, bytes);
+  return bytes ?? undefined;
+}

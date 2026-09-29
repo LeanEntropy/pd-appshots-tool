@@ -1,3 +1,5 @@
+import { HEAD_FONT_CSS } from "./shell.ts";
+
 /**
  * The look of the library pages (image page, games directory, game page): style A "Tinted
  * bands" (user, 2026-09-29) - a dark teal header band, full-width soft-tinted bands by kind,
@@ -9,6 +11,7 @@ const DARK =
   "--a-canvas: #171a1b; --a-head: #1d4955; --a-teal: #1a2c31; --a-sand: #2a241b; --a-green: #1b2b21; --a-blue: #1c2330; --a-grey: #1f2426; --a-h: #9fd0dd; --a-h2: #e8b184; --a-h3: #8fd0a6; --a-div: rgba(255,255,255,.1); --a-surface: #1c2022; --a-muted: #a3aaaf; --a-amber: #3a2f12; --a-amber-line: #d9a21b; --a-bad: #f87171;";
 
 export const LIB_CSS = `
+${HEAD_FONT_CSS}
 :root { ${LIGHT} }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { ${DARK} } }
 :root[data-theme="dark"] { ${DARK} }

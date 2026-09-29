@@ -1,7 +1,7 @@
 import { createServer, type IncomingMessage, type Server, type ServerResponse } from "node:http";
 import type { AddressInfo } from "node:net";
 import { draftState } from "../projects/state.ts";
-import { flagSvg } from "../storage/index.ts";
+import { flagSvg, fontWoff2 } from "../storage/index.ts";
 import { homeHtml } from "../view/home-html.ts";
 import { wizardHtml } from "../view/wizard-html.ts";
 import type { ApiResponse } from "./api.ts";
@@ -21,6 +21,7 @@ import { setupRoute } from "./routes-setup.ts";
 import { shareGlobalRoute } from "./routes-share.ts";
 
 const PROJECT_PATH = /^\/p\/([^/]+)(\/.*)?$/;
+const FONT_PATH = /^\/fonts\/(space-grotesk-[a-z-]+-700\.woff2)$/;
 const FLAG_PATH = /^\/flags\/([a-z]{2})\.svg$/;
 
 type PlayGet = (app: AppContext, q: URLSearchParams) => ApiResponse | Promise<ApiResponse>;
@@ -94,6 +95,16 @@ async function globalRoute(
         "Content-Security-Policy": "default-src 'none'; style-src 'unsafe-inline'",
       });
       res.end(svg);
+    }
+    return true;
+  }
+  const font = get ? FONT_PATH.exec(p) : null;
+  if (font) {
+    const bytes = fontWoff2(font[1] ?? "");
+    if (!bytes) send(res, 404, { problems: ["Not found."] });
+    else {
+      res.writeHead(200, { "Content-Type": "font/woff2", "Cache-Control": "max-age=86400" });
+      res.end(bytes);
     }
     return true;
   }

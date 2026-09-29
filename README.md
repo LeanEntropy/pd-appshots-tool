@@ -1,4 +1,4 @@
-# Store Screenshot Recipe
+# App Shots Optimizer
 
 A config-driven tool that collects Google Play screenshots of a game and its competitors, per country,
 and (in later milestones) analyses them to recommend which screenshots the game should use.

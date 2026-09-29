@@ -8,10 +8,17 @@ export const TOKENS = `
 :root[data-theme="dark"] { --bg: #151517; --card: #1f1f22; --text: #ececef; --muted: #9a9aa2; --line: #333338; --accent: #7aa7ff; --warn: #ff8a80; --next: #fb923c; --tint: #1c2438; --accent-2: #5eead4; --head-bg: #16302c; --ok: #4ade80; --mid: #fbbf24; --bad: #f87171; --brand: #3730a3; --brand-2: #115e59; }
 `;
 
+/** Space Grotesk (bundled, served at /fonts) for the app name and headlines; system sans fallback. */
+export const HEAD_FONT_CSS = `
+@font-face { font-family: "Space Grotesk"; font-weight: 700; font-style: normal; font-display: swap; src: url("/fonts/space-grotesk-latin-700.woff2") format("woff2"); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+h1, h2, h3, .appbar .brand { font-family: "Space Grotesk", system-ui, -apple-system, "Segoe UI", sans-serif; overflow-wrap: break-word; }
+`;
+
 export const SHELL_CSS = `
+${HEAD_FONT_CSS}
 .appbar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; padding: 10px 16px; background: linear-gradient(90deg, var(--brand), var(--brand-2)); color: #fff; }
 .appbar a { color: #fff; }
-.appbar .brand { font-weight: 800; font-size: 17px; text-decoration: none; letter-spacing: .01em; }
+.appbar .brand { font-weight: 700; font-size: 17px; text-decoration: none; letter-spacing: .01em; }
 .appbar .crumbs { font-size: 15px; font-weight: 600; } .appbar .crumbs a { text-decoration: none; opacity: .9; } .appbar .crumbs a:hover { text-decoration: underline; }
 .appbar .grow { flex: 1; }
 .appbar .btn-new { background: #fff; color: var(--brand); border: none; border-radius: 8px; padding: 7px 14px; font-weight: 700; text-decoration: none; }
@@ -38,7 +45,7 @@ export function appBar(project: string | null, right = ""): string {
   const crumbs = project
     ? `<nav class="crumbs" aria-label="Where you are"><a href="/">All projects</a> / <span>${escHtml(project)}</span></nav>`
     : `<nav class="crumbs" aria-label="Where you are"><span>All projects</span></nav>`;
-  return `<header class="appbar"><a class="brand" href="/">Store Screenshot Recipe</a>${crumbs}<span class="grow"></span>${right}</header>`;
+  return `<header class="appbar"><a class="brand" href="/">App Shots Optimizer</a>${crumbs}<span class="grow"></span>${right}</header>`;
 }
 
 /** Settings, Download, Pick competitors, Pilot, Core check, Recommendations. */

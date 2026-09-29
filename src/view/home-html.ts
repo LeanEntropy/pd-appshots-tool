@@ -47,5 +47,5 @@ ${SHARE_IMPORT_HTML}
 <div id="archivedCards" class="cards" hidden></div>
 </main>
 <style>${HOME_CSS}${APP_ICON_CSS}${SHARE_IMPORT_CSS}</style>`;
-  return page("Store Screenshot Recipe", body, token, HOME_SCRIPT + SHARE_IMPORT_SCRIPT);
+  return page("App Shots Optimizer", body, token, HOME_SCRIPT + SHARE_IMPORT_SCRIPT);
 }

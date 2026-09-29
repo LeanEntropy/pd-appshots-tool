@@ -72,3 +72,20 @@ test("flag pictures come from the flag-icons package through the tool's own serv
     w.server.close();
   }
 });
+
+test("the Space Grotesk headline font is served locally and the pages use it", async () => {
+  const w = await wizardServer();
+  try {
+    const f = await fetch(`${w.origin}/fonts/space-grotesk-latin-700.woff2`);
+    assert.equal(f.status, 200);
+    assert.equal(f.headers.get("content-type"), "font/woff2");
+    assert.equal((await f.arrayBuffer()).byteLength > 1000, true);
+    assert.equal((await w.get("/fonts/space-grotesk-latin-400.woff2")).status, 404);
+    const home = await (await fetch(`${w.origin}/`)).text();
+    assert.match(home, /font-display: swap/);
+    assert.match(home, /App Shots Optimizer/);
+    assert.doesNotMatch(home, /Store Screenshot Recipe/);
+  } finally {
+    w.server.close();
+  }
+});
