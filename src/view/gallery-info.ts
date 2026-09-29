@@ -1,8 +1,10 @@
+import { WIREFRAME_SCRIPT } from "./gallery-wireframe.ts";
+
 /**
  * The (i) button on every analysed image. Hover or keyboard focus shows the image's analysis
  * (both layers) in a popover; click or Enter pins it; Escape or a click outside closes it.
  */
-export const INFO_SCRIPT = `
+export const INFO_SCRIPT = `${WIREFRAME_SCRIPT}
 let INFO = DATA.info || {};
 let infoBtnOpen = null;
 let infoPinned = false;
@@ -24,7 +26,7 @@ function swatches(cs) {
 function words(s) { return esc(String(s).replace(/_/g, " ")); }
 
 function identityHtml(v) {
-  return '<p class="meta"><strong>' + esc(v.game) + " #" + v.position + "</strong> &middot; " + esc(v.filename) + "<br>"
+  return '<p class="meta"><strong>' + esc(v.game) + " #" + esc(v.position) + "</strong> &middot; " + esc(v.filename) + "<br>"
     + (v.file ? '<a href="../' + esc(v.file) + '" target="_blank" rel="noopener">Open image</a>' : "")
     + (v.sourceUrl && String(v.sourceUrl).startsWith("https://play-lh.googleusercontent.com/") ? ' &middot; <a href="' + esc(v.sourceUrl) + '" target="_blank" rel="noopener noreferrer">On Google Play</a>' : "") + "</p>"
     + (v.appearances && v.appearances.length > 1 ? '<p class="meta">Appears ' + v.appearances.length + " times: " + esc(v.appearances.join(", ")) + "</p>" : "");
@@ -53,18 +55,19 @@ function infoHtml(v) {
   h += "<h5>Marketing layer</h5>";
   if (!m.present) h += "<p>No marketing layer.</p>";
   else {
-    h += "<dl><dt>Covers</dt><dd>" + m.coveragePercent + "% of the image" + (m.relationToScreen === "none" ? "" : ", " + words(m.relationToScreen) + " the screen") + "</dd>"
+    h += "<dl><dt>Covers</dt><dd>" + esc(m.coveragePercent) + "% of the image" + (m.relationToScreen === "none" ? "" : ", " + words(m.relationToScreen) + " the screen") + "</dd>"
       + "<dt>Colours</dt><dd>" + swatches(m.mainColours) + "</dd></dl><ul>"
       + m.backgroundMasks.map((b) => "<li>Mask: " + words(b.shape) + ", " + swatches([{ name: b.colourName, hex: b.colourHex }]) + ", " + words(b.location) + "</li>").join("")
       + m.texts.map((t) => "<li>Text <strong>" + esc(t.text) + "</strong>: " + esc(t.colour) + (t.strokeColour && t.strokeColour !== "none" ? ", outline " + esc(t.strokeColour) : "") + ", " + esc(t.fontStyle) + ", " + esc(t.size) + ", " + words(t.position) + "</li>").join("")
       + m.elements.map((e) => "<li>" + words(e.kind) + ": " + esc(e.what) + ", " + esc(e.position) + (e.pose && e.pose !== "n/a" ? ", pose " + esc(e.pose) : "") + ", " + esc(e.colours) + "</li>").join("")
       + "</ul>";
   }
-  // The layout wireframe is drawn by the server from the saved layout (its labels escaped there).
+  // The wireframe slot stays empty here: showInfo draws it with DOM calls (wireframeNode), since
+  // its labels come from the model and are never parsed as markup.
   if (v.layout) {
     h += "<h5>Layout</h5>";
-    if (v.layout.svg) h += '<div class="wf">' + v.layout.svg + "</div><p>" + esc(v.layout.summary) + "</p>"
-      + (v.layout.coverageUpTo != null ? '<p class="meta">Marketing layer covers up to ' + v.layout.coverageUpTo + "% (measured from the pixels). Dashed boxes are estimated.</p>" : "");
+    if (v.layout.wireframe) h += '<div class="wf"></div><p>' + esc(v.layout.summary) + "</p>"
+      + (v.layout.coverageUpTo != null ? '<p class="meta">Marketing layer covers up to ' + esc(v.layout.coverageUpTo) + "% (measured from the pixels). Dashed boxes are estimated.</p>" : "");
     else h += '<p class="meta">' + (v.layout.status === "outdated" ? "The layout is from an older version." : v.layout.status === "stale" ? "The saved layout no longer matches this analysis." : "Layout missing: analysed before layouts existed. Add it on the Analysis page.") + "</p>";
   }
   if (a.notes) h += '<p class="meta">' + esc(a.notes) + "</p>";
@@ -97,6 +100,9 @@ function showInfo(btn) {
   if (infoBtnOpen && infoBtnOpen !== btn) infoBtnOpen.setAttribute("aria-expanded", "false");
   const pop = document.getElementById("infoPop");
   pop.innerHTML = html;
+  const wf = !id.startsWith("store:") && INFO[id] && INFO[id].layout && INFO[id].layout.wireframe;
+  const wfSlot = wf && pop.querySelector(".wf");
+  if (wfSlot) wfSlot.appendChild(wireframeNode(wf));
   pop.setAttribute("aria-label", id.startsWith("store:") ? "Store page" : "Screenshot analysis");
   pop.hidden = false;
   placeInfo(btn, pop);
