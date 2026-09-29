@@ -1,6 +1,7 @@
 import { type LoadedConfig, loadTaxonomy, projectPaths } from "../config/load.ts";
 import { type ImageDb, openImageDb } from "../store/imagedb.ts";
 import { namesBrand } from "./brand.ts";
+import { ensureMeasured } from "./colour-store.ts";
 import { type ImageIdentity, identityBuilder } from "./identity.ts";
 import { type ImageFacts, imageFacts } from "./image-facts.ts";
 import { type AnalysisRecord, readRecords, writeRecord } from "./records.ts";
@@ -184,6 +185,8 @@ export function recordWriter(loaded: LoadedConfig, db?: ImageDb) {
     const facts = await imageFacts(paths, store, r.imageId);
     const out = refreshRecord(r, identityOf, `${t.id}@${t.version}`, facts);
     writeRecord(paths, out);
+    // Layer colours measured by code (free) when "Colours measured by code" is on.
+    if (loaded.config.options.speed.measuredColours) await ensureMeasured(paths, store, out);
     return out;
   };
 }

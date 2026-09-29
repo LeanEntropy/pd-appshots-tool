@@ -193,7 +193,10 @@ test("a major finding in the recommendation check leads to one revision", async 
   assert.ok(out.synthesis?.draft);
   // Facts first (shared with the first draft, so the prompt cache serves them), instruction last.
   const [draft, revision] = [writer.calls[1]?.prompt ?? "", writer.calls[2]?.prompt ?? ""];
-  assert.match(revision, /\n\nRevise your recommendations\. [^]*$/);
+  assert.match(revision, /\n\nRevise your recommendations\. [\s\S]*$/);
   const shared = draft.slice(0, draft.indexOf("\n\nInterpretation:"));
-  assert.ok(shared.length > 1000 && revision.startsWith(shared), "the revision starts like the draft");
+  assert.ok(
+    shared.length > 1000 && revision.startsWith(shared),
+    "the revision starts like the draft",
+  );
 });

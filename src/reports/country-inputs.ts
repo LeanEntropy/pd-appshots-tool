@@ -1,4 +1,5 @@
 import { reportLabeler } from "../analysis/categories.ts";
+import { withMeasuredRecords } from "../analysis/colour-store.ts";
 import { batchEntries } from "../analysis/entries.ts";
 import type { Labeler } from "../analysis/labels.ts";
 import { labeler } from "../analysis/labels.ts";
@@ -57,7 +58,11 @@ export function withLayerRecords(
   loaded: LoadedConfig,
   plan: Pick<ScopePlan, "items">,
 ): { records: Map<string, AnalysisRecord>; layers: Map<string, LayerDiffRecord> } {
-  const records = withCurrentMapping(readRecords(projectPaths(loaded)));
+  const records = withMeasuredRecords(
+    projectPaths(loaded),
+    loaded.config,
+    withCurrentMapping(readRecords(projectPaths(loaded))),
+  );
   const lookup = layerLookup(loaded, records);
   const layers = new Map<string, LayerDiffRecord>();
   for (const it of plan.items) {

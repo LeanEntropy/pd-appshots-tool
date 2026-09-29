@@ -96,6 +96,10 @@ export function consequences(loaded: LoadedConfig, after: Config): Consequence[]
         usd,
       });
   }
+  if (!before.options.speed.measuredColours && after.options.speed.measuredColours)
+    out.push({
+      text: "Colour statistics will use colours measured from the pixels for every image. The written (AI) parts of reports built before then need a text-only re-run (no image is analysed again), about $0.5 to $1 per report.",
+    });
   for (const step of AI_STEPS) {
     if (secondOpinionOn(before, step) || !secondOpinionOn(after, step)) continue;
     const perImage = step === "screenshotAnalysis" || step === "textLayer";

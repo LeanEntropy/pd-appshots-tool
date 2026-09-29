@@ -6,6 +6,7 @@ import { projectKey, workspaceStorage } from "../storage/index.ts";
 import { openImageDb } from "../store/imagedb.ts";
 import type { AbTestsOutput } from "./ab-tests-schema.ts";
 import { reportLabeler } from "./categories.ts";
+import { withMeasuredRecords } from "./colour-store.ts";
 import { batchDataHash } from "./entries.ts";
 import { readLatest } from "./final-report.ts";
 import { labeler } from "./labels.ts";
@@ -72,7 +73,7 @@ export function reportInputs(
   // The cost of the next approval is the batch as it would be proposed now (no AI, not saved).
   const proposed = buildAnalysisPlan(loaded, stage);
   const plan = saved ?? proposed;
-  const records = withCurrentMapping(readRecords(paths));
+  const records = withMeasuredRecords(paths, loaded.config, withCurrentMapping(readRecords(paths)));
   const db = openImageDb(paths);
   const m = plan.market;
   const decks = new Map(plan.games.map((g) => [g.appId, coreDeck(loaded, g.appId)]));

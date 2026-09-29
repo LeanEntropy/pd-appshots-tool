@@ -7,6 +7,7 @@ import { newRunId } from "../store/manifest.ts";
 import { writeJsonOnce } from "../util/fsx.ts";
 import { endAttempt, SYNTHESIS, startAttempt } from "./attempts.ts";
 import { STEP_CEILING_USD } from "./budget.ts";
+import { measuredRecords } from "./colour-store.ts";
 import { batchDataHash, batchEntries } from "./entries.ts";
 import { writeFinalReport } from "./final-report.ts";
 import { labeler } from "./labels.ts";
@@ -168,7 +169,7 @@ export async function runAnalysis(
   const { stoppedForBudget, cancelled, aborted } = loop;
   for (const h of loop.heldElsewhere) fail(`${h}; it will be reused, not paid`, null, null);
 
-  const all = withCurrentMapping(readRecords(paths));
+  const all = await measuredRecords(paths, db, config, withCurrentMapping(readRecords(paths)));
   for (const s of snaps) enrichOrder(paths, s, all);
   const entries = batchEntries(plan, all, db, config.ourApp.id);
   let patterns: Patterns | null = null;
