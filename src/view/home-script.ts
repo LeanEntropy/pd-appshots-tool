@@ -28,12 +28,16 @@ function card(p) {
   return '<article class="pcard st-' + esc(stage) + (sub ? " sub-" + esc(sub) : "") + (p.archived ? " archived" : "") + '" tabindex="-1" aria-labelledby="t-' + esc(p.id) + '">'
     + '<div class="phead">' + (p.iconFile ? '<img class="icon" alt="" src="/p/' + esc(p.id) + "/icons/" + esc(encodeURIComponent(p.iconFile)) + '">' : '<span class="icon" aria-hidden="true">' + esc((p.name || "?").slice(0, 1).toUpperCase()) + "</span>") + '<div class="who"><h2 id="t-' + esc(p.id) + '">' + esc(p.name) + '</h2><div class="meta">' + esc(p.ourAppId) + " &middot; " + p.competitors + " competitors &middot; " + p.countries + " countries</div></div>"
     + '<span class="pill">' + esc(pill) + "</span></div>"
-    + '<p class="line">' + (sub === "running" ? spinHtml("spin", "border-color: var(--accent); border-right-color: transparent") : "") + esc(line) + "</p>" + prog + notices
-    + '<div class="actions">' + (p.archived ? "" : next) + ' <a class="btn" href="/p/' + esc(p.id) + '/">Open</a>'
-    + '<button type="button" class="btn right" data-archive="' + esc(p.id) + '" data-act-key="archive:' + esc(p.id) + '" data-to="' + (p.archived ? "false" : "true") + '">' + (p.archived ? "Show again" : "Archive") + "</button></div></article>";
+    + '<p class="line">' + (sub === "running" ? spinHtml("spin", "border-color: var(--accent); border-right-color: transparent") : "") + esc(line) + "</p>"
+    // Open comes first and what arrives with the fresh state goes under the buttons: a card that
+    // grows while the pointer is on its way must not move Open away from it.
+    + '<div class="actions"><a class="btn" href="/p/' + esc(p.id) + '/">Open</a>' + (p.archived ? "" : " " + next)
+    + '<button type="button" class="btn right" data-archive="' + esc(p.id) + '" data-act-key="archive:' + esc(p.id) + '" data-to="' + (p.archived ? "false" : "true") + '">' + (p.archived ? "Show again" : "Archive") + "</button></div>" + prog + notices + "</article>";
 }
 
 function render() {
+  // A project is opening: the page stays as it was pressed (nothing grows or moves under it).
+  if (actLeaving) return;
   const live = projects.filter((p) => !p.archived);
   const arch = projects.filter((p) => p.archived);
   put("cards", live.map(card).join("")
@@ -163,6 +167,8 @@ document.addEventListener("click", (e) => {
   if (t.dataset.import) importing(t.dataset.import, t.dataset.name || t.dataset.import, t);
 });
 
+// Back from the project page (the page kept in memory): show what arrived while it was opening.
+window.addEventListener("pageshow", (e) => { if (e.persisted) render(); });
 loadProjects();
 loadImport();
 pollJobs();
