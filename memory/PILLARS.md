@@ -191,3 +191,4 @@ Output per locale:
 - Knowledge base trust rule (user, 2026-09-29): no single source is trusted. A claim needs 2+ independent sources before it counts as common practice or trustworthy; single-source claims are unverified and at most inspire a test idea.
 - Plan review process (user, 2026-09-29): Opus writes the complete plan -> exactly ONE gpt-5.6-sol review of the finished plan -> Opus 5.5 processes the feedback (apply or decline with reasons). No repeated review rounds.
 - Sources never appear as plain text in recommendations or report text (user, 2026-09-29). A citation marker such as [1] shows a tooltip with ONLY the source link(s), opening in a new tab. No trust level, dates or other extra data.
+- Reports: what is OPEN by default must be clean, accurate, insightful and easy to read (user, 2026-09-29). Everything else (evidence details, tables, method notes, statistics, long lists) goes behind folds. Reduce noise everywhere.
