@@ -132,7 +132,7 @@ function typeCardHtml(g) {
     : "";
   return '<div class="rtcard ' + (TYPE_CLS[r.type] || "") + (ids.includes(openRid) ? " is-open" : "") + '" data-group="' + esc(g.key) + '"' + (ids.includes(openRid) ? ' aria-current="true"' : "") + ">"
     + '<div class="rt-top"><h4>' + cardTitle(g) + "</h4>" + pill(STATUS_CLS[r.status.kind] || "none", statusWord(r)) + "</div>"
-    + '<p class="rt-date">' + esc(cardDate(r)) + "</p>" + cardMeta(r) + sel
+    + '<p class="rt-date">' + esc(cardDate(r)) + (r.derivedFrom ? " " + pill("none", "from comparison") : "") + "</p>" + cardMeta(r) + sel
     + '<div class="rt-acts">' + (pick === openRid
       ? '<button type="button" class="rt-open" disabled data-rid="' + rsafe(pick) + '">Showing</button>'
       : '<button type="button" class="rt-open primary" data-rid="' + rsafe(pick) + '" data-act-key="rt-open-' + k + '">Open</button>') + "</div></div>";

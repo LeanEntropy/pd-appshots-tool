@@ -343,5 +343,17 @@
       "defaultHl": "en",
       "languages": ["en"]
     }
+  ],
+  "groupRegions": [
+    { "name": "East Asia", "countries": ["jp", "kr", "tw", "hk"] },
+    { "name": "Southeast Asia", "countries": ["th", "vn", "id", "ph", "my", "sg"] },
+    { "name": "English-speaking", "countries": ["us", "gb", "ie", "ca", "au", "nz", "za"] },
+    { "name": "Latin America", "countries": ["mx", "br", "ar", "cl", "co", "pe"] },
+    {
+      "name": "Western Europe",
+      "countries": ["de", "at", "ch", "fr", "be", "nl", "es", "pt", "it", "gb", "ie"]
+    },
+    { "name": "Northern Europe", "countries": ["se", "no", "dk", "fi"] },
+    { "name": "Middle East", "countries": ["sa", "ae", "eg", "tr"] }
   ]
 }

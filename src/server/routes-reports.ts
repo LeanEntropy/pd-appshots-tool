@@ -6,9 +6,12 @@ import { send, writeRequest } from "./http-util.ts";
 import { reportList } from "./project-data.ts";
 import { getReportVersion, patchReport, removeReport, reportsResponse } from "./reports-api.ts";
 import { saveScope } from "./reports-builder-api.ts";
+import { deriveNow } from "./reports-derive-api.ts";
 import { builderRoute, GONE } from "./routes-builder.ts";
 
 const PATH = /^\/api\/reports(?:\/([^/]+)(?:\/versions\/([^/]+))?)?$/;
+/** POST: "Make country reports now" on a comparison. */
+const DERIVE = /^\/api\/reports\/(r-[a-z0-9-]{1,80})\/derive$/;
 
 /** True for the paths this module answers (everything under /p/<id>/api/reports, suggestions). */
 export const isReportsPath = (rest: string) =>
@@ -30,6 +33,13 @@ export async function reportsRoute(
   res: ServerResponse,
 ): Promise<void> {
   if (await builderRoute(app, loaded, rest, req, res)) return;
+  const dm = DERIVE.exec(rest);
+  if (dm?.[1]) {
+    if (req.method !== "POST") return send(res, 405, { problems: ["Not allowed."] });
+    if (!(await writeRequest(req, res, app.token))) return;
+    const r = deriveNow(loaded, dm[1]);
+    return send(res, r.status, r.body);
+  }
   const m = PATH.exec(rest);
   if (!m) return send(res, 404, { problems: ["Not found."] });
   let id: string | undefined;

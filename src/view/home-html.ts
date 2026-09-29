@@ -1,6 +1,7 @@
 import { APP_ICON_CSS } from "./app-icon.ts";
 import { HOME_SCRIPT } from "./home-script.ts";
 import { page } from "./pages-html.ts";
+import { SHARE_IMPORT_CSS, SHARE_IMPORT_HTML, SHARE_IMPORT_SCRIPT } from "./share-import.ts";
 import { appBar } from "./shell.ts";
 
 const HOME_CSS = `
@@ -39,11 +40,12 @@ export function homeHtml(token: string): string {
 ${appBar(null, '<a class="btn-new" href="/new">+ New project</a>')}
 <main>
 <h1>Your projects</h1>
+${SHARE_IMPORT_HTML}
 <div id="import"></div>
 <div id="cards" class="cards" aria-live="polite"><p class="meta">Loading your projects...</p></div>
 <p id="archivedToggle" hidden><button type="button" class="linkbtn" id="showArchived"></button></p>
 <div id="archivedCards" class="cards" hidden></div>
 </main>
-<style>${HOME_CSS}${APP_ICON_CSS}</style>`;
-  return page("Store Screenshot Recipe", body, token, HOME_SCRIPT);
+<style>${HOME_CSS}${APP_ICON_CSS}${SHARE_IMPORT_CSS}</style>`;
+  return page("Store Screenshot Recipe", body, token, HOME_SCRIPT + SHARE_IMPORT_SCRIPT);
 }

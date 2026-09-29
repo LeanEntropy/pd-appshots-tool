@@ -8,6 +8,7 @@ import { describeAnalysisPlan } from "../analysis/report.ts";
 import { type LoadedConfig, projectPaths } from "../config/load.ts";
 import { cancel, enqueue, type RunnerOptions, status } from "../jobs/index.ts";
 import { readJournal } from "../jobs/journal.ts";
+import { originalsProblem } from "../share/originals.ts";
 import { workspaceStorage } from "../storage/index.ts";
 import type { ApiResponse } from "./api.ts";
 
@@ -84,6 +85,11 @@ export function postAnalysisPlan(
     };
   }
   const plan = buildAnalysisPlan(loaded, stage, { save: true });
+  // Pictures of a Light copy need their full-size picture before any paid step (plan 12C, C6).
+  const paths = projectPaths(loaded);
+  const paid = plan.items.filter((i) => i.tier !== "identical");
+  const previews = originalsProblem(workspaceStorage(paths.workspace), paths.projectId, paid);
+  if (previews) return { status: 409, body: { problems: [previews] } };
   return {
     status: 200,
     body: {

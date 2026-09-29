@@ -31,7 +31,7 @@ function keyRecsHtml(d) {
   const s = d.summary;
   if (!s) return "";
   // One country per Pilot and Full check: its name is not repeated on every line.
-  const items = s.keyRecommendations.map((r) => "<li><strong>Position " + r.position + ":</strong> " + esc(r.text) + "</li>");
+  const items = s.keyRecommendations.map((r) => "<li><strong>Position " + esc(r.position) + ":</strong> " + esc(r.text) + "</li>");
   return "<h3>Key recommendations</h3>" + (s.recommendationsStale ? '<p class="warn">Written from older data (see Recommendations).</p>' : "")
     + (items.length ? capList("ol", "keyrecs", items, 3) + '<p><button type="button" class="linkbtn" data-goto="rep-' + repRid + '-recs">Full spec per position</button></p>'
       : "<p>None yet: the recommendations are not written, or they keep our current deck.</p>");
@@ -43,10 +43,10 @@ function abCardsHtml(d) {
   const ab = d.abTests;
   const h = "<h3>A/B tests to run next</h3>";
   if (!ab) return h + '<p class="meta">This version was made before A/B tests were part of reports.</p>';
-  const cards = ab.tests.map((t) => '<div class="abcard' + (t.source === "code" ? " code" : "") + '"><h4><span class="abno">' + t.priority + "</span>" + esc(t.title) + "</h4>"
+  const cards = ab.tests.map((t) => '<div class="abcard' + (t.source === "code" ? " code" : "") + '"><h4><span class="abno">' + esc(t.priority) + "</span>" + esc(t.title) + "</h4>"
     + "<p>" + esc(t.hypothesis) + "</p><p><strong>One variable:</strong> " + esc(t.variableName) + (t.positions.length ? ", position " + esc(t.positions.join(", ")) : "") + "</p>"
     + (d.multi ? "<p><strong>Countries:</strong> " + esc(t.countries.join(", ")) + "</p>" : "")
-    + '<p><button type="button" class="linkbtn" data-goto="rep-' + repRid + "-abt-" + t.priority + '">Full spec</button></p></div>').join("");
+    + '<p><button type="button" class="linkbtn" data-goto="rep-' + repRid + "-abt-" + esc(t.priority) + '">Full spec</button></p></div>').join("");
   return h + (cards ? '<div class="abcards">' + cards + "</div>" : "");
 }
 // The A/B tests' note (traffic, how many tests), for the summary's Details fold.
@@ -65,14 +65,14 @@ function summaryHtml(d) { return overviewHtml(d) + keyRecsHtml(d) + abCardsHtml(
 
 function variantHtml(v) {
   return "<p><em>" + esc(v.summary) + '</em></p><div class="tablewrap"><table class="rt"><tr><th>#</th><th>Changed</th><th>From our position</th><th>Orientation</th><th>Composition</th><th>Screen</th><th>Band</th><th>Headline</th><th>Extras</th></tr>'
-    + v.slots.map((s) => { const ch = (s.changes || []).length > 0 || s.fromOurPosition !== s.position; return '<tr class="' + (ch ? "miss" : "") + '"><th>' + s.position + "</th><td>" + (ch ? pill("slightly", (s.changes || []).join(", ") || "moved") : "same") + "</td><td>" + (s.fromOurPosition || "new") + "</td><td>" + esc(s.orientation) + "</td><td>" + esc(s.composition) + "</td><td>" + esc(s.screen) + "</td><td>" + esc(s.band) + "</td><td><strong>" + esc(s.headline) + "</strong></td><td>" + esc(s.extras) + "</td></tr>"; }).join("") + "</table></div>";
+    + v.slots.map((s) => { const ch = (s.changes || []).length > 0 || s.fromOurPosition !== s.position; return '<tr class="' + (ch ? "miss" : "") + '"><th>' + esc(s.position) + "</th><td>" + (ch ? pill("slightly", (s.changes || []).join(", ") || "moved") : "same") + "</td><td>" + esc(s.fromOurPosition || "new") + "</td><td>" + esc(s.orientation) + "</td><td>" + esc(s.composition) + "</td><td>" + esc(s.screen) + "</td><td>" + esc(s.band) + "</td><td><strong>" + esc(s.headline) + "</strong></td><td>" + esc(s.extras) + "</td></tr>"; }).join("") + "</table></div>";
 }
 
 function abTestHtml(t) {
   // The statement carries its count; the games behind it are in the tooltip.
   const ev = t.evidence.map((e) => '<li title="' + esc(e.n + " of " + e.of + " " + e.unit + (e.games.length ? ": " + e.games.join(", ") : "")) + '">' + esc(e.statement) + "</li>").join("");
-  const ctl = '<table class="rt"><tr><th>#</th><th>Screen</th><th>Headline</th><th>Orientation</th></tr>' + t.control.map((c) => "<tr><th>" + c.position + "</th><td>" + esc(c.screen) + "</td><td>" + esc(c.headline) + "</td><td>" + esc(c.orientation) + "</td></tr>").join("") + "</table>";
-  return '<div class="abtest' + (t.source === "code" ? " code" : "") + '" id="rep-' + repRid + "-abt-" + t.priority + '"><h3>Test ' + t.priority + ": " + esc(t.title) + "</h3>"
+  const ctl = '<table class="rt"><tr><th>#</th><th>Screen</th><th>Headline</th><th>Orientation</th></tr>' + t.control.map((c) => "<tr><th>" + esc(c.position) + "</th><td>" + esc(c.screen) + "</td><td>" + esc(c.headline) + "</td><td>" + esc(c.orientation) + "</td></tr>").join("") + "</table>";
+  return '<div class="abtest' + (t.source === "code" ? " code" : "") + '" id="rep-' + repRid + "-abt-" + esc(t.priority) + '"><h3>Test ' + esc(t.priority) + ": " + esc(t.title) + "</h3>"
     + (t.source === "code" ? '<p class="meta">Gap worth testing, written by code (no AI wording).</p>' : "")
     + "<dl><dt>Hypothesis</dt><dd>" + esc(t.hypothesis) + "</dd><dt>Evidence</dt><dd><ul>" + ev + "</ul></dd>"
     + "<dt>The one variable</dt><dd>" + esc(t.variableName) + (t.positions.length ? ", position " + esc(t.positions.join(", ")) : "") + "</dd><dt>Countries</dt><dd>" + esc(t.countries.join(", ")) + "</dd>"

@@ -50,6 +50,19 @@ export interface AdvicePart {
   note: string;
 }
 
+/** A One country version made by code from a comparison's version (derive-country.ts). */
+export interface DerivedInfo {
+  projection: "projection.v1";
+  from: { reportId: string; versionId: string; name: string; generatedAt: string };
+  gl: string;
+  /** The other countries of the comparison. */
+  others: { gl: string; label: string }[];
+  /** Every game shows exactly the same images here as in this earlier compared country. */
+  samePagesAs: { gl: string; label: string } | null;
+  /** Items not kept because they name another compared country, with the reason. */
+  dropped: string[];
+}
+
 export interface CountryReport {
   kind: "countries";
   version: 1;
@@ -80,4 +93,6 @@ export interface CountryReport {
   advice: AdvicePart[];
   abTests: AbTestsPart;
   sorting: SortingPart | null;
+  /** Set on a One country version made from a comparison (no AI call). */
+  derived?: DerivedInfo;
 }

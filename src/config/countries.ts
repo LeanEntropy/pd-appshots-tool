@@ -19,6 +19,10 @@ export const CountryCatalogueSchema = z
         }),
       )
       .min(1),
+    /** Regions the cross-country groups are suggested from (plan-cross-country 3.2). */
+    groupRegions: z
+      .array(z.object({ name: z.string().min(1), countries: z.array(z.string()).min(2) }))
+      .default([]),
   })
   .superRefine((c, ctx) => {
     const gls = new Set<string>();
