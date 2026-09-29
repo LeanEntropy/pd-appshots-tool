@@ -3,6 +3,7 @@ import { type LoadedConfig, projectPaths } from "../config/load.ts";
 import type { RunnerOptions } from "../jobs/runner.ts";
 import { enqueueReport, reportApproval } from "../reports/report-job.ts";
 import { readDef } from "../reports/store.ts";
+import { originalsProblem } from "../share/originals.ts";
 import { workspaceStorage } from "../storage/index.ts";
 import type { ApiResponse } from "./api.ts";
 
@@ -17,6 +18,9 @@ export function postReportApproval(loaded: LoadedConfig, id: string): ApiRespons
   if (!def) return null;
   const r = reportApproval(loaded, def);
   if ("problem" in r) return { status: 409, body: { problems: [r.problem] } };
+  const paid = r.plan.items.filter((i) => i.tier !== "identical");
+  const previews = originalsProblem(workspaceStorage(paths.workspace), paths.projectId, paid);
+  if (previews) return { status: 409, body: { problems: [previews] } };
   return { status: 200, body: { id: def.id, name: def.name, type: def.type, ...r } };
 }
 

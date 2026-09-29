@@ -39,12 +39,16 @@
     "sharp": "^0.35.4",
     "sharp-phash": "^2.2.0",
     "stopword": "^3.1.5",
+    "yauzl": "^3.4.0",
+    "yazl": "^3.3.1",
     "zod": "^4.6.5"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.5.14",
     "@types/he": "^1.2.3",
     "@types/node": "^22.20.4",
+    "@types/yauzl": "^3.4.0",
+    "@types/yazl": "^3.3.1",
     "tsx": "^4.23.15",
     "typescript": "^7.0.2"
   }

@@ -23,6 +23,7 @@ import { exportRoute } from "./export-api.ts";
 import { redirect, send, sendHtml, writeRequest } from "./http-util.ts";
 import { getReportCurrent, getReportRun } from "./report-api.ts";
 import { isReportsPath, reportsRoute } from "./routes-reports.ts";
+import { shareProjectRoute } from "./routes-share.ts";
 import { serveStatic } from "./static.ts";
 
 type Get = (l: LoadedConfig, q: URLSearchParams, app: AppContext) => ApiResponse;
@@ -100,6 +101,8 @@ export async function projectRoute(
   if (isReportsPath(rest)) return reportsRoute(app, loaded, rest, req, res);
   // PDF export (milestone R2): the print page and the export job's endpoints.
   if (await exportRoute(app, loaded, rest, req, res, url)) return;
+  // Save the project to a file / full-size pictures of a shared copy (milestone 3b).
+  if (await shareProjectRoute(app, loaded, rest, req, res, url)) return;
   // "Same screen uploaded twice" (free, cached per pair): before a batch plan or report is read.
   if (/^\/api\/(analysis|report)\//.test(rest)) await ensureSameScreens(loaded).catch(() => 0);
   const get = GETS[rest];
