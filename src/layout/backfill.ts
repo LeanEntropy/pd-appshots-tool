@@ -1,85 +1,39 @@
 import { join } from "node:path";
 import { ledger, STEP_CEILING_USD } from "../analysis/budget.ts";
-import type { CallContext } from "../analysis/call.ts";
+import type { CallContext, CallLog } from "../analysis/call.ts";
 import { runPool, sleepUnlessStopped } from "../analysis/pool.ts";
 import { type Provider, providerFor } from "../analysis/providers.ts";
-import { isUsable, readRecords } from "../analysis/records.ts";
+import { readRecords } from "../analysis/records.ts";
 import { modelCopy } from "../analysis/run-chunk.ts";
+import { withOwnCost } from "../analysis/run-context.ts";
 import { type LoadedConfig, loadTaxonomy, projectPaths } from "../config/load.ts";
 import { answerKey } from "../library/layout.ts";
 import { workspaceStorage } from "../storage/index.ts";
 import { acquireAll, LOCKS } from "../storage/leases.ts";
 import { openImageDb } from "../store/imagedb.ts";
-import { stableHash } from "../util/hash.ts";
+import { newRunId } from "../store/manifest.ts";
+import { backfillScope } from "./backfill-scope.ts";
 import { LAYOUT_STEP } from "./call.ts";
 import { addLayout } from "./capture.ts";
-import { layoutStatus } from "./store.ts";
-import { LAYOUT_USD_PER_IMAGE } from "./vocab.ts";
+import { explainFailure, type LayoutFailure } from "./failure.ts";
+import { type LayoutRunImage, type LayoutRunLog, writeLayoutRunLog } from "./run-log.ts";
 
-export interface BackfillItem {
-  imageId: string;
-  game: string;
-  ours: boolean;
-  where: string[];
-}
-
-export interface BackfillScope {
-  items: BackfillItem[];
-  ours: number;
-  competitors: number;
-  usd: [number, number];
-  /** The spending limit: the run stops there. */
-  limitUsd: number;
-  /** Fingerprint of exactly this list: the approval refers to it. */
-  scopeHash: string;
-}
-
-/**
- * Earlier images without a current layout that reports need first (user decision D3): ours in
- * every country, and competitors' store positions 1 to 3. Free to compute; nothing is called.
- */
-export function backfillScope(loaded: LoadedConfig): BackfillScope {
-  const paths = projectPaths(loaded);
-  const ours = loaded.config.ourApp.id;
-  const items: BackfillItem[] = [];
-  for (const r of readRecords(paths).values()) {
-    if (!isUsable(r)) continue;
-    const st = layoutStatus(paths, r).status;
-    if (st === "current" || st === "stale") continue;
-    const apps = r.identity?.appearances ?? [
-      { appId: r.appId, gl: r.gl, hl: r.hl, position: r.position, game: r.appId },
-    ];
-    const isOurs = r.appId === ours || apps.some((a) => a.appId === ours);
-    if (!isOurs && !apps.some((a) => a.position <= 3)) continue;
-    items.push({
-      imageId: r.imageId,
-      game: r.identity?.game ?? r.appId,
-      ours: isOurs,
-      where: apps.map((a) => `${a.gl.toUpperCase()}-${a.hl} #${a.position}`),
-    });
-  }
-  items.sort((a, b) => Number(b.ours) - Number(a.ours) || a.game.localeCompare(b.game));
-  const n = items.length;
-  const usd = LAYOUT_USD_PER_IMAGE.map((u) => Math.round(n * u * 100) / 100) as [number, number];
-  // It stops at the top of the range, and never below one call's reserved ceiling.
-  const limitUsd = n ? Math.max(usd[1], STEP_CEILING_USD[LAYOUT_STEP] ?? 0.25) : 0;
-  return {
-    items,
-    ours: items.filter((i) => i.ours).length,
-    competitors: items.filter((i) => !i.ours).length,
-    usd,
-    limitUsd,
-    scopeHash: stableHash({ items, usd, limitUsd }),
-  };
-}
+export { type BackfillItem, type BackfillScope, backfillScope } from "./backfill-scope.ts";
 
 export interface BackfillProgress {
   state: "running" | "finished" | "stopped" | "failed";
+  runId: string;
   done: number;
   total: number;
   saved: number;
   missing: number;
+  /** Saved layouts that needed a second (or third) attempt. */
+  retried: number;
   spentUsd: number;
+  /** Of which spent on images that failed (their attempts are paid too). */
+  failedUsd: number;
+  /** Each image that failed, with why in plain words. */
+  failed: LayoutFailure[];
   message: string;
 }
 
@@ -97,10 +51,24 @@ export function stopBackfill(loaded: LoadedConfig): boolean {
   return true;
 }
 
+const cents = (n: number) => Math.round(n * 100) / 100;
+
+function endMessage(p: BackfillProgress, pressedStop: boolean): string {
+  const failed = p.failed.length
+    ? `, ${p.failed.length} failed ($${p.failedUsd.toFixed(2)} of it spent on them)`
+    : "";
+  const spent = `$${p.spentUsd.toFixed(2)} spent`;
+  if (p.state === "finished") return `Finished: ${p.saved} layouts added${failed}; ${spent}.`;
+  const why = pressedStop ? "you pressed Stop" : "the spending limit was reached";
+  return `Stopped (${why}) after ${p.done} of ${p.total}: ${p.saved} added${failed}, ${p.total - p.done} not started; ${spent}. Everything finished is kept.`;
+}
+
 /**
  * Adds the layouts of the approved list only (the fingerprint the user saw must still match),
  * 3 at a time, under a spending limit of the list's top estimate, with the AI lock held like any
- * AI job. Each layout is saved the moment it is done; a rerun skips those already saved.
+ * AI job. Each layout is saved the moment it is done; a rerun skips those already saved. Every
+ * call, each image's cost and each failure's reason go to the run's log (runs/<id>/layout.json).
+ * `retryFailed` is the separate approval for images that failed before; nothing else retries them.
  */
 export function startBackfill(
   loaded: LoadedConfig,
@@ -109,8 +77,9 @@ export function startBackfill(
     providerFor(ref, join(projectPaths(loaded).objects, "schemas"), {
       inlineImages: loaded.config.options.speed.inlineImages,
     }),
+  retryFailed = false,
 ): { ok: true; done: Promise<BackfillProgress> } | { ok: false; status: number; problem: string } {
-  const scope = backfillScope(loaded);
+  const scope = backfillScope(loaded, { retryFailed });
   if (scope.scopeHash !== scopeHash)
     return {
       ok: false,
@@ -139,6 +108,7 @@ export function startBackfill(
   let spent = 0;
   const book = ledger(scope.limitUsd, () => spent);
   const ceiling = STEP_CEILING_USD[LAYOUT_STEP] ?? 0.25;
+  const calls: CallLog[] = [];
   const ctx: CallContext = {
     storage,
     answerKey: (step, key) => answerKey(paths, step, key),
@@ -151,22 +121,51 @@ export function startBackfill(
       spent += u;
     },
     reserve: book.reserve,
+    onCall: (c) => {
+      calls.push(c);
+    },
     poolRetries: true,
   };
+  const runId = newRunId("layout-backfill");
   const job = {
     stop: false,
     progress: {
       state: "running",
+      runId,
       done: 0,
       total: scope.items.length,
       saved: 0,
       missing: 0,
+      retried: 0,
       spentUsd: 0,
+      failedUsd: 0,
+      failed: [],
       message: "Starting…",
     } as BackfillProgress,
   };
   running.set(loaded.config.project, job);
   const p = job.progress;
+  const images: LayoutRunImage[] = [];
+  const startedAt = new Date().toISOString();
+  const save = (endedAt: string | null) => {
+    const log: LayoutRunLog = {
+      runId,
+      kind: "layout-backfill",
+      startedAt,
+      endedAt,
+      state: p.state,
+      retryFailed,
+      total: p.total,
+      estimateUsd: scope.usd,
+      limitUsd: scope.limitUsd,
+      spentUsd: cents(spent),
+      failedUsd: p.failedUsd,
+      images,
+      failed: p.failed,
+      calls,
+    };
+    writeLayoutRunLog(paths, log);
+  };
   const done = runPool(scope.items, {
     concurrency: Math.max(1, loaded.config.options.speed.parallelCalls),
     gate: () => !job.stop && book.remaining() >= ceiling,
@@ -175,36 +174,62 @@ export function startBackfill(
     slowDown: () => {},
     run: async (it) => {
       const r = records.get(it.imageId);
-      const before = spent;
+      let usd = 0;
+      const own = withOwnCost(ctx, (u) => {
+        usd += u;
+      });
       const out = r
         ? await addLayout(
-            { paths, db, provider, ctx, root: loaded.root },
+            { paths, db, provider, ctx: own, root: loaded.root },
             r,
             { imageId: it.imageId, image: await modelCopy(paths, db, it.imageId) },
             "backfill",
           )
-        : { outcome: "skipped", problems: [] };
-      p.done++;
-      if (out.outcome === "saved" || out.outcome === "had") p.saved++;
-      else p.missing++;
-      p.spentUsd = Math.round(spent * 100) / 100;
+        : { outcome: "skipped" as const, problems: ["the image's analysis is missing"] };
+      const n = calls.filter((c) => c.imageIds[0] === it.imageId).length;
+      const why = explainFailure(out.problems, provider.model);
+      // Refused by the spending limit before any call: not started, and not a failure.
+      const notStarted = out.outcome === "failed" && why.kind === "budget" && n === 0;
+      images.push({ imageId: it.imageId, game: it.game, outcome: out.outcome, calls: n, usd });
+      if (!notStarted) p.done++;
+      if (out.outcome === "saved" || out.outcome === "had") {
+        p.saved++;
+        if (n > 1) p.retried++;
+      } else if (!notStarted) {
+        p.missing++;
+        p.failedUsd = cents(p.failedUsd + usd);
+        p.failed.push({
+          imageId: it.imageId,
+          game: it.game,
+          where: it.where,
+          ...why,
+          problems: out.problems.slice(0, 10),
+          usd: cents(usd),
+          calls: n,
+          at: new Date().toISOString(),
+        });
+      }
+      p.spentUsd = cents(spent);
       p.message = `Adding layout to image ${p.done} / ${p.total} (${it.game})`;
-      return { ok: true, paid: spent > before };
+      save(null);
+      return { ok: true, paid: usd > 0 };
     },
   })
     .then(() => {
-      p.state = job.stop ? "stopped" : p.done < p.total ? "stopped" : "finished";
-      p.message =
-        p.state === "finished"
-          ? `Finished: ${p.saved} layouts added${p.missing ? `, ${p.missing} missing (you can try them again)` : ""}; $${p.spentUsd.toFixed(2)} spent.`
-          : `Stopped after ${p.done} of ${p.total}: everything finished is kept; $${p.spentUsd.toFixed(2)} spent.`;
+      p.state = !job.stop && p.done >= p.total ? "finished" : "stopped";
+      p.spentUsd = cents(spent);
+      p.message = endMessage(p, job.stop);
       return p;
     })
     .catch((e: unknown) => {
       p.state = "failed";
-      p.message = `The layout step failed: ${e instanceof Error ? e.message : String(e)}`;
+      p.spentUsd = cents(spent);
+      p.message = `The layout step failed: ${e instanceof Error ? e.message : String(e)}; $${p.spentUsd.toFixed(2)} spent.`;
       return p;
     })
-    .finally(() => held.release());
+    .finally(() => {
+      save(new Date().toISOString());
+      held.release();
+    });
   return { ok: true, done };
 }
