@@ -144,7 +144,10 @@ test("builder API: options, drafts, plans, instant build and refusals", async ()
     assert.ok(readDef(s, paths, draft.id));
     writeJournal(s, paths, before);
     const md = s.getText(versionFileKey(paths, versionId, "report.md")) ?? "";
-    assert.match(md, /## 1\. Summary: the bottom line[\s\S]*## What to research next/);
+    assert.match(
+      md,
+      /## 1\. Overall recommendations[\s\S]*## Contents[\s\S]*### What to research next[\s\S]*## \d\. Per country/,
+    );
     // Autosave of a new scope (and name) for a report of the builder.
     const jpScope = { type: "country", markets: [JP], competitors: three, includeCharts: [] };
     const saved = await post(

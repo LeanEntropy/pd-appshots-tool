@@ -3,7 +3,7 @@
  * country (a matrix per country, then each changed image's text with its back-translation), our
  * localisation habits vs the competitors' ([V] same as most, [X] different, with the reason),
  * and the words used per country (the concept by game table, the most common term with n of m,
- * where our wording differs, and a cross-country view). Every value is escaped.
+ * where our wording differs) and across countries. Every value is escaped.
  */
 export const REPORT_COUNTRY_PARTS_SCRIPT = `
 const KIND_WORDS = { identical: "same file", "new-text": "same picture, new text", "not-compared": "same picture, text not compared yet", different: "a picture not on the main page" };
@@ -58,11 +58,12 @@ function wordsCountry(t) {
     + (t.suggestions.length ? "<p><strong>Suggestions:</strong></p><ul>" + t.suggestions.map((s) => "<li>" + esc(s) + "</li>").join("") + "</ul>" : "");
 }
 
-function wordsHtml(c) {
+const WORDS_NOTE = '<p class="meta">Every text on the images and the store text (title, short and full description) per country. The ideas and their words are grouped once per language by AI (text only); every count is made by code. A title\\u2019s part after " - " or ":" is keyword text, not the game\\u2019s name.</p>';
+// The most common word per idea in each country, side by side ("" with fewer than 2 countries).
+function wordsCrossHtml(c) {
   const x = c.crossTerms || [];
-  const cross = c.terminology.length > 1 && x.length ? '<h3>Across countries</h3><div class="tablewrap"><table class="rt"><tr><th>Idea</th>' + c.terminology.map((t) => "<th>" + cflag(t.gl, t.label) + "</th>").join("") + "</tr>"
-    + x.map((r) => "<tr><td>" + esc(r.label) + "</td>" + r.perCountry.map((p) => "<td>" + (p.common ? "<strong>" + esc(p.common) + "</strong>" : '<span class="meta">none</span>') + (p.ours && p.ours !== p.common ? '<div class="meta">ours: ' + esc(p.ours) + "</div>" : "") + "</td>").join("") + "</tr>").join("") + "</table></div>" : "";
-  return '<p class="meta">Every text on the images and the store text (title, short and full description) per country. The ideas and their words are grouped once per language by AI (text only); every count is made by code. A title\\u2019s part after " - " or ":" is keyword text, not the game\\u2019s name.</p>'
-    + c.terminology.map((t) => '<details class="sec"' + (c.terminology.length === 1 ? " open" : "") + '><summary><span class="sec-t">' + cflag(t.gl, t.label) + '</span> <span class="meta">' + t.rows.filter((r) => r.ours === "differs").length + " where we differ</span></summary><div class=\\"sec-b\\">" + wordsCountry(t) + "</div></details>").join("") + cross;
+  if (c.terminology.length < 2 || !x.length) return "";
+  return WORDS_NOTE + '<div class="tablewrap"><table class="rt"><tr><th>Idea</th>' + c.terminology.map((t) => "<th>" + cflag(t.gl, t.label) + "</th>").join("") + "</tr>"
+    + x.map((r) => "<tr><td>" + esc(r.label) + "</td>" + r.perCountry.map((p) => "<td>" + (p.common ? "<strong>" + esc(p.common) + "</strong>" : '<span class="meta">none</span>') + (p.ours && p.ours !== p.common ? '<div class="meta">ours: ' + esc(p.ours) + "</div>" : "") + "</td>").join("") + "</tr>").join("") + "</table></div>";
 }
 `;

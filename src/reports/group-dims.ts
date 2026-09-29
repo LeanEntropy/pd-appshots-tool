@@ -47,7 +47,8 @@ export const MAIN_DIMS: {
   {
     id: "largeLayer",
     label: "Large marketing layer",
-    question: "Most screenshots in images 1 to 3 leave 20 % or more of the image to the marketing layer",
+    question:
+      "Most screenshots in images 1 to 3 leave 20 % or more of the image to the marketing layer",
     does: "give the marketing layer a large share of images 1 to 3",
     definition:
       "The marketing layer (bands, headline, characters) covers 20 % or more of the image, so the screenshot fills less than 80 %. Title art is not counted.",
@@ -68,16 +69,22 @@ export const EXPLORE_DIMS: { id: ExploreDim; label: string; definition: string }
     definition:
       "Images in the set, each screen counted once (the same screen uploaded twice, even with another headline, counts once).",
   },
-  { id: "order", label: "Order of images 1 to 3", definition: "The kind of screen at images 1, 2 and 3." },
+  {
+    id: "order",
+    label: "Order of images 1 to 3",
+    definition: "The kind of screen at images 1, 2 and 3.",
+  },
   {
     id: "compositionMix",
     label: "Composition of images 1 to 3",
-    definition: "How images 1 to 3 are built: full screenshot, screenshot in art, several, full-screen art.",
+    definition:
+      "How images 1 to 3 are built: full screenshot, screenshot in art, several, full-screen art.",
   },
   {
     id: "artMessage",
     label: "What the title art says",
-    definition: "The message of title art in images 1 to 3: logo only, headline or benefit, event or offer, character showcase.",
+    definition:
+      "The message of title art in images 1 to 3: logo only, headline or benefit, event or offer, character showcase.",
   },
 ];
 
@@ -130,6 +137,8 @@ export function pageValues(g: GameOrder): PageValues {
     compositionMix: known3
       ? [...new Set(first3.map((r) => r.composition || "?"))].sort().join(" + ")
       : null,
-    artMessage: known3 ? (art?.message ?? (first3.some((r) => r.category === ART) ? null : "none")) : null,
+    artMessage: known3
+      ? (art?.message ?? (first3.some((r) => r.category === ART) ? null : "none"))
+      : null,
   };
 }
