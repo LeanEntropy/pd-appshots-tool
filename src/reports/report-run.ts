@@ -241,6 +241,7 @@ export async function runReport(
     research: () => researchSnapshot(loaded),
   });
   if (attempt) endAttempt(paths, SYNTHESIS, attempt, batchId, "finished", spent - before);
+  saveCalls();
   for (const p of built.problems ?? []) fail(p, null, null);
   if (textLimit()) stoppedForBudget = true;
   const ended = stopped || stoppedForBudget;
