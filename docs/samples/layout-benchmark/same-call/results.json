@@ -1,0 +1,280 @@
+{
+ "spentUsd": 0.9203,
+ "gates": {
+  "g1": {
+   "elementsF1": 0.93,
+   "placementError": 1.48,
+   "textCharacterError": 0.143,
+   "geometryWithinTolerance": "2 of 7",
+   "pass": false
+  },
+  "g2": {
+   "totals": [
+    {
+     "image": "archero2-4",
+     "modelOnly": 89.1,
+     "measured": 92
+    },
+    {
+     "image": "roguelegend-1",
+     "modelOnly": 90.9,
+     "measured": 90.9
+    },
+    {
+     "image": "legend-of-mushroom-3",
+     "modelOnly": 85.4,
+     "measured": 85.4
+    },
+    {
+     "image": "survivorio-jp-4",
+     "modelOnly": 69.7,
+     "measured": 71.1
+    }
+   ],
+   "mean": 84.9,
+   "pass": true
+  },
+  "g3": {
+   "core": [
+    {
+     "image": "archero2-4",
+     "against": "paired run without the layout request",
+     "differences": [],
+     "pairedVsSaved": [
+      "headline \"Beyond All Limits\" -> \"Beyond All Limits Deep progression, maximum fun\""
+     ],
+     "withLayoutVsSaved": [
+      "headline \"Beyond All Limits\" -> \"Beyond All Limits Deep progression, maximum fun\""
+     ]
+    },
+    {
+     "image": "roguelegend-1",
+     "against": "paired run without the layout request",
+     "differences": [
+      "headline \"ROGUE LEGEND\" -> \"\""
+     ],
+     "pairedVsSaved": [
+      "composition single_full_capture -> pure_art"
+     ],
+     "withLayoutVsSaved": [
+      "composition single_full_capture -> pure_art",
+      "headline \"ROGUE LEGEND\" -> \"\""
+     ]
+    },
+    {
+     "image": "legend-of-mushroom-3",
+     "against": "paired run without the layout request",
+     "differences": [],
+     "pairedVsSaved": [
+      "composition capture_in_marketing_art -> single_full_capture"
+     ],
+     "withLayoutVsSaved": [
+      "composition capture_in_marketing_art -> single_full_capture"
+     ]
+    },
+    {
+     "image": "survivorio-jp-4",
+     "against": "saved record",
+     "differences": [],
+     "pairedVsSaved": null,
+     "withLayoutVsSaved": []
+    }
+   ],
+   "pass": false
+  },
+  "g4": {
+   "baseline": {
+    "usd": 0.154,
+    "wallS": 28,
+    "outTokens": 1816
+   },
+   "perImage": [
+    {
+     "image": "archero2-4",
+     "costUsd": 0.4,
+     "wallS": 40.7,
+     "outputTokens": 2850,
+     "cacheWriteTokens": 12894,
+     "layoutOutputTokens": 1167,
+     "addedUsd": 0.059,
+     "addedS": 13.9,
+     "warmUsd": 0.197
+    },
+    {
+     "image": "roguelegend-1",
+     "costUsd": 0.141,
+     "wallS": 26.2,
+     "outputTokens": 1728,
+     "cacheWriteTokens": 2586,
+     "layoutOutputTokens": 554,
+     "addedUsd": 0.028,
+     "addedS": 6.9,
+     "warmUsd": 0.141
+    },
+    {
+     "image": "legend-of-mushroom-3",
+     "costUsd": 0.209,
+     "wallS": 40.1,
+     "outputTokens": 3098,
+     "cacheWriteTokens": 2586,
+     "layoutOutputTokens": 1316,
+     "addedUsd": 0.066,
+     "addedS": 14.9,
+     "warmUsd": 0.209
+    },
+    {
+     "image": "survivorio-jp-4",
+     "costUsd": 0.17,
+     "wallS": 42.7,
+     "outputTokens": 2313,
+     "cacheWriteTokens": 2586,
+     "layoutOutputTokens": 927,
+     "addedUsd": 0.047,
+     "addedS": 12.4,
+     "warmUsd": 0.17
+    }
+   ],
+   "addedUsdMean": 0.05,
+   "addedSecondsMean": 12,
+   "vsBaseline": {
+    "costMean": 0.076,
+    "costMeanWarm": 0.025,
+    "wallMean": 9.4,
+    "outputTokensMean": 681
+   },
+   "paired": {
+    "rows": [
+     {
+      "image": "archero2-4",
+      "cold": true,
+      "outputTokens": 1612,
+      "usd": 0.14,
+      "seconds": 16.1
+     },
+     {
+      "image": "roguelegend-1",
+      "cold": false,
+      "outputTokens": 724,
+      "usd": 0.037,
+      "seconds": 6.3
+     },
+     {
+      "image": "legend-of-mushroom-3",
+      "cold": false,
+      "outputTokens": 1463,
+      "usd": 0.074,
+      "seconds": 13.3
+     }
+    ],
+    "outputTokensMean": 1266,
+    "usdMean": 0.084,
+    "usdMeanWarm": 0.064,
+    "secondsMean": 11.9,
+    "oncePerBatchUsd": 0.059
+   },
+   "pass": true
+  },
+  "g5": {
+   "images": [
+    {
+     "image": "archero2-4",
+     "calls": 1,
+     "counts": {
+      "inGame": 5,
+      "marketing": 4
+     },
+     "problems": []
+    },
+    {
+     "image": "roguelegend-1",
+     "calls": 1,
+     "counts": {
+      "inGame": 3,
+      "marketing": 1
+     },
+     "problems": []
+    },
+    {
+     "image": "legend-of-mushroom-3",
+     "calls": 1,
+     "counts": {
+      "inGame": 7,
+      "marketing": 6
+     },
+     "problems": []
+    },
+    {
+     "image": "survivorio-jp-4",
+     "calls": 1,
+     "counts": {
+      "inGame": 3,
+      "marketing": 4
+     },
+     "problems": []
+    }
+   ],
+   "pass": true
+  },
+  "g6": {
+   "snappedBoxes": [
+    {
+     "image": "archero2-4",
+     "id": "S3",
+     "role": "nav-bar",
+     "model": 0.13,
+     "measured": 0.27
+    },
+    {
+     "image": "legend-of-mushroom-3",
+     "id": "S4",
+     "role": "panel",
+     "model": 1.63,
+     "measured": 1.05
+    }
+   ],
+   "worse": [
+    {
+     "image": "legend-of-mushroom-3",
+     "what": "coverage",
+     "model": 0,
+     "measured": 2.3
+    }
+   ],
+   "pass": false
+  },
+  "g7": {
+   "rows": [
+    {
+     "image": "archero2-4",
+     "glyphMeasured": 8.1,
+     "glyphKey": null,
+     "contrastMeasured": 3.7,
+     "contrastKey": null
+    },
+    {
+     "image": "roguelegend-1",
+     "glyphMeasured": null,
+     "glyphKey": null,
+     "contrastMeasured": null,
+     "contrastKey": null
+    },
+    {
+     "image": "legend-of-mushroom-3",
+     "glyphMeasured": 12.2,
+     "glyphKey": null,
+     "contrastMeasured": 1.5,
+     "contrastKey": null
+    },
+    {
+     "image": "survivorio-jp-4",
+     "glyphMeasured": null,
+     "glyphKey": 5.3,
+     "contrastMeasured": null,
+     "contrastKey": null
+    }
+   ],
+   "validated": false
+  }
+ },
+ "go": false
+}

@@ -38,12 +38,14 @@ export async function tempProject(
   mkdirSync(join(root, "configs"));
   cpSync(join(REPO, "prompts"), join(root, "prompts"), { recursive: true });
   cpSync(join(REPO, "taxonomies"), join(root, "taxonomies"), { recursive: true });
-  const cfg: unknown = JSON.parse(
+  const cfg = JSON.parse(
     readFileSync(join(REPO, "test", "fixtures", "config.json"), "utf8"),
-  );
+  ) as Record<string, unknown>;
   writeFileSync(join(root, "configs", "t.json"), JSON.stringify(cfg));
   cpSync(join(REPO, "configs", "defaults.json"), join(root, "configs", "defaults.json"));
   const loaded = loadConfig(join(root, "configs", "t.json"));
+  // Tests count model calls: the layout call after each analysis is on only where a test asks.
+  loaded.config.options.speed.layoutCapture = false;
   const paths = projectPaths(loaded);
   const db = openImageDb(paths);
   const all: DeckManifest[] = [];

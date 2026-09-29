@@ -1,6 +1,6 @@
 import type { Layout, LayoutBox, MarketingElement } from "../schema.ts";
 import { type LayoutRole, RECT_ROLES } from "../vocab.ts";
-import { type EdgeMeasure, measureBand, quadColour } from "./band.ts";
+import { type EdgeMeasure, measureBands, quadColour } from "./band.ts";
 import { headlineText } from "./glyph.ts";
 import { inside, loadPixels, type Pixels, type Quad, quadOf } from "./pixels.ts";
 import { insets, type Side, snapBox } from "./rect.ts";
@@ -69,6 +69,10 @@ export async function measureLayout(
   const p = await loadPixels(bytes);
   const elements: ElementMeasure[] = [];
   const quads: { q: Quad; ring: boolean }[] = [];
+  const bands = measureBands(
+    p,
+    layout.marketing.filter((e) => e.role === "band"),
+  );
   for (const e of [...layout.inGame, ...layout.marketing]) {
     const m: ElementMeasure = {
       id: e.id,
@@ -82,7 +86,13 @@ export async function measureLayout(
     };
     const marketing = layout.marketing.includes(e as MarketingElement);
     if (e.role === "band") {
-      const b = measureBand(p, e as MarketingElement);
+      const b = bands.get(e.id) ?? {
+        box: null,
+        tiltDeg: null,
+        top: null,
+        bottom: null,
+        colour: null,
+      };
       Object.assign(m, {
         box: b.box,
         tiltDeg: b.tiltDeg,

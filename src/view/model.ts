@@ -4,6 +4,7 @@ import type { ImageAnalysis } from "../analysis/schema.ts";
 import type { StoreTextView } from "../analysis/store-compare.ts";
 import type { Config } from "../config/schema.ts";
 import type { Group } from "../core/targets.ts";
+import type { LayoutView } from "../layout/info.ts";
 import type { ImageDb } from "../store/imagedb.ts";
 import { type DeckManifest, type RunManifest, withDeckClasses } from "../store/manifest.ts";
 import { readJson } from "../util/fsx.ts";
@@ -42,6 +43,8 @@ export interface InfoView {
   captures: string[];
   /** Plain message when there is no usable analysis yet (retried in the next run). */
   pending: string | null;
+  /** The layout breakdown (wireframe), or null when there is no usable analysis. */
+  layout: LayoutView | null;
 }
 
 export interface ViewImage {

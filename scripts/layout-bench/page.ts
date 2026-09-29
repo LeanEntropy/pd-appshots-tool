@@ -39,7 +39,7 @@ function main(): void {
 <figure>${wireframeSvg(measured, size, i.measure, 200)}<figcaption>After measuring: ${f(i.measured.total)}</figcaption></figure></div>
 <p>Points after measuring: ${pts(i.measured.pts)}</p>
 <p>Summary: ${esc(i.layout.composition.summary)}</p>
-<p>Core reading vs saved record: ${esc(i.baseline?.coreDiff?.join("; ") || "unchanged")}</p></section>`;
+</section>`;
   });
   const cost = (g.g4.perImage as Any[])
     .map((p) => `<tr><td>${esc(p.image)}</td><td>$${f(p.costUsd, 3)}</td><td>${f(p.wallS)}</td><td>${p.outputTokens}</td><td>${p.layoutOutputTokens}</td><td>$${f(p.addedUsd, 3)}</td><td>${f(p.addedS)}</td></tr>`)
@@ -47,12 +47,12 @@ function main(): void {
   const html = `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Layout benchmark</title>
 <style>body{font:14px/1.45 system-ui,sans-serif;margin:16px;max-width:1100px;background:#fff;color:#111}table{border-collapse:collapse;margin:8px 0}td,th{border:1px solid #ccc;padding:4px 8px;text-align:left}.ok{background:#e3f5e1}.bad{background:#fbe3e1}.row{display:flex;gap:16px;flex-wrap:wrap}figure{margin:0}section{border-top:1px solid #ddd;margin-top:16px}</style></head><body>
 <h1>Layout benchmark (4 images, 2026-09-29)</h1>
-<p><strong>Verdict: ${r.go ? "GO" : "NO-GO"}</strong>. Spent $${f(r.spentUsd, 2)} of the $1.20 cap. Four calls, no repairs.</p>
+<p><strong>Verdict: ${r.go ? "GO" : "NO-GO"}</strong>. Separate layout call, spent $${f(r.spentUsd, 2)} of the $0.80 cap. Earlier same-call version: <a href="same-call/index.html">same-call/</a>.</p>
 <table><tr><th>Gate</th><th>Result</th><th>Numbers</th></tr>
 ${gate("1. Each part", g.g1.pass, `elements F1 ${g.g1.elementsF1}, placement error ${g.g1.placementError} points, text character error ${f(g.g1.textCharacterError * 100)}%, band tilt and edges within tolerance ${g.g1.geometryWithinTolerance}`)}
 ${gate("2. Total", g.g2.pass, `mean ${g.g2.mean} after measuring; ${g.g2.totals.map((t: Any) => `${t.image} ${t.measured}`).join(", ")}`)}
-${gate("3. Core reading unchanged (with vs without the layout request)", g.g3.pass, g.g3.core.map((c: Any) => `${c.image} (against the ${c.against}): ${c.differences.join("; ") || "unchanged"}${c.pairedVsSaved?.length ? `; the run without layout vs the saved record: ${c.pairedVsSaved.join("; ")}` : ""}`).join(" | "))}
-${gate("4. Cost and time", g.g4.pass, `added by the layout: $${g.g4.addedUsdMean} and ${g.g4.addedSecondsMean} s per image; against the measured baseline ($0.154, 28 s): +$${g.g4.vsBaseline.costMean} (+$${g.g4.vsBaseline.costMeanWarm} without the one-time cache write), ${g.g4.vsBaseline.wallMean} s${g.g4.paired ? `; exact on the 3 paired images: +${g.g4.paired.outputTokensMean} output tokens, +$${g.g4.paired.usdMeanWarm} per image with a warm cache (+$${g.g4.paired.oncePerBatchUsd} once per batch), +${g.g4.paired.secondsMean} s` : ""}`)}
+${gate("3. Main analysis unchanged", g.g3.pass, g.g3.checked ? `the layout is its own call after the analysis is saved; main-call files identical to master: ${g.g3.changed.length ? `NO (${g.g3.changed.join(", ")})` : "yes"} (${g.g3.checked.length} files)` : "")}
+${gate("4. Cost and time", g.g4.pass, g.g4.separate ? `the layout call per image: $${g.g4.separate.warmUsdMean} on average with a warm prompt cache ($${g.g4.separate.usdMean} as run; the first call of a batch also writes the prompt, $${g.g4.separate.oncePerBatchUsd}), ${g.g4.separate.wallSMean} s; approved at up to $${g.g4.limitUsd}` : "")}
 ${gate("5. Valid answers, cap", g.g5.pass, "all 4 valid on the first call, at most 7 boxes per layer")}
 ${gate("6. Measuring never worse by more than 2 points", g.g6.pass, g.g6.worse.map((w: Any) => `${w.image} ${w.what}: model off by ${w.model}, measured off by ${w.measured}`).join("; ") || "none worse")}
 ${gate("7. Experimental (glyph height, contrast)", undefined, "not validated: the key has a glyph height for one image only, where the tool found none")}

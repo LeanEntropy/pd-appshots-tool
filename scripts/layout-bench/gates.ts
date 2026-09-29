@@ -4,6 +4,7 @@
  * calls: $0.154, 28 s wall, 21 s writing, 1,816 output tokens). No paired run (user decision).
  * Usage: npx tsx scripts/layout-bench/gates.ts
  */
+import { execSync } from "node:child_process";
 import { edgeError } from "./metrics.ts";
 import { readOut, writeOut } from "./common.ts";
 
@@ -40,6 +41,44 @@ function pairedCost(imgs: Any[], spend: Any) {
     usdMeanWarm: r(mean(warmUsd)),
     secondsMean: r(mean(rows.map((x) => x.seconds)), 1),
     oncePerBatchUsd: r(2965 * (PRICE.cacheWrite - PRICE.cacheRead)),
+  };
+}
+
+/** Separate-call version: the main analysis call must be exactly as on master. */
+function mainCallUnchanged() {
+  const files = [
+    "src/analysis/call.ts",
+    "src/analysis/schema.ts",
+    "src/analysis/schema-lean.ts",
+    "src/analysis/settle.ts",
+    "src/analysis/compare.ts",
+    "src/analysis/regions.ts",
+    "prompts/analysis/full-analysis.v8.md",
+    "prompts/analysis/full-analysis.v9.md",
+    "prompts/analysis/adjudicate.v4.md",
+  ];
+  const changed = execSync(`git diff --name-only origin/master -- ${files.join(" ")}`, { encoding: "utf8" })
+    .split("\n")
+    .filter(Boolean);
+  return { checked: files, changed, note: "the layout is its own call after the record is saved", pass: !changed.length };
+}
+
+/** Separate-call version: the whole layout call is the added cost (approved at $0.12-0.14). */
+function separateCost(imgs: Any[]) {
+  const rows = imgs.map((i) => {
+    const u = (i.usage as Any[])[0] ?? {};
+    const cold = Math.max(0, (u.cacheWriteTokens ?? 0) - 3000) * (PRICE.cacheWrite - PRICE.cacheRead);
+    return { image: i.name, usd: r(i.costUsd), warmUsd: r(i.costUsd - cold), wallS: r((u.wallMs ?? 0) / 1000, 1), modelS: r((u.durationMs ?? 0) / 1000, 1), outputTokens: u.outputTokens, cacheWriteTokens: u.cacheWriteTokens };
+  });
+  const warm = mean(rows.map((x) => x.warmUsd));
+  const wall = mean(rows.map((x) => x.wallS));
+  return {
+    separate: { rows, usdMean: r(mean(rows.map((x) => x.usd))), warmUsdMean: r(warm), wallSMean: r(wall, 1), oncePerBatchUsd: r(Math.max(...rows.map((x) => x.usd - x.warmUsd))) },
+    perImage: rows.map((x) => ({ image: x.image, costUsd: x.usd, wallS: x.wallS, outputTokens: x.outputTokens, layoutOutputTokens: x.outputTokens, addedUsd: x.warmUsd, addedS: x.wallS })),
+    addedUsdMean: r(warm),
+    addedSecondsMean: r(wall, 1),
+    limitUsd: 0.14,
+    pass: warm <= 0.14 && wall <= 25,
   };
 }
 
@@ -91,7 +130,9 @@ function main(): void {
       withLayoutVsSaved: i.baseline?.coreDiff ?? null,
     };
   });
-  const g3 = { core, pass: core.every((c) => !c.differences.length) };
+  const g3 = run.separate
+    ? mainCallUnchanged()
+    : { core, pass: core.every((c) => !c.differences.length) };
   // Gate 4: cost and time.
   const per = imgs.map((i) => {
     const u = (i.usage as Any[])[0] ?? {};
@@ -125,6 +166,7 @@ function main(): void {
     pass: false,
   };
   g4.pass = g4.addedUsdMean <= 0.07 && g4.addedSecondsMean <= 25;
+  if (run.separate) Object.assign(g4, separateCost(imgs));
   // Gate 5: valid answers, repairs, cap.
   const g5 = { images: imgs.map((i) => ({ image: i.name, calls: i.calls, counts: i.counts, problems: i.layoutProblems })), pass: imgs.length === 4 && imgs.every((i) => !i.layoutProblems.length && i.counts.inGame <= 8 && i.counts.marketing <= 8) };
   // Gate 6: the measuring tool never makes a value worse than the model's by more than 2 points.

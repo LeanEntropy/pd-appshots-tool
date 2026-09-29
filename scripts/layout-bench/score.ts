@@ -106,7 +106,8 @@ async function main(): Promise<void> {
       .map((k) => store.getJson(k) as AnalysisRecord)
       .find((x) => x?.final);
     const baseObj = base?.producer ? (store.getJson(`library/objects/full-analysis/${base.producer.object}.json`) as StoredObject | undefined) : undefined;
-    const calls = spend.calls.filter((c) => c.imageIds.includes(im.id));
+    const own = (r as { calls?: typeof spend.calls }).calls ?? [];
+    const calls = own.length ? own : spend.calls.filter((c) => c.imageIds.includes(im.id));
     const layoutChars = JSON.stringify(raw ?? null).length;
     const answerChars = JSON.stringify(r.output).length;
     const out = calls.reduce((s, c) => s + (c.usage?.outputTokens ?? 0), 0);

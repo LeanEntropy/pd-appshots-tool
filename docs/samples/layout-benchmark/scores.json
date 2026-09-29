@@ -1,9 +1,9 @@
 {
- "spentUsd": 0.9203,
+ "spentUsd": 0.6377,
  "prompt": {
-  "hash": "b4e878cf5c1ca085a9f23fcd734cf3a0835039a1a693ec5f1ec5aa9aceeb5791",
-  "chars": 14452,
-  "blockChars": 3458
+  "hash": "963e6e6284fbe0f13c2ddb957b2aec7f511869fd6f2b33e754d8dfe64ff363d5",
+  "chars": 4377,
+  "blockChars": 4377
  },
  "images": [
   {
@@ -11,22 +11,22 @@
    "imageId": "b799e91aee76927b805be9c807e1892ea169d45aadc645dbc29608176b35ba21",
    "why": "UI screen (hero hub) with a tilted corner band and a hero cut-out",
    "calls": 1,
-   "costUsd": 0.4004,
+   "costUsd": 0.18186,
    "usage": [
     {
      "inputTokens": 2,
-     "outputTokens": 2850,
+     "outputTokens": 992,
      "cacheReadTokens": 0,
-     "cacheWriteTokens": 12894,
-     "durationMs": 33951,
+     "cacheWriteTokens": 6612,
+     "durationMs": 10639,
      "turns": 2,
-     "wallMs": 40679,
+     "wallMs": 18243,
      "requests": 1
     }
    ],
-   "layoutShareOfAnswer": 0.4094521120869929,
-   "layoutOutputTokens": 1167,
-   "secondsPerOutputToken": 0.011912631578947369,
+   "layoutShareOfAnswer": 0.9866962305986696,
+   "layoutOutputTokens": 979,
+   "secondsPerOutputToken": 0.010724798387096774,
    "baseline": {
     "costUsd": 0.17728875,
     "usage": null,
@@ -179,7 +179,7 @@
    },
    "layoutProblems": [],
    "counts": {
-    "inGame": 5,
+    "inGame": 4,
     "marketing": 4
    },
    "layout": {
@@ -204,33 +204,15 @@
      },
      {
       "id": "S2",
-      "role": "character",
-      "box": {
-       "x": 10,
-       "y": 1,
-       "w": 80,
-       "h": 45
-      },
-      "tiltDeg": 0,
-      "z": 1,
-      "textEn": null,
-      "note": "",
-      "capture": 0,
-      "textRef": null,
-      "text": null,
-      "covers": []
-     },
-     {
-      "id": "S3",
       "role": "nav-bar",
       "box": {
        "x": 0,
        "y": 49,
        "w": 100,
-       "h": 6
+       "h": 5
       },
       "tiltDeg": 0,
-      "z": 2,
+      "z": 1,
       "textEn": "Characters / Gear / Runes",
       "note": "",
       "capture": 0,
@@ -239,13 +221,13 @@
       "covers": []
      },
      {
-      "id": "S4",
+      "id": "S3",
       "role": "hud",
       "box": {
        "x": 0,
        "y": 55,
        "w": 100,
-       "h": 6
+       "h": 5
       },
       "tiltDeg": 0,
       "z": 2,
@@ -257,7 +239,7 @@
       "covers": []
      },
      {
-      "id": "S5",
+      "id": "S4",
       "role": "panel",
       "box": {
        "x": 0,
@@ -278,14 +260,14 @@
     "marketing": [
      {
       "id": "M1",
-      "role": "band",
+      "role": "cut-out",
       "box": {
-       "x": 0,
-       "y": 81,
-       "w": 100,
-       "h": 19
+       "x": 60,
+       "y": 58,
+       "w": 40,
+       "h": 28
       },
-      "tiltDeg": -4,
+      "tiltDeg": 0,
       "z": 0,
       "textEn": null,
       "note": "",
@@ -293,57 +275,20 @@
       "textRef": null,
       "text": null,
       "covers": [
-       "S5"
+       "S3",
+       "S4"
       ]
      },
      {
       "id": "M2",
-      "role": "headline",
+      "role": "band",
       "box": {
-       "x": 7,
-       "y": 84,
-       "w": 86,
-       "h": 9
+       "x": 0,
+       "y": 83,
+       "w": 100,
+       "h": 17
       },
-      "tiltDeg": -5,
-      "z": 2,
-      "textEn": "Beyond All Limits",
-      "note": "",
-      "capture": null,
-      "textRef": 0,
-      "text": null,
-      "covers": [
-       "S5"
-      ]
-     },
-     {
-      "id": "M3",
-      "role": "subline",
-      "box": {
-       "x": 4,
-       "y": 91,
-       "w": 94,
-       "h": 8
-      },
-      "tiltDeg": -5,
-      "z": 2,
-      "textEn": "Deep progression, maximum fun",
-      "note": "",
-      "capture": null,
-      "textRef": 1,
-      "text": null,
-      "covers": []
-     },
-     {
-      "id": "M4",
-      "role": "cut-out",
-      "box": {
-       "x": 59,
-       "y": 58,
-       "w": 41,
-       "h": 28
-      },
-      "tiltDeg": 0,
+      "tiltDeg": -3,
       "z": 1,
       "textEn": null,
       "note": "",
@@ -351,26 +296,63 @@
       "textRef": null,
       "text": null,
       "covers": [
-       "S5",
        "S4"
       ]
+     },
+     {
+      "id": "M3",
+      "role": "headline",
+      "box": {
+       "x": 6,
+       "y": 84,
+       "w": 88,
+       "h": 9
+      },
+      "tiltDeg": -4,
+      "z": 2,
+      "textEn": "Beyond All Limits",
+      "note": "",
+      "capture": null,
+      "textRef": 0,
+      "text": null,
+      "covers": [
+       "S4"
+      ]
+     },
+     {
+      "id": "M4",
+      "role": "subline",
+      "box": {
+       "x": 4,
+       "y": 92,
+       "w": 94,
+       "h": 7
+      },
+      "tiltDeg": -4,
+      "z": 2,
+      "textEn": "Deep progression, maximum fun",
+      "note": "",
+      "capture": null,
+      "textRef": 1,
+      "text": null,
+      "covers": []
      }
     ],
     "composition": {
      "focal": {
       "x": 50,
       "y": 88,
-      "id": "M2"
+      "id": "M3"
      },
      "readingOrder": [
-      "M2",
-      "M4",
-      "S2",
-      "S5",
-      "M3"
+      "M3",
+      "M1",
+      "S1",
+      "S4",
+      "M4"
      ],
-     "overlaySharePercent": 30,
-     "summary": "Full portrait gear capture with a hero showcase on top and an item grid below; a tilted light-blue band across the bottom fifth carries the yellow headline and white subline, while a large heroine cut-out sits over the grid's right side."
+     "overlaySharePercent": 28,
+     "summary": "Full-height metagame capture (hero showcase above a gear grid); a chibi hero cut-out sits over the lower right of the grid and a slightly tilted light-blue band across the bottom sixth carries the headline and subline."
     }
    },
    "measure": {
@@ -392,16 +374,6 @@
      },
      {
       "id": "S2",
-      "role": "character",
-      "box": null,
-      "tiltDeg": null,
-      "top": null,
-      "bottom": null,
-      "colour": null,
-      "snapped": []
-     },
-     {
-      "id": "S3",
       "role": "nav-bar",
       "box": {
        "x": 0,
@@ -419,7 +391,7 @@
       ]
      },
      {
-      "id": "S4",
+      "id": "S3",
       "role": "hud",
       "box": null,
       "tiltDeg": null,
@@ -429,7 +401,7 @@
       "snapped": []
      },
      {
-      "id": "S5",
+      "id": "S4",
       "role": "panel",
       "box": null,
       "tiltDeg": null,
@@ -440,6 +412,16 @@
      },
      {
       "id": "M1",
+      "role": "cut-out",
+      "box": null,
+      "tiltDeg": null,
+      "top": null,
+      "bottom": null,
+      "colour": null,
+      "snapped": []
+     },
+     {
+      "id": "M2",
       "role": "band",
       "box": {
        "x": 0,
@@ -450,12 +432,12 @@
       "tiltDeg": -5,
       "top": {
        "left": 84.9,
-       "right": 80,
+       "right": 80.1,
        "angleDeg": -5,
        "quality": {
-        "share": 0.63,
+        "share": 0.6709999999999999,
         "rms": 0.3,
-        "strength": 310.5
+        "strength": 304.9
        }
       },
       "bottom": null,
@@ -463,7 +445,7 @@
       "snapped": []
      },
      {
-      "id": "M2",
+      "id": "M3",
       "role": "headline",
       "box": null,
       "tiltDeg": null,
@@ -473,18 +455,8 @@
       "snapped": []
      },
      {
-      "id": "M3",
-      "role": "subline",
-      "box": null,
-      "tiltDeg": null,
-      "top": null,
-      "bottom": null,
-      "colour": null,
-      "snapped": []
-     },
-     {
       "id": "M4",
-      "role": "cut-out",
+      "role": "subline",
       "box": null,
       "tiltDeg": null,
       "top": null,
@@ -499,7 +471,7 @@
      "left": 0,
      "right": 0
     },
-    "coverageUpTo": 26.4,
+    "coverageUpTo": 26.2,
     "experimental": {
      "headlineGlyphPercent": 8.1,
      "headlineContrast": 3.7
@@ -507,11 +479,11 @@
    },
    "modelOnly": {
     "f1": {
-     "inGame": 1,
+     "inGame": 0.888888888888889,
      "marketing": 1,
-     "mean": 1
+     "mean": 0.9444444444444444
     },
-    "placementError": 1.0694444444444444,
+    "placementError": 0.921875,
     "texts": [
      {
       "role": "headline",
@@ -532,46 +504,46 @@
      {
       "what": "M1 tilt",
       "key": -4.8,
-      "got": -4,
-      "err": 0.7999999999999998,
-      "score": 1,
+      "got": -3,
+      "err": 1.7999999999999998,
+      "score": 0.8,
       "measured": false
      },
      {
       "what": "M1 top edge",
       "key": 82.6,
-      "got": 80.97680196822887,
-      "err": 1.623198031771139,
-      "score": 0.9726226596064136,
+      "got": 82.98833505901767,
+      "err": 0.9260312076644581,
+      "score": 1,
       "measured": false
      },
      {
       "what": "coverage",
       "key": 23,
-      "got": 30,
-      "err": 7,
-      "score": 0.5555555555555556,
+      "got": 28,
+      "err": 5,
+      "score": 0.7777777777777778,
       "measured": false
      }
     ],
     "focalDistance": 0.23480277726988208,
     "firstOk": false,
     "pts": {
-     "elements": 30,
+     "elements": 28.333333333333332,
      "placement": 20,
      "text": 20,
-     "measurements": 16.854521434413126,
+     "measurements": 17.185185185185187,
      "composition": 2.2819027955541267
     },
-    "total": 89.13642422996726
+    "total": 87.80042131407265
    },
    "measured": {
     "f1": {
-     "inGame": 1,
+     "inGame": 0.888888888888889,
      "marketing": 1,
-     "mean": 1
+     "mean": 0.9444444444444444
     },
-    "placementError": 1.0444444444444443,
+    "placementError": 0.9249999999999998,
     "texts": [
      {
       "role": "headline",
@@ -600,30 +572,30 @@
      {
       "what": "M1 top edge",
       "key": 82.6,
-      "got": 82.45,
-      "err": 0.14999999999999858,
+      "got": 82.5,
+      "err": 0.10000000000000142,
       "score": 1,
       "measured": true
      },
      {
       "what": "coverage",
       "key": 23,
-      "got": 26.4,
-      "err": 3.3999999999999986,
-      "score": 0.9555555555555557,
+      "got": 26.2,
+      "err": 3.1999999999999993,
+      "score": 0.9777777777777779,
       "measured": true
      }
     ],
     "focalDistance": 0.23480277726988208,
     "firstOk": false,
     "pts": {
-     "elements": 30,
+     "elements": 28.333333333333332,
      "placement": 20,
      "text": 20,
-     "measurements": 19.703703703703706,
+     "measurements": 19.85185185185185,
      "composition": 2.2819027955541267
     },
-    "total": 91.98560649925784
+    "total": 90.46708798073931
    },
    "key": {
     "glyph": null,
@@ -635,29 +607,28 @@
    "imageId": "ddd7f0710af668e6ed7d088a2e010a8704b1b3a34b6500f2de30c5f9a8dea732",
    "why": "ours: full-screen key art with a logo only",
    "calls": 1,
-   "costUsd": 0.14071699999999998,
+   "costUsd": 0.09186849999999999,
    "usage": [
     {
      "inputTokens": 2,
-     "outputTokens": 1728,
-     "cacheReadTokens": 10308,
-     "cacheWriteTokens": 2586,
-     "durationMs": 21584,
+     "outputTokens": 700,
+     "cacheReadTokens": 3714,
+     "cacheWriteTokens": 2796,
+     "durationMs": 8478,
      "turns": 2,
-     "wallMs": 26157,
+     "wallMs": 12800,
      "requests": 1
     }
    ],
-   "layoutShareOfAnswer": 0.3204778156996587,
-   "layoutOutputTokens": 554,
-   "secondsPerOutputToken": 0.01249074074074074,
+   "layoutShareOfAnswer": 0.9811320754716981,
+   "layoutOutputTokens": 687,
+   "secondsPerOutputToken": 0.012111428571428572,
    "baseline": {
     "costUsd": 0.24703825000000001,
     "usage": null,
     "answerChars": 1902,
     "coreDiff": [
-     "composition single_full_capture -> pure_art",
-     "headline \"ROGUE LEGEND\" -> \"\""
+     "composition single_full_capture -> pure_art"
     ],
     "final": {
      "imageRef": "img1",
@@ -771,7 +742,7 @@
    },
    "layoutProblems": [],
    "counts": {
-    "inGame": 3,
+    "inGame": 4,
     "marketing": 1
    },
    "layout": {
@@ -796,17 +767,17 @@
      },
      {
       "id": "S2",
-      "role": "character",
+      "role": "other",
       "box": {
-       "x": 32,
-       "y": 52,
-       "w": 56,
-       "h": 30
+       "x": 5,
+       "y": 28,
+       "w": 90,
+       "h": 28
       },
       "tiltDeg": 0,
       "z": 1,
       "textEn": null,
-      "note": "",
+      "note": "silhouetted monsters with red eyes: spider, bats, wolf, ghouls",
       "capture": null,
       "textRef": null,
       "text": null,
@@ -816,13 +787,31 @@
       "id": "S3",
       "role": "character",
       "box": {
-       "x": 22,
-       "y": 72,
-       "w": 30,
-       "h": 18
+       "x": 32,
+       "y": 52,
+       "w": 56,
+       "h": 30
       },
       "tiltDeg": 0,
       "z": 2,
+      "textEn": null,
+      "note": "",
+      "capture": null,
+      "textRef": null,
+      "text": null,
+      "covers": []
+     },
+     {
+      "id": "S4",
+      "role": "character",
+      "box": {
+       "x": 23,
+       "y": 72,
+       "w": 28,
+       "h": 18
+      },
+      "tiltDeg": 0,
+      "z": 3,
       "textEn": null,
       "note": "",
       "capture": null,
@@ -837,9 +826,9 @@
       "role": "logo",
       "box": {
        "x": 18,
-       "y": 5,
+       "y": 6,
        "w": 64,
-       "h": 22
+       "h": 20
       },
       "tiltDeg": 0,
       "z": 0,
@@ -861,12 +850,13 @@
      },
      "readingOrder": [
       "M1",
-      "S2",
       "S3",
+      "S4",
+      "S2",
       "S1"
      ],
-     "overlaySharePercent": 14,
-     "summary": "Full-screen cave art with the large game logo in the top quarter, a rock golem in the centre and the small hero in the lower left."
+     "overlaySharePercent": 13,
+     "summary": "Full-screen cave art with the ROGUE LEGEND logo stacked in the top fifth, a rune-covered stone golem boss looming centre-lower and the small elf hero facing it at bottom-left, monster silhouettes lurking mid-frame."
     }
    },
    "measure": {
@@ -888,7 +878,7 @@
      },
      {
       "id": "S2",
-      "role": "character",
+      "role": "other",
       "box": null,
       "tiltDeg": null,
       "top": null,
@@ -898,6 +888,16 @@
      },
      {
       "id": "S3",
+      "role": "character",
+      "box": null,
+      "tiltDeg": null,
+      "top": null,
+      "bottom": null,
+      "colour": null,
+      "snapped": []
+     },
+     {
+      "id": "S4",
       "role": "character",
       "box": null,
       "tiltDeg": null,
@@ -923,7 +923,7 @@
      "left": 7.6,
      "right": 3.3
     },
-    "coverageUpTo": 14,
+    "coverageUpTo": 13,
     "experimental": {
      "headlineGlyphPercent": null,
      "headlineContrast": null
@@ -931,11 +931,11 @@
    },
    "modelOnly": {
     "f1": {
-     "inGame": 0.8571428571428571,
+     "inGame": 0.75,
      "marketing": 1,
-     "mean": 0.9285714285714286
+     "mean": 0.875
     },
-    "placementError": 1.125,
+    "placementError": 0.875,
     "texts": [
      {
       "role": "logo",
@@ -949,8 +949,8 @@
      {
       "what": "coverage",
       "key": 12.2,
-      "got": 14,
-      "err": 1.8000000000000007,
+      "got": 13,
+      "err": 0.8000000000000007,
       "score": 1,
       "measured": false
      }
@@ -958,21 +958,21 @@
     "focalDistance": 0.4063487268761007,
     "firstOk": true,
     "pts": {
-     "elements": 27.857142857142858,
+     "elements": 26.25,
      "placement": 20,
      "text": 20,
      "measurements": 20,
      "composition": 3
     },
-    "total": 90.85714285714286
+    "total": 89.25
    },
    "measured": {
     "f1": {
-     "inGame": 0.8571428571428571,
+     "inGame": 0.75,
      "marketing": 1,
-     "mean": 0.9285714285714286
+     "mean": 0.875
     },
-    "placementError": 1.125,
+    "placementError": 0.875,
     "texts": [
      {
       "role": "logo",
@@ -986,8 +986,8 @@
      {
       "what": "coverage",
       "key": 12.2,
-      "got": 14,
-      "err": 1.8000000000000007,
+      "got": 13,
+      "err": 0.8000000000000007,
       "score": 1,
       "measured": true
      }
@@ -995,13 +995,13 @@
     "focalDistance": 0.4063487268761007,
     "firstOk": true,
     "pts": {
-     "elements": 27.857142857142858,
+     "elements": 26.25,
      "placement": 20,
      "text": 20,
      "measurements": 20,
      "composition": 3
     },
-    "total": 90.85714285714286
+    "total": 89.25
    },
    "key": {
     "glyph": null,
@@ -1013,22 +1013,22 @@
    "imageId": "ce1c0012193fae117746075beee7b27af321fd86e732f5610ffc2837d938545b",
    "why": "landscape: one capture inside marketing art, cut-outs",
    "calls": 1,
-   "costUsd": 0.209217,
+   "costUsd": 0.14132850000000002,
    "usage": [
     {
      "inputTokens": 2,
-     "outputTokens": 3098,
-     "cacheReadTokens": 10308,
-     "cacheWriteTokens": 2586,
-     "durationMs": 35014,
+     "outputTokens": 1572,
+     "cacheReadTokens": 3714,
+     "cacheWriteTokens": 3089,
+     "durationMs": 15264,
      "turns": 2,
-     "wallMs": 40083,
+     "wallMs": 18337,
      "requests": 1
     }
    ],
-   "layoutShareOfAnswer": 0.42481632653061224,
-   "layoutOutputTokens": 1316,
-   "secondsPerOutputToken": 0.01130213040671401,
+   "layoutShareOfAnswer": 0.9915044247787611,
+   "layoutOutputTokens": 1559,
+   "secondsPerOutputToken": 0.009709923664122136,
    "baseline": {
     "costUsd": 0.158995,
     "usage": null,
@@ -1253,8 +1253,8 @@
    },
    "layoutProblems": [],
    "counts": {
-    "inGame": 7,
-    "marketing": 6
+    "inGame": 6,
+    "marketing": 8
    },
    "layout": {
     "inGame": [
@@ -1262,32 +1262,32 @@
       "id": "S1",
       "role": "main-scene",
       "box": {
-       "x": 2,
-       "y": 2,
-       "w": 96,
-       "h": 96
+       "x": 1,
+       "y": 1,
+       "w": 98,
+       "h": 98
       },
       "tiltDeg": 0,
       "z": 0,
-      "textEn": null,
+      "textEn": "damage numbers -583, -2774, -587",
       "note": "",
       "capture": 0,
       "textRef": null,
-      "text": null,
+      "text": "-583 -2774 -587",
       "covers": []
      },
      {
       "id": "S2",
       "role": "hud",
       "box": {
-       "x": 3,
-       "y": 3,
-       "w": 34,
-       "h": 8
+       "x": 2,
+       "y": 4,
+       "w": 35,
+       "h": 7
       },
       "tiltDeg": 0,
-      "z": 1,
-      "textEn": "LV 17, 13450/1520, 999,999, 9,999",
+      "z": 2,
+      "textEn": "Level 17, HP 13450/1520, gold 999,999, gems 9,999",
       "note": "",
       "capture": 0,
       "textRef": null,
@@ -1299,12 +1299,12 @@
       "role": "hud",
       "box": {
        "x": 84,
-       "y": 3,
+       "y": 4,
        "w": 13,
-       "h": 8
+       "h": 6
       },
       "tiltDeg": 0,
-      "z": 1,
+      "z": 2,
       "textEn": "stage 1-6",
       "note": "",
       "capture": 0,
@@ -1322,8 +1322,8 @@
        "h": 60
       },
       "tiltDeg": 0,
-      "z": 1,
-      "textEn": "Lv.10 equipment icons",
+      "z": 2,
+      "textEn": "Level 10 equipment slots",
       "note": "",
       "capture": 0,
       "textRef": null,
@@ -1335,12 +1335,12 @@
       "role": "character",
       "box": {
        "x": 20,
-       "y": 32,
-       "w": 21,
-       "h": 34
+       "y": 36,
+       "w": 22,
+       "h": 30
       },
       "tiltDeg": 0,
-      "z": 2,
+      "z": 1,
       "textEn": null,
       "note": "",
       "capture": 0,
@@ -1353,35 +1353,17 @@
       "role": "character",
       "box": {
        "x": 48,
-       "y": 25,
-       "w": 30,
-       "h": 42
+       "y": 30,
+       "w": 26,
+       "h": 36
       },
       "tiltDeg": 0,
-      "z": 2,
+      "z": 1,
       "textEn": null,
       "note": "",
       "capture": 0,
       "textRef": null,
       "text": null,
-      "covers": []
-     },
-     {
-      "id": "S7",
-      "role": "game-text",
-      "box": {
-       "x": 22,
-       "y": 22,
-       "w": 44,
-       "h": 18
-      },
-      "tiltDeg": 0,
-      "z": 3,
-      "textEn": "damage numbers",
-      "note": "",
-      "capture": 0,
-      "textRef": null,
-      "text": "-583 -2774 -587",
       "covers": []
      }
     ],
@@ -1402,16 +1384,18 @@
       "capture": null,
       "textRef": null,
       "text": null,
-      "covers": []
+      "covers": [
+       "S1"
+      ]
      },
      {
       "id": "M2",
       "role": "cut-out",
       "box": {
-       "x": 66,
+       "x": 68,
        "y": 30,
-       "w": 34,
-       "h": 68
+       "w": 32,
+       "h": 66
       },
       "tiltDeg": 0,
       "z": 1,
@@ -1431,8 +1415,69 @@
       "box": {
        "x": 56,
        "y": 68,
-       "w": 32,
-       "h": 28
+       "w": 20,
+       "h": 30
+      },
+      "tiltDeg": 0,
+      "z": 3,
+      "textEn": null,
+      "note": "",
+      "capture": null,
+      "textRef": null,
+      "text": null,
+      "covers": [
+       "S1"
+      ]
+     },
+     {
+      "id": "M4",
+      "role": "cut-out",
+      "box": {
+       "x": 76,
+       "y": 76,
+       "w": 12,
+       "h": 20
+      },
+      "tiltDeg": 0,
+      "z": 4,
+      "textEn": null,
+      "note": "",
+      "capture": null,
+      "textRef": null,
+      "text": null,
+      "covers": [
+       "S1"
+      ]
+     },
+     {
+      "id": "M5",
+      "role": "headline",
+      "box": {
+       "x": 2,
+       "y": 73,
+       "w": 58,
+       "h": 14
+      },
+      "tiltDeg": 0,
+      "z": 2,
+      "textEn": "Collect Companions",
+      "note": "",
+      "capture": null,
+      "textRef": 0,
+      "text": null,
+      "covers": [
+       "S1",
+       "S4"
+      ]
+     },
+     {
+      "id": "M6",
+      "role": "band",
+      "box": {
+       "x": 10,
+       "y": 87,
+       "w": 43,
+       "h": 9
       },
       "tiltDeg": 0,
       "z": 2,
@@ -1446,57 +1491,16 @@
       ]
      },
      {
-      "id": "M4",
-      "role": "headline",
-      "box": {
-       "x": 3,
-       "y": 74,
-       "w": 57,
-       "h": 12
-      },
-      "tiltDeg": 0,
-      "z": 3,
-      "textEn": "Collect Companions",
-      "note": "",
-      "capture": null,
-      "textRef": 0,
-      "text": null,
-      "covers": [
-       "S1",
-       "S4"
-      ]
-     },
-     {
-      "id": "M5",
-      "role": "band",
-      "box": {
-       "x": 10,
-       "y": 86,
-       "w": 43,
-       "h": 9
-      },
-      "tiltDeg": 0,
-      "z": 3,
-      "textEn": null,
-      "note": "",
-      "capture": null,
-      "textRef": null,
-      "text": null,
-      "covers": [
-       "S1"
-      ]
-     },
-     {
-      "id": "M6",
+      "id": "M7",
       "role": "subline",
       "box": {
        "x": 18,
        "y": 88,
        "w": 34,
-       "h": 6
+       "h": 7
       },
       "tiltDeg": 0,
-      "z": 4,
+      "z": 3,
       "textEn": "Combat Squad, Auto Upgrade",
       "note": "",
       "capture": null,
@@ -1505,23 +1509,43 @@
       "covers": [
        "S1"
       ]
+     },
+     {
+      "id": "M8",
+      "role": "badge",
+      "box": {
+       "x": 10,
+       "y": 86,
+       "w": 8,
+       "h": 10
+      },
+      "tiltDeg": 0,
+      "z": 4,
+      "textEn": null,
+      "note": "",
+      "capture": null,
+      "textRef": null,
+      "text": null,
+      "covers": [
+       "S1"
+      ]
      }
     ],
     "composition": {
      "focal": {
-      "x": 30,
+      "x": 31,
       "y": 80,
-      "id": "M4"
+      "id": "M5"
      },
      "readingOrder": [
-      "M4",
+      "M5",
       "M2",
       "M3",
-      "M6",
+      "M7",
       "S6"
      ],
-     "overlaySharePercent": 40,
-     "summary": "Full landscape battle capture inside a thin white frame; a huge blue headline sits over the bottom-left with a light-blue subline band beneath, while large companion cut-outs break out of the bottom-right corner."
+     "overlaySharePercent": 45,
+     "summary": "Full battle capture inside a white frame; a large white mascot cut-out with a mushroom hero and chick dominates the right, while a big blue headline and a pill band with the subline fill the bottom-left."
     }
    },
    "measure": {
@@ -1602,16 +1626,6 @@
       "snapped": []
      },
      {
-      "id": "S7",
-      "role": "game-text",
-      "box": null,
-      "tiltDeg": null,
-      "top": null,
-      "bottom": null,
-      "colour": null,
-      "snapped": []
-     },
-     {
       "id": "M1",
       "role": "frame",
       "box": null,
@@ -1643,7 +1657,7 @@
      },
      {
       "id": "M4",
-      "role": "headline",
+      "role": "cut-out",
       "box": null,
       "tiltDeg": null,
       "top": null,
@@ -1653,6 +1667,16 @@
      },
      {
       "id": "M5",
+      "role": "headline",
+      "box": null,
+      "tiltDeg": null,
+      "top": null,
+      "bottom": null,
+      "colour": null,
+      "snapped": []
+     },
+     {
+      "id": "M6",
       "role": "band",
       "box": {
        "x": 10,
@@ -1666,27 +1690,37 @@
        "right": 87.6,
        "angleDeg": 0,
        "quality": {
-        "share": 0.9390000000000001,
+        "share": 1,
         "rms": 0.3,
-        "strength": 242.1
+        "strength": 241.3
        }
       },
       "bottom": {
        "left": 95.7,
-       "right": 95.7,
+       "right": 95.6,
        "angleDeg": 0,
        "quality": {
-        "share": 0.9470000000000001,
-        "rms": 0.1,
-        "strength": 227.4
+        "share": 0.985,
+        "rms": 0.3,
+        "strength": 226.4
        }
       },
-      "colour": "#40a3f5",
+      "colour": "#40a3f4",
       "snapped": []
      },
      {
-      "id": "M6",
+      "id": "M7",
       "role": "subline",
+      "box": null,
+      "tiltDeg": null,
+      "top": null,
+      "bottom": null,
+      "colour": null,
+      "snapped": []
+     },
+     {
+      "id": "M8",
+      "role": "badge",
       "box": null,
       "tiltDeg": null,
       "top": null,
@@ -1701,19 +1735,19 @@
      "left": 0,
      "right": 0
     },
-    "coverageUpTo": 42.3,
+    "coverageUpTo": 39,
     "experimental": {
-     "headlineGlyphPercent": 12.2,
+     "headlineGlyphPercent": 14.1,
      "headlineContrast": 1.5
     }
    },
    "modelOnly": {
     "f1": {
-     "inGame": 0.923076923076923,
-     "marketing": 0.7692307692307692,
-     "mean": 0.846153846153846
+     "inGame": 1,
+     "marketing": 0.7999999999999999,
+     "mean": 0.8999999999999999
     },
-    "placementError": 2.125,
+    "placementError": 1.4791666666666667,
     "texts": [
      {
       "role": "headline",
@@ -1733,31 +1767,31 @@
     "parts": [
      {
       "what": "coverage",
-      "key": 40,
-      "got": 40,
-      "err": 0,
-      "score": 1,
+      "key": 40.4,
+      "got": 45,
+      "err": 4.600000000000001,
+      "score": 0.8222222222222221,
       "measured": false
      }
     ],
-    "focalDistance": 0.4670359214544246,
+    "focalDistance": 0.45858283830140195,
     "firstOk": false,
     "pts": {
-     "elements": 25.38461538461538,
+     "elements": 26.999999999999996,
      "placement": 20,
      "text": 20,
-     "measurements": 20,
+     "measurements": 16.444444444444443,
      "composition": 0
     },
-    "total": 85.38461538461539
+    "total": 83.44444444444444
    },
    "measured": {
     "f1": {
-     "inGame": 0.923076923076923,
-     "marketing": 0.7692307692307692,
-     "mean": 0.846153846153846
+     "inGame": 1,
+     "marketing": 0.7999999999999999,
+     "mean": 0.8999999999999999
     },
-    "placementError": 2.0727272727272728,
+    "placementError": 1.4312500000000001,
     "texts": [
      {
       "role": "headline",
@@ -1777,23 +1811,23 @@
     "parts": [
      {
       "what": "coverage",
-      "key": 40,
-      "got": 42.3,
-      "err": 2.299999999999997,
+      "key": 40.4,
+      "got": 39,
+      "err": 1.3999999999999986,
       "score": 1,
       "measured": true
      }
     ],
-    "focalDistance": 0.4670359214544246,
+    "focalDistance": 0.45858283830140195,
     "firstOk": false,
     "pts": {
-     "elements": 25.38461538461538,
+     "elements": 26.999999999999996,
      "placement": 20,
      "text": 20,
      "measurements": 20,
      "composition": 0
     },
-    "total": 85.38461538461539
+    "total": 87
    },
    "key": {
     "glyph": null,
@@ -1805,22 +1839,22 @@
    "imageId": "9890be41062c557eb4ac1b6261516a3d47acc9c41009f68aca3302b930c01ce7",
    "why": "text-heavy Japanese image with tilted bands",
    "calls": 1,
-   "costUsd": 0.169967,
+   "costUsd": 0.1116985,
    "usage": [
     {
      "inputTokens": 2,
-     "outputTokens": 2313,
-     "cacheReadTokens": 10308,
-     "cacheWriteTokens": 2586,
-     "durationMs": 30866,
+     "outputTokens": 1031,
+     "cacheReadTokens": 3714,
+     "cacheWriteTokens": 2960,
+     "durationMs": 11055,
      "turns": 2,
-     "wallMs": 42735,
+     "wallMs": 14551,
      "requests": 1
     }
    ],
-   "layoutShareOfAnswer": 0.40098765432098765,
-   "layoutOutputTokens": 927,
-   "secondsPerOutputToken": 0.013344574146130566,
+   "layoutShareOfAnswer": 0.9869777536625067,
+   "layoutOutputTokens": 1018,
+   "secondsPerOutputToken": 0.010722599418040737,
    "baseline": {
     "costUsd": 0.12430100000000001,
     "usage": {
@@ -1992,7 +2026,7 @@
    "layoutProblems": [],
    "counts": {
     "inGame": 3,
-    "marketing": 4
+    "marketing": 5
    },
    "layout": {
     "inGame": [
@@ -2019,7 +2053,7 @@
       "role": "panel",
       "box": {
        "x": 15,
-       "y": 6,
+       "y": 5,
        "w": 20,
        "h": 68
       },
@@ -2043,46 +2077,45 @@
       },
       "tiltDeg": 0,
       "z": 2,
-      "textEn": "2 Lucky Dog — Gain 1 skill at the start of battle. All survivors are the gods' favourites",
+      "textEn": "Lucky Dog: Gain 1 skill at battle start. All survivors are favored by the gods",
       "note": "",
       "capture": 0,
       "textRef": null,
-      "text": "2 ラッキードッグ 戦闘開始時に1個のスキルを獲得 すべてのサバイバーは神のお気に入り",
+      "text": "ラッキードッグ 戦闘開始時に1個のスキルを獲得 すべてのサバイバーは神のお気に入り",
       "covers": []
      }
     ],
     "marketing": [
      {
       "id": "M1",
-      "role": "logo",
+      "role": "band",
       "box": {
-       "x": 3,
-       "y": 2,
-       "w": 50,
-       "h": 6
+       "x": 0,
+       "y": 72,
+       "w": 100,
+       "h": 10
       },
-      "tiltDeg": 0,
+      "tiltDeg": -8,
       "z": 0,
-      "textEn": "Dada Survivor",
+      "textEn": null,
       "note": "",
       "capture": null,
       "textRef": null,
       "text": null,
       "covers": [
-       "S1",
-       "S2"
+       "S1"
       ]
      },
      {
       "id": "M2",
-      "role": "cut-out",
+      "role": "band",
       "box": {
-       "x": 40,
-       "y": 42,
-       "w": 60,
-       "h": 37
+       "x": 0,
+       "y": 74,
+       "w": 100,
+       "h": 26
       },
-      "tiltDeg": 0,
+      "tiltDeg": -8,
       "z": 1,
       "textEn": null,
       "note": "",
@@ -2095,14 +2128,14 @@
      },
      {
       "id": "M3",
-      "role": "band",
+      "role": "cut-out",
       "box": {
-       "x": 0,
-       "y": 76,
-       "w": 100,
-       "h": 24
+       "x": 40,
+       "y": 42,
+       "w": 60,
+       "h": 38
       },
-      "tiltDeg": -8,
+      "tiltDeg": 0,
       "z": 2,
       "textEn": null,
       "note": "",
@@ -2110,7 +2143,8 @@
       "textRef": null,
       "text": null,
       "covers": [
-       "S1"
+       "S1",
+       "S3"
       ]
      },
      {
@@ -2129,26 +2163,45 @@
       "capture": null,
       "textRef": 0,
       "text": null,
+      "covers": []
+     },
+     {
+      "id": "M5",
+      "role": "logo",
+      "box": {
+       "x": 3,
+       "y": 1,
+       "w": 50,
+       "h": 7
+      },
+      "tiltDeg": 0,
+      "z": 4,
+      "textEn": "Survivor.io",
+      "note": "",
+      "capture": null,
+      "textRef": null,
+      "text": "ダダサバイバー",
       "covers": [
-       "S1"
+       "S1",
+       "S2"
       ]
      }
     ],
     "composition": {
      "focal": {
-      "x": 68,
-      "y": 60,
-      "id": "M2"
+      "x": 65,
+      "y": 58,
+      "id": "M3"
      },
      "readingOrder": [
-      "M1",
-      "S3",
-      "M2",
+      "M3",
       "M4",
-      "S2"
+      "S3",
+      "S2",
+      "M5"
      ],
-     "overlaySharePercent": 45,
-     "summary": "Full talent-tree capture with the logo top-left; a big purple monster cut-out sits on the right over the screen and a tilted purple band across the bottom quarter carries the headline."
+     "overlaySharePercent": 50,
+     "summary": "Full talent-tree capture with a skill tooltip; a large purple creature cut-out breaks out over the lower right, above tilted white and purple bands across the bottom quarter carrying the headline, with the game logo top-left."
     }
    },
    "measure": {
@@ -2190,16 +2243,63 @@
      },
      {
       "id": "M1",
-      "role": "logo",
-      "box": null,
-      "tiltDeg": null,
-      "top": null,
-      "bottom": null,
-      "colour": null,
+      "role": "band",
+      "box": {
+       "x": 0,
+       "y": 79.4,
+       "w": 100,
+       "h": 4.9
+      },
+      "tiltDeg": -7.5,
+      "top": {
+       "left": 83.1,
+       "right": 75.6,
+       "angleDeg": -7.5,
+       "quality": {
+        "share": 0.659,
+        "rms": 0.3,
+        "strength": 374.8
+       }
+      },
+      "bottom": {
+       "left": 89.8,
+       "right": 78.7,
+       "angleDeg": -11,
+       "quality": {
+        "share": 1,
+        "rms": 0.3,
+        "strength": 149.4
+       }
+      },
+      "colour": "#353c4f",
       "snapped": []
      },
      {
       "id": "M2",
+      "role": "band",
+      "box": {
+       "x": 0,
+       "y": 84.4,
+       "w": 100,
+       "h": 15.6
+      },
+      "tiltDeg": -11,
+      "top": {
+       "left": 89.8,
+       "right": 78.7,
+       "angleDeg": -11,
+       "quality": {
+        "share": 1,
+        "rms": 0.3,
+        "strength": 149.4
+       }
+      },
+      "bottom": null,
+      "colour": "#771190",
+      "snapped": []
+     },
+     {
+      "id": "M3",
       "role": "cut-out",
       "box": null,
       "tiltDeg": null,
@@ -2209,32 +2309,18 @@
       "snapped": []
      },
      {
-      "id": "M3",
-      "role": "band",
-      "box": {
-       "x": 0,
-       "y": 79.4,
-       "w": 100,
-       "h": 20.6
-      },
-      "tiltDeg": -7.5,
-      "top": {
-       "left": 83.1,
-       "right": 75.6,
-       "angleDeg": -7.5,
-       "quality": {
-        "share": 0.655,
-        "rms": 0.3,
-        "strength": 374.3
-       }
-      },
+      "id": "M4",
+      "role": "headline",
+      "box": null,
+      "tiltDeg": null,
+      "top": null,
       "bottom": null,
-      "colour": "#771190",
+      "colour": null,
       "snapped": []
      },
      {
-      "id": "M4",
-      "role": "headline",
+      "id": "M5",
+      "role": "logo",
       "box": null,
       "tiltDeg": null,
       "top": null,
@@ -2258,10 +2344,10 @@
    "modelOnly": {
     "f1": {
      "inGame": 1,
-     "marketing": 0.888888888888889,
-     "mean": 0.9444444444444444
+     "marketing": 1,
+     "mean": 1
     },
-    "placementError": 1.7857142857142858,
+    "placementError": 1.859375,
     "texts": [
      {
       "role": "headline",
@@ -2273,8 +2359,8 @@
      {
       "role": "logo",
       "key": "ダダサバイバー",
-      "got": "",
-      "cer": 1,
+      "got": "ダダサバイバー",
+      "cer": 0,
       "meaning": true
      }
     ],
@@ -2282,25 +2368,25 @@
      {
       "what": "M1 tilt",
       "key": -7.7,
-      "got": 0,
-      "err": 7.7,
-      "score": 0,
+      "got": -8,
+      "err": 0.2999999999999998,
+      "score": 1,
       "measured": false
      },
      {
       "what": "M1 top edge",
       "key": 78.75,
-      "got": -1,
-      "err": 99,
+      "got": 71.95086213740692,
+      "err": 6.799137862593092,
       "score": 0,
       "measured": false
      },
      {
       "what": "M1 bottom edge",
       "key": 83.45,
-      "got": -1,
-      "err": 99,
-      "score": 0,
+      "got": 82.04913786259308,
+      "err": 1.5972890239952378,
+      "score": 0.9783802168899471,
       "measured": false
      },
      {
@@ -2314,38 +2400,38 @@
      {
       "what": "M2 top edge",
       "key": 83.45,
-      "got": 75.88206912977657,
-      "err": 7.567930870223428,
+      "got": 73.87224155725796,
+      "err": 9.577758442742038,
       "score": 0,
       "measured": false
      },
      {
       "what": "coverage",
       "key": 33.9,
-      "got": 45,
-      "err": 11.100000000000001,
-      "score": 0.09999999999999984,
+      "got": 50,
+      "err": 16.1,
+      "score": 0,
       "measured": false
      }
     ],
-    "focalDistance": 0.035050451133032234,
+    "focalDistance": 0.013471147318956206,
     "firstOk": false,
     "pts": {
-     "elements": 28.333333333333332,
+     "elements": 30,
      "placement": 20,
-     "text": 12.5,
-     "measurements": 1.8333333333333333,
+     "text": 20,
+     "measurements": 8.094600722966492,
      "composition": 7
     },
-    "total": 69.66666666666666
+    "total": 85.09460072296649
    },
    "measured": {
     "f1": {
      "inGame": 1,
-     "marketing": 0.888888888888889,
-     "mean": 0.9444444444444444
+     "marketing": 1,
+     "mean": 1
     },
-    "placementError": 1.6642857142857141,
+    "placementError": 1.3625000000000007,
     "texts": [
      {
       "role": "headline",
@@ -2357,8 +2443,8 @@
      {
       "role": "logo",
       "key": "ダダサバイバー",
-      "got": "",
-      "cer": 1,
+      "got": "ダダサバイバー",
+      "cer": 0,
       "meaning": true
      }
     ],
@@ -2366,41 +2452,41 @@
      {
       "what": "M1 tilt",
       "key": -7.7,
-      "got": 0,
-      "err": 7.7,
-      "score": 0,
-      "measured": false
+      "got": -7.5,
+      "err": 0.20000000000000018,
+      "score": 1,
+      "measured": true
      },
      {
       "what": "M1 top edge",
       "key": 78.75,
-      "got": -1,
-      "err": 99,
-      "score": 0,
-      "measured": false
+      "got": 79.35,
+      "err": 0.5999999999999943,
+      "score": 1,
+      "measured": true
      },
      {
       "what": "M1 bottom edge",
       "key": 83.45,
-      "got": -1,
-      "err": 99,
-      "score": 0,
-      "measured": false
+      "got": 84.25,
+      "err": 0.7999999999999972,
+      "score": 1,
+      "measured": true
      },
      {
       "what": "M2 tilt",
       "key": -11.2,
-      "got": -7.5,
-      "err": 3.6999999999999993,
-      "score": 0.3250000000000002,
+      "got": -11,
+      "err": 0.1999999999999993,
+      "score": 1,
       "measured": true
      },
      {
       "what": "M2 top edge",
       "key": 83.45,
-      "got": 79.35,
-      "err": 4.1000000000000085,
-      "score": 0.42222222222222033,
+      "got": 84.25,
+      "err": 0.7999999999999972,
+      "score": 1,
       "measured": true
      },
      {
@@ -2412,16 +2498,16 @@
       "measured": true
      }
     ],
-    "focalDistance": 0.035050451133032234,
+    "focalDistance": 0.013471147318956206,
     "firstOk": false,
     "pts": {
-     "elements": 28.333333333333332,
+     "elements": 30,
      "placement": 20,
-     "text": 12.5,
-     "measurements": 3.2685185185185133,
+     "text": 20,
+     "measurements": 17.444444444444446,
      "composition": 7
     },
-    "total": 71.10185185185185
+    "total": 94.44444444444444
    },
    "key": {
     "glyph": 5.3,

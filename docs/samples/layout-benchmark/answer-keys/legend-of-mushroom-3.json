@@ -226,11 +226,12 @@
       "M6",
       "S3"
     ],
-    "overlaySharePercent": 40
+    "overlaySharePercent": 40.4
   },
   "measurements": {
     "bands": [],
-    "coveragePercent": 40,
+    "coveragePercent": 40.4,
+    "coverageMethod": "Pixel mask (union of per-element masks from colour thresholds, outline hole-filling and connected components): card frame/margin outside the white stroke's inner edge 7.2%, cat cut-out with white halo 11.4%, mushroom knight 2.5%, chick 1.3%, headline 4.7%, subline pill with icon 3.4%, blurred foreground grass/bush not under other layers 9.9%.",
     "headlineGlyphPercent": null,
     "headlineContrast": null
   },

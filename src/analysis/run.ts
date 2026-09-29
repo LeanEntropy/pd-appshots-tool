@@ -16,11 +16,11 @@ import { compareOurs, type OursVsPatterns } from "./ours-vs.ts";
 import { patternFit } from "./pattern-fit.ts";
 import { findPatterns, type Patterns } from "./patterns.ts";
 import type { AnalysisPlan } from "./plan.ts";
-import { layoutPromptFor, type PromptName, renderAnalysisPrompt, renderPrompt } from "./prompts.ts";
+import { type PromptName, renderAnalysisPrompt, renderPrompt } from "./prompts.ts";
 import type { Provider } from "./providers.ts";
 import { recordWriter, withCurrentMapping } from "./record-refresh.ts";
 import { type AnalysisRecord, readRecords } from "./records.ts";
-import { analyseChunk, modelCopy } from "./run-chunk.ts";
+import { analyseChunk, layoutAfterSave, modelCopy } from "./run-chunk.ts";
 import { batchContext, withOwnCost } from "./run-context.ts";
 import { analyseImages } from "./run-images.ts";
 import type { OnItem, RunStep } from "./run-status.ts";
@@ -154,7 +154,6 @@ export async function runAnalysis(
         runId,
         ctx: withOwnCost(bc.ctx, onCost),
         lean,
-        layoutPrompt: layoutPromptFor(loaded.root, paths.objects, taxonomy, config),
         phase: report,
       }),
     save: writeRec,
@@ -166,6 +165,7 @@ export async function runAnalysis(
     counter,
     total: full.length,
     item: deps.onItem,
+    afterSave: layoutAfterSave(loaded, paths, db, bc.ctx, deps.producer),
   });
   records.push(...loop.records);
   const { stoppedForBudget, cancelled, aborted } = loop;

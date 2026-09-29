@@ -5,17 +5,12 @@ import type { CallLog } from "../analysis/call.ts";
 import { compareLayers, type LayerItem } from "../analysis/layer-diff-run.ts";
 import { snapshotOrder } from "../analysis/orders.ts";
 import type { PlanItem } from "../analysis/plan.ts";
-import {
-  layoutPromptFor,
-  renderAnalysisPrompt,
-  renderPrompt,
-  renderReportPrompt,
-} from "../analysis/prompts.ts";
+import { renderAnalysisPrompt, renderPrompt, renderReportPrompt } from "../analysis/prompts.ts";
 import { type Provider, providerFor } from "../analysis/providers.ts";
 import { recordWriter, withCurrentMapping } from "../analysis/record-refresh.ts";
 import { readRecords } from "../analysis/records.ts";
 import type { RunDeps, RunError } from "../analysis/run.ts";
-import { analyseChunk, modelCopy } from "../analysis/run-chunk.ts";
+import { analyseChunk, layoutAfterSave, modelCopy } from "../analysis/run-chunk.ts";
 import { withOwnCost } from "../analysis/run-context.ts";
 import { analyseImages } from "../analysis/run-images.ts";
 import { STOPPED_STEP, stepTracker } from "../analysis/run-status.ts";
@@ -141,7 +136,6 @@ export async function runReport(
         runId,
         ctx: withOwnCost(ctx, onCost),
         lean: speed.leanAnswer,
-        layoutPrompt: layoutPromptFor(loaded.root, paths.objects, taxonomy, config),
         phase: report,
       }),
     save: writeRec,
@@ -153,6 +147,7 @@ export async function runReport(
     counter,
     total,
     item: deps.onItem,
+    afterSave: layoutAfterSave(loaded, paths, db, ctx, deps.producer),
   });
   let cancelled = produce.cancelled;
   let stoppedForBudget = produce.stoppedForBudget;

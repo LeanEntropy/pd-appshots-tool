@@ -1,6 +1,6 @@
 # Plan: layout breakdown and wireframes per store image
 
-Date: 2026-09-28. Status: **approved 2026-09-29 (decisions in section 11); benchmark run 2026-09-29: NO-GO (section 12), not merged**. Reviewed by gpt-5.6-sol (review in `docs/reviews/plan-layout-wireframes-review-gpt.md`; what was applied or declined is at the end). No code yet.
+Date: 2026-09-28. Status: **approved 2026-09-29 (decisions in section 11); the separate-call version passed its benchmark and is merged (section 14)**. Reviewed by gpt-5.6-sol (review in `docs/reviews/plan-layout-wireframes-review-gpt.md`; what was applied or declined is at the end). No code yet.
 Authority: `memory/PILLARS.md`. Builds on `docs/plan-reports.md` (R2b A/B test cards, R3 builder, R4 country step), `docs/analysis-requirements-user-2026-09-27.md`, `docs/report-requirements-user-2026-09-28.md`. Answer key: the four agent breakdowns in `docs/samples/wireframe-*/`.
 
 ## 0. Bottom line
@@ -359,3 +359,27 @@ So 3 of the 4 earlier differences come from the newer prompt or run-to-run varia
 **Gate 1 (contract v2 built, not yet re-measured):** layout contract `layout.v2` and prompt block `layout-block.v2.md`: a logo or badge element carries its own text in the original script when no marketing text holds it (a headline or subline must still point at the transcribed text), and every band is asked for separately (two bands of different colour or angle are two boxes, even when they touch); at most 8 boxes per layer as before. Re-scoring the existing answers cannot show the effect: they were made with v1. Checking it needs new layout calls (Survivor.io alone about $0.35 with a cold cache; all 4 about $0.90).
 
 **Gate 6, which coverage is right for Legend of Mushroom:** neither is exact. The key's 40% is the agent's rounded area budget (card margin ~6 + headline ~7 + pill ~4 + cat ~10 + knight ~3.5 + chick ~1.5 + blurred foreground ~8), not a pixel count; only the cat was measured (8.9%). The tool's 42.3% is an upper bound by design: cut-outs count by their rectangle (the cat's box is 34% x 68% of the image), and the blurred foreground has no box. The model's 40% equals the key's rounded estimate. The 2.3-point gap is within the key's own rounding, so this gate result says little either way; a pixel-mask coverage for the key (free) would settle it.
+
+## 14. Separate layout call: benchmark GO, merged (2026-09-29)
+
+Approved: the layout in its own call per image (the main analysis untouched), with the gate-1 fixes, a 4-image test capped at $0.80, a pixel-exact coverage for Legend of Mushroom's key, and the backfill built as a button but not run.
+
+**How it works now.** After each new analysis is saved, the same pool task (so 3 at a time alongside the main analyses, under the batch's spending limit; Stop ends the batch after the current images) makes one layout call (`src/layout/call.ts`, prompt `layout-only.v1`, step "layout" in the shared library). It gets the image and the finished reading (captures and marketing texts by index) and returns only the layout, checked against the reading: text and capture references, marketing layer present or not, and every character, creature or item the analysis puts on the marketing layer must be a cut-out (its logo a logo). A layout that never fits (at most 2 repairs) or cannot be paid leaves the analysis saved and the layout "missing". The layout is saved write-once, then measured by code; its cost is part of the image's paid attempt. The main analysis files (call, schemas, settle, compare, regions, the full-analysis and settle prompts) are identical to master; the analysis key never changes. Settings: "Layout breakdown for new analyses", on by default. The approval screen shows the layout call as its own row with its cost (so a plan approved before but not yet run asks for approval again).
+
+**Benchmark (spent $0.64 of $0.80; `docs/samples/layout-benchmark/`).** 5 calls: one per image, plus one repeat of Survivor.io after the cut-out check was added (its first layout drew the mascot as an in-game character; the repeat, a fresh call, drew it as a cut-out). The main readings given to the layout call: this morning's paired run (today's prompt) for 3 images, the saved record for Survivor.io.
+
+| Gate | Result | Numbers |
+|---|---|---|
+| 1. Each part | pass | Elements F1 0.93, placement error 1.2 points, text error 0% (the logo now carries its own text), band tilt and edges within tolerance 7 of 7 |
+| 2. Total | pass | 90.3 on average after measuring (90.5, 89.3, 87.0, 94.4) |
+| 3. Main analysis unchanged | pass | The layout is its own call after the analysis is saved; the 9 main-call files are identical to master |
+| 4. Cost and time | pass | $0.114 per image on average with a warm prompt cache ($0.092 to $0.140), plus about $0.07 once per batch for writing the prompt to the cache; 16 s per image (12.8 to 18.3 s), in the same pool as the analyses. Approved at up to $0.14 |
+| 5. Valid answers, cap | pass | 4 of 4, at most 8 boxes per layer |
+| 6. Measuring never worse by more than 2 points | pass | Legend of Mushroom's key coverage is now pixel-exact (40.4%, see `coverageMethod` in its key); the tool measured 39.0%, the model said 45% |
+| 7. Experimental | not validated | Glyph height and contrast stay experimental |
+
+**Changes made after seeing the benchmark images (free code, disclosed; 4 images is a sanity check, not statistics):** band edges are found among all long straight edges near the model's bands (within 6 degrees and 8% of the height; a band's top has its colour below it, its bottom above it), and bands the model drew touching share their boundary (up to 15% from the model's edge); the cut-out and logo consistency check. The first production batches log the same numbers.
+
+**Backfill button (built, not run).** Analysis page, card "Layouts for earlier images": the count (ours in every country and competitors' positions 1 to 3 without a current layout), the cost range and "Add layouts ($x to $y)". It opens an approval dialog listing every image; only "Approve and add layouts" starts it, for exactly that list, 3 at a time, stopping at the top of the range, with progress and Stop, under the AI lock. With the workspace of 2026-09-29: 84 images, about $7.60 to $12.60.
+
+**(i) popover.** Every analysed image with a layout shows its wireframe (measured boxes solid, estimated ones dashed), the one-line summary and the measured coverage; images analysed before say "Layout missing".

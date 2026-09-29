@@ -1,0 +1,89 @@
+{
+ "usd": 0.9203,
+ "calls": [
+  {
+   "step": "full-analysis",
+   "model": "claude-fable-5-1",
+   "key": "df953ee370ce66e8a12979fa5a287090040c7ccef5ab7b3198b31300be3e8538",
+   "imageIds": [
+    "b799e91aee76927b805be9c807e1892ea169d45aadc645dbc29608176b35ba21"
+   ],
+   "ok": true,
+   "costUsd": 0.4004,
+   "usage": {
+    "inputTokens": 2,
+    "outputTokens": 2850,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 12894,
+    "durationMs": 33951,
+    "turns": 2,
+    "wallMs": 40679,
+    "requests": 1
+   },
+   "at": "2026-09-29T07:16:17.188Z"
+  },
+  {
+   "step": "full-analysis",
+   "model": "claude-fable-5-1",
+   "key": "6a42389f68d1f28bf711b026dc7199783aec4c92cbfc80fcf28757864b89a698",
+   "imageIds": [
+    "ddd7f0710af668e6ed7d088a2e010a8704b1b3a34b6500f2de30c5f9a8dea732"
+   ],
+   "ok": true,
+   "costUsd": 0.14071699999999998,
+   "usage": {
+    "inputTokens": 2,
+    "outputTokens": 1728,
+    "cacheReadTokens": 10308,
+    "cacheWriteTokens": 2586,
+    "durationMs": 21584,
+    "turns": 2,
+    "wallMs": 26157,
+    "requests": 1
+   },
+   "at": "2026-09-29T07:16:43.412Z"
+  },
+  {
+   "step": "full-analysis",
+   "model": "claude-fable-5-1",
+   "key": "d2558ac5e8cc237494c3790e55971dedac7d0a36f9bb459a8967dda2a63d456a",
+   "imageIds": [
+    "ce1c0012193fae117746075beee7b27af321fd86e732f5610ffc2837d938545b"
+   ],
+   "ok": true,
+   "costUsd": 0.209217,
+   "usage": {
+    "inputTokens": 2,
+    "outputTokens": 3098,
+    "cacheReadTokens": 10308,
+    "cacheWriteTokens": 2586,
+    "durationMs": 35014,
+    "turns": 2,
+    "wallMs": 40083,
+    "requests": 1
+   },
+   "at": "2026-09-29T07:18:21.295Z"
+  },
+  {
+   "step": "full-analysis",
+   "model": "claude-fable-5-1",
+   "key": "f381227d0c1b13c053cf1ebbb8ecaf4b625f65c71f3abd6e05985f745602ee09",
+   "imageIds": [
+    "9890be41062c557eb4ac1b6261516a3d47acc9c41009f68aca3302b930c01ce7"
+   ],
+   "ok": true,
+   "costUsd": 0.169967,
+   "usage": {
+    "inputTokens": 2,
+    "outputTokens": 2313,
+    "cacheReadTokens": 10308,
+    "cacheWriteTokens": 2586,
+    "durationMs": 30866,
+    "turns": 2,
+    "wallMs": 42735,
+    "requests": 1
+   },
+   "at": "2026-09-29T07:20:06.436Z"
+  }
+ ]
+}

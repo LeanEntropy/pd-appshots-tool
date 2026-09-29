@@ -10,6 +10,12 @@ export const LAYOUT_CONTRACT = "layout.v2";
 /** Shape of the saved layout; part of every layout key. */
 export const LAYOUT_SCHEMA_VERSION = "layout-schema.v1";
 
+/**
+ * Cost of one layout call per newly analysed image, low and high (benchmark 2026-09-29: $0.09 to
+ * $0.14 with a warm prompt cache; the first call of a batch also writes the prompt, about $0.07).
+ */
+export const LAYOUT_USD_PER_IMAGE: readonly [number, number] = [0.09, 0.15];
+
 /** At most this many boxes per layer (user decision D4, 2026-09-29). */
 export const MAX_PER_LAYER = 8;
 

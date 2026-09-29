@@ -1,3 +1,5 @@
+// HISTORICAL: the same-call version (results in docs/samples/layout-benchmark/same-call/). It
+// imports modules removed since; run it from commit 6b6212e.
 /**
  * Paid part of the layout benchmark: the 4 sample images through the production call path
  * (full-analysis prompt + layout block, split validation, image inside the request), one call

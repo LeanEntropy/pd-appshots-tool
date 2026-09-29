@@ -4,13 +4,13 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { test } from "node:test";
 import type { CallContext } from "../src/analysis/call.ts";
-import { analyseImages } from "../src/analysis/call-images.ts";
 import type { ModelImage, Provider, VisionCall } from "../src/analysis/providers.ts";
 import type { Taxonomy } from "../src/config/load.ts";
+import { layoutCall, readingForLayout } from "../src/layout/call.ts";
 import { readLayout } from "../src/layout/checks.ts";
 import { workspaceStorage } from "../src/storage/index.ts";
 import { reading } from "./helpers/fake-provider.ts";
-import { asksLayout, fakeLayout } from "./helpers/layout.ts";
+import { fakeLayout } from "./helpers/layout.ts";
 
 const image: ModelImage = {
   mimeType: "image/jpeg",
@@ -38,13 +38,10 @@ function context(): CallContext {
   };
 }
 
-type Answer = (n: number) => unknown;
 const good = () => reading("img1", "gameplay", "EPIC");
-const withLayout = (layout: unknown, core = good()) => ({ images: [{ ...core, layout }] });
 const badLayout = () => ({ ...fakeLayout(good()), marketing: [] });
-const badCore = () => ({ ...good(), screenshot: { ...good().screenshot, subtype: "nope" } });
 
-function provider(answer: Answer): Provider & { calls: VisionCall[] } {
+function provider(answer: (n: number) => unknown): Provider & { calls: VisionCall[] } {
   const calls: VisionCall[] = [];
   return {
     family: "anthropic",
@@ -57,74 +54,41 @@ function provider(answer: Answer): Provider & { calls: VisionCall[] } {
   };
 }
 
+const system = { text: "layout prompt", hash: "lh", file: "" };
 const run = (p: Provider, ctx: CallContext) =>
-  analyseImages(
-    "full-analysis",
-    p,
-    { text: "s", hash: "h", file: "" },
-    [{ imageId: "a", image }],
-    ctx,
-    false,
-    true,
-  );
+  layoutCall(p, system, { imageId: "a", image }, good(), ctx);
 
-test("the layout is asked for in the same call and a valid one needs no repair", async () => {
-  const p = provider(() => withLayout(fakeLayout(good())));
+test("the layout call gets the image and the finished reading; the main answer is not asked for", async () => {
+  const p = provider(() => ({ layout: fakeLayout(good()) }));
   const out = await run(p, context());
   assert.equal(p.calls.length, 1);
-  assert.ok(asksLayout(p.calls[0]?.schema));
-  assert.equal(out.readings.get("a")?.headline, "EPIC");
+  assert.equal(p.calls[0]?.images.length, 1);
+  assert.match(p.calls[0]?.prompt ?? "", /^Draw the layout/);
+  assert.ok(p.calls[0]?.prompt.includes(readingForLayout(good())));
+  const schema = p.calls[0]?.schema as { properties: object } | undefined;
+  const props = Object.keys(schema?.properties ?? {});
+  assert.deepEqual(props, ["layout"]);
+  assert.ok(out.layout);
 });
 
-test("an invalid layout never drops a valid core: one repair of its own, then the core stays", async () => {
+test("a layout that does not fit the reading is repaired; the saved answer is reused for free", async () => {
   const ctx = context();
-  const p = provider(() => withLayout(badLayout()));
+  const p = provider((n) => ({ layout: n === 1 ? badLayout() : fakeLayout(good()) }));
   const out = await run(p, ctx);
-  assert.equal(p.calls.length, 2, "one extra call for the layout alone");
+  assert.equal(p.calls.length, 2);
   assert.match(p.calls[1]?.prompt ?? "", /marketing layer is present/);
-  assert.equal(out.failed.size, 0);
-  assert.equal(out.readings.get("a")?.headline, "EPIC");
-  // The saved answer is reused without a new call.
-  const again = await run(p, ctx);
-  assert.equal(p.calls.length, 2);
-  assert.equal(again.readings.size, 1);
+  assert.ok(out.layout);
+  await run(p, ctx);
+  assert.equal(p.calls.length, 2, "cached");
 });
 
-test("layout problems join the repair while the core also needs one", async () => {
-  const p = provider((n) =>
-    n === 1 ? withLayout(badLayout(), badCore()) : withLayout(fakeLayout(good())),
-  );
+test("a layout that never fits comes back missing, with its problems", async () => {
+  const p = provider(() => ({ layout: badLayout() }));
   const out = await run(p, context());
-  assert.equal(p.calls.length, 2);
-  const repair = p.calls[1]?.prompt ?? "";
-  assert.match(repair, /subtype "nope"/);
-  assert.match(repair, /layout/);
-  assert.equal(out.readings.size, 1);
+  assert.equal(out.layout, null);
+  assert.equal(p.calls.length, 3, "two repairs at most");
+  assert.match(out.problems.join(), /marketing layer is present/);
 });
-
-test("a layout repair that breaks the core keeps the first valid core", async () => {
-  const p = provider((n) =>
-    n === 1 ? withLayout(badLayout()) : withLayout(badLayout(), badCore()),
-  );
-  const out = await run(p, context());
-  assert.equal(p.calls.length, 2);
-  assert.equal(out.failed.size, 0);
-  assert.equal(out.readings.get("a")?.screenshot.subtype, "");
-});
-
-test("a core valid only on its last repair still gets the layout's own repair", async () => {
-  const p = provider((n) =>
-    n < 3
-      ? withLayout(badLayout(), badCore())
-      : n === 3
-        ? withLayout(badLayout())
-        : withLayout(fakeLayout(good())),
-  );
-  const out = await run(p, context());
-  assert.equal(p.calls.length, 4, "two core repairs, then one for the layout alone");
-  assert.equal(out.readings.size, 1);
-});
-
 test("ownership checks: text and capture references, marketing present or absent, covers", () => {
   const core = good();
   assert.deepEqual(readLayout(fakeLayout(core), core).problems, []);

@@ -60,5 +60,14 @@ export function fakeLayout(a: ImageAnalysis): Layout {
   };
 }
 
-/** True when the call's answer schema asks for the layout. */
-export const asksLayout = (schema: unknown) => JSON.stringify(schema).includes('"layout"');
+/** A valid layout for the finished reading the layout call was given (its second line). */
+export function layoutFor(prompt: string): Layout {
+  const r = JSON.parse(prompt.split("\n")[1] ?? "{}") as {
+    captures: unknown[];
+    marketingLayer: { present: boolean; texts: { text: string }[] };
+  };
+  return fakeLayout({
+    screenshot: { captures: r.captures },
+    marketingLayer: r.marketingLayer,
+  } as unknown as ImageAnalysis);
+}

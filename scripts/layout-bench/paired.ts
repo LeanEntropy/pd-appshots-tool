@@ -1,3 +1,5 @@
+// HISTORICAL: the same-call version (results in docs/samples/layout-benchmark/same-call/). It
+// imports modules removed since; run it from commit 6b6212e.
 /**
  * Paired check for gate 3 (approved 2026-09-29, about $0.45, hard cap $0.60): the 3 images whose
  * main analysis changed, run with the CURRENT full-analysis prompt WITHOUT the layout block,

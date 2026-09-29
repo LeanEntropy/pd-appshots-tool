@@ -7,12 +7,7 @@ import { type AnalysisRecord, isUsable, readRecord, readRecords } from "../src/a
 import { runAnalysis } from "../src/analysis/run.ts";
 import { projectPaths } from "../src/config/load.ts";
 import { readLayoutMeasure } from "../src/layout/capture.ts";
-import {
-  ensureLayout,
-  layoutFromAnswer,
-  layoutStatus,
-  readLayoutFile,
-} from "../src/layout/store.ts";
+import { layoutStatus, readLayoutFile, saveLayout } from "../src/layout/store.ts";
 import { runImport } from "../src/library/import/run-import.ts";
 import { LIB } from "../src/library/layout.ts";
 import { cleanupTrialFiles } from "../src/library/trial-cleanup.ts";
@@ -60,18 +55,22 @@ test("layout capture keeps every analysis key; new images get a write-once layou
 
   const p = providers();
   await runAnalysis(loaded, buildAnalysisPlan(loaded, "core"), p);
-  const calls = p.producer.calls.filter((c) => c.images.length);
-  assert.ok(calls.length > 0);
-  for (const c of calls) {
-    assert.match(c.system.text, /## 3\. Layout/);
-    assert.ok(JSON.stringify(c.schema).includes('"layout"'));
+  const main = p.producer.calls.filter((c) => c.images.length && !c.prompt.startsWith("Draw"));
+  const layout = p.producer.calls.filter((c) => c.prompt.startsWith("Draw the layout"));
+  assert.ok(main.length > 0);
+  // The main analysis call is exactly as before: no layout in its prompt or answer schema.
+  for (const c of main) {
+    assert.doesNotMatch(c.system.text, /Layout|layout/);
+    assert.equal(JSON.stringify(c.schema).includes('"layout"'), false);
   }
+  for (const c of layout) assert.match(c.system.text, /describe its LAYOUT only/);
   const fresh = [...readRecords(paths).values()].filter(
     (r) => !old.some((o) => o.imageId === r.imageId),
   );
   assert.ok(fresh.length > 0);
   for (const r of fresh) {
     assert.ok(isUsable(r));
+    assert.equal(layout.filter((c) => c.images[0]?.image.localPath?.includes(r.imageId)).length, 1);
     const s = layoutStatus(paths, r);
     assert.equal(s.status, "current", r.imageId);
     assert.equal(s.file?.recordKey, r.key);
@@ -81,7 +80,10 @@ test("layout capture keeps every analysis key; new images get a write-once layou
   // Write-once: a second writer keeps the first layout.
   const r = fresh[0] as AnalysisRecord;
   const first = readLayoutFile(paths, r);
-  assert.equal(ensureLayout(paths, r)?.createdAt, first?.createdAt);
+  assert.ok(first);
+  const again = saveLayout(paths, r, { ...first.layout, inGame: [] }, first);
+  assert.equal(again.createdAt, first.createdAt);
+  assert.equal(readLayoutFile(paths, r)?.layout.inGame.length, first.layout.inGame.length);
 });
 
 test("a settled reading the layout no longer fits leaves it missing; older versions read as outdated", async () => {
@@ -106,11 +108,9 @@ test("a settled reading the layout no longer fits leaves it missing; older versi
       },
     },
   };
-  assert.match(layoutFromAnswer(paths, settled).problems.join(), /marketing layer is absent/);
   // A layout saved before the reading changed no longer counts.
   assert.equal(layoutStatus(paths, r).status, "current");
   assert.equal(layoutStatus(paths, settled).status, "missing");
-  assert.equal(ensureLayout(paths, settled), null);
   const storage = workspaceStorage(paths.workspace);
   const file = readLayoutFile(paths, r);
   assert.ok(file);

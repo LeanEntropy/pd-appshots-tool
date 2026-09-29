@@ -1,7 +1,6 @@
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import type { Taxonomy } from "../config/load.ts";
-import type { Config } from "../config/schema.ts";
 import { ensureDir } from "../util/fsx.ts";
 import { sha256 } from "../util/hash.ts";
 
@@ -96,36 +95,30 @@ export const LEAN_FULL_ANALYSIS = {
   file: "full-analysis.v9",
 } as const;
 
-/**
- * The layout block (plan-layout-wireframes 2.4), added after the producer's full-analysis prompt
- * when layout capture is on. The second opinion never gets it. It changes the rendered text (so
- * the answer-cache key), never the analysis key: the layout is saved in its own file.
- */
-export const LAYOUT_BLOCK_FILE = "layout-block.v2";
-
-/** The full-analysis prompt of either answer shape, with the layout block when asked. */
+/** The full-analysis prompt of either answer shape. */
 export function renderAnalysisPrompt(
   root: string,
   objectsDir: string,
   taxonomy: Taxonomy,
   lean: boolean,
-  layout = false,
 ): RenderedPrompt {
-  const file = lean ? LEAN_FULL_ANALYSIS.file : PROMPT_FILES.fullAnalysis;
-  return renderFile(root, objectsDir, file, taxonomy, layout ? LAYOUT_BLOCK_FILE : null);
+  return lean
+    ? renderFile(root, objectsDir, LEAN_FULL_ANALYSIS.file, taxonomy)
+    : renderPrompt(root, objectsDir, "fullAnalysis", taxonomy);
 }
 
-/** The producer's prompt with the layout block when layout capture is on (Settings), else null. */
-export function layoutPromptFor(
+/**
+ * The layout breakdown's own call (plan-layout-wireframes, separate-call version, 2026-09-29):
+ * kept apart from PROMPT_VERSIONS, so the main analysis, its keys and plans never change.
+ */
+export const LAYOUT_PROMPT_FILE = "layout-only.v1";
+
+export function renderLayoutPrompt(
   root: string,
   objectsDir: string,
   taxonomy: Taxonomy,
-  config: Config,
-): RenderedPrompt | null {
-  const s = config.options.speed;
-  return s.layoutCapture
-    ? renderAnalysisPrompt(root, objectsDir, taxonomy, s.leanAnswer, true)
-    : null;
+): RenderedPrompt {
+  return renderFile(root, objectsDir, LAYOUT_PROMPT_FILE, taxonomy);
 }
 
 /** Renders a versioned prompt with the taxonomy and stores it by content hash. */
@@ -143,13 +136,8 @@ function renderFile(
   objectsDir: string,
   fileName: string,
   taxonomy: Taxonomy,
-  block: string | null = null,
 ): RenderedPrompt {
-  const read = (name: string) =>
-    readFileSync(join(root, "prompts", "analysis", `${name}.md`), "utf8");
-  const template = block
-    ? `${read(fileName).trimEnd()}\n\n${read(block).trim()}\n`
-    : read(fileName);
+  const template = readFileSync(join(root, "prompts", "analysis", `${fileName}.md`), "utf8");
   const tx = taxonomyText(taxonomy);
   const voice = template.includes("{{VOICE}}")
     ? readFileSync(join(root, "prompts", "analysis", `${VOICE_FILE}.md`), "utf8").trim()

@@ -42,7 +42,7 @@ export function speedFields(): FieldDef[] {
     sw(
       "layoutCapture",
       "Layout breakdown for new analyses",
-      "Each newly analysed screenshot also gets a coarse wireframe of both layers (up to 8 boxes each), asked in the same AI call and saved in its own file. Existing analyses stay valid; images analysed before show 'layout missing'.",
+      "After each new screenshot analysis, a separate AI call draws a coarse wireframe of both layers (up to 8 boxes each), about $0.09 to $0.15 per image. The analysis itself is never changed. Images analysed before show 'layout missing' until you add their layouts.",
     ),
     {
       id: "options.pixelCheck.mode",

@@ -1,7 +1,4 @@
 import { z } from "zod";
-import { imageAnalysisSchema } from "../analysis/schema.ts";
-import { leanImageSchema } from "../analysis/schema-lean.ts";
-import type { Taxonomy } from "../config/load.ts";
 import { IN_GAME_ROLES, MARKETING_ROLES, MAX_PER_LAYER } from "./vocab.ts";
 
 /**
@@ -75,22 +72,5 @@ export type InGameElement = z.infer<typeof InGame>;
 export type MarketingElement = z.infer<typeof Marketing>;
 export type LayoutElement = InGameElement | MarketingElement;
 
-/** The per-image answer with its layout, as sent to the model (strict, layout required). */
-export function withLayoutDeckSchema(taxonomy: Taxonomy, lean: boolean) {
-  const image = lean ? leanImageSchema(taxonomy) : imageAnalysisSchema(taxonomy);
-  return z.strictObject({ images: z.array(image.extend({ layout: layoutSchema })) });
-}
-
-/** The answer with its layout part taken off (for the core checks), and the layouts by ref. */
-export function splitLayouts(raw: unknown): { core: unknown; layouts: Map<string, unknown> } {
-  const layouts = new Map<string, unknown>();
-  const images = (raw as { images?: unknown } | null)?.images;
-  if (!Array.isArray(images)) return { core: raw, layouts };
-  const core = images.map((im) => {
-    if (!im || typeof im !== "object" || !("layout" in im)) return im;
-    const { layout, ...rest } = im as Record<string, unknown>;
-    if (typeof rest.imageRef === "string") layouts.set(rest.imageRef, layout);
-    return rest;
-  });
-  return { core: { ...(raw as object), images: core }, layouts };
-}
+/** The layout call's answer (its own step, apart from the main analysis). */
+export const layoutAnswerSchema = z.strictObject({ layout: layoutSchema });

@@ -20,6 +20,7 @@ import {
 import type { AppContext } from "./app-context.ts";
 import { exportRoute } from "./export-api.ts";
 import { redirect, send, sendHtml, writeRequest } from "./http-util.ts";
+import { getLayoutBackfill, postLayoutBackfill, postLayoutBackfillStop } from "./layout-api.ts";
 import { getReportCurrent, getReportRun } from "./report-api.ts";
 import { isReportsPath, reportsRoute } from "./routes-reports.ts";
 import { serveStatic } from "./static.ts";
@@ -39,6 +40,7 @@ const GETS: Record<string, Get> = {
   "/api/report": (l, q) => getReportCurrent(l, q.get("stage")),
   "/api/report/run": (l, q) => getReportRun(l, q.get("stage"), q.get("id")),
   "/api/expansion": (l) => getExpansion(l),
+  "/api/layout-backfill": (l) => getLayoutBackfill(l),
   // The home card asks for the top suggested research too (?home=1).
   "/api/state": (l, q, a) => ({ status: 200, body: stateFor(a, l, q.get("home") === "1") }),
 };
@@ -52,6 +54,8 @@ const POSTS: Record<string, Post> = {
   "/api/analysis/stop": (l) => postAnalysisStop(l),
   "/api/overview": (l) => postOverview(l),
   "/api/expansion": (l, b) => postExpansion(l, b),
+  "/api/layout-backfill": (l, b) => postLayoutBackfill(l, b),
+  "/api/layout-backfill/stop": (l) => postLayoutBackfillStop(l),
 };
 
 /** Derived state, with the home card's cached summary refreshed at the same time. */

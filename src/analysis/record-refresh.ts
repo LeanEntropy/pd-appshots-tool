@@ -1,5 +1,4 @@
 import { type LoadedConfig, loadTaxonomy, projectPaths } from "../config/load.ts";
-import { ensureLayoutMeasured } from "../layout/capture.ts";
 import { type ImageDb, openImageDb } from "../store/imagedb.ts";
 import { namesBrand } from "./brand.ts";
 import { ensureMeasured } from "./colour-store.ts";
@@ -188,8 +187,6 @@ export function recordWriter(loaded: LoadedConfig, db?: ImageDb) {
     writeRecord(paths, out);
     // Layer colours measured by code (free) when "Colours measured by code" is on.
     if (loaded.config.options.speed.measuredColours) await ensureMeasured(paths, store, out);
-    // The layout from the producer's answer and its pixel measurements, each written once (free).
-    await ensureLayoutMeasured(paths, store, out);
     return out;
   };
 }

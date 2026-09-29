@@ -73,6 +73,25 @@ export function layoutProblems(l: Layout, core: ImageAnalysis): string[] {
     for (const c of e.covers)
       if (!inIds.includes(c)) p(`${e.id} covers "${c}", which is not an in-game element`);
   }
+  // The analysis owns what was added for the store: each character, creature or item it lists
+  // on the marketing layer is a cut-out here, and its logo a logo, at about the same place.
+  const at = (b: { x: number; y: number; w: number; h: number }, x: number, y: number) =>
+    x >= b.x - 5 && x <= b.x + b.w + 5 && y >= b.y - 5 && y <= b.y + b.h + 5;
+  for (const el of core.marketingLayer.elements) {
+    const role = ["character", "creature", "item"].includes(el.kind)
+      ? "cut-out"
+      : el.kind === "logo"
+        ? "logo"
+        : null;
+    const r = el.region;
+    if (!role || !(r.w > 0 && r.h > 0)) continue;
+    const cx = r.x + r.w / 2;
+    const cy = r.y + r.h / 2;
+    if (!l.marketing.some((e) => e.role === role && at(e.box, cx, cy)))
+      p(
+        `the analysis lists a marketing ${el.kind} ("${el.what.slice(0, 40)}") at ${Math.round(cx)}%, ${Math.round(cy)}%: add a marketing "${role}" element for it`,
+      );
+  }
   const present = core.marketingLayer.present;
   if (!present && l.marketing.length)
     p("the marketing layer is absent, so the marketing list must be empty");

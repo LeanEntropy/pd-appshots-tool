@@ -1,11 +1,11 @@
-import type { StoredObject } from "../analysis/call.ts";
-import { type AnalysisRecord, isUsable } from "../analysis/records.ts";
+import type { AnalysisRecord } from "../analysis/records.ts";
 import type { ProjectPaths } from "../config/load.ts";
-import { answerKey, LIB, pixelsKey } from "../library/layout.ts";
+import { LIB, pixelsKey } from "../library/layout.ts";
 import { projectKey, workspaceStorage } from "../storage/index.ts";
 import { stableHash } from "../util/hash.ts";
-import { layoutProblems, readLayout } from "./checks.ts";
-import { type Layout, splitLayouts } from "./schema.ts";
+import { layoutProblems } from "./checks.ts";
+import { LAYOUT_MEASURE_VERSION, type LayoutMeasure } from "./measure/index.ts";
+import type { Layout } from "./schema.ts";
 import { LAYOUT_CONTRACT, LAYOUT_SCHEMA_VERSION } from "./vocab.ts";
 
 /**
@@ -19,8 +19,8 @@ export interface LayoutFile {
   imageId: string;
   /** Analysis key of the record the layout belongs to. */
   recordKey: string;
-  /** "same-call": asked with the full analysis; "backfill": a later layout-only call. */
-  source: "same-call" | "backfill";
+  /** "new": right after a new analysis; "backfill": added later to an older analysis. */
+  source: "new" | "backfill";
   model: string;
   /** Cached model answer it was read from. */
   object: string;
@@ -53,24 +53,11 @@ export function measureKey(paths: ProjectPaths, imageId: string, key: string, ve
   return pixelsKey(paths, imageId, `${version}.${key}`);
 }
 
-/** The layout in the record's producer answer, checked against the record's final reading. */
-export function layoutFromAnswer(
-  paths: ProjectPaths,
-  r: AnalysisRecord,
-): { layout: Layout | null; problems: string[]; object: StoredObject | null } {
-  const storage = workspaceStorage(paths.workspace);
-  const key = r.producer?.object;
-  const obj = key
-    ? (storage.getJson(answerKey(paths, "full-analysis", key)) as StoredObject | undefined)
-    : undefined;
-  if (!obj || !r.final) return { layout: null, problems: ["no saved answer"], object: null };
-  const ref = `img${obj.imageIds.indexOf(r.imageId) + 1}`;
-  const raw = splitLayouts(obj.output).layouts.get(ref);
-  if (raw === undefined)
-    return { layout: null, problems: ["analysed before layout capture"], object: obj };
-  // After a settled dispute the final reading may differ: the layout must fit it.
-  const got = readLayout(raw, { ...r.final, imageRef: ref });
-  return { ...got, object: obj };
+/** The saved measurements of a record's layout, or null. */
+export function readLayoutMeasure(paths: ProjectPaths, r: AnalysisRecord): LayoutMeasure | null {
+  const key = layoutKey(r.imageId, recordKeyOf(paths, r));
+  const k = measureKey(paths, r.imageId, key, LAYOUT_MEASURE_VERSION);
+  return (workspaceStorage(paths.workspace).getJson(k) as LayoutMeasure | undefined) ?? null;
 }
 
 /** The saved layout of a record, or null. */
@@ -86,27 +73,22 @@ export function readLayoutFile(paths: ProjectPaths, r: AnalysisRecord): LayoutFi
 const fits = (f: LayoutFile, r: AnalysisRecord) =>
   !!r.final && layoutProblems(f.layout, r.final).length === 0;
 
-/**
- * Saves a usable record's layout once, from its producer answer (free, no model call). Called
- * whenever a record is saved. The first valid layout wins; a later writer keeps it.
- */
-export function ensureLayout(paths: ProjectPaths, r: AnalysisRecord): LayoutFile | null {
-  if (!isUsable(r)) return null;
-  const done = readLayoutFile(paths, r);
-  if (done) return fits(done, r) ? done : null;
-  const got = layoutFromAnswer(paths, r);
-  if (!got.layout || !got.object) return null;
+/** Saves a record's layout once; the first valid layout wins, a later writer keeps it. */
+export function saveLayout(
+  paths: ProjectPaths,
+  r: AnalysisRecord,
+  layout: Layout,
+  from: { source: LayoutFile["source"]; model: string; object: string },
+): LayoutFile {
   const recordKey = recordKeyOf(paths, r);
   const file: LayoutFile = {
     version: LAYOUT_SCHEMA_VERSION,
     contract: LAYOUT_CONTRACT,
     imageId: r.imageId,
     recordKey,
-    source: "same-call",
-    model: got.object.model,
-    object: got.object.key,
+    ...from,
     createdAt: new Date().toISOString(),
-    layout: got.layout,
+    layout,
   };
   const k = fileKey(paths, r.imageId, layoutKey(r.imageId, recordKey));
   const storage = workspaceStorage(paths.workspace);
@@ -115,8 +97,8 @@ export function ensureLayout(paths: ProjectPaths, r: AnalysisRecord): LayoutFile
 }
 
 /**
- * current: a layout of today's version for this record; outdated: only an older layout version
- * exists for it; missing: none (analysed before layout capture, or its layout failed the checks).
+ * current: a layout of today's version for this record that fits its reading; outdated: only an
+ * older layout version exists for it; missing: none (analysed before layouts, or it failed).
  */
 export function layoutStatus(
   paths: ProjectPaths,
