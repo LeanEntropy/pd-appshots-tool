@@ -39,7 +39,11 @@ function context(): CallContext {
 }
 
 const good = () => reading("img1", "gameplay", "EPIC");
-const badLayout = () => ({ ...fakeLayout(good()), marketing: [] });
+// A box entirely outside the picture (clamped to nothing): a hard problem.
+const badLayout = () => {
+  const l = fakeLayout(good());
+  return { ...l, inGame: l.inGame.map((e) => ({ ...e, box: { x: 0, y: 130, w: 50, h: 10 } })) };
+};
 
 function provider(answer: (n: number) => unknown): Provider & { calls: VisionCall[] } {
   const calls: VisionCall[] = [];
@@ -76,7 +80,7 @@ test("a layout that does not fit the reading is repaired; the saved answer is re
   const p = provider((n) => ({ layout: n === 1 ? badLayout() : fakeLayout(good()) }));
   const out = await run(p, ctx);
   assert.equal(p.calls.length, 2);
-  assert.match(p.calls[1]?.prompt ?? "", /marketing layer is present/);
+  assert.match(p.calls[1]?.prompt ?? "", /S1 has an empty box \(or one outside the image\)/);
   assert.ok(out.layout);
   await run(p, ctx);
   assert.equal(p.calls.length, 2, "cached");
@@ -87,23 +91,67 @@ test("a layout that never fits comes back missing, with its problems", async () 
   const out = await run(p, context());
   assert.equal(out.layout, null);
   assert.equal(p.calls.length, 3, "two repairs at most");
-  assert.match(out.problems.join(), /marketing layer is present/);
+  assert.match(out.problems.join(), /S1 has an empty box/);
 });
-test("ownership checks: text and capture references, marketing present or absent, covers", () => {
+
+test("a layout that only disagrees with the analysis is saved on the first answer, no retry", async () => {
+  const p = provider(() => ({ layout: { ...fakeLayout(good()), marketing: [] } }));
+  const out = await run(p, context());
+  assert.equal(p.calls.length, 1);
+  assert.ok(out.layout);
+  assert.deepEqual(readLayout({ ...fakeLayout(good()), marketing: [] }, good()).notes, [
+    'Note: the headline "EPIC" has no box.',
+    "Note: the analysis found a marketing layer, but no marketing box is drawn.",
+    'Note: the focal point names "M2", which is not drawn.',
+    "Note: the reading order names M2, which is not drawn.",
+    'Note: the focus verdict ("match") does not match the marketing boxes drawn.',
+    "Note: the focus texts describe a marketing layer, but no marketing box is drawn.",
+  ]);
+});
+test("hard checks: text and capture references that do not exist, too many boxes", () => {
   const core = good();
-  assert.deepEqual(readLayout(fakeLayout(core), core).problems, []);
+  assert.deepEqual(readLayout(fakeLayout(core), core), {
+    layout: readLayout(fakeLayout(core), core).layout,
+    problems: [],
+    notes: [],
+  });
   const l = fakeLayout(core);
   const m2 = l.marketing[1];
-  const m1 = l.marketing[0];
   if (m2) m2.textRef = 3;
-  if (m1) m1.covers = ["S9"];
   const s1 = l.inGame[0];
   if (s1) s1.capture = 2;
-  const p = readLayout(l, core).problems.join("\n");
+  const bad = readLayout(l, core);
+  assert.equal(bad.layout, null);
+  const p = bad.problems.join("\n");
   assert.match(p, /textRef 3 does not exist/);
-  assert.match(p, /covers "S9"/);
   assert.match(p, /capture 2 does not exist/);
-  // Contract v2: a logo carries its own text; a headline must point at the transcribed one.
+  assert.match(readLayout(undefined, core).problems.join(), /missing/);
+  const seventeen = {
+    ...fakeLayout(core),
+    inGame: Array.from({ length: 17 }, (_, i) => ({ ...l.inGame[0], id: `S${i + 1}` })),
+  };
+  assert.match(readLayout(seventeen, core).problems.join(), /inGame/);
+  const nan = fakeLayout(core);
+  nan.composition.focal.x = 140;
+  assert.match(readLayout(nan, core).problems.join(), /focal point must be inside/);
+});
+
+test("covering: marketing over marketing is accepted; a covered id that is not drawn is a note", () => {
+  const core = good();
+  const l = fakeLayout(core);
+  const band = l.marketing[0] as (typeof l.marketing)[0];
+  l.marketing.push({ ...band, id: "M3", role: "badge", z: 2, covers: ["M2", "S1"] });
+  assert.deepEqual(readLayout(l, core).problems, []);
+  assert.deepEqual(readLayout(l, core).notes, []);
+  band.covers = ["S9"];
+  const r = readLayout(l, core);
+  assert.ok(r.layout);
+  assert.deepEqual(r.notes, ['Note: M1 is listed as covering "S9", which is not drawn.']);
+});
+
+test("soft checks never reject: text linking, the marketing layer present or absent", () => {
+  const core = good();
+  // Contract v2: a logo carries its own text; a headline should point at the transcribed one.
   const logo = { ...fakeLayout(core) };
   logo.marketing = [
     ...logo.marketing,
@@ -115,18 +163,21 @@ test("ownership checks: text and capture references, marketing present or absent
       covers: [],
     },
   ];
-  assert.deepEqual(readLayout(logo, core).problems, []);
+  assert.deepEqual(readLayout(logo, core).notes, []);
   const head = fakeLayout(core);
   const h = head.marketing[1];
   if (h) h.textRef = null;
   if (h) h.text = "EPIC";
-  assert.match(readLayout(head, core).problems.join(), /only logo and badge/);
+  const said = readLayout(head, core);
+  assert.ok(said.layout);
+  assert.deepEqual(said.notes, [
+    "Note: M2 (headline) repeats its text instead of linking the analysis' text.",
+  ]);
   const noLayer = reading("img1", "gameplay", "", false);
-  assert.match(readLayout(fakeLayout(core), noLayer).problems.join(), /marketing layer is absent/);
-  assert.match(readLayout(undefined, core).problems.join(), /missing/);
-  const seventeen = {
-    ...fakeLayout(core),
-    inGame: Array.from({ length: 17 }, (_, i) => ({ ...l.inGame[0], id: `S${i + 1}` })),
-  };
-  assert.match(readLayout(seventeen, core).problems.join(), /inGame/);
+  // Its headline points at no text: the analysis without a layer has none to point at.
+  const drawn = fakeLayout(core);
+  for (const e of drawn.marketing) e.textRef = null;
+  const absent = readLayout(drawn, noLayer);
+  assert.ok(absent.layout);
+  assert.match(absent.notes.join(), /the analysis found no marketing layer, but 2 marketing boxes/);
 });

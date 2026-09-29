@@ -19,38 +19,50 @@ export interface LayoutFailure {
 const LIMIT = /spending limit/i;
 const TIMEOUT = /timed? ?out|timeout|ETIMEDOUT|took too long/i;
 
-/** Check results in plain words, one per kind of problem (the answer's own wording dropped). */
+/**
+ * The hard check results in plain words, one per check (checks.ts layoutProblems; the
+ * answer's own wording dropped). Disagreements with the main analysis are notes, never here.
+ */
 const CHECKS: [RegExp, string][] = [
+  [/every element id must be unique/, "two boxes had the same id"],
   [
-    /lists a marketing (character|creature)/,
-    "a character in the analysis was not marked as a cut-out",
-  ],
-  [/lists a marketing item/, "no cut-out or badge covered an item in the analysis"],
-  [/lists a marketing logo/, "the logo was not marked"],
-  [/headline text \d+/, "a headline had no box"],
-  [
-    /capture \d+ has no in-game element|must name its capture|capture \d+ does not exist/,
-    "a screenshot area had no box",
-  ],
-  [/marketing layer is (absent|present)/, "the marketing layer did not match the analysis"],
-  [
-    /Too big|must be [SM]1 to [SM]\d+/i,
+    /layout\.(inGame|marketing): Too big|must be [SM]1 to [SM]\d+/,
     "more boxes than one layer allows (16 in-game, 10 marketing)",
   ],
-  [/note must be at most/, "a note was too long"],
+  [/has an empty box/, "a box was empty or entirely outside the picture"],
+  [/tilt must be between/, "a box was tilted more than 45 degrees"],
+  [/draw order must be/, "a box had a negative draw order"],
+  [/has role "other" and needs a note/, 'a box of kind "other" had no description'],
+  [/note must be at most/, "a box description was too long"],
   [
-    /focusMatch|marketingCovers|focus\.words|reinforcement/,
-    "the focus fields did not match the layers",
+    /capture -?\d+ does not exist|the image has no captures/,
+    "a box pointed at a screenshot area the analysis does not have",
   ],
-  [/focal|reading order/, "the focal point or reading order named no element"],
-  [/textRef|carry their own text|point at a text/, "a text was not linked correctly"],
+  [/textRef -?\d+ does not exist/, "a box pointed at a marketing text the analysis does not have"],
+  [/focal point must be inside/, "the focal point was outside the picture"],
+  [/overlaySharePercent must be/, "the marketing share was not a percentage (0-100)"],
+  [
+    /(focus\.words|marketingCovers|reinforcement|focusMatch\.reason) must be at most/,
+    "a focus text was too long",
+  ],
+  [/layout: missing/, "the answer had no layout"],
 ];
+
+/** A schema problem ("img1 layout.marketing.2.box.x: Expected number"): the field it names. */
+const FIELD = /layout\.([\w.]+): (.*)$/;
 
 function checkSummary(problems: readonly string[]): string {
   const said = new Set<string>();
   for (const p of problems) {
     const hit = CHECKS.find(([re]) => re.test(p));
-    said.add(hit ? hit[1] : "the answer was malformed");
+    const field = FIELD.exec(p);
+    said.add(
+      hit
+        ? hit[1]
+        : field
+          ? `the field ${field[1]} did not follow the required format (${field[2]})`
+          : `an unexpected check failed (${p.replace(/^img\d+ layout: /, "").slice(0, 80)})`,
+    );
   }
   return [...said].slice(0, 3).join("; ");
 }

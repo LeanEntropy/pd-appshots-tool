@@ -52,6 +52,8 @@ export interface ImagePage {
   wireframe: NumberedWireframe | null;
   summary: string;
   older: boolean;
+  /** Where the layout disagrees with the analysis, in plain words (shown folded). */
+  layoutNotes: string[];
   texts: TextRow[];
   where: WhereUsed;
   footer: string;
@@ -201,6 +203,7 @@ export async function imagePage(
     wireframe: wf,
     summary: lv?.summary ?? "",
     older: lv?.older ?? false,
+    layoutNotes: lv?.notes ?? [],
     texts: r && isUsable(r) ? textRows(paths, app.storage, r, drawn) : [],
     where: whereUsed({
       storage: app.storage,

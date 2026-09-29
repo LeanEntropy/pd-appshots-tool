@@ -86,7 +86,8 @@ function infoHtml(v) {
       + (f.match ? "<dt>Focus match</dt><dd" + (f.verdict === "mismatch" ? ' class="bad"' : "") + ">" + esc(f.match) + "</dd>" : "")
       + (f.reinforcement ? "<dt>Reinforcement</dt><dd>" + esc(f.reinforcement) + "</dd>" : "") + "</dl>";
     if (v.layout.older) h += '<p class="meta">Drawn from a layout saved by an older version; adding layouts again replaces it.</p>';
-    if (v.layout.wireframe) h += '<div class="wf"></div>' + (v.layout.summary ? '<p class="meta">In one sentence: ' + esc(v.layout.summary) + "</p>" : "");
+    if (v.layout.wireframe) h += '<div class="wf"></div>' + (v.layout.summary ? '<p class="meta">In one sentence: ' + esc(v.layout.summary) + "</p>" : "")
+      + (v.layout.notes && v.layout.notes.length ? '<details class="tech"><summary>Layout notes (' + v.layout.notes.length + ")</summary><ul>" + v.layout.notes.map((n) => '<li class="meta">' + esc(n) + "</li>").join("") + "</ul></details>" : "");
     else h += '<p class="meta">' + (v.layout.status === "outdated" ? "The layout is from an older version." : v.layout.status === "stale" ? "The saved layout no longer matches this analysis." : "Layout missing: analysed before layouts existed. Add it on the Analysis page.") + "</p>";
   }
   if (a.notes) h += '<p class="meta">' + esc(a.notes) + "</p>";

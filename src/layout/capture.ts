@@ -9,6 +9,7 @@ import { workspaceStorage } from "../storage/index.ts";
 import type { ImageDb } from "../store/imagedb.ts";
 import { layoutCall } from "./call.ts";
 import { LAYOUT_MEASURE_VERSION, type LayoutMeasure, measureLayout } from "./measure/index.ts";
+import { layoutNotes } from "./notes.ts";
 import {
   type LayoutFile,
   layoutKey,
@@ -80,6 +81,7 @@ export async function addLayout(
     source,
     model: d.provider.model,
     object: got.key,
+    notes: layoutNotes(got.layout, r.final),
   });
   await measureSaved(d.paths, d.db, r, file);
   return { outcome: "saved", problems: [] };
