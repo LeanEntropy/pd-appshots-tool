@@ -68,6 +68,14 @@ function wfPanel(p) {
   for (const s of wfList(p.shapes, 24)) pic.appendChild(wfShape(s, p.stroke));
   const f = p.focal && typeof p.focal === "object" ? p.focal : null;
   if (f) pic.appendChild(wfEl("circle", { cx: wfNum(f.x, 0, 4000), cy: wfNum(f.y, 0, 4000), r: "6", fill: "none", stroke: "#1d1d1d", "stroke-width": "2" })).appendChild(wfEl("title", {}, "Focal point"));
+  // Number chips (the image page's numbered wireframes only; the popover has labels instead).
+  for (const c of wfList(p.chips, 32)) {
+    const n = typeof c.n === "string" && /^M?\\d{1,2}$/.test(c.n) ? c.n : "";
+    if (!n) continue;
+    const cx = wfN(c.x, 0, 4000), cy = wfN(c.y, 0, 4000), cw = 10 + n.length * 7;
+    pic.appendChild(wfEl("rect", { x: String(cx), y: String(cy), width: String(cw), height: "15", rx: "7", fill: "#1d1d1d", "fill-opacity": "0.82" }));
+    pic.appendChild(wfEl("text", { x: wfNum(cx + cw / 2, 0, 4100), y: wfNum(cy + 11.5, 0, 4100), "font-size": "11", "font-weight": "700", "text-anchor": "middle", fill: "#ffffff" }, n));
+  }
   svg.appendChild(pic);
   svg.appendChild(wfEl("rect", { width: String(w), height: String(h), fill: "none", stroke: "#8a8a8a", "stroke-width": "1" }));
   const labels = wfList(p.labels, 24);
@@ -89,6 +97,22 @@ function wfPanel(p) {
   }
   box.appendChild(legend);
   box.appendChild(wfHtml("p", "wf-sum", wfText(p.summary)));
+  const rows = wfList(p.rows, 32);
+  if (rows.length) {
+    const ol = wfHtml("ol", "wf-rows", "");
+    for (const r of rows) {
+      const li = wfHtml("li", "", "");
+      li.appendChild(wfHtml("span", "wf-no", /^[M\\d, ]{1,80}$/.test(String(r.n)) ? String(r.n) : ""));
+      const body = wfHtml("span", "wf-row", "");
+      body.appendChild(wfHtml("strong", "", wfText(r.name)));
+      if (r.text) body.appendChild(wfHtml("span", "wf-said", " “" + wfText(r.text) + "”"));
+      if (r.english && r.english !== r.text) body.appendChild(wfHtml("span", "meta", " (English: " + wfText(r.english) + ")"));
+      if (r.about) body.appendChild(wfHtml("span", "", " - " + wfText(r.about)));
+      li.appendChild(body);
+      ol.appendChild(li);
+    }
+    box.appendChild(ol);
+  }
   const parts = wfList(p.parts, 12);
   if (parts.length) {
     const ul = wfHtml("ul", "wf-parts", "");

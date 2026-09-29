@@ -121,6 +121,20 @@ export function renderLayoutPrompt(
   return renderFile(root, objectsDir, LAYOUT_PROMPT_FILE, taxonomy);
 }
 
+/**
+ * The paid English step for marketing texts (plan-games-library I1b): text only, its own file,
+ * kept apart from every analysis and report fingerprint.
+ */
+export const ENGLISH_PROMPT_FILE = "english-texts.v1";
+
+export function renderEnglishPrompt(
+  root: string,
+  objectsDir: string,
+  taxonomy: Taxonomy,
+): RenderedPrompt {
+  return renderFile(root, objectsDir, ENGLISH_PROMPT_FILE, taxonomy);
+}
+
 /** Renders a versioned prompt with the taxonomy and stores it by content hash. */
 export function renderPrompt(
   root: string,

@@ -95,7 +95,7 @@ export function galleryRest(vm: ViewModel, served?: GalleryServed): string {
 <p><label>Batch: <select id="stage"><option value="pilot">Core pilot (ours + first ${escHtml(vm.pilotCompetitors)} competitors)</option><option value="core">Full core check</option></select></label></p>
 <button id="startAnalysis" class="primary">Start analysis</button>
 <p class="meta">Shows the image count, model passes and estimated cost first. Nothing is sent to an AI model until you press Approve and run. Screenshots already analysed are never sent again.</p>
-</div><div id="layoutBackfill" class="card" hidden></div></div></div></section>
+</div><div id="layoutBackfill" class="card" hidden></div><div id="englishTexts" class="card" hidden></div></div></div></section>
 <section data-page="report" hidden><h2 class="ph" tabindex="-1">Reports</h2>
 <div class="card noprint"><button type="button" id="newReport" class="primary">+ New report</button> <label><input type="checkbox" id="showImages" checked> Show images</label>
 <p id="reportStatus" class="act-msg" hidden></p></div>
