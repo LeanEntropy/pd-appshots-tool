@@ -1,76 +1,15 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { runInNewContext } from "node:vm";
 import sharp from "sharp";
 import { playSetup } from "../src/analysis/play-experiments.ts";
-import { type LoadedConfig, projectPaths } from "../src/config/load.ts";
+import { projectPaths } from "../src/config/load.ts";
 import { readJournal, writeJournal } from "../src/jobs/journal.ts";
-import type { CountryReport } from "../src/reports/country-report-types.ts";
-import { enqueueReport, reportApproval } from "../src/reports/report-job.ts";
-import { createReport, readDef, versionFileKey } from "../src/reports/store.ts";
+import { reportApproval } from "../src/reports/report-job.ts";
 import { workspaceStorage } from "../src/storage/index.ts";
 import { describeImage, hamming } from "../src/store/identity.ts";
-import { REPORT_SCRIPT } from "../src/view/gallery-report.ts";
-import { REPORT_PARTS_SCRIPT } from "../src/view/gallery-report-parts.ts";
-import { REPORT_COUNTRY_SCRIPT } from "../src/view/report-country.ts";
-import { REPORT_COUNTRY_PARTS_SCRIPT } from "../src/view/report-country-parts.ts";
-import { REPORT_SUMMARY_SCRIPT } from "../src/view/report-summary.ts";
-import { REPORT_WORDS_SCRIPT } from "../src/view/report-words.ts";
-import {
-  addDeck,
-  analyse,
-  builderProject,
-  idOf,
-  idsOf,
-  newText,
-  picture,
-  readyReport,
-  usBytes,
-} from "./helpers/builder.ts";
+import { addDeck, analyse, builderProject, idOf, readyReport, usBytes } from "./helpers/builder.ts";
+import { japanProject, japanReport, latestCountry, run, TWO } from "./helpers/country-run.ts";
 import { reportFake } from "./helpers/report-fakes.ts";
-
-const TWO = ["Capybara Go", "Mini Tales"];
-const JP = { gl: "jp", hl: "ja", label: "Japan" };
-
-/** Japan: ours the same file as in the US; Capybara Go the same picture with new text; Mini Tales a new picture. */
-async function japanProject(): Promise<LoadedConfig> {
-  const loaded = await builderProject();
-  const ours = loaded.config.ourApp.name;
-  analyse(loaded, [ours, ...TWO]);
-  readyReport(loaded, "pilot");
-  await addDeck(loaded, ours, "jp", "ja", [usBytes(loaded, idOf(loaded, ours), 1)], "ours");
-  const capy = usBytes(loaded, idOf(loaded, "Capybara Go"), 1);
-  await addDeck(loaded, "Capybara Go", "jp", "ja", [await newText(capy)]);
-  await addDeck(loaded, "Mini Tales", "jp", "ja", [await picture(901)]);
-  return loaded;
-}
-
-function japanReport(loaded: LoadedConfig) {
-  const paths = projectPaths(loaded);
-  return createReport(workspaceStorage(paths.workspace), paths, {
-    name: "Japan vs 2 competitors",
-    type: "country",
-    scope: { type: "country", markets: [JP], competitors: idsOf(loaded, TWO), includeCharts: [] },
-  });
-}
-
-function run(loaded: LoadedConfig, id: string, hash: string, fake: ReturnType<typeof reportFake>) {
-  return enqueueReport(
-    loaded,
-    { reportId: id, planHash: hash },
-    {
-      depsFor: (onProgress) => ({ producer: fake, reviewer: null, adjudicator: fake, onProgress }),
-      reportProvider: (ref) => ({ ...fake, model: ref.split(":")[1] ?? ref }),
-    },
-  );
-}
-
-function latestCountry(loaded: LoadedConfig, id: string): CountryReport {
-  const paths = projectPaths(loaded);
-  const s = workspaceStorage(paths.workspace);
-  const v = readDef(s, paths, id)?.versions.at(-1)?.id as string;
-  return s.getJson(versionFileKey(paths, v, "country-report.json")) as CountryReport;
-}
 
 test("a One country report runs end to end after its approval: full analysis, text comparison, written parts", async () => {
   const loaded = await japanProject();
@@ -193,59 +132,6 @@ test("over the spending limit, the run is refused before anything is sent", asyn
   assert.equal(r.ok, false);
   assert.match(r.ok ? "" : r.problem, /over its spending limit/);
   assert.equal(fake.calls.length, 0);
-});
-
-function renderCountry(c: CountryReport, withFlags: boolean): string {
-  const box = { innerHTML: "", classList: { toggle: () => {} } };
-  const ctx: Record<string, unknown> = {
-    IMG: "../images/",
-    API: "/p/x/api",
-    esc: (x: unknown) => String(x).replace(/[&<>"']/g, (ch) => `&#${ch.charCodeAt(0)};`),
-    infoBtn: (id: string) => `<button class="info" data-info="${id}">i</button>`,
-    localStorage: { getItem: () => null, setItem: () => {} },
-    document: { addEventListener: () => {}, getElementById: () => null },
-    location: { hash: "", protocol: "file:" },
-    ...(withFlags
-      ? { countryLabel: (gl: string, n: string) => `<img class="flag" alt="${gl}">${n}` }
-      : {}),
-  };
-  runInNewContext(
-    `${REPORT_SCRIPT}\n${REPORT_PARTS_SCRIPT}\n${REPORT_SUMMARY_SCRIPT}\n${REPORT_COUNTRY_SCRIPT}\n${REPORT_COUNTRY_PARTS_SCRIPT}\n${REPORT_WORDS_SCRIPT}\nthis.draw = renderCountryReport;`,
-    ctx,
-  );
-  const draw = ctx.draw as (b: unknown, c: unknown, rid: string, research: string) => void;
-  draw(box, c, "r-japan-1", "");
-  return box.innerHTML;
-}
-
-test("the country report reads bottom line first, with flags, local text, back-translations and no internal ids", async () => {
-  const loaded = await japanProject();
-  const def = japanReport(loaded);
-  const a = reportApproval(loaded, def);
-  assert.ok(!("problem" in a));
-  const r = run(loaded, def.id, a.plan.planHash, reportFake());
-  assert.ok(r.ok);
-  await r.done;
-  const html = renderCountry(latestCountry(loaded, def.id), true);
-  const order = [
-    "Summary: the bottom line",
-    "Recommendations per country",
-    "How each game localises",
-    "Words used, per country",
-    "A/B test details",
-    "How we sort images",
-  ];
-  const at = order.map((t) => html.indexOf(t));
-  assert.ok(
-    at.every((i, k) => i > 0 && (k === 0 || i > (at[k - 1] as number))),
-    JSON.stringify(at),
-  );
-  assert.match(html, /<img class="flag" alt="jp">Japan/);
-  assert.match(html, /バトル開始/);
-  assert.match(html, /battle start/);
-  assert.match(html, /\[X\] different|\[V\] same/);
-  assert.doesNotMatch(html, /\bC\d+\b/);
-  assert.doesNotMatch(renderCountry(latestCountry(loaded, def.id), false), /class="flag"/);
 });
 
 test("a test across more than five languages says to split it into several experiments", () => {
