@@ -5,7 +5,7 @@ import { fitFor } from "../core/selection.ts";
 import { readJournal } from "../jobs/journal.ts";
 import { analysisStatus } from "../jobs/status.ts";
 import { presetOutcome } from "../reports/ready.ts";
-import { type SuggestionsView, suggestionsView } from "../reports/suggest.ts";
+import { suggestionsView } from "../reports/suggest.ts";
 import { workspaceStorage } from "../storage/index.ts";
 import { latestRun } from "../view/model.ts";
 
@@ -206,17 +206,9 @@ export function projectState(
 
 function topSuggestion(loaded: LoadedConfig, href: string): ProjectState["suggestion"] {
   try {
-    return topOf(suggestionsView(loaded), href);
+    const top = suggestionsView(loaded).suggestions.find((s) => s.category !== "same");
+    return top ? { text: `${top.title} (${top.costText}): ${top.why}`, href } : null;
   } catch {
     return null;
   }
 }
-
-/** The home card's "Next" line from computed suggestions (the first that is not "same"). */
-export function topOf(view: SuggestionsView, href: string): ProjectState["suggestion"] {
-  const top = view.suggestions.find((s) => s.category !== "same");
-  return top ? { text: `${top.title} (${top.costText}): ${top.why}`, href } : null;
-}
-
-/** Stages whose home card shows the top suggested research. */
-export const SUGGESTION_STAGES: readonly ProjectStage[] = ["recommendations", "expand"];

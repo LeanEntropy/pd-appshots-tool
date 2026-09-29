@@ -135,7 +135,10 @@ export async function settingsRoute(
     else {
       const s = readSettings(app.storage, { projectId: id });
       const view = s ? settingsView(s, found.loaded.config, app.root) : null;
-      sendHtml(res, settingsPage(id, app.names(id), view, app.token, FIXED));
+      sendHtml(
+        res,
+        settingsPage(id, app.names(id), view, app.token, FIXED, s ? (s.archived ?? false) : null),
+      );
     }
     return true;
   }

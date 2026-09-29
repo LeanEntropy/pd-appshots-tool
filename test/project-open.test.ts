@@ -242,8 +242,14 @@ test("same-screen check: page reads do not wait for it; the page is told while i
     assert.deepEqual(await (await fetch(`${api}/same-screens`)).json(), { running: true });
     release();
     await held;
-    await new Promise((r) => setTimeout(r, 50));
-    assert.deepEqual(await (await fetch(`${api}/same-screens`)).json(), { running: false });
+    // Done (a data change meanwhile runs the quick check once more first).
+    let running = true;
+    for (let i = 0; i < 200 && running; i++) {
+      running = ((await (await fetch(`${api}/same-screens`)).json()) as { running: boolean })
+        .running;
+      if (running) await new Promise((r) => setTimeout(r, 100));
+    }
+    assert.equal(running, false, "the check never reported done");
   } finally {
     server.close();
   }

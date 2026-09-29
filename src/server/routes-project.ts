@@ -21,7 +21,7 @@ import {
 import type { AppContext } from "./app-context.ts";
 import { exportRoute } from "./export-api.ts";
 import { redirect, send, sendHtml, writeRequest } from "./http-util.ts";
-import { homeSuggestion, pageView, sameScreens, sameScreensRunning } from "./project-data.ts";
+import { pageView, sameScreens, sameScreensRunning } from "./project-data.ts";
 import { getReportCurrent, getReportRun } from "./report-api.ts";
 import { isReportsPath, reportsRoute } from "./routes-reports.ts";
 import { serveStatic } from "./static.ts";
@@ -85,26 +85,6 @@ export async function stateNow(app: AppContext, loaded: LoadedConfig): Promise<P
 const STATE_KEEP_MS = 5000;
 
 /**
- * The state; the home card asks for its "Next" line too (?home=1): the suggestion computed for
- * the current data, else the last one known. With &compute=1 (only when none was ever known) it
- * is computed, unless the page went away meanwhile (the home stops asking when Open is pressed).
- */
-async function getState(
-  app: AppContext,
-  loaded: LoadedConfig,
-  q: URLSearchParams,
-  res: ServerResponse,
-): Promise<void> {
-  const s = await stateNow(app, loaded);
-  if (q.get("home") !== "1") return send(res, 200, s);
-  const compute = q.get("compute") === "1";
-  if (compute) await new Promise((r) => setImmediate(r));
-  if (res.destroyed) return;
-  const suggestion = await homeSuggestion(app, loaded, s, compute);
-  send(res, 200, suggestion === undefined ? s : { ...s, suggestion });
-}
-
-/**
  * The project page: its top (bar and steps) goes out at once, the rest when the view model is
  * ready; the view model is kept while the data is unchanged, so a second visit is immediate.
  */
@@ -151,7 +131,7 @@ export async function projectRoute(
   }
   if (rest === "/views/gallery.html" && req.method === "GET") return sendGallery(app, loaded, res);
   if (rest === "/api/state" && req.method === "GET")
-    return getState(app, loaded, url.searchParams, res);
+    return send(res, 200, await stateNow(app, loaded));
   if (rest === "/status" && req.method === "GET")
     return sendHtml(res, app.pages.status(id, app.names(id), stateFor(app, loaded), app.token));
   // Several reports per project (plan-reports R1).

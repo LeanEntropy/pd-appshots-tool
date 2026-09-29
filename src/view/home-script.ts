@@ -1,7 +1,8 @@
 ﻿/**
- * Projects home script: cards from the registry's cached summaries at once, then each card's
- * fresh state; the "Working now" strip polls /api/jobs (every 2 s while something runs); the
- * Import offer for a project made before the shared library (runs only when pressed).
+ * Projects home script: one card per project from the registry's saved summary (no request per
+ * card: nothing arrives late, nothing grows under the pointer), each with one button, Open;
+ * archiving is on the project's Settings page. The "Working now" strip polls /api/jobs (every 2 s
+ * while something runs); the Import offer for a project made before the shared library.
  */
 import { ACTION_SCRIPT } from "./action.ts";
 import { APP_ICON_SCRIPT } from "./app-icon.ts";
@@ -10,30 +11,18 @@ export const HOME_SCRIPT = `${ACTION_SCRIPT}${APP_ICON_SCRIPT}
 const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 const LABEL = { setup: "Setting up", preview: "Ready to download", pick: "Pick competitors", pilot: "Pilot", core: "Core check", recommendations: "Recommendations ready", expand: "Expansions" };
 let projects = [];
-const states = {};
 let jobTimer = null;
-// The first poll finds no jobs: the states loadProjects() asks for are enough (each costs the tool seconds).
 let lastLanes = "[]";
 const shown = {};
 
+// Icon, name, one muted line, the status line with its chip, and one button: Open.
 function card(p) {
-  const s = states[p.id];
-  const stage = s ? s.stage : p.summary ? p.summary.stage : "setup";
-  const sub = s && s.substate ? s.substate : "";
-  const line = s ? s.line : p.summary ? p.summary.line : "Checking...";
-  const pill = (LABEL[stage] || stage) + (sub === "running" ? " \\u00b7 running" : sub === "stopped" || sub === "failed" ? " \\u00b7 stopped" : "");
-  const prog = s && s.progress ? '<progress max="' + (s.progress.total || 1) + '" value="' + s.progress.done + '"></progress><span class="meta">' + esc(s.progress.label) + "</span>" : "";
-  const next = s ? '<a class="btn primary" href="' + esc(s.next.href) + '">' + esc(s.next.label) + "</a>" : "";
-  const notices = (s ? s.notices.map((n) => '<p class="warn">' + esc(n) + "</p>").join("") : "")
-    + (s && s.suggestion && !p.archived ? '<p class="meta"><strong>Next:</strong> ' + esc(s.suggestion.text) + ' <a class="btn" href="' + esc(s.suggestion.href) + '">See the suggestions</a></p>' : "");
-  return '<article class="pcard st-' + esc(stage) + (sub ? " sub-" + esc(sub) : "") + (p.archived ? " archived" : "") + '" tabindex="-1" aria-labelledby="t-' + esc(p.id) + '">'
-    + '<div class="phead">' + appIconHtml(p.name, p.appIcon) + '<div class="who"><h2 id="t-' + esc(p.id) + '">' + esc(p.name) + '</h2><div class="meta">' + esc(p.ourAppId) + " &middot; " + p.competitors + " competitors &middot; " + p.countries + " countries</div></div>"
-    + '<span class="pill">' + esc(pill) + "</span></div>"
-    + '<p class="line">' + (sub === "running" ? spinHtml("spin", "border-color: var(--accent); border-right-color: transparent") : "") + esc(line) + "</p>"
-    // Open comes first and what arrives with the fresh state goes under the buttons: a card that
-    // grows while the pointer is on its way must not move Open away from it.
-    + '<div class="actions"><a class="btn" href="/p/' + esc(p.id) + '/">Open</a>' + (p.archived ? "" : " " + next)
-    + '<button type="button" class="btn right" data-archive="' + esc(p.id) + '" data-act-key="archive:' + esc(p.id) + '" data-to="' + (p.archived ? "false" : "true") + '">' + (p.archived ? "Show again" : "Archive") + "</button></div>" + prog + notices + "</article>";
+  const stage = p.summary ? p.summary.stage : "setup";
+  const line = p.summary ? p.summary.line : "Not opened yet";
+  return '<article class="pcard st-' + esc(stage) + (p.archived ? " archived" : "") + '" tabindex="-1" aria-labelledby="t-' + esc(p.id) + '">'
+    + '<div class="phead">' + appIconHtml(p.name, p.appIcon) + '<div class="who"><h2 id="t-' + esc(p.id) + '">' + esc(p.name) + '</h2><div class="meta">' + esc(p.ourAppId) + " &middot; " + p.competitors + " competitors &middot; " + p.countries + " countries</div></div></div>"
+    + '<p class="line"><span class="pill">' + esc(LABEL[stage] || stage) + "</span> " + esc(line) + "</p>"
+    + '<div class="actions"><a class="btn primary big" href="/p/' + esc(p.id) + '/">Open</a></div></article>';
 }
 
 function render() {
@@ -60,36 +49,12 @@ function put(id, html) {
   document.getElementById(id).innerHTML = html;
 }
 
-// Open (any link away) cancels the cards' requests still waiting: the project's page needs the tool now.
-let homeAbort = new AbortController();
-document.addEventListener("click", () => { if (actLeaving) homeAbort.abort(); });
-window.addEventListener("pagehide", () => homeAbort.abort());
-window.addEventListener("pageshow", () => { if (homeAbort.signal.aborted) homeAbort = new AbortController(); });
-const suggestionAsked = {};
-
-async function loadState(id) {
+async function loadProjects() {
   // A project is opening: its page needs the tool now, and this page is about to go.
   if (actLeaving) return;
-  const url = "/p/" + encodeURIComponent(id) + "/api/state?home=1";
-  try {
-    const r = await fetch(url, { signal: homeAbort.signal });
-    if (!r.ok) return;
-    const s = await r.json();
-    states[id] = s; render();
-    // The "Next" line was never worked out for this project: ask once (it costs the tool a few seconds).
-    if ((s.stage === "recommendations" || s.stage === "expand") && !("suggestion" in s) && !suggestionAsked[id] && !actLeaving) {
-      suggestionAsked[id] = true;
-      const r2 = await fetch(url + "&compute=1", { signal: homeAbort.signal });
-      if (r2.ok) { states[id] = await r2.json(); render(); }
-    }
-  } catch {}
-}
-
-async function loadProjects() {
   try {
     projects = (await (await fetch("/api/projects")).json()).projects || [];
     render();
-    for (const p of projects) if (!p.archived) loadState(p.id);
     fetchAppIcons(projects.filter((p) => !p.archived), render);
   } catch { put("cards", '<p class="warn">The tool is not running. Start it with: npm start</p>'); }
 }
@@ -101,8 +66,9 @@ async function pollJobs() {
   const bar = document.getElementById("working");
   bar.hidden = !lanes.length;
   bar.innerHTML = lanes.length ? "<span>Working now:</span>" + lanes.map((l) => '<span>' + spinHtml("spin") + '<a href="/p/' + esc(l.projectId) + '/">' + esc(l.name) + "</a>, " + esc(l.total ? "analysing image " + Math.min(l.done + 1, l.total) + " of " + l.total + " ($" + Number(l.spentUsd).toFixed(2) + " so far)" : l.message) + (l.total ? ' <progress max="' + l.total + '" value="' + l.done + '"></progress>' : "") + "</span>").join("") : "";
-  const key = JSON.stringify(lanes.map((l) => [l.projectId, l.done]));
-  if (key !== lastLanes) { lastLanes = key; for (const l of lanes) loadState(l.projectId); if (!lanes.length) for (const p of projects) if (!p.archived) loadState(p.id); }
+  // A run started or ended: the cards' saved status lines are read again (one cheap request).
+  const key = JSON.stringify(lanes.map((l) => l.projectId));
+  if (key !== lastLanes) { lastLanes = key; loadProjects(); }
   jobTimer = setTimeout(pollJobs, lanes.length ? 2000 : 10000);
 }
 
@@ -164,15 +130,6 @@ document.addEventListener("click", (e) => {
   const t = e.target.closest ? e.target.closest("button") : null;
   if (!t) return;
   if (t.id === "showArchived") { const b = document.getElementById("archivedCards"); b.hidden = !b.hidden; render(); }
-  if (t.dataset.archive) {
-    const id = t.dataset.archive; const to = t.dataset.to === "true";
-    const name = (projects.find((p) => p.id === id) || { name: id }).name;
-    act(t, {
-      busy: to ? "Archiving..." : "Restoring...",
-      run: async () => { await send("/p/" + encodeURIComponent(id) + "/api/archive", { archived: to }); await loadProjects(); },
-      done: to ? name + " is archived. Its card is under Show archived." : name + " is back in your projects.",
-    });
-  }
   if (t.dataset.dry) {
     const id = t.dataset.dry;
     act(t, {

@@ -26,12 +26,8 @@ export interface AppContext {
   names: (id: string) => string;
   /** A project by id: its runnable config, or its draft settings; null when unknown. */
   load: (id: string) => Loaded | null;
-  /** Caches a project's derived state for the home screen (with its suggestion when given). */
+  /** Caches a project's derived state for the home screen. */
   remember: (id: string, s: ProjectState) => void;
-  /** The home card's last known suggestion (null: none; undefined: never computed). */
-  knownSuggestion: (id: string) => ProjectState["suggestion"] | undefined;
-  /** Keeps the newest top suggestion for the home card (only for a card with a summary). */
-  rememberSuggestion: (id: string, s: ProjectState["suggestion"]) => void;
   /** Derived project data kept in memory while the data is unchanged (single flight). */
   computed: Computed;
   opened: (id: string) => void;
@@ -106,31 +102,11 @@ export function createAppContext(o: AppOptions): AppContext {
     },
     remember(id, s) {
       const e = entry(id);
-      if (!e) return;
-      const was = e.summary?.suggestion;
-      const suggestion = s.suggestion === undefined ? was : s.suggestion;
-      const same =
-        e.summary?.line === s.line &&
-        e.summary.stage === s.stage &&
-        JSON.stringify(was ?? null) === JSON.stringify(suggestion ?? null);
-      if (same) return;
+      if (!e || (e.summary?.line === s.line && e.summary.stage === s.stage)) return;
       upsertEntry(storage, {
         ...e,
-        summary: {
-          stage: s.stage,
-          line: s.line,
-          updatedAt: new Date().toISOString(),
-          ...(suggestion === undefined ? {} : { suggestion }),
-        },
+        summary: { stage: s.stage, line: s.line, updatedAt: new Date().toISOString() },
       });
-    },
-    knownSuggestion: (id) => entry(id)?.summary?.suggestion,
-    rememberSuggestion(id, suggestion) {
-      const e = entry(id);
-      if (!e?.summary) return;
-      if (JSON.stringify(e.summary.suggestion ?? null) === JSON.stringify(suggestion ?? null))
-        return;
-      upsertEntry(storage, { ...e, summary: { ...e.summary, suggestion: suggestion ?? null } });
     },
     computed: new Computed(),
     opened(id) {
