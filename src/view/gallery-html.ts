@@ -28,9 +28,10 @@ export interface GalleryServed {
 /** The Settings page of a served project (its API base is /p/<id>/api). */
 function settingsLink(apiBase: string): string {
   const base = apiBase.replace(/\/api$/, "");
+  const library = '<a class="btn-new" href="/games">Games library</a>';
   return base.startsWith("/p/")
-    ? `<a class="btn-new" href="${escHtml(base)}/settings">Settings</a>`
-    : "";
+    ? `<a class="btn-new" href="${escHtml(base)}/settings">Settings</a> ${library}`
+    : library;
 }
 
 /**

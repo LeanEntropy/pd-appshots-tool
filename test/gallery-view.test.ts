@@ -112,6 +112,16 @@ test("the page script parses; approval is a modal dialog; the overview starts fo
   assert.doesNotMatch(GALLERY_SCRIPT, /<details open><summary><strong>Store overview/);
 });
 
+test("a project page's top bar has Settings and Games library side by side", () => {
+  const vm = { coreMarket: { label: "US" }, pilotCompetitors: 2 } as unknown as ViewModel;
+  const served = { name: "Demo", apiBase: "/p/demo/api", steps: [], stage: "setup" };
+  const html = galleryHtml(vm, "t", served);
+  assert.match(
+    html,
+    /href="\/p\/demo\/settings">Settings<\/a> <a class="btn-new" href="\/games">Games library<\/a>/,
+  );
+});
+
 test("the status lists the images of the approved batch, also after a restart", async () => {
   const loaded = await tempProject({
     "Archero 2": { phone: 2, tablet: 2 },

@@ -47,7 +47,7 @@ export function settingsPage(
   /** Archived or not; null when the project cannot be archived (not in the registry). */
   archived: boolean | null = null,
 ): string {
-  const back = `<a class="btn-new" href="/p/${encodeURIComponent(id)}/">Back to the project</a>`;
+  const back = `<a class="btn-new" href="/p/${encodeURIComponent(id)}/">Back to the project</a> <a class="btn-new" href="/games">Games library</a>`;
   const data = JSON.stringify({ id, view }).replace(/</g, "\\u003c");
   const body = `${appBar(name, back)}
 <style>${SETTINGS_CSS}</style>
