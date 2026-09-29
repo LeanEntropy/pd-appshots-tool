@@ -80,6 +80,13 @@ document.addEventListener("click", (e) => {
     return;
   }
   if (!b.closest("#builder")) return;
+  if (b.id === "bSameOk") { bld.adopted = null; renderSame(); const m = document.querySelector("#bActs button.primary"); if (m) m.focus(); return; }
+  if (b.classList.contains("bSameOpen")) {
+    const rid = b.dataset.rid;
+    if (b.dataset.draft) act(b, { busy: "Opening the draft...", run: async () => { const x = await getJson(API + "/reports/" + encodeURIComponent(rid) + "/plan"); await openBuilder({ id: rid, type: x.type, scope: x.scope, name: x.name }); }, done: "" });
+    else { closeBuilder(); openState.set(rid, {}); location.hash = "#report/" + rid; loadReport(); }
+    return;
+  }
   const p = bld.plan;
   if (b.id === "bLeave" && p && p.drop) { bld.leftOut = bld.leftOut.concat(p.drop.leaveOut.map((x) => ({ appId: x.appId, gl: x.gl }))); builderChanged(true); }
   else if (b.id === "bPutBack") { bld.leftOut = []; builderChanged(true); }

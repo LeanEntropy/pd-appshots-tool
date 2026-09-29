@@ -8,6 +8,8 @@ import { builderNewer, draftStatus } from "./builder-status.ts";
 import { eligibility } from "./eligibility.ts";
 import { mainMarketRef } from "./main-market.ts";
 import { syncPresetReports } from "./migrate.ts";
+import { countryName } from "./names.ts";
+import { sameScope } from "./same-scope.ts";
 import { type PlanContext, planContext } from "./scope-plan.ts";
 import { newerReason } from "./stale.ts";
 import { listDefs, readVersionInputs, runFolders, versionFileKey } from "./store.ts";
@@ -29,6 +31,10 @@ export interface ReportSummary {
   countries: string;
   /** The country codes of the report, the first one first. */
   markets: string[];
+  /** The plain country names in the same order ("Hong Kong", never its language). */
+  countryNames: string[];
+  /** Another report set up exactly like this one (same kind, countries and games), or null. */
+  sameAs: string | null;
   competitors: number | null;
   /** The competitors the newest version was built from (for the Pilot and Full check, the pick). */
   competitorNames: string[];
@@ -72,7 +78,8 @@ export function listReports(loaded: LoadedConfig): ReportSummary[] {
     }
     return x;
   };
-  const out = listDefs(s, paths).map((d): ReportSummary => {
+  const defs = listDefs(s, paths);
+  const out = defs.map((d): ReportSummary => {
     const versions: VersionSummary[] = d.versions
       .filter((v) => folders.has(v.id))
       .map((v) => ({
@@ -108,7 +115,7 @@ export function listReports(loaded: LoadedConfig): ReportSummary[] {
       const x = current(d.type);
       names ??= x.plan.games.filter((g) => g.appId !== x.ourAppId).map((g) => g.name);
       if (newest && !files?.has("recommendations.json") && !saved?.hasRecommendations)
-        status = { kind: "partial", text: "Partial: no recommendations written" };
+        status = { kind: "partial", text: "Partial \u00b7 no recommendations" };
       if (job?.state === "running" && job.stage === d.type)
         status = {
           kind: "running",
@@ -128,18 +135,21 @@ export function listReports(loaded: LoadedConfig): ReportSummary[] {
       if (left)
         status = {
           kind: "partial",
-          text: `Partial: ${left} written ${left === 1 ? "part" : "parts"} missing`,
+          text: `Partial \u00b7 ${left} ${left === 1 ? "part" : "parts"} missing`,
         };
     }
     if (job?.state === "running" && job.reportId === d.id)
       status = { kind: "running", text: job.progress.message || "Running" };
+    const markets = inputs?.scope.markets ?? d.scope.markets;
     return {
       id: d.id,
       name: d.name,
       type: d.type,
       typeName: TYPE_NAMES[d.type],
-      countries: countriesOf(inputs?.scope.markets ?? d.scope.markets),
-      markets: (inputs?.scope.markets ?? d.scope.markets).map((m) => m.gl),
+      countries: countriesOf(markets),
+      markets: markets.map((m) => m.gl),
+      countryNames: markets.map((m) => countryName(m.label)),
+      sameAs: d.archived ? null : (sameScope(defs, d.scope, d.id)[0]?.name ?? null),
       competitors: names ? names.length : null,
       competitorNames: names ?? [],
       generatedAt: newest?.generatedAt ?? null,

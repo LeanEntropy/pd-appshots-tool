@@ -6,17 +6,26 @@ import { mainMarketRef } from "./main-market.ts";
 import { buildScopePlan, type PlanContext } from "./scope-plan.ts";
 import type { ReportDef, VersionInputs } from "./types.ts";
 
-const money = (n: number) => `$${n.toFixed(2)}`;
+/** "~$16–29" (whole dollars from $10 up, each end on its own), "~$0.58–1.53" below. */
+export function shortRange(lo: number, hi: number): string {
+  const f = (n: number) => (n >= 10 ? String(Math.round(n)) : n.toFixed(2));
+  return f(lo) === f(hi) ? `~$${f(hi)}` : `~$${f(lo)}–${f(hi)}`;
+}
 
-/** A draft's status line: what it needs before it can be built (code only). */
+/**
+ * A draft's status chip, short (the list row is one line): "Draft · 182 images · ~$16–29",
+ * "Draft · ready to build, free", or "Draft · " plus what is still missing (code only).
+ */
 export function draftStatus(loaded: LoadedConfig, def: ReportDef, ctx: PlanContext): string {
   const incomplete = scopeIncomplete(def.scope);
-  if (incomplete) return `Draft: ${incomplete.charAt(0).toLowerCase()}${incomplete.slice(1)}`;
+  if (incomplete)
+    return `Draft · ${incomplete.charAt(0).toLowerCase()}${incomplete.slice(1).replace(/\.$/, "")}`;
   try {
     const p = buildScopePlan(loaded, def.scope, { proposeDrop: false, ctx });
-    if (p.instant) return "Draft: ready to build, free";
+    if (p.instant) return "Draft · ready to build, free";
     const n = p.counts.newImages;
-    return `Draft: needs ${n} ${n === 1 ? "image" : "images"} analysed (about ${money(p.usd[0])} to ${money(p.usd[1])})`;
+    const what = n ? `${n} ${n === 1 ? "image" : "images"}` : "written parts only";
+    return `Draft · ${what} · ${shortRange(p.usd[0], p.usd[1])}`;
   } catch {
     return "Draft";
   }

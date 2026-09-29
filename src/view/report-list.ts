@@ -11,6 +11,9 @@ export const REPORT_LIST_CSS = `
 .rcard { margin-bottom: 14px; }
 .rcard > summary { cursor: pointer; display: flex; flex-wrap: wrap; gap: 6px 12px; align-items: center; }
 .rcard > summary .rc-desc { flex-basis: 100%; }
+.rcard .rc-full, .rcard[open] .rc-short { display: none; } .rcard[open] .rc-full { display: inline; }
+.rc-date { margin-left: auto; font-size: 13px; color: var(--muted); white-space: nowrap; }
+.rc-del { margin: 8px 0; padding: 10px 14px; border-radius: 8px; background: var(--card); color: var(--text); } .rc-del p { margin: 0 0 8px; }
 @media print { .rcard > summary { padding: 10px 14px; } .rcard > summary .rc-name { font-size: 17px; font-weight: 700; } .rcard > .rc-b { padding: 4px 14px 12px; } }
 .rc-bar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 8px 0; }
 .pill.t-pilot { background: var(--accent); } .pill.t-core { background: var(--ok); } .pill.t-country { background: var(--mid); } .pill.t-compare { background: var(--accent-2); }
@@ -59,11 +62,14 @@ function reportDescription(r) {
 
 function reportCardHtml(r) {
   const id = rsafe(r.id);
-  const summary = '<span class="rc-name">' + flagText(r.name) + "</span>" + pill(TYPE_CLS[r.type] || "", r.typeName)
+  // Folded: one line (title, kind, status, date); the description shows when the card is open.
+  const summary = rowTitleHtml(r) + pill(TYPE_CLS[r.type] || "", r.typeName)
     + pill(STATUS_CLS[r.status.kind] || "none", r.status.text)
     + (r.newer ? '<span class="pill newer" title="' + esc(r.newer) + '">Newer data</span>' : "")
     + (r.archived ? pill("none", "Archived") : "")
-    + '<span class="rc-desc">' + esc(reportDescription(r)) + "</span>";
+    + (r.sameAs ? '<span class="pill same" title="Set up exactly like \\u201c' + esc(r.sameAs) + '\\u201d">Same setup as another</span>' : "")
+    + (r.generatedAt ? '<span class="rc-date" title="' + esc(fmtDate(r.generatedAt)) + '">' + esc(rowDate(r.generatedAt)) + "</span>" : "")
+    + '<span class="rc-desc">' + esc(reportDescription(r)) + (r.sameAs ? ". Set up exactly like \\u201c" + esc(r.sameAs) + "\\u201d" : "") + "</span>";
   const b =(cls, label, extra) => '<button type="button" class="' + cls + '" data-rid="' + id + '" data-act-key="' + cls.split(" ")[0] + "-" + id + '"' + (extra || "") + ">" + label + "</button>";
   return '<details class="rcard ' + (TYPE_CLS[r.type] || "") + '" data-rid="' + id + '" id="rc-' + id + '"><summary>' + summary + '</summary><div class="rc-b">'
     + (r.newer ? '<div class="banner stale"><p>' + pill("stale", "Newer data") + " " + esc(r.newer) + (r.canNow ? " Choose \\u201cNow\\u201d to see the report with the current data." : "") + "</p></div>" : "")
@@ -73,9 +79,9 @@ function reportCardHtml(r) {
     + (r.versions.length || r.canNow ? b("rc-pdf", "Export PDF") : "")
     + (r.versions.length || r.canNow ? b("rc-regen", "Regenerate") : "")
     + b("rc-rename", "Rename") + b("rc-archive", r.archived ? "Restore" : "Archive")
-    + (r.deletable ? b("rc-delete danger", "Delete") : '<span class="meta">The ' + esc(r.typeName) + " can be archived, not deleted.</span>") + "</div>"
+    + (!r.deletable ? '<span class="meta">The ' + esc(r.typeName) + " can be archived, not deleted.</span>" : r.status.kind === "running" ? '<span class="meta">Stop the run before deleting this report.</span>' : b("rc-delete danger", "Delete")) + "</div>"
     + '<div class="rc-edit" id="re-' + id + '" hidden><label>New name: <input type="text" maxlength="120" class="rc-input" id="rn-' + id + '" data-rid="' + id + '"></label> '
-    + b("rc-save primary", "Save name") + " " + b("rc-cancel", "Cancel") + "</div>"
+    + b("rc-save primary", "Save name") + " " + b("rc-cancel", "Cancel") + "</div>" + (r.deletable && r.status.kind !== "running" ? deleteConfirmHtml(r, id) : "")
     + '<p class="act-msg" id="rs-' + id + '" hidden></p><div class="rc-pdfres" id="rp-' + id + '"></div><p class="meta" id="rh-' + id + '"></p></div><div class="rbox" id="rb-' + id + '"></div></div></details>';
 }
 
@@ -261,11 +267,13 @@ document.addEventListener("click", (e) => {
       run: async () => { const r = await sendReq("PATCH", url, { archived }); await loadReport(); return r; },
       done: archived ? "Archived \\u201c" + rep.name + "\\u201d. Find it under Show archived." : "Restored \\u201c" + rep.name + "\\u201d." });
   } else if (b.classList.contains("rc-delete")) {
-    const n = rep.versions.length;
-    if (!confirm("Delete the report \\u201c" + rep.name + "\\u201d and its " + n + (n === 1 ? " version" : " versions") + "? The analyses stay in the library and are reused by other reports.")) return;
+    showDeleteConfirm(rid, true);
+  } else if (b.classList.contains("rc-delno")) {
+    showDeleteConfirm(rid, false);
+  } else if (b.classList.contains("rc-delyes")) {
     act(b, { busy: "Deleting...", status: "reportStatus",
       run: async () => { const r = await sendReq("DELETE", url, {}); openState.delete(rid); await loadReport(); return r; },
-      done: "Deleted \\u201c" + rep.name + "\\u201d." });
+      done: "Deleted \\u201c" + rep.name + "\\u201d. Paid image analyses stay in the library." });
   }
 });
 `;

@@ -76,7 +76,7 @@ function builderHtml() {
   return '<h3 id="bTitle" tabindex="-1">' + (bld.id ? "Report setup (saved as a draft)" : "New report") + "</h3>"
     + '<fieldset><legend>What kind?</legend>' + types + "</fieldset>"
     + (o.warning && bld.type !== "core" && bld.type !== "pilot" ? '<p class="bwarn">' + esc(o.warning) + "</p>" : "")
-    + body + '<div id="bNeeds" aria-live="polite"></div><p class="act-msg" id="bStatus" hidden></p><div class="bacts" id="bActs"></div>';
+    + body + '<div id="bSame" aria-live="polite"></div><div id="bNeeds" aria-live="polite"></div><p class="act-msg" id="bStatus" hidden></p><div class="bacts" id="bActs"></div>';
 }
 
 function renderBuilder() {
@@ -85,6 +85,26 @@ function renderBuilder() {
   box.hidden = false;
   box.innerHTML = builderHtml();
   if (bld.plan) renderNeeds(bld.plan);
+  renderSame();
+}
+
+// A draft set up exactly like this already exists: it is reopened here, never copied.
+function adoptDraft(d, keepName) {
+  bld.id = d.id; bld.name = d.name; bld.nameEdited = !!keepName; bld.adopted = { id: d.id, name: d.name };
+  const h = document.getElementById("bTitle"); if (h) h.textContent = "Report setup (saved as a draft)";
+  const input = document.getElementById("bName"); if (input) input.value = d.name;
+}
+
+// "You already have a draft for this" (Continue), and a warning when another report has the same setup.
+function renderSame() {
+  const box = document.getElementById("bSame");
+  if (!box) return;
+  const others = (bld.same || []).filter((x) => x.id !== bld.id);
+  const q = (n) => "\\u201c" + esc(n) + "\\u201d";
+  box.innerHTML = (bld.adopted ? '<p class="bwarn">You already have a draft for this: ' + q(bld.adopted.name) + ". It is open here, so no second copy is made. "
+      + '<button type="button" class="primary" id="bSameOk">Continue</button></p>' : "")
+    + others.map((x) => '<p class="bwarn">' + q(x.name) + (x.draft ? " (a draft)" : "") + " is set up exactly like this: the same countries and competitors. "
+      + '<button type="button" class="bSameOpen" data-rid="' + esc(x.id) + '" data-draft="' + (x.draft ? "1" : "") + '">Open it instead</button></p>').join("");
 }
 
 // Opens the builder, prefilled from a suggestion, a card or "What next?" (nothing is saved until a tick).
@@ -110,6 +130,8 @@ async function openBuilder(pre) {
   bld.nameEdited = !!p.name;
   bld.plan = null;
   bld.dirty = false;
+  bld.same = [];
+  bld.adopted = null;
   renderBuilder();
   box.scrollIntoView({ block: "start" });
   const h = document.getElementById("bTitle"); if (h) h.focus();
@@ -119,7 +141,7 @@ async function openBuilder(pre) {
 function closeBuilder() {
   const box = document.getElementById("builder");
   if (box) { box.hidden = true; box.innerHTML = ""; }
-  bld.id = null; bld.plan = null; bld.dirty = false; bld.seq++;
+  bld.id = null; bld.plan = null; bld.dirty = false; bld.same = []; bld.adopted = null; bld.seq++;
 }
 
 // Every change: "Working out what is needed..." at once, then the numbers (debounced, one save at a time).
@@ -147,6 +169,8 @@ async function ensureDraft() {
   if (bld.id || isPresetType(bld.type)) return;
   const d = await send(API + "/reports", bld.nameEdited ? { scope: builderScope(), name: bld.name } : { scope: builderScope() });
   bld.id = d.id; bld.name = d.name;
+  // The server reopens a draft set up exactly like this one instead of making a copy.
+  if (d.existing) { adoptDraft(d, true); renderSame(); }
   const h = document.getElementById("bTitle"); if (h) h.textContent = "Report setup (saved as a draft)";
   if (typeof loadReport === "function") loadReport();
 }
@@ -177,6 +201,10 @@ async function recompute(seq) {
       if (!bld.nameEdited) bld.name = r.name;
     }
     if (seq !== bld.seq) return;
+    const draft = !isPresetType(bld.type) && !bld.id && (r.same || []).find((x) => x.draft);
+    if (draft) adoptDraft(draft, draft.name !== r.suggestedName);
+    bld.same = r.same || [];
+    renderSame();
     if (!bld.id && !bld.nameEdited) bld.name = r.suggestedName || bld.name;
     const input = document.getElementById("bName");
     if (input && document.activeElement !== input) input.value = bld.name;

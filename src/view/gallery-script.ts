@@ -20,6 +20,7 @@ import { REPORT_COUNTRY_SCRIPT } from "./report-country.ts";
 import { REPORT_COUNTRY_PARTS_SCRIPT } from "./report-country-parts.ts";
 import { EXPORT_SCRIPT } from "./report-export.ts";
 import { REPORT_LIST_SCRIPT } from "./report-list.ts";
+import { REPORT_ROW_SCRIPT } from "./report-list-row.ts";
 import { SUGGEST_SCRIPT } from "./report-suggest.ts";
 import { REPORT_SUMMARY_SCRIPT } from "./report-summary.ts";
 
@@ -77,4 +78,4 @@ document.getElementById("locale").innerHTML = '<option value="all">All countries
 
 export const GALLERY_SCRIPT = `${ACTION_SCRIPT}
 ${FLAG_SCRIPT}
-${RENDER_SCRIPT}\n${INFO_SCRIPT}\n${STORE_SCRIPT}\n${PICKER_SCRIPT}\n${GRID_SCRIPT}\n${NAV_SCRIPT}\n${REPORT_SCRIPT}\n${REPORT_PARTS_SCRIPT}\n${REPORT_SUMMARY_SCRIPT}\n${REPORT_LIST_SCRIPT}\n${RUN_SCRIPT}\n${ANALYSIS_SCRIPT}\n${BUILDER_SCRIPT}\n${BUILDER_REVIEW_SCRIPT}\n${REPORT_COUNTRY_SCRIPT}\n${REPORT_COUNTRY_PARTS_SCRIPT}\n${REPORT_APPROVE_SCRIPT}\n${SUGGEST_SCRIPT}\n${EXPAND_SCRIPT}\n${EXPORT_SCRIPT}\n${PLAY_CARD_SCRIPT}\n${ADD_SCRIPT}\n${COUNTRY_ADD_SCRIPT}\nrender();\nloadSaved();\naddInit();\nshowPage(false);\n`;
+${RENDER_SCRIPT}\n${INFO_SCRIPT}\n${STORE_SCRIPT}\n${PICKER_SCRIPT}\n${GRID_SCRIPT}\n${NAV_SCRIPT}\n${REPORT_SCRIPT}\n${REPORT_PARTS_SCRIPT}\n${REPORT_SUMMARY_SCRIPT}\n${REPORT_ROW_SCRIPT}\n${REPORT_LIST_SCRIPT}\n${RUN_SCRIPT}\n${ANALYSIS_SCRIPT}\n${BUILDER_SCRIPT}\n${BUILDER_REVIEW_SCRIPT}\n${REPORT_COUNTRY_SCRIPT}\n${REPORT_COUNTRY_PARTS_SCRIPT}\n${REPORT_APPROVE_SCRIPT}\n${SUGGEST_SCRIPT}\n${EXPAND_SCRIPT}\n${EXPORT_SCRIPT}\n${PLAY_CARD_SCRIPT}\n${ADD_SCRIPT}\n${COUNTRY_ADD_SCRIPT}\nrender();\nloadSaved();\naddInit();\nshowPage(false);\n`;

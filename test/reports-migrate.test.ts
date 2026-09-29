@@ -99,7 +99,7 @@ test("migration lists every pilot and core run as versions; no existing file cha
     [RUNS.core],
   );
   assert.equal(pilot?.deletable, false);
-  assert.equal(pilot?.status.text, "Partial: no recommendations written");
+  assert.equal(pilot?.status.text, "Partial \u00b7 no recommendations");
   assert.equal(pilot?.newer, "New or updated analyses since this version was made.");
   // Nothing moved or rewritten; the approval numbers and freshness pointers stay the same.
   assert.deepEqual(snapshot(loaded), before);

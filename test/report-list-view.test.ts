@@ -7,6 +7,7 @@ import { NAV_SCRIPT } from "../src/view/gallery-nav.ts";
 import { REPORT_SCRIPT } from "../src/view/gallery-report.ts";
 import { REPORT_PARTS_SCRIPT } from "../src/view/gallery-report-parts.ts";
 import { REPORT_LIST_SCRIPT } from "../src/view/report-list.ts";
+import { REPORT_ROW_SCRIPT } from "../src/view/report-list-row.ts";
 import { REPORTS_A_CSS } from "../src/view/report-style-a.ts";
 import { REPORT_SUMMARY_SCRIPT } from "../src/view/report-summary.ts";
 
@@ -25,7 +26,7 @@ function page() {
     location: { hash: "", protocol: "file:" },
   };
   runInNewContext(
-    `${FLAG_SCRIPT}\n${REPORT_SCRIPT}\n${REPORT_PARTS_SCRIPT}\n${REPORT_SUMMARY_SCRIPT}\n${REPORT_LIST_SCRIPT}\nthis.renderReport = renderReport; this.card = reportCardHtml;`,
+    `${FLAG_SCRIPT}\n${REPORT_SCRIPT}\n${REPORT_PARTS_SCRIPT}\n${REPORT_SUMMARY_SCRIPT}\n${REPORT_ROW_SCRIPT}\n${REPORT_LIST_SCRIPT}\nthis.renderReport = renderReport; this.card = reportCardHtml;`,
     ctx,
   );
   // The words as read: the country flag markup (tested in flags.test.ts) is left out here.
@@ -60,6 +61,8 @@ const summary = (o: Partial<ReportSummary>): ReportSummary => ({
   typeName: "Pilot",
   countries: "United States (English)",
   markets: ["us"],
+  countryNames: ["United States"],
+  sameAs: null,
   competitors: 2,
   competitorNames: ["Archero 2", "Capybara Go"],
   generatedAt: "2026-09-27T22:29:48.097Z",
