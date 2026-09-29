@@ -4,8 +4,9 @@
  * Import offer for a project made before the shared library (runs only when pressed).
  */
 import { ACTION_SCRIPT } from "./action.ts";
+import { APP_ICON_SCRIPT } from "./app-icon.ts";
 
-export const HOME_SCRIPT = `${ACTION_SCRIPT}
+export const HOME_SCRIPT = `${ACTION_SCRIPT}${APP_ICON_SCRIPT}
 const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 const LABEL = { setup: "Setting up", preview: "Ready to download", pick: "Pick competitors", pilot: "Pilot", core: "Core check", recommendations: "Recommendations ready", expand: "Expansions" };
 let projects = [];
@@ -26,7 +27,7 @@ function card(p) {
   const notices = (s ? s.notices.map((n) => '<p class="warn">' + esc(n) + "</p>").join("") : "")
     + (s && s.suggestion && !p.archived ? '<p class="meta"><strong>Next:</strong> ' + esc(s.suggestion.text) + ' <a class="btn" href="' + esc(s.suggestion.href) + '">See the suggestions</a></p>' : "");
   return '<article class="pcard st-' + esc(stage) + (sub ? " sub-" + esc(sub) : "") + (p.archived ? " archived" : "") + '" tabindex="-1" aria-labelledby="t-' + esc(p.id) + '">'
-    + '<div class="phead">' + (p.iconFile ? '<img class="icon" alt="" src="/p/' + esc(p.id) + "/icons/" + esc(encodeURIComponent(p.iconFile)) + '">' : '<span class="icon" aria-hidden="true">' + esc((p.name || "?").slice(0, 1).toUpperCase()) + "</span>") + '<div class="who"><h2 id="t-' + esc(p.id) + '">' + esc(p.name) + '</h2><div class="meta">' + esc(p.ourAppId) + " &middot; " + p.competitors + " competitors &middot; " + p.countries + " countries</div></div>"
+    + '<div class="phead">' + appIconHtml(p.name, p.appIcon) + '<div class="who"><h2 id="t-' + esc(p.id) + '">' + esc(p.name) + '</h2><div class="meta">' + esc(p.ourAppId) + " &middot; " + p.competitors + " competitors &middot; " + p.countries + " countries</div></div>"
     + '<span class="pill">' + esc(pill) + "</span></div>"
     + '<p class="line">' + (sub === "running" ? spinHtml("spin", "border-color: var(--accent); border-right-color: transparent") : "") + esc(line) + "</p>"
     // Open comes first and what arrives with the fresh state goes under the buttons: a card that
@@ -73,6 +74,7 @@ async function loadProjects() {
     projects = (await (await fetch("/api/projects")).json()).projects || [];
     render();
     for (const p of projects) if (!p.archived) loadState(p.id);
+    fetchAppIcons(projects.filter((p) => !p.archived), render);
   } catch { put("cards", '<p class="warn">The tool is not running. Start it with: npm start</p>'); }
 }
 
