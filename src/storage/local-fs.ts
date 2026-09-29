@@ -13,7 +13,7 @@ import {
 } from "node:fs";
 import { dirname, join, relative, resolve, sep } from "node:path";
 import type { Readable } from "node:stream";
-import { dataChanged, watchWorkspace } from "./changes.ts";
+import { dataChanged, dataChangedLater, watchWorkspace } from "./changes.ts";
 import { REPORT_DELETE_KEY, type Storage } from "./types.ts";
 
 /** Top-level key namespaces and their folders inside the workspace. */
@@ -40,6 +40,18 @@ function readIfExists(p: string, enc?: "utf8"): Buffer | string | undefined {
     if (code === "ENOENT" || code === "ENOTDIR") return undefined;
     throw e;
   }
+}
+
+const SAME_SCREEN = /^(library|projects\/[a-z0-9-]+)\/same-screen\//;
+
+/** Counts a data write for the cached page data (changes.ts). */
+function changed(k: string): void {
+  // The registry (names, last opened, the home card's summary) is not project data: opening a
+  // project must not throw away what was computed for it.
+  if (k.startsWith("registry/")) return;
+  // The same-screen check writes one small result per pair for minutes: counted when it ends.
+  if (SAME_SCREEN.test(k)) dataChangedLater();
+  else dataChanged();
 }
 
 /** The local file-system implementation, rooted at the workspace folder. */
@@ -94,9 +106,7 @@ export class LocalFsStorage implements Storage {
     const tmp = `${p}.${process.pid}.${++tmpCounter}.tmp`;
     writeFileSync(tmp, text);
     renameSync(tmp, p);
-    // The registry (names, last opened, the home card's summary) is not project data: opening a
-    // project must not throw away what was computed for it.
-    if (!k.startsWith("registry/")) dataChanged();
+    changed(k);
   }
 
   putJsonOnce(k: string, value: unknown): boolean {
@@ -104,7 +114,7 @@ export class LocalFsStorage implements Storage {
     mkdirSync(dirname(p), { recursive: true });
     try {
       writeFileSync(p, `${JSON.stringify(value, null, 2)}\n`, { flag: "wx" });
-      dataChanged();
+      changed(k);
       return true;
     } catch (e) {
       if ((e as NodeJS.ErrnoException).code === "EEXIST") return false;

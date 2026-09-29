@@ -9,7 +9,7 @@ import { projectPaths } from "../src/config/load.ts";
 import { startAppServer } from "../src/server/app-server.ts";
 import { Computed } from "../src/server/computed.ts";
 import { viewModel } from "../src/steps/deck-view.ts";
-import { dataStamp } from "../src/storage/changes.ts";
+import { dataStamp, flushDataChanges } from "../src/storage/changes.ts";
 import { workspaceStorage } from "../src/storage/index.ts";
 import { tempProject } from "./helpers/project.ts";
 
@@ -87,6 +87,11 @@ test("data stamp: data writes change it, the project registry does not", () => {
   assert.notEqual(a, b);
   s.putJson("registry/projects.json", { version: 1, projects: [] });
   assert.equal(dataStamp(ws), b, "opening a project (a registry write) dropped the cached data");
+  // The same-screen check's many small results count once, when it ends.
+  s.putJsonOnce("library/same-screen/aa/bb.v1.json", { same: false });
+  assert.equal(dataStamp(ws), b);
+  flushDataChanges();
+  assert.notEqual(dataStamp(ws), b);
 });
 
 test("analysis records: read once per data change, and a new record is seen at once", async () => {
@@ -199,6 +204,46 @@ test("reports and suggestions share one report list per data change", async () =
     // A data write: the next ask computes it again.
     workspaceStorage(ws).putJson(`projects/${id}/touch.json`, { at: 1 });
     assert.equal(app.computed.peek(ws, `${id}:reports`), undefined);
+  } finally {
+    server.close();
+  }
+});
+
+test("same-screen check: page reads do not wait for it; the page is told while it runs", async () => {
+  const loaded = await tempProject(FIVE);
+  const { server, app, origin } = await startAppServer({
+    root: loaded.root,
+    projects: [loaded],
+    token: "tok",
+  });
+  try {
+    const id = projectPaths(loaded).projectId;
+    const ws = projectPaths(loaded).workspace;
+    const api = `${origin}/p/${id}/api`;
+    // Its first run takes minutes: here it is held until the end of the test.
+    let release: () => void = () => {};
+    const held = new Promise<number>((r) => {
+      release = () => r(0);
+    });
+    void app.computed.get(ws, `${id}:same-screens`, () => held);
+    const quick = await Promise.race([
+      Promise.all([
+        fetch(`${api}/reports/builder`),
+        fetch(`${api}/analysis/status`),
+        fetch(`${api}/reports`),
+      ]),
+      new Promise<null>((r) => setTimeout(() => r(null), 20_000)),
+    ]);
+    assert.ok(quick, "a page read waited for the same-screen check");
+    assert.deepEqual(
+      quick.map((r) => r.status),
+      [200, 200, 200],
+    );
+    assert.deepEqual(await (await fetch(`${api}/same-screens`)).json(), { running: true });
+    release();
+    await held;
+    await new Promise((r) => setTimeout(r, 50));
+    assert.deepEqual(await (await fetch(`${api}/same-screens`)).json(), { running: false });
   } finally {
     server.close();
   }

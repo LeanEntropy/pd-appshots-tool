@@ -7,6 +7,7 @@ import { readJournal } from "../jobs/journal.ts";
 import { draftsFromExpansion } from "../reports/drafts.ts";
 import { listReports } from "../reports/list.ts";
 import { mainMarketRef } from "../reports/main-market.ts";
+import { repeatUpgrader, tryUpgrade } from "../reports/repeat-upgrade.ts";
 import {
   deleteReport,
   listDefs,
@@ -111,6 +112,12 @@ export function getReportVersion(loaded: LoadedConfig, id: string, vid: string):
     research,
   };
   let note = "";
+  // "Same screen uploaded twice" on saved versions (code only; read only when needed).
+  let up: ReturnType<typeof repeatUpgrader> | undefined;
+  const repeats = () => {
+    up ??= repeatUpgrader(loaded);
+    return up;
+  };
   if (files.has("country-report.json")) {
     try {
       const raw = s.getJson(versionFileKey(paths, entry.id, "country-report.json")) as {
@@ -123,7 +130,7 @@ export function getReportVersion(loaded: LoadedConfig, id: string, vid: string):
           body: {
             ...meta,
             // "Words to use" statuses are derived by code from the saved data (no AI).
-            country: artWordingDeep(withWordStatus(raw)),
+            country: artWordingDeep(withWordStatus(tryUpgrade(raw, repeats().country))),
             // The written report too: the basic PDF export prints it.
             html: markdownToHtml(
               artWording(
@@ -150,7 +157,10 @@ export function getReportVersion(loaded: LoadedConfig, id: string, vid: string):
           status: 200,
           body: {
             ...meta,
-            countries: countries.map((c) => ({ ...c, data: artWordingDeep(c.data) })),
+            countries: countries.map((c) => ({
+              ...c,
+              data: artWordingDeep(tryUpgrade(c.data, repeats().data)),
+            })),
             // The written report too: the PDF export prints it (one renderer per country page).
             html: files.has("report.md")
               ? markdownToHtml(
@@ -169,7 +179,10 @@ export function getReportVersion(loaded: LoadedConfig, id: string, vid: string):
       const raw = s.getJson(versionFileKey(paths, entry.id, "report-data.json"));
       // Saved before the art-screen wording rule: reworded for display (no AI, nothing re-analysed).
       if (SavedDataSchema.safeParse(raw).success)
-        return { status: 200, body: { ...meta, data: artWordingDeep(raw) } };
+        return {
+          status: 200,
+          body: { ...meta, data: artWordingDeep(tryUpgrade(raw, repeats().data)) },
+        };
     } catch {
       // Unreadable: shown as its markdown below.
     }

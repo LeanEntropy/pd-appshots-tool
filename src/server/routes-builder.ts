@@ -4,7 +4,7 @@ import { setDismissed } from "../reports/suggest.ts";
 import type { AppContext } from "./app-context.ts";
 import { send, writeRequest } from "./http-util.ts";
 import { postPairVerdicts } from "./pixel-api.ts";
-import { builderOptions, pixelChecked, suggestionsFor } from "./project-data.ts";
+import { builderOptions, pixelChecked, sameScreens, suggestionsFor } from "./project-data.ts";
 import {
   getMatchCheck,
   getReportPlan,
@@ -58,9 +58,15 @@ export async function builderRoute(
     return true;
   }
   const write = async () => (await writeRequest(req, res, app.token))?.body;
-  // Checked once per data change; a failed check never blocks the page (those pairs keep the
-  // fingerprint rule).
-  if (rest.startsWith("/api/reports/")) await pixelChecked(app, loaded).catch(() => 0);
+  if (rest.startsWith("/api/reports/")) {
+    // Checked once per data change; a failed check never blocks the page (those pairs keep the
+    // fingerprint rule).
+    await pixelChecked(app, loaded).catch(() => 0);
+    // "Same screen uploaded twice" (free, cached per pair): a plan, build or run waits for it;
+    // reads and quick edits (a rename, a yes/no answer) only start it (its first run takes minutes).
+    const check = sameScreens(app, loaded);
+    if (req.method === "POST" && !rest.startsWith("/api/reports/match-check")) await check;
+  }
   if (rest === "/api/reports/match-check/pairs" && req.method === "POST") {
     const body = await write();
     if (body === undefined) return true;

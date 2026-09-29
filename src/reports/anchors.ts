@@ -1,3 +1,4 @@
+import { type RepeatOf, repeatReason } from "../analysis/deck-repeats.ts";
 import type { CostTier } from "../analysis/tiers.ts";
 import { hamming, NEAR_IDENTICAL_BITS } from "../store/identity.ts";
 import { PIXEL_MAX_BITS, type PixelVerdict } from "../store/pixel-diff.ts";
@@ -17,6 +18,8 @@ export interface ScopeInput {
   phash: string;
   width: number;
   height: number;
+  /** The same screen as an earlier position of this deck (uploaded twice). */
+  repeatOf?: RepeatOf;
 }
 
 /** An image that can anchor a text-layer comparison (the same picture, analysed once). */
@@ -112,9 +115,14 @@ export function tierScope(
     const v = pixel.mode === "automatic" ? pixel.verdict(it.imageId, c.imageId) : undefined;
     return v ? v !== "different" : samePicture(c, it);
   };
+  // A repeated copy (reused, never analysed on its own) cannot anchor others unless analysed.
+  const copies = new Set(inputs.filter((i) => i.repeatOf).map((i) => i.imageId));
   const open = (it: ScopeInput, list: readonly AnchorCandidate[] | undefined) =>
     (list ?? []).filter(
-      (c) => c.imageId !== it.imageId && !different.has(pairKey(c.imageId, it.imageId)),
+      (c) =>
+        c.imageId !== it.imageId &&
+        !different.has(pairKey(c.imageId, it.imageId)) &&
+        (c.analysed || !copies.has(c.imageId)),
     );
   const suggested = (it: ScopeInput): string | undefined => {
     if (pixel?.mode !== "suggest" || it.main) return undefined;
@@ -135,6 +143,12 @@ export function tierScope(
   for (const it of inputs) {
     if (analysedIds.has(it.imageId)) {
       out.push({ ...it, tier: "identical", basedOn: it.imageId, reason: "already analysed" });
+      continue;
+    }
+    // The same screen in another size in this deck: its earlier copy's reading is reused.
+    if (it.repeatOf) {
+      const reason = repeatReason(it.repeatOf.position);
+      out.push({ ...it, tier: "identical", basedOn: it.repeatOf.imageId, reason });
       continue;
     }
     if (planned.has(it.imageId)) {

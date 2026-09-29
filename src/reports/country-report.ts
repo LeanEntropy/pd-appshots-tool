@@ -14,6 +14,7 @@ import type { ReportAi } from "./country-ai.ts";
 import { adviceInput, type CountryPart, countryEvidence, countryRules } from "./country-facts.ts";
 import { type CountryInputs, countryInputs, sliceEntries } from "./country-inputs.ts";
 import { mainSynthesis } from "./country-main.ts";
+import { withCountryRepeats } from "./country-repeats.ts";
 import type { AdvicePart, CountryReport } from "./country-report-types.ts";
 import { dates, keyActions, shortAnswer, verdicts } from "./country-summary.ts";
 import { countryName } from "./names.ts";
@@ -261,7 +262,7 @@ export async function assembleCountryReport(
   return {
     inputs: x,
     problems,
-    report: {
+    report: withCountryRepeats({
       kind: "countries",
       version: 1,
       type: def.type === "compare" ? "compare" : "country",
@@ -284,6 +285,6 @@ export async function assembleCountryReport(
       advice,
       abTests,
       sorting: mergedSorting(countries.map((c) => c.data)),
-    },
+    }),
   };
 }

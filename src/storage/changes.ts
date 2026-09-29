@@ -60,6 +60,32 @@ export function dataChanged(): void {
   trailing.unref();
 }
 
+let later: NodeJS.Timeout | null = null;
+const LATER_MS = 10_000;
+
+/**
+ * A write from a long background pass that writes many small results (the same-screen check):
+ * counted once when the pass ends (dataChangedNow) or ten seconds later, so the page's cached
+ * data is not recomputed after every one of its writes.
+ */
+export function dataChangedLater(): void {
+  if (later) return;
+  later = setTimeout(() => {
+    later = null;
+    dataChanged();
+  }, LATER_MS);
+  later.unref();
+}
+
+/** Counts a pending deferred write now (a background pass has ended). */
+export function flushDataChanges(): void {
+  if (!later) return;
+  clearTimeout(later);
+  later = null;
+  dataChanged();
+}
+process.once("exit", flushDataChanges);
+
 /**
  * The current stamp of a workspace: this process's write count plus the marker's time (writes
  * from other processes). Equal stamps mean no data was written in between. One file stat.

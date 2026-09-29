@@ -18,7 +18,8 @@ function needsHtml(p) {
   const dates = p.decks.map((d) => d.orderDate).filter(Boolean).sort();
   const gone = p.decks.filter((d) => d.state === "not-sold" || d.state === "not-downloaded");
   const left = p.decks.filter((d) => d.state === "left-out");
-  const lines = [row("Already analysed or identical to an analysed image (free)", c.identical), row("Same picture, new text: compare the text layer", c.layerDiff), row("Different picture: full analysis", c.full)];
+  const again = p.items.filter((i) => i.repeatOf && i.basedOn !== i.imageId).length;
+  const lines = [row("Already analysed or identical to an analysed image (free)", c.identical - again), ...(again ? [row("Same screen in another size (free)", again)] : []), row("Same picture, new text: compare the text layer", c.layerDiff), row("Different picture: full analysis", c.full)];
   if (c.newImages) lines.push(row("Images: estimated cost", usdRange(p.images.usd)));
   for (const t of p.text.parts) lines.push(row(t.label, usdRange(t.usd)));
   return "<h4>What this report needs</h4><table>" + lines.join("") + "</table>"
@@ -56,16 +57,20 @@ function reviewHtml(p) {
 }
 
 function pairHtml(x) {
-  const img = (t, alt) => (t ? '<img src="' + IMG + esc(t) + '" alt="' + esc(alt) + '">' : "");
   const now = x.treatedAs === "same" ? "treated as the same picture (text comparison only)" : "treated as different screens (full analysis)";
-  return '<div class="pair">' + img(x.anchor.thumb, "main country") + img(x.image.thumb, x.country) + "<div><strong>" + esc(x.game) + "</strong>: position " + x.position + " in " + esc(theCountryOf(x.country)) + " vs position " + x.anchor.position + " in the main country. " + esc(now) + (x.userSaid ? " (your answer)" : "") + '<br><button type="button" class="pairv" data-img="' + esc(x.image.id) + '" data-anchor="' + esc(x.anchor.id) + '" data-same="false">Different screens</button> <button type="button" class="pairv" data-img="' + esc(x.image.id) + '" data-anchor="' + esc(x.anchor.id) + '" data-same="true">Same screen</button></div></div>';
+  return '<div class="pair">' + pgPictures(x) + "<div><strong>" + esc(x.game) + "</strong>: position " + x.position + " in " + esc(theCountryOf(x.country)) + " vs position " + x.anchor.position + " in the main country. " + esc(now) + (x.userSaid ? " (your answer)" : "") + "." + esc(pgChanged(x)) + '<br><button type="button" class="pairv" data-img="' + esc(x.image.id) + '" data-anchor="' + esc(x.anchor.id) + '" data-same="false">Different screens</button> <button type="button" class="pairv" data-img="' + esc(x.image.id) + '" data-anchor="' + esc(x.anchor.id) + '" data-same="true">Same screen</button></div></div>';
 }
 
 async function showMatchCheck() {
   const r = await getJson(API + "/reports/match-check");
   const box = document.getElementById("approval");
+  // The pixel check's one-click block and the answers given there, then the rest one by one.
+  const done = pgAnswered("m");
+  const grouped = pgGroupHtml("m", r.doubtful) + pgDoneHtml("m") + pgDecidedHtml("m", r.doubtful);
+  const one = r.doubtful.filter((x) => !x.group && !done.has(pgKey(x)));
   box.innerHTML = '<h3 id="approvalTitle">Check the picture matches (free, no AI)</h3><p>Checked ' + r.checked + " images of our game and your pick in the other countries: " + r.identical + " the same file as in the main country, " + r.same + " the same picture with new text, " + r.different + " different pictures.</p>"
-    + (r.doubtful.length ? "<p>These matches are close to the line. If the screen under the text is different, press Different screens: that image then gets a full analysis.</p>" + r.doubtful.map(pairHtml).join("") : "<p>No doubtful matches.</p>")
+    + grouped
+    + (one.length ? "<p>These matches are close to the line. If the screen under the text is different, press Different screens: that image then gets a full analysis.</p>" + one.map(pairHtml).join("") : grouped ? "" : "<p>No doubtful matches.</p>")
     + '<div class="actions"><button id="cancelApproval">Close</button></div>';
   approvalDialog();
 }

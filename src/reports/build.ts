@@ -1,4 +1,5 @@
 import { reportLabeler } from "../analysis/categories.ts";
+import { repeatsOfItems, sameCheck } from "../analysis/deck-repeats.ts";
 import { batchDataHash } from "../analysis/entries.ts";
 import { labeler } from "../analysis/labels.ts";
 import { PATTERN_FIT_VERSION } from "../analysis/pattern-fit.ts";
@@ -39,6 +40,7 @@ export function countrySlices(
   const taxonomy = loadTaxonomy(loaded);
   const label = reportLabeler(labeler(taxonomy.taxonomy));
   const storage = workspaceStorage(paths.workspace);
+  const same = sameCheck(paths, records);
   const versions = {
     prompts: PROMPT_VERSIONS,
     schema: SCHEMA_VERSION,
@@ -82,6 +84,7 @@ export function countrySlices(
       orderDates: new Map(decks.map((d) => [d.appId, d.orderDate])),
       label,
       dataHash: batchDataHash(slice, records),
+      repeats: repeatsOfItems(items, (id) => db.get(id), same),
       latestAi: null,
       lastSkip: null,
       estimateUsd: plan.text.usd,

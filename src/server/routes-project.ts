@@ -21,7 +21,7 @@ import {
 import type { AppContext } from "./app-context.ts";
 import { exportRoute } from "./export-api.ts";
 import { redirect, send, sendHtml, writeRequest } from "./http-util.ts";
-import { homeSuggestion, pageView } from "./project-data.ts";
+import { homeSuggestion, pageView, sameScreens, sameScreensRunning } from "./project-data.ts";
 import { getReportCurrent, getReportRun } from "./report-api.ts";
 import { isReportsPath, reportsRoute } from "./routes-reports.ts";
 import { serveStatic } from "./static.ts";
@@ -41,6 +41,12 @@ const GETS: Record<string, Get> = {
   "/api/report": (l, q) => getReportCurrent(l, q.get("stage")),
   "/api/report/run": (l, q) => getReportRun(l, q.get("stage"), q.get("id")),
   "/api/expansion": (l) => getExpansion(l),
+  // Starts the same-screen check if it has not run for the current data; the page shows a note
+  // while it runs and refreshes the reports after it.
+  "/api/same-screens": (l, _q, a) => ({
+    status: 200,
+    body: { running: sameScreensRunning(a, l) },
+  }),
 };
 
 const POSTS: Record<string, Post> = {
@@ -152,6 +158,13 @@ export async function projectRoute(
   if (isReportsPath(rest)) return reportsRoute(app, loaded, rest, req, res);
   // PDF export (milestone R2): the print page and the export job's endpoints.
   if (await exportRoute(app, loaded, rest, req, res, url)) return;
+  // "Same screen uploaded twice" (free, cached per pair): a batch plan or run waits for it; page
+  // reads (the run panel's status, the report) only start it (its first run takes minutes).
+  if (/^\/api\/(analysis|report)\//.test(rest)) {
+    const check = sameScreens(app, loaded);
+    if (req.method === "POST" && (rest === "/api/analysis/plan" || rest === "/api/analysis/run"))
+      await check;
+  }
   const get = GETS[rest];
   if (get && req.method === "GET") {
     const r = get(loaded, url.searchParams, app);

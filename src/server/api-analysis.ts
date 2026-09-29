@@ -31,9 +31,15 @@ export function freeImages(loaded: LoadedConfig, plan: AnalysisPlan, names: Name
   const paths = projectPaths(loaded);
   let thisProject = 0;
   let sameInBatch = 0;
+  let sameScreen = 0;
   const others = new Map<string, number>();
   for (const it of plan.items) {
     if (it.tier !== "identical") continue;
+    // The same screen in another size in its deck: the earlier copy's analysis is reused.
+    if (it.repeatOf && it.basedOn !== it.imageId) {
+      sameScreen++;
+      continue;
+    }
     if (it.reason !== "already analysed") {
       sameInBatch++;
       continue;
@@ -45,6 +51,7 @@ export function freeImages(loaded: LoadedConfig, plan: AnalysisPlan, names: Name
   return {
     thisProject,
     sameInBatch,
+    sameScreen,
     others: [...others].map(([projectId, count]) => ({ projectId, name: names(projectId), count })),
   };
 }
