@@ -15,17 +15,23 @@ document.addEventListener("error", (e) => {
   const i = e.target;
   if (i && i.dataset && i.dataset.appIcon) { iconFailed.add(i.getAttribute("src")); i.remove(); }
 }, true);
-// Missing or stale icons are fetched in the background, one game at a time, once per page load
-// (free, no AI); each item is { id, appIcon, iconStale }; ready() runs when an icon arrives.
-async function fetchAppIcons(items, ready) {
-  for (const p of items) {
-    if (!p.iconStale || iconAsked.has(p.id) || (typeof actLeaving !== "undefined" && actLeaving)) continue;
-    iconAsked.add(p.id);
-    try {
-      const r = await send("/api/app-icon", { projectId: p.id });
-      if (r && r.src && r.src !== p.appIcon) { p.appIcon = r.src; ready(p); }
-    } catch {}
-  }
+// Missing or stale icons are fetched in the background, once per page load (free, no AI); each
+// item is { id, appIcon, iconStale }; ready() runs when an icon arrives. opts.ask(item) asks the
+// tool (default: a project's game), opts.limit caps the requests in flight (default one).
+async function fetchAppIcons(items, ready, opts) {
+  const ask = (opts && opts.ask) || ((p) => send("/api/app-icon", { projectId: p.id }));
+  const todo = items.filter((p) => p.iconStale && !iconAsked.has(p.id));
+  for (const p of todo) iconAsked.add(p.id);
+  const worker = async () => {
+    for (let p = todo.shift(); p; p = todo.shift()) {
+      if (typeof actLeaving !== "undefined" && actLeaving) { iconAsked.delete(p.id); continue; }
+      try {
+        const r = await ask(p);
+        if (r && r.src && r.src !== p.appIcon) { p.appIcon = r.src; ready(p); }
+      } catch {}
+    }
+  };
+  await Promise.all(Array.from({ length: Math.max(1, (opts && opts.limit) || 1) }, worker));
 }
 `;
 

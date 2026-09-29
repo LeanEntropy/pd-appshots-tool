@@ -1,6 +1,8 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
+import { resetAppIconRetries } from "../src/library/app-icon.ts";
 import { indexStale, readIndex } from "../src/library/games-index.ts";
+import { platformOf, storesOf } from "../src/library/games-parts.ts";
 import { latestRunId } from "../src/library/project-decks.ts";
 import { projectKey } from "../src/storage/index.ts";
 import { downloadedProject } from "./helpers/competitors.ts";
@@ -112,4 +114,68 @@ test("game page: strips link every picture to its image page in a new tab; marks
   } finally {
     w.server.close();
   }
+});
+
+test("games library: icons asked in the background, store marks with countries", async () => {
+  resetAppIconRetries();
+  const { w, id } = await downloadedProject();
+  try {
+    const games = (await listed(w)) as (Game & { icon: string | null; iconStale: boolean })[];
+    const capy = games.find((g) => g.appId === "com.habby.capybara");
+    assert.ok(capy);
+    assert.deepEqual([capy.icon, capy.iconStale], [null, true], "the letter until it is in");
+    // Only the tool's page may ask, only for a game a project holds.
+    const body = { appId: "com.habby.capybara" };
+    const json = { "Content-Type": "application/json" };
+    assert.equal((await w.post("/api/games/icon", body, json)).status, 403);
+    assert.equal((await w.post("/api/games/icon", { appId: "not an app" }, headers)).status, 400);
+    assert.equal(
+      (await w.post("/api/games/icon", { appId: "com.x.unknown" }, headers)).status,
+      404,
+    );
+    const r = await w.post("/api/games/icon", body, headers);
+    assert.equal(r.status, 200);
+    const src = String(r.body.src);
+    assert.match(src, /^\/app-icons\/[0-9a-f]{64}\.webp$/);
+    const again = (await listed(w)) as typeof games;
+    const now = again.find((g) => g.appId === "com.habby.capybara");
+    assert.deepEqual([now?.icon, now?.iconStale], [src, false], "the list shows it at once");
+    const html = (await w.get(`/games/com.habby.capybara?project=${id}`)).text;
+    assert.match(html, new RegExp(`<img alt="" src="${src}" data-app-icon="1">`));
+    // Store marks: Google Play with the countries held; no App Store data yet.
+    assert.match(
+      html,
+      /<span class="store-mark play" role="img" title="Google Play: United States, Japan" aria-label="Google Play: United States, Japan"><svg /,
+    );
+    assert.doesNotMatch(html, /store-mark appstore/);
+    const d = (await w.get(`/api/games/com.habby.capybara?project=${id}`)).json();
+    assert.deepEqual(d.stores, [{ platform: "play", countries: ["United States", "Japan"] }]);
+    assert.equal(d.iconStale, false);
+    const ours = (await w.get("/api/games/com.pockethaven.roguelegend")).json();
+    assert.equal(ours.iconStale, true, "the game page asks for a missing icon");
+    assert.match((await w.get("/games")).text, /<select id="gStore">/);
+  } finally {
+    w.server.close();
+  }
+});
+
+test("stores of a game: a missing platform is Google Play; the App Store appears once held", () => {
+  assert.deepEqual(
+    [platformOf(undefined), platformOf("play"), platformOf("appstore"), platformOf("apple")],
+    ["play", "play", "appstore", "appstore"],
+  );
+  const page = (gl: string, platform?: string, images = 3, status = "ok") => ({
+    gl,
+    status,
+    images,
+    ...(platform ? { platform } : {}),
+  });
+  assert.deepEqual(storesOf([page("us"), page("jp", "play"), page("kr", undefined, 0)]), [
+    { platform: "play", countries: ["us", "jp"] },
+  ]);
+  assert.deepEqual(storesOf([page("us"), page("us", "appstore"), page("vn", "appstore", 0)]), [
+    { platform: "play", countries: ["us"] },
+    { platform: "appstore", countries: ["us"] },
+  ]);
+  assert.deepEqual(storesOf([]), []);
 });

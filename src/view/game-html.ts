@@ -1,12 +1,15 @@
 import type { GamePage, Strip, Thumb } from "../server/game-view.ts";
 import { ACTION_SCRIPT } from "./action.ts";
-import { APP_ICON_CSS } from "./app-icon.ts";
+import { APP_ICON_CSS, APP_ICON_SCRIPT } from "./app-icon.ts";
 import { countryLabel, FLAG_CSS } from "./flags.ts";
 import { CSS as GALLERY_CSS } from "./gallery-css.ts";
 import { INFO_SCRIPT } from "./gallery-info.ts";
 import { LIB_CSS } from "./library-css.ts";
 import { page } from "./pages-html.ts";
 import { appBar, escHtml as esc } from "./shell.ts";
+import { STORE_MARK_CSS, storeMarksHtml } from "./store-marks.ts";
+
+const ICON_SRC = /^\/app-icons\/[0-9a-f]{64}\.webp$/;
 
 /**
  * The game page (plan-games-library 4): one strip per country (flag in the strip heading only),
@@ -29,7 +32,8 @@ const GAME_CSS = `
 .thumbs figcaption { font-size: 12px; line-height: 1.3; margin-top: 3px; overflow-wrap: anywhere; }
 .thumbs .pos { font-weight: 800; color: var(--a-h); margin-right: 4px; }
 .thumbs .failed { width: 112px; height: 190px; display: grid; place-items: center; text-align: center; padding: 8px; font-size: 12px; background: var(--a-grey); color: var(--a-muted); border-radius: 6px; }
-.ghead2 { display: flex; gap: 12px; align-items: center; }
+.ghead2 { display: flex; gap: 12px; align-items: center; min-width: 0; }
+.ghead2 h1 { flex: 0 1 auto; }
 .ghead2 .icon { width: 52px; height: 52px; flex: none; border-radius: 12px; display: grid; place-items: center; font-weight: 800; font-size: 22px; color: var(--a-head); background: #fff; }
 `;
 
@@ -105,7 +109,7 @@ export function gameHtml(p: GamePage, token: string): string {
     p.choices.length > 1
       ? `<span class="grow"></span><label>Shown as: <select id="shownAs">${p.choices.map((o) => `<option value="${esc(o.href)}"${o.id === p.project.id ? " selected" : ""}>${esc(o.name)}${o.archived ? " (archived)" : ""}</option>`).join("")}</select></label><span id="shownMsg" class="act-msg" hidden></span>`
       : "";
-  const icon = `<span class="icon app-icon"><span aria-hidden="true">${esc((p.name || "?").slice(0, 1).toUpperCase())}</span>${p.icon && /^\/app-icons\/[0-9a-f]{64}\.webp$/.test(p.icon) ? `<img alt="" src="${esc(p.icon)}">` : ""}</span>`;
+  const icon = `<span class="icon app-icon"><span aria-hidden="true">${esc((p.name || "?").slice(0, 1).toUpperCase())}</span>${p.icon && ICON_SRC.test(p.icon) ? `<img alt="" src="${esc(p.icon)}" data-app-icon="1">` : ""}</span>`;
   const meta = [p.category, `${p.images} images, ${p.analysed} analysed`]
     .filter(Boolean)
     .join(" · ");
@@ -115,20 +119,32 @@ export function gameHtml(p: GamePage, token: string): string {
         `${esc(u.name)} (${esc(u.role)})${u.archived ? " (archived)" : ""} <a class="btn" href="/p/${esc(encodeURIComponent(u.id))}/">Open</a>`,
     )
     .join(" ");
-  const data = JSON.stringify({ info: p.info, project: p.project.id }).replace(/</g, "\\u003c");
+  const data = JSON.stringify({
+    info: p.info,
+    project: p.project.id,
+    appId: p.appId,
+    name: p.name,
+    icon: p.icon,
+    iconStale: p.iconStale,
+  }).replace(/</g, "\\u003c");
   const body = `${appBar(null, '<a class="btn-new" href="/games">Games library</a>')}
 <main class="lib">
 <nav class="lib-crumbs" aria-label="Where you are"><a href="/games">Games library</a> / <span>${esc(p.name)}</span>${shownAs}</nav>
 ${p.notice ? `<section class="band notice" role="note">${esc(p.notice)}</section>` : ""}
-<header class="lib-head"><div class="ghead2">${icon}<h1>${esc(p.name)}</h1></div><span class="sub">${esc(meta)}</span></header>
+<header class="lib-head"><div class="ghead2">${icon}<h1>${esc(p.name)}</h1>${storeMarksHtml(p.stores)}</div><span class="sub">${esc(meta)}</span></header>
 <section class="band plain"><p>Used in: ${used}</p><p class="meta">Click a picture to open its image page in a new tab; the (i) shows its analysis.</p></section>
 ${p.strips.map((s) => strip(s, p.appId, p.info)).join("")}
 ${storeFolds(p)}
 </main>
 <div id="infoPop" role="dialog" aria-label="Screenshot analysis" hidden></div>
-<style>${LIB_CSS}${FLAG_CSS}${APP_ICON_CSS}${INFO_CSS}${GAME_CSS}</style>
+<style>${LIB_CSS}${FLAG_CSS}${APP_ICON_CSS}${STORE_MARK_CSS}${INFO_CSS}${GAME_CSS}</style>
 <script type="application/json" id="data">${data}</script>`;
-  return page(`${p.name} · Games library`, body, token, `${ACTION_SCRIPT}${GAME_SCRIPT}`);
+  return page(
+    `${p.name} · Games library`,
+    body,
+    token,
+    `${ACTION_SCRIPT}${APP_ICON_SCRIPT}${GAME_SCRIPT}`,
+  );
 }
 
 const GAME_SCRIPT = `
@@ -136,6 +152,11 @@ const DATA = JSON.parse(document.getElementById("data").textContent);
 const esc = actEsc;
 const APP = { apiBase: "/p/" + encodeURIComponent(DATA.project) + "/api" };
 ${INFO_SCRIPT}
+// The header shows the letter until the icon is in the library; a missing one is fetched now.
+if (DATA.iconStale) fetchAppIcons([{ id: DATA.appId, appIcon: DATA.icon, iconStale: true }], (p) => {
+  const t = document.querySelector(".ghead2 .app-icon");
+  if (t) t.outerHTML = appIconHtml(DATA.name, p.appIcon);
+}, { ask: (p) => send("/api/games/icon", { appId: p.id }) });
 const shown = document.getElementById("shownAs");
 if (shown) shown.addEventListener("change", () => {
   const href = shown.value;

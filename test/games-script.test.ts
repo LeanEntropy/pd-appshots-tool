@@ -57,6 +57,7 @@ function fakePage(games: unknown[]) {
     "gCat",
     "gCountry",
     "gProject",
+    "gStore",
     "gSort",
     "gCards",
     "gCount",
@@ -66,7 +67,7 @@ function fakePage(games: unknown[]) {
     const e = make(
       idn === "gSearch"
         ? "input"
-        : idn.startsWith("g") && ["gCat", "gCountry", "gProject", "gSort"].includes(idn)
+        : ["gCat", "gCountry", "gProject", "gStore", "gSort"].includes(idn)
           ? "select"
           : "div",
     );
@@ -75,6 +76,7 @@ function fakePage(games: unknown[]) {
   }
   (els.get("gSort") as El).options = ["images", "checked", "name"].map((value) => ({ value }));
   (els.get("gSort") as El).value = "images";
+  (els.get("gStore") as El).options = ["", "play", "appstore", "both"].map((value) => ({ value }));
   const handlers: Record<string, ((e: unknown) => void)[]> = {};
   const document = {
     getElementById: (i: string) => els.get(i) ?? null,
@@ -94,6 +96,8 @@ function fakePage(games: unknown[]) {
 test("games directory script: search, filters, sort, remembered view, empty state; text only as text", async () => {
   const { GAMES_SCRIPT } = await import("../src/view/games-script.ts");
   const { FLAG_SCRIPT } = await import("../src/view/flags.ts");
+  const { APP_ICON_SCRIPT } = await import("../src/view/app-icon.ts");
+  const { STORE_MARK_SCRIPT } = await import("../src/view/store-marks.ts");
   const evil = "<img src=x onerror=alert(1)>";
   const g = (
     appId: string,
@@ -128,7 +132,15 @@ test("games directory script: search, filters, sort, remembered view, empty stat
     search: `${name} ${appId}`.toLowerCase().normalize("NFKD").replace(/\p{M}/gu, ""),
   });
   const games = [
-    g("com.a.capy", "Capybara Gó", 64, "Role Playing", "jp", "p1", "2026-09-27"),
+    // Held on both stores: Google Play (no platform: old saved lists) and the App Store.
+    {
+      ...g("com.a.capy", "Capybara Gó", 64, "Role Playing", "jp", "p1", "2026-09-27"),
+      pages: [
+        { gl: "jp", hl: "en", images: 64, checked: "2026-09-27", status: "ok" },
+        { gl: "us", hl: "en", images: 0, checked: "", status: "unavailable" },
+        { platform: "appstore", gl: "us", hl: "en", images: 6, checked: "", status: "ok" },
+      ],
+    },
     g("com.b.arch", "Archero 2", 12, "Action", "us", "p2", "2026-09-29"),
     g("com.c.evil", evil, 30, "Action", "kr", "p1", "2026-09-28"),
   ];
@@ -144,7 +156,7 @@ test("games directory script: search, filters, sort, remembered view, empty stat
     "actReason",
     "actEsc",
     "location",
-    `${FLAG_SCRIPT}\n${GAMES_SCRIPT}\nreturn { gRender: () => gRender(), setGames: (x) => { GAMES = x; gFill(); } };`,
+    `${FLAG_SCRIPT}\n${APP_ICON_SCRIPT}\n${STORE_MARK_SCRIPT}\n${GAMES_SCRIPT}\nreturn { gRender: () => gRender(), setGames: (x) => { GAMES = x; gFill(); } };`,
   );
   const api = run(
     page.document,
@@ -160,7 +172,7 @@ test("games directory script: search, filters, sort, remembered view, empty stat
   ) as { gRender: () => void; setGames: (x: unknown) => void };
   api.setGames(games);
   const names = () =>
-    (page.els.get("gCards") as El).kids.map((k) => k.kids[0]?.kids[1]?.kids[0]?.text);
+    (page.els.get("gCards") as El).kids.map((k) => k.kids[0]?.kids[1]?.kids[0]?.kids[0]?.text);
   const fire = (type: string, target: unknown) => {
     for (const f of page.handlers[type] ?? []) f({ target });
   };
@@ -209,4 +221,63 @@ test("games directory script: search, filters, sort, remembered view, empty stat
     );
     if (e.attrs.href) assert.match(e.attrs.href, /^\/games\/com\.[a-z]\.[a-z]+$/);
   }
+  // Store marks: one per store we hold, the tooltip names the store and its countries.
+  const card = (name: string) =>
+    cards.kids.find((k) => k.kids[0]?.kids[1]?.kids[0]?.kids[0]?.text === name) as El;
+  const marks = (name: string) =>
+    all(card(name))
+      .filter((e) => /^store-mark /.test(e.attrs.class ?? ""))
+      .map((e) => [e.attrs.class, e.attrs.title, e.attrs["aria-label"]]);
+  assert.deepEqual(marks("Capybara Gó"), [
+    ["store-mark play", "Google Play: Japan", "Google Play: Japan"],
+    ["store-mark appstore", "App Store: United States", "App Store: United States"],
+  ]);
+  assert.deepEqual(marks("Archero 2"), [
+    ["store-mark play", "Google Play: United States", "Google Play: United States"],
+  ]);
+  const markEl = all(card("Archero 2")).find((e) => e.attrs.role === "img") as El & {
+    innerHTML?: string;
+  };
+  assert.match(String(markEl.innerHTML), /^<svg viewBox="0 0 16 16"[^>]*aria-hidden="true"/);
+  // The directory cards no longer say where a game is used (the game page does).
+  const texts = all(cards).map((e) => e.text);
+  assert.ok(!texts.some((t) => /Used in/.test(t)), "no Used in line on the cards");
+  // The store filter: Google Play, App Store, both; remembered with the view.
+  const st = page.els.get("gStore") as El;
+  for (const [v, want] of [
+    ["play", 3],
+    ["appstore", 1],
+    ["both", 1],
+    ["", 3],
+  ] as const) {
+    st.value = v;
+    fire("change", st);
+    assert.equal(names().length, want, `store filter ${v}`);
+  }
+  st.value = "appstore";
+  fire("change", st);
+  assert.deepEqual(names(), ["Capybara Gó"]);
+  assert.match(page.store.get("games-library-view") ?? "", /"store":"appstore"/);
+  fire("click", { id: "gClear" });
+  assert.equal(st.value, "");
+  // Icons: a stored one over the letter tile; anything else leaves the letter only.
+  const good = `/app-icons/${"a".repeat(64)}.webp`;
+  api.setGames(
+    games.map((x, i) => ({ ...x, icon: i === 0 ? good : i === 1 ? "https://evil/x.png" : null })),
+  );
+  api.gRender();
+  const tile = (name: string) =>
+    all(card(name)).find((e) => /app-icon/.test(e.attrs.class ?? "")) as El;
+  assert.deepEqual(
+    tile("Capybara Gó").kids.map((k) => [k.tag, k.attrs.src ?? k.text, k.attrs["data-app-icon"]]),
+    [
+      ["span", "C", undefined],
+      ["img", good, "1"],
+    ],
+  );
+  assert.deepEqual(
+    tile("Archero 2").kids.map((k) => k.tag),
+    ["span"],
+    "a remote link is never shown",
+  );
 });
