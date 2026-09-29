@@ -1,5 +1,5 @@
 {
-  "importedAt": "2026-09-29T10:49:11.000Z",
+  "importedAt": "2026-09-29T16:21:39.059Z",
   "folders": [
     "C:\\Users\\User\\AppData\\Local\\Temp\\claude\\C--projects-ai-pd-appstore-tool\\9b150f72-d30c-4d72-a5fa-2d1770596957\\scratchpad\\kb\\seed"
   ],
@@ -124,23 +124,473 @@
   "rejects": [],
   "warnings": [],
   "byTrust": {
-    "unverified": 231,
-    "corroborated": 57,
-    "established": 14,
-    "official": 137
+    "unverified": 198,
+    "corroborated": 45,
+    "established": 11,
+    "official": 134
   },
   "byRuleClass": {
-    "none": 302,
+    "none": 254,
     "enforced_rule": 36,
     "official_guidance": 30,
-    "store_behaviour": 71
+    "store_behaviour": 68
   },
   "byKind": {
-    "ab_case": 29,
-    "store_fact": 137,
-    "market_note": 146,
-    "genre_note": 20,
+    "ab_case": 10,
+    "store_fact": 134,
+    "market_note": 132,
+    "genre_note": 19,
     "glossary": 28,
-    "heuristic": 79
+    "heuristic": 65
+  },
+  "byMarket": {
+    "global": 235,
+    "US": 12,
+    "GB": 1,
+    "CA": 1,
+    "IN": 1,
+    "JP": 30,
+    "KR": 30,
+    "TW": 20,
+    "ID": 24,
+    "PH": 11,
+    "TH": 22,
+    "VN": 27,
+    "HK": 14,
+    "CN": 3
+  },
+  "dateRule": {
+    "cutoff": "2023-01-01",
+    "removedSources": [
+      {
+        "id": "ap-s024",
+        "type": "official",
+        "published": "unknown",
+        "reason": "undated, not confirmed live by a refresh"
+      },
+      {
+        "id": "ap-s026",
+        "type": "vendor_case_study",
+        "published": "unknown",
+        "reason": "undated, no date on the page"
+      },
+      {
+        "id": "ap-s029",
+        "type": "vendor",
+        "published": "unknown",
+        "reason": "undated, no date on the page"
+      },
+      {
+        "id": "as-s007",
+        "type": "law",
+        "published": "2019-05-23",
+        "reason": "published 2019-05-23"
+      },
+      {
+        "id": "as-s008",
+        "type": "press",
+        "published": "2022",
+        "reason": "published 2022"
+      },
+      {
+        "id": "as-s009",
+        "type": "law",
+        "published": "2022",
+        "reason": "published 2022"
+      },
+      {
+        "id": "as-s010",
+        "type": "press",
+        "published": "2021-01-17",
+        "reason": "published 2021-01-17"
+      },
+      {
+        "id": "as-s014",
+        "type": "vendor",
+        "published": "2015-10-27",
+        "reason": "published 2015-10-27"
+      },
+      {
+        "id": "as-s017",
+        "type": "official",
+        "published": "unknown",
+        "reason": "undated, no date on the page"
+      },
+      {
+        "id": "gp-s014",
+        "type": "official",
+        "published": "2021-04-29",
+        "reason": "published 2021-04-29"
+      },
+      {
+        "id": "gp-s017",
+        "type": "vendor",
+        "published": "2020-01-30",
+        "reason": "published 2020-01-30"
+      },
+      {
+        "id": "hr-s009",
+        "type": "vendor",
+        "published": "2018-03",
+        "reason": "published 2018-03"
+      },
+      {
+        "id": "hr-s010",
+        "type": "vendor_case_study",
+        "published": "unknown",
+        "reason": "undated, no date on the page"
+      },
+      {
+        "id": "hr-s011",
+        "type": "vendor_case_study",
+        "published": "unknown",
+        "reason": "undated, no date on the page"
+      },
+      {
+        "id": "hr-s012",
+        "type": "vendor_case_study",
+        "published": "unknown",
+        "reason": "undated, no date on the page"
+      },
+      {
+        "id": "hr-s013",
+        "type": "vendor_case_study",
+        "published": "unknown",
+        "reason": "undated, no date on the page"
+      },
+      {
+        "id": "hr-s014",
+        "type": "vendor_case_study",
+        "published": "unknown",
+        "reason": "undated, no date on the page"
+      },
+      {
+        "id": "hr-s015",
+        "type": "vendor_case_study",
+        "published": "unknown",
+        "reason": "undated, no date on the page"
+      },
+      {
+        "id": "hr-s016",
+        "type": "vendor_case_study",
+        "published": "unknown",
+        "reason": "undated, no date on the page"
+      },
+      {
+        "id": "hr-s018",
+        "type": "vendor",
+        "published": "2020-09-18",
+        "reason": "published 2020-09-18"
+      },
+      {
+        "id": "hr-s022",
+        "type": "vendor",
+        "published": "2022-04-27",
+        "reason": "published 2022-04-27"
+      },
+      {
+        "id": "hr-s027",
+        "type": "vendor",
+        "published": "2017-08-30",
+        "reason": "published 2017-08-30"
+      },
+      {
+        "id": "hr-s042",
+        "type": "vendor",
+        "published": "2019-03-20",
+        "reason": "published 2019-03-20"
+      },
+      {
+        "id": "hr-s043",
+        "type": "vendor",
+        "published": "unknown",
+        "reason": "undated, the page shows 2022-10-11"
+      },
+      {
+        "id": "hr-s044",
+        "type": "vendor",
+        "published": "unknown",
+        "reason": "undated, the page shows 2022-10-11"
+      },
+      {
+        "id": "hr-s045",
+        "type": "vendor",
+        "published": "2018-12-20",
+        "reason": "published 2018-12-20"
+      },
+      {
+        "id": "hr-s049",
+        "type": "community",
+        "published": "2019-04-15",
+        "reason": "published 2019-04-15"
+      },
+      {
+        "id": "hr-s051",
+        "type": "vendor_case_study",
+        "published": "2015-10-28",
+        "reason": "published 2015-10-28"
+      },
+      {
+        "id": "hr-s052",
+        "type": "vendor_case_study",
+        "published": "2015-12-09",
+        "reason": "published 2015-12-09"
+      },
+      {
+        "id": "hr-s053",
+        "type": "vendor_case_study",
+        "published": "unknown",
+        "reason": "undated, no date on the page"
+      },
+      {
+        "id": "hr-s054",
+        "type": "vendor_case_study",
+        "published": "unknown",
+        "reason": "undated, no date on the page"
+      },
+      {
+        "id": "hr-s056",
+        "type": "vendor",
+        "published": "2015-07",
+        "reason": "published 2015-07"
+      },
+      {
+        "id": "hr-s061",
+        "type": "press",
+        "published": "2020-03-26",
+        "reason": "published 2020-03-26"
+      },
+      {
+        "id": "hr-s062",
+        "type": "press",
+        "published": "2016-02-17",
+        "reason": "published 2016-02-17"
+      },
+      {
+        "id": "hr-s065",
+        "type": "vendor",
+        "published": "2022-04-25",
+        "reason": "published 2022-04-25"
+      },
+      {
+        "id": "hr-s066",
+        "type": "vendor",
+        "published": "2022-04-25",
+        "reason": "published 2022-04-25"
+      },
+      {
+        "id": "hr-s077",
+        "type": "independent_data",
+        "published": "2020-09-04",
+        "reason": "published 2020-09-04"
+      },
+      {
+        "id": "hr-s090",
+        "type": "vendor",
+        "published": "2022",
+        "reason": "published 2022"
+      },
+      {
+        "id": "jk-s006",
+        "type": "vendor",
+        "published": "2022-06-21",
+        "reason": "published 2022-06-21"
+      },
+      {
+        "id": "jk-s010",
+        "type": "vendor",
+        "published": "2021-03",
+        "reason": "published 2021-03"
+      },
+      {
+        "id": "jk-s011",
+        "type": "vendor_case_study",
+        "published": "2018-03-16",
+        "reason": "published 2018-03-16"
+      },
+      {
+        "id": "jk-s012",
+        "type": "vendor",
+        "published": "2022-04-12",
+        "reason": "published 2022-04-12"
+      },
+      {
+        "id": "jk-s013",
+        "type": "official",
+        "published": "unknown",
+        "reason": "undated, the page shows 2020-08-11"
+      },
+      {
+        "id": "jk-s019",
+        "type": "law",
+        "published": "2016-04",
+        "reason": "published 2016-04"
+      },
+      {
+        "id": "jk-s024",
+        "type": "press",
+        "published": "2021-05-01",
+        "reason": "published 2021-05-01"
+      },
+      {
+        "id": "jk-s027",
+        "type": "vendor",
+        "published": "2015-02-18",
+        "reason": "published 2015-02-18"
+      },
+      {
+        "id": "jk-s028",
+        "type": "vendor",
+        "published": "2015-02-18",
+        "reason": "published 2015-02-18"
+      },
+      {
+        "id": "jk-s029",
+        "type": "independent_data",
+        "published": "2014-04",
+        "reason": "published 2014-04"
+      },
+      {
+        "id": "jk-s052",
+        "type": "vendor",
+        "published": "2019-09-05",
+        "reason": "published 2019-09-05"
+      },
+      {
+        "id": "jk-s053",
+        "type": "vendor_case_study",
+        "published": "2018",
+        "reason": "published 2018"
+      }
+    ],
+    "removedByType": {
+      "official": 4,
+      "vendor_case_study": 14,
+      "vendor": 21,
+      "law": 3,
+      "press": 5,
+      "community": 1,
+      "independent_data": 2
+    },
+    "droppedEntries": [
+      "hr-101",
+      "hr-102",
+      "hr-103",
+      "hr-104",
+      "hr-105",
+      "hr-106",
+      "hr-107",
+      "hr-108",
+      "hr-109",
+      "hr-110",
+      "hr-111",
+      "hr-120",
+      "hr-121",
+      "hr-122",
+      "hr-125",
+      "hr-126",
+      "ap-066",
+      "ap-067",
+      "ap-068",
+      "hr-216",
+      "gp-031",
+      "hr-002",
+      "hr-005",
+      "hr-010",
+      "hr-012",
+      "hr-015",
+      "hr-023",
+      "hr-033",
+      "hr-034",
+      "hr-041",
+      "hr-048",
+      "hr-054",
+      "hr-058",
+      "hr-059",
+      "jk-jp-005",
+      "jk-jp-008",
+      "jk-jp-009",
+      "jk-jp-010",
+      "jk-jp-011",
+      "jk-jp-012",
+      "jk-jp-026",
+      "jk-jp-027",
+      "jk-jp-029",
+      "as-tw-015",
+      "as-tw-016",
+      "as-tw-017",
+      "as-tw-018",
+      "as-tw-019",
+      "as-tw-020",
+      "ap-102",
+      "ap-107"
+    ],
+    "trustChanged": [
+      {
+        "id": "hr-009",
+        "from": "established",
+        "to": "corroborated"
+      },
+      {
+        "id": "hr-021",
+        "from": "corroborated",
+        "to": "unverified"
+      },
+      {
+        "id": "hr-022",
+        "from": "corroborated",
+        "to": "unverified"
+      },
+      {
+        "id": "hr-040",
+        "from": "established",
+        "to": "corroborated"
+      },
+      {
+        "id": "hr-043",
+        "from": "corroborated",
+        "to": "unverified"
+      },
+      {
+        "id": "hr-044",
+        "from": "corroborated",
+        "to": "unverified"
+      },
+      {
+        "id": "hr-053",
+        "from": "corroborated",
+        "to": "unverified"
+      },
+      {
+        "id": "hr-057",
+        "from": "established",
+        "to": "unverified"
+      },
+      {
+        "id": "hr-060",
+        "from": "corroborated",
+        "to": "unverified"
+      },
+      {
+        "id": "hr-064",
+        "from": "corroborated",
+        "to": "unverified"
+      },
+      {
+        "id": "jk-jp-006",
+        "from": "corroborated",
+        "to": "unverified"
+      },
+      {
+        "id": "as-tw-014",
+        "from": "corroborated",
+        "to": "unverified"
+      },
+      {
+        "id": "ap-105",
+        "from": "corroborated",
+        "to": "unverified"
+      }
+    ]
   }
 }

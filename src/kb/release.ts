@@ -13,6 +13,7 @@ import {
   SourceFileSchema,
   TagsSchema,
 } from "./schema.ts";
+import { applyDateCut, type DateCut, readRefresh } from "./source-date.ts";
 import { type Computed, computeAll } from "./trust.ts";
 
 /** kb/dimension-tags.json: computed facts (pattern ids, gap kinds, variables) to tags. */
@@ -39,6 +40,8 @@ export interface Kb extends KbContent {
   sourceById: Map<string, Source>;
   computed: Map<string, Computed>;
   problems: string[];
+  /** The inbox only: sources the date rule removed and entries left without a source. */
+  dateCut?: DateCut;
 }
 
 const EMPTY_META: ReleaseMeta = {
@@ -116,8 +119,14 @@ function parse<T>(
 /**
  * The released knowledge base (kb/entries, kb/sources.json) or the inbox (kb/inbox), with the
  * shared tag list, checks and dimension map. Files that do not parse are reported, never used.
+ * The inbox is built with the source-date rule applied (source-date.ts) unless raw is asked for.
  */
-export function loadKb(files: KbFiles, part: "release" | "inbox", today: string): Kb {
+export function loadKb(
+  files: KbFiles,
+  part: "release" | "inbox",
+  today: string,
+  opts: { raw?: boolean } = {},
+): Kb {
   const problems: string[] = [];
   const base = part === "release" ? "" : "inbox/";
   const entryDir = part === "release" ? "entries" : "inbox";
@@ -144,11 +153,13 @@ export function loadKb(files: KbFiles, part: "release" | "inbox", today: string)
     );
     if (f) entries.push(...f.entries);
   }
-  return assemble(
+  const cut =
+    part === "inbox" && !opts.raw ? applyDateCut(entries, sources, readRefresh(files)) : null;
+  const kb = assemble(
     {
       meta: meta ?? EMPTY_META,
-      entries,
-      sources,
+      entries: cut?.entries ?? entries,
+      sources: cut?.sources ?? sources,
       tags,
       checks: checks?.checks ?? [],
       dimensionTags: dims ?? EMPTY_DIMS,
@@ -156,6 +167,7 @@ export function loadKb(files: KbFiles, part: "release" | "inbox", today: string)
     today,
     problems,
   );
+  return cut ? { ...kb, dateCut: cut.cut } : kb;
 }
 
 /** The immutable snapshot of a release in the shared library, by its content hash. */

@@ -216,8 +216,11 @@ export const DecisionSchema = z.strictObject({
   entryId: z.string().regex(ID),
   contentHash: z.string().regex(/^[0-9a-f]{64}$/),
   decision: z.enum(["approved", "rejected"]),
-  /** "one" = approved on its own; "bulk" = with the other unverified entries (D4). */
-  how: z.enum(["one", "bulk"]),
+  /**
+   * "one" = approved on its own; "bulk" = with the other unverified entries; "auto" = a current
+   * official entry, approved automatically (D4, official.ts).
+   */
+  how: z.enum(["one", "bulk", "auto"]),
   by: z.string().max(80),
   at: z.string().max(40),
   note: z.string().max(500).default(""),

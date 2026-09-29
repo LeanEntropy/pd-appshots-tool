@@ -76,16 +76,15 @@ test("review list: recommendation-driving entries one by one, unverified in bulk
   importSeeds(files, [seedDir()], TODAY);
   const l = reviewList(files, TODAY);
   const one = l.one.map((i) => i.id);
-  assert.ok(
-    one.includes("gp-enf-1") && one.includes("h-est") && one.includes("jp-reg"),
-    "trusted and regulation entries",
-  );
+  assert.ok(one.includes("h-est") && one.includes("jp-reg"), "trusted and regulation entries");
+  const auto = l.auto.find((i) => i.id === "gp-enf-1");
+  assert.ok(!one.includes("gp-enf-1") && auto?.how === "auto" && auto.status === "approved");
   assert.ok(l.bulk.some((i) => i.id === "h-unv") && !one.includes("h-unv"));
   const d = decide(files, TODAY, "h-est", "approved", "user");
   assert.ok(d.ok);
   assert.equal(approveBulk(files, TODAY, "user"), l.bulk.length);
   const after = reviewList(files, TODAY);
-  assert.equal(after.counts.approved, 1 + l.bulk.length);
+  assert.equal(after.counts.approved, 1 + l.bulk.length + l.auto.length);
   // A changed entry asks again.
   const inbox = files.getJson("inbox/entries-t.json") as {
     file: string;
@@ -104,13 +103,14 @@ test("promotion: only approved content becomes a release; version, counts, chang
   decide(files, TODAY, "h-corr", "approved", "user");
   const p = promote(files, TODAY);
   assert.equal(p.version, 1);
-  assert.deepEqual(p.added.sort(), ["gp-enf-1", "h-est"]);
+  // The current official entries are approved automatically (D4).
+  assert.deepEqual(p.added.sort(), ["exp-fact", "gp-count", "gp-enf-1", "gp-guid-1", "h-est"]);
   assert.ok(
     p.held.some((h) => h.startsWith("h-corr")),
     "a claim whose counter-claim is undecided is held back, never released uncontested",
   );
   const kb = loadKb(files, "release", TODAY);
-  assert.equal(kb.entries.length, 2);
+  assert.equal(kb.entries.length, 5);
   assert.equal(kb.problems.length, 0);
   assert.equal(kb.meta.version, 1);
   assert.equal(promote(files, TODAY).unchanged, true);
@@ -121,6 +121,6 @@ test("promotion: only approved content becomes a release; version, counts, chang
   assert.equal(kb2.computed.get("h-corr")?.contested, true);
   const storage = workspaceStorage(mkdtempSync(join(tmpdir(), "ws-")));
   const hash = pinRelease(storage, kb);
-  assert.equal(loadPinned(storage, hash, TODAY)?.entries.length, 2);
+  assert.equal(loadPinned(storage, hash, TODAY)?.entries.length, 5);
   assert.equal(pinRelease(storage, kb), hash, "write-once snapshot");
 });

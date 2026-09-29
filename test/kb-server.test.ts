@@ -30,6 +30,7 @@ test("review list page: approve one entry and the unverified ones in bulk, saved
     const list = (await (await fetch(`${s.origin}/api/kb/review`)).json()) as {
       one: { id: string }[];
       bulk: { id: string }[];
+      auto: { id: string }[];
     };
     assert.ok(list.one.some((i) => i.id === "h-est"));
     const post = (path: string, body: unknown, token = TOKEN) =>
@@ -51,7 +52,8 @@ test("review list page: approve one entry and the unverified ones in bulk, saved
     const bulk = (await (await post("/api/kb/approve-bulk", {})).json()) as { approved: number };
     assert.equal(bulk.approved, list.bulk.length);
     const saved = readApprovals(files);
-    assert.equal(saved.length, 1 + list.bulk.length);
+    assert.equal(saved.length, 1 + list.bulk.length + list.auto.length);
+    assert.ok(list.auto.length > 0 && saved.some((d) => d.how === "auto"));
     assert.equal(saved.find((d) => d.entryId === "h-est")?.how, "one");
   } finally {
     s.server.close();

@@ -1,6 +1,6 @@
 import type { KbFiles } from "../storage/kb-files.ts";
 import { assemble, contentHash, loadKb } from "./release.ts";
-import { entryHash, readApprovals } from "./review.ts";
+import { entryHash, syncOfficial } from "./review.ts";
 import type { Entry, ReleaseMeta } from "./schema.ts";
 import { TRUST_LEVELS } from "./trust.ts";
 
@@ -25,15 +25,13 @@ export interface Promotion {
 export function promote(files: KbFiles, today: string, dryRun = false): Promotion {
   const inbox = loadKb(files, "inbox", today);
   const current = loadKb(files, "release", today);
+  // D4: current official entries are approved automatically first (written unless a dry run).
+  const decisions = syncOfficial(files, today, !dryRun).decisions;
   const ok = new Map(
-    readApprovals(files)
-      .filter((d) => d.decision === "approved")
-      .map((d) => [d.entryId, d.contentHash]),
+    decisions.filter((d) => d.decision === "approved").map((d) => [d.entryId, d.contentHash]),
   );
   const rejected = new Set(
-    readApprovals(files)
-      .filter((d) => d.decision === "rejected")
-      .map((d) => d.entryId),
+    decisions.filter((d) => d.decision === "rejected").map((d) => d.entryId),
   );
   const ids = new Set(inbox.entries.filter((e) => ok.get(e.id) === entryHash(e)).map((e) => e.id));
   const held: string[] = [];

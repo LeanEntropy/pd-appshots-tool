@@ -1,8 +1,9 @@
 import { basename } from "node:path";
 import { type KbFiles, readSeedDir } from "../storage/kb-files.ts";
 import { convertV1, isV1File } from "./import-v1.ts";
-import { assemble } from "./release.ts";
+import { assemble, loadKb } from "./release.ts";
 import { type Entry, EntrySchema, type Source, SourceSchema, TagsSchema } from "./schema.ts";
+import { type DateCut, SOURCE_CUTOFF } from "./source-date.ts";
 import { TRUST_LEVELS } from "./trust.ts";
 
 /**
@@ -10,7 +11,8 @@ import { TRUST_LEVELS } from "./trust.ts";
  * the user reviews them. Re-runnable: each run rebuilds the inbox from exactly the folders given
  * (the user's decisions live apart, in kb/approvals.json, keyed by entry and content, so a
  * re-import keeps every decision on unchanged entries). Nothing invalid is imported: every
- * reject is listed with its reasons in kb/inbox/import-report.json.
+ * reject is listed with its reasons in kb/inbox/import-report.json. The counts are those of the
+ * inbox as the tool reads it: with the source-date rule applied (source-date.ts).
  */
 type Raw = Record<string, unknown>;
 
@@ -36,6 +38,15 @@ export interface ImportReport {
   byTrust: Record<string, number>;
   byRuleClass: Record<string, number>;
   byKind: Record<string, number>;
+  /** Entries per market (country code, or "global"). */
+  byMarket: Record<string, number>;
+  dateRule: {
+    cutoff: string;
+    removedSources: DateCut["removed"];
+    removedByType: Record<string, number>;
+    droppedEntries: string[];
+    trustChanged: { id: string; from: string; to: string }[];
+  };
 }
 
 const ENTRY_KEYS = new Set(Object.keys(EntrySchema.shape));
@@ -73,6 +84,14 @@ export function importSeeds(
     byTrust: {},
     byRuleClass: {},
     byKind: {},
+    byMarket: {},
+    dateRule: {
+      cutoff: SOURCE_CUTOFF,
+      removedSources: [],
+      removedByType: {},
+      droppedEntries: [],
+      trustChanged: [],
+    },
   };
   const sources = new Map<string, Source>();
   const rules = files.getJson("import-rules.json") as { replaceableOrigins?: string[] } | undefined;
@@ -198,7 +217,7 @@ export function importSeeds(
       accepted.filter((a) => a.file === f.name).length || (f.format === "sources" ? f.imported : 0);
   report.sources = kept.length;
   report.imported = accepted.length;
-  const kb = assemble(
+  const all = assemble(
     {
       meta: { version: 0, date: "", contentHash: "", counts: {}, changelog: [] },
       entries: accepted.map((a) => a.entry),
@@ -209,12 +228,22 @@ export function importSeeds(
     },
     today,
   );
+  const kb = loadKb(files, "inbox", today);
+  const cut = kb.dateCut ?? { removed: [], dropped: [] };
+  report.dateRule.removedSources = cut.removed;
+  for (const r of cut.removed)
+    report.dateRule.removedByType[r.type] = (report.dateRule.removedByType[r.type] ?? 0) + 1;
+  report.dateRule.droppedEntries = cut.dropped;
   for (const t of TRUST_LEVELS) report.byTrust[t] = 0;
   for (const e of kb.entries) {
     const c = kb.computed.get(e.id);
+    const before = all.computed.get(e.id)?.trust;
+    if (c && before && before !== c.trust)
+      report.dateRule.trustChanged.push({ id: e.id, from: before, to: c.trust });
     if (c) report.byTrust[c.trust] = (report.byTrust[c.trust] ?? 0) + 1;
     report.byRuleClass[e.ruleClass] = (report.byRuleClass[e.ruleClass] ?? 0) + 1;
     report.byKind[e.kind] = (report.byKind[e.kind] ?? 0) + 1;
+    for (const m of e.scope.countries) report.byMarket[m] = (report.byMarket[m] ?? 0) + 1;
   }
   files.putJson("inbox/import-report.json", report);
   return report;
