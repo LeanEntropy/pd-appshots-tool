@@ -4,6 +4,7 @@ import { buildReportData } from "../analysis/report-data.ts";
 import { reportInputs } from "../analysis/report-inputs.ts";
 import { type LoadedConfig, projectPaths } from "../config/load.ts";
 import { readJournal } from "../jobs/journal.ts";
+import { upgradeBottomMd, withCountryPoints, withDataPoints } from "../reports/bottom-points-of.ts";
 import type { CountryReport } from "../reports/country-report-types.ts";
 import { suppressChild } from "../reports/derived-relations.ts";
 import { draftsFromExpansion } from "../reports/drafts.ts";
@@ -91,7 +92,7 @@ export function getReportVersion(loaded: LoadedConfig, id: string, vid: string):
       return { status: 404, body: { problems: ["This report has no live view."] } };
     return {
       status: 200,
-      body: { now: true, data: buildReportData(reportInputs(loaded, def.type)) },
+      body: { now: true, data: withDataPoints(buildReportData(reportInputs(loaded, def.type))) },
     };
   }
   const paths = projectPaths(loaded);
@@ -131,7 +132,10 @@ export function getReportVersion(loaded: LoadedConfig, id: string, vid: string):
       } & Parameters<typeof upgradeWordsMd>[1];
       if (raw?.kind === "countries" && Array.isArray(raw.countries)) {
         // "Words to use" statuses are derived by code from the saved data (no AI).
-        const country = artWordingDeep(withWordStatus(tryUpgrade(raw, repeats().country)));
+        // The bottom line as points (code only), from the upgraded data.
+        const country = withCountryPoints(
+          artWordingDeep(withWordStatus(tryUpgrade(raw, repeats().country))),
+        );
         // Across countries: the group patterns, from this version's pages (code only).
         const groups = safe(() => groupsFor(loaded, def, country as unknown as CountryReport));
         return {
@@ -152,7 +156,11 @@ export function getReportVersion(loaded: LoadedConfig, id: string, vid: string):
               artWording(
                 withGroupsMd(
                   upgradeWordsMd(
-                    s.getText(versionFileKey(paths, entry.id, "report.md")) ?? "",
+                    upgradeBottomMd(
+                      s.getText(versionFileKey(paths, entry.id, "report.md")) ?? "",
+                      (raw as { summary?: { shortAnswer?: unknown } }).summary?.shortAnswer,
+                      (country as unknown as CountryReport).summary.points ?? null,
+                    ),
                     raw,
                   ),
                   groups,
@@ -182,7 +190,7 @@ export function getReportVersion(loaded: LoadedConfig, id: string, vid: string):
             ...meta,
             countries: countries.map((c) => ({
               ...c,
-              data: artWordingDeep(tryUpgrade(c.data, repeats().data)),
+              data: withDataPoints(artWordingDeep(tryUpgrade(c.data, repeats().data))),
             })),
             // The written report too: the PDF export prints it (one renderer per country page).
             html: files.has("report.md")
@@ -204,7 +212,7 @@ export function getReportVersion(loaded: LoadedConfig, id: string, vid: string):
       if (SavedDataSchema.safeParse(raw).success)
         return {
           status: 200,
-          body: { ...meta, data: artWordingDeep(tryUpgrade(raw, repeats().data)) },
+          body: { ...meta, data: withDataPoints(artWordingDeep(tryUpgrade(raw, repeats().data))) },
         };
     } catch {
       // Unreadable: shown as its markdown below.

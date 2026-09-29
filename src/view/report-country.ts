@@ -83,8 +83,11 @@ function countrySummaryHtml(c) {
   const meta = [comp.length > 1 ? "<p>Competitors per country: " + esc(s.verdicts.map((v) => cname(v.label) + " " + v.competitors).join(", ")) + ".</p>" : "",
     across.length ? "<p>Gaps across countries are computed by code from each country\\u2019s competitor patterns.</p>" : "", abNoteHtml(c.abTests),
     '<p class="dates">Generated ' + esc(fmtWhen(d.generated)) + ". Store pages from " + esc(d.storeFrom && d.storeTo && d.storeFrom !== d.storeTo ? d.storeFrom + " to " + d.storeTo : d.storeFrom || "not saved") + ". Analyses as of " + esc(d.analyses || "none yet") + ". Main country (the reference for what changed): " + esc(cname(c.main.label)) + ".</p>"];
-  return missingHtml(c) + '<p class="short">' + esc(s.shortAnswer) + "</p>"
-    + '<div class="vcards">' + s.verdicts.map((v) => verdictCard(s.verdicts.length === 1 ? Object.assign({}, v, { shortAnswer: "" }) : v)).join("") + "</div>" + vline
+  // One country with the bottom line as points: its verdict line replaces the card.
+  const one = s.points && s.verdicts.length === 1 ? s.verdicts[0] : null;
+  if (one && one.localisation) meta.unshift("<p><strong>Localisation:</strong> " + esc(one.localisation) + "</p>");
+  return missingHtml(c) + (s.points ? bottomPointsHtml(s.points) : '<p class="short">' + esc(s.shortAnswer) + "</p>")
+    + (one ? "" : '<div class="vcards">' + s.verdicts.map((v) => verdictCard(s.verdicts.length === 1 ? Object.assign({}, v, { shortAnswer: "" }) : v)).join("") + "</div>") + vline
     + (across.length ? "<h3>Across countries</h3>" + capList("ol", "keyrecs", across, 3) : "")
     + "<h3>" + (n > 1 ? "Key points per country" : "Key points") + "</h3>" + (own || "<p>None: our page follows the competitors\\u2019 patterns here.</p>")
     + abCardsHtml({ abTests: c.abTests, multi: n > 1 }) + detailsFold(meta);

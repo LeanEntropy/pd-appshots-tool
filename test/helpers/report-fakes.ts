@@ -70,6 +70,7 @@ function adviceAnswer(prompt: string): CountryAdvice {
     .filter((x): x is string => !!x);
   return {
     shortAnswer: "Translate the first image: most competitors here do.",
+    bottomLine: { verdict: "", differences: [], actions: [] },
     actions: facts.length
       ? [
           {

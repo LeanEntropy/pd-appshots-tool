@@ -3,6 +3,7 @@ import type { ReportData } from "../analysis/report-data.ts";
 import type { SortingPart } from "../analysis/report-sorting.ts";
 import type { Review } from "../analysis/synthesis-schema.ts";
 import type { AbTestsPart } from "./ab-section.ts";
+import type { BottomPoints } from "./bottom-points.ts";
 import type { LocalisationData } from "./localisation.ts";
 import type { crossCountryTerms, TerminologyCountry } from "./terminology.ts";
 import type { MarketRef } from "./types.ts";
@@ -77,6 +78,8 @@ export interface CountryReport {
   missing: { what: string; how: string }[];
   summary: {
     shortAnswer: string;
+    /** The short answer as points (bottom-points-of.ts), added when the version is shown. */
+    points?: BottomPoints;
     verdicts: CountryVerdict[];
     keyActions: KeyAction[];
     dates: {
