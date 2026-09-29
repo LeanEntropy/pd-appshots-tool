@@ -1,4 +1,5 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
+import { appIconSrc, appIconStale } from "../library/app-icon.ts";
 import { indexStale, readIndex, rebuildIndex, rebuildProgress } from "../library/games-index.ts";
 import { dataStamp } from "../storage/changes.ts";
 import { gameHtml } from "../view/game-html.ts";
@@ -59,8 +60,15 @@ function gamesList(app: AppContext): unknown {
     checkedAt.set(ws, stamp);
     if (indexStale(app.storage, saved)) void rebuildIndex(ws, app.storage, loadedOf(app), false);
   }
+  // Icons as stored now (they arrive after the list was saved); stale ones are asked for later.
+  const games =
+    saved?.games.map((g) => ({
+      ...g,
+      icon: appIconSrc(app.storage, g.appId),
+      iconStale: appIconStale(app.storage, g.appId),
+    })) ?? null;
   return {
-    games: saved?.games ?? null,
+    games,
     builtAt: saved?.builtAt ?? null,
     progress: rebuildProgress(ws),
   };

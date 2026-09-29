@@ -22,10 +22,10 @@ function gFlag(gl) {
 }
 function gLoadView() { try { return JSON.parse(localStorage.getItem(G_KEY) || "{}"); } catch { return {}; } }
 function gSaveView() {
-  const v = { q: gSearch.value, cat: gCat.value, country: gCountry.value, project: gProject.value, sort: gSort.value };
+  const v = { q: gSearch.value, cat: gCat.value, country: gCountry.value, project: gProject.value, store: gStore.value, sort: gSort.value };
   try { localStorage.setItem(G_KEY, JSON.stringify(v)); } catch {}
 }
-const gSearch = document.getElementById("gSearch"), gCat = document.getElementById("gCat"), gCountry = document.getElementById("gCountry"), gProject = document.getElementById("gProject"), gSort = document.getElementById("gSort");
+const gSearch = document.getElementById("gSearch"), gCat = document.getElementById("gCat"), gCountry = document.getElementById("gCountry"), gProject = document.getElementById("gProject"), gStore = document.getElementById("gStore"), gSort = document.getElementById("gSort");
 
 function gOptions(sel, items) {
   const keep = sel.value;
@@ -49,27 +49,62 @@ function gMatches(g) {
   if (gCat.value && g.category !== gCat.value) return false;
   if (gCountry.value && !g.pages.some((p) => p.gl === gCountry.value && p.images > 0)) return false;
   if (gProject.value && !g.uses.some((u) => u.projectId === gProject.value)) return false;
+  if (gStore.value) {
+    const has = new Set(g.pages.map(gPlatform));
+    if (gStore.value === "both" ? !(has.has("play") && has.has("appstore")) : !has.has(gStore.value)) return false;
+  }
   return true;
+}
+
+// A page without a platform is Google Play (lists saved before the App Store field).
+const gPlatform = (p) => (p.platform === "appstore" || p.platform === "apple" ? "appstore" : "play");
+function gStores(g) {
+  const out = [];
+  for (const platform of ["play", "appstore"]) {
+    const mine = g.pages.filter((p) => gPlatform(p) === platform);
+    if (!mine.length) continue;
+    const held = [...new Set(mine.filter((p) => p.status === "ok" && p.images > 0).map((p) => p.gl))];
+    out.push({ platform, countries: held.map(gName) });
+  }
+  return out;
+}
+function gIcon(g) {
+  const icon = h("span", { class: "icon app-icon" }, h("span", { "aria-hidden": "true" }, (g.name || "?").slice(0, 1).toUpperCase()));
+  if (g.icon && /^\\/app-icons\\/[0-9a-f]{64}\\.webp$/.test(g.icon) && !iconFailed.has(g.icon)) icon.append(h("img", { alt: "", src: g.icon, "data-app-icon": "1" }));
+  return icon;
+}
+// Missing icons arrive in the background, three at a time, the cards shown first; the letters
+// stay until then (the list never waits for them).
+function gIcons(shown) {
+  const first = new Set(shown.map((g) => g.appId));
+  const items = [...shown, ...GAMES.filter((g) => !first.has(g.appId))].map((g) => ({ id: g.appId, appIcon: g.icon, iconStale: g.iconStale }));
+  return fetchAppIcons(items, (p) => {
+    const g = GAMES.find((x) => x.appId === p.id);
+    if (!g) return;
+    g.icon = p.appIcon; g.iconStale = false;
+    const card = document.getElementById("gc-" + p.id);
+    const old = card && card.querySelector(".app-icon");
+    if (old) old.replaceWith(gIcon(g));
+  }, { ask: (p) => send("/api/games/icon", { appId: p.id }), limit: 3 });
 }
 
 function gCard(g) {
   const href = APP_ID_RE.test(g.appId) ? "/games/" + encodeURIComponent(g.appId) : "#";
-  const icon = h("span", { class: "icon app-icon" }, h("span", { "aria-hidden": "true" }, (g.name || "?").slice(0, 1).toUpperCase()));
-  if (g.icon && /^\\/app-icons\\/[0-9a-f]{64}\\.webp$/.test(g.icon)) icon.append(h("img", { alt: "", src: g.icon }));
+  const icon = gIcon(g);
+  const marks = h("span", { class: "store-marks" }, gStores(g).map((s) => storeMark(s.platform, s.countries)));
   const meta = [g.category, g.images + " images", g.countries + " countries", g.analysed + " analysed"].filter(Boolean).join(" · ");
   const chips = h("div", { class: "chips" }, g.pages.map((p) => {
     const dim = p.status !== "ok" || !p.images;
     const tip = gName(p.gl) + ": " + (p.status === "unavailable" ? "not sold here" : p.images + " images") + (p.checked ? ", store checked " + gDay(p.checked) : "");
     return h("span", { class: "chip" + (dim ? " dim" : ""), title: tip, "aria-label": tip }, gFlag(p.gl) || p.gl.toUpperCase());
   }));
-  const used = g.uses.map((u) => u.project + " (" + u.role + (u.ranks.length ? ", " + u.ranks.join(", ") : "") + ")" + (u.archived ? " (archived)" : "")).join("; ");
   const more = h("details", {}, h("summary", {}, "more (ASO words, keywords, store check)"),
     h("p", {}, "ASO words: " + (g.aso || "none in the store title") + (g.asoDiffers ? " (different in " + g.asoDiffers + " countries)" : "")),
     g.keywords.length ? [h("p", { class: "meta" }, "Keywords derived from the store text (Google Play has no official keywords):"), ...g.keywords.map((k) => h("p", {}, gName(k.gl) + ": " + k.terms.join(", ")))] : h("p", { class: "meta" }, "No store text saved yet."),
     h("p", { class: "meta" }, "Last store check: " + (gDay(g.latestCheck) || "unknown")));
-  return h("article", { class: "gcard" },
-    h("a", { class: "ghead", href }, icon, h("div", {}, h("h2", {}, g.name), h("div", { class: "gmeta" }, meta))),
-    chips, h("p", {}, "Used in: " + used), more);
+  return h("article", { class: "gcard", id: APP_ID_RE.test(g.appId) ? "gc-" + g.appId : null },
+    h("a", { class: "ghead", href }, icon, h("div", {}, h("div", { class: "gtitle" }, h("h2", {}, g.name), marks), h("div", { class: "gmeta" }, meta))),
+    chips, more);
 }
 
 function gRender() {
@@ -86,7 +121,9 @@ function gRender() {
     return;
   }
   box.replaceChildren(...list.map(gCard));
+  gShown = list;
 }
+let gShown = [];
 
 function gAgo(iso) {
   if (!iso) return "";
@@ -101,7 +138,7 @@ async function gLoad() {
   try { r = await getJson("/api/games"); }
   catch (e) { if (!GAMES) document.getElementById("gCards").replaceChildren(h("p", { class: "act-msg bad", role: "alert" }, actReason(e))); return; }
   const p = r.progress;
-  if (r.games) { const first = !GAMES; GAMES = r.games; gFill(); if (first) gApplyView(); gRender(); }
+  if (r.games) { const first = !GAMES; GAMES = r.games; gFill(); if (first) gApplyView(); gRender(); void gIcons(gShown); }
   document.getElementById("gUpdated").textContent = gAgo(r.builtAt);
   const line = document.getElementById("gStatus");
   if (p && p.running) {
@@ -118,13 +155,13 @@ async function gLoad() {
 function gApplyView() {
   const v = gLoadView();
   gSearch.value = v.q || "";
-  for (const [el, val] of [[gCat, v.cat], [gCountry, v.country], [gProject, v.project], [gSort, v.sort]]) if (val && [...el.options].some((o) => o.value === val)) el.value = val;
+  for (const [el, val] of [[gCat, v.cat], [gCountry, v.country], [gProject, v.project], [gStore, v.store], [gSort, v.sort]]) if (val && [...el.options].some((o) => o.value === val)) el.value = val;
 }
 
 document.addEventListener("input", (e) => { if (e.target === gSearch) { gRender(); gSaveView(); } });
-document.addEventListener("change", (e) => { if ([gCat, gCountry, gProject, gSort].includes(e.target)) { gRender(); gSaveView(); } });
+document.addEventListener("change", (e) => { if ([gCat, gCountry, gProject, gStore, gSort].includes(e.target)) { gRender(); gSaveView(); } });
 document.addEventListener("click", (e) => {
-  if (e.target.id === "gClear") { gSearch.value = ""; gCat.value = ""; gCountry.value = ""; gProject.value = ""; gSaveView(); gRender(); }
+  if (e.target.id === "gClear") { gSearch.value = ""; gCat.value = ""; gCountry.value = ""; gProject.value = ""; gStore.value = ""; gSaveView(); gRender(); }
   if (e.target.id === "gRebuild") act(e.target, {
     busy: "Updating the list...",
     status: "gStatus",
@@ -137,7 +174,7 @@ document.addEventListener("click", (e) => {
         if (p.running) { progress("Updating the list: " + p.message, p.done, p.total); continue; }
         if (p.error) throw new Error(p.error);
         GAMES = r.games || [];
-        gFill(); gRender();
+        gFill(); gRender(); void gIcons(gShown);
         document.getElementById("gUpdated").textContent = gAgo(r.builtAt);
         return p;
       }

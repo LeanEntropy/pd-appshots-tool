@@ -9,7 +9,36 @@ import { countryName, gameNames, latestDecks, roleIn } from "./project-decks.ts"
  * pages as its latest download saw them, and which of its pictures have a usable reading. A
  * part is rebuilt only when its stamp changes; the stamp uses only Storage reads.
  */
+export type Platform = "play" | "appstore";
+
+/**
+ * The one reader of a store page's platform (plan-app-store 3): missing means Google Play, so
+ * old decks and saved lists stay valid; "apple" (the refs spelling) is the App Store too.
+ */
+export function platformOf(v: unknown): Platform {
+  return v === "appstore" || v === "apple" ? "appstore" : "play";
+}
+
+/**
+ * Which stores we hold data for, Google Play first: every platform with a page, and the
+ * countries whose page was read with pictures.
+ */
+export function storesOf(
+  pages: readonly { gl: string; status: string; images: number; platform?: unknown }[],
+): { platform: Platform; countries: string[] }[] {
+  const out: { platform: Platform; countries: string[] }[] = [];
+  for (const platform of ["play", "appstore"] as const) {
+    const mine = pages.filter((p) => platformOf(p.platform) === platform);
+    if (!mine.length) continue;
+    const held = mine.filter((p) => p.status === "ok" && p.images > 0).map((p) => p.gl);
+    out.push({ platform, countries: [...new Set(held)] });
+  }
+  return out;
+}
+
 export interface PagePart {
+  /** Missing in parts saved before the App Store field: read with platformOf. */
+  platform?: Platform;
   gl: string;
   hl: string;
   status: string;
@@ -82,6 +111,7 @@ export function buildPart(
     };
     const slots = [...(d.slots ?? [])].sort((a, b) => a.position - b.position);
     g.pages.push({
+      platform: platformOf((d as { platform?: unknown }).platform),
       gl: d.gl,
       hl: d.hl,
       status: d.status,

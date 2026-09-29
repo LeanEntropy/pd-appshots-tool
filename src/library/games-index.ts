@@ -4,7 +4,13 @@ import type { LoadedConfig } from "../config/load.ts";
 import type { Storage } from "../storage/index.ts";
 import { stableHash } from "../util/hash.ts";
 import { appIconSrc } from "./app-icon.ts";
-import { buildPart, type ProjectPart, projectStamp } from "./games-parts.ts";
+import {
+  buildPart,
+  type Platform,
+  type ProjectPart,
+  platformOf,
+  projectStamp,
+} from "./games-parts.ts";
 import { byRecent, type ProjectInfo, projectInfos } from "./image-uses.ts";
 import { latestStoreText } from "./store-text.ts";
 
@@ -21,7 +27,15 @@ export interface GameEntry {
   name: string;
   icon: string | null;
   category: string;
-  pages: { gl: string; hl: string; images: number; checked: string; status: string }[];
+  /** Store pages; a missing platform (lists saved before it) means Google Play. */
+  pages: {
+    platform: Platform;
+    gl: string;
+    hl: string;
+    images: number;
+    checked: string;
+    status: string;
+  }[];
   images: number;
   countries: number;
   analysed: number;
@@ -93,8 +107,12 @@ function merge(storage: Storage, parts: ProjectPart[], infos: ProjectInfo[]): Ga
         shas: new Set<string>(),
       };
       for (const pg of g.pages) {
-        const had = e.pages.find((x) => x.gl === pg.gl && x.hl === pg.hl);
+        const platform = platformOf(pg.platform);
+        const had = e.pages.find(
+          (x) => x.platform === platform && x.gl === pg.gl && x.hl === pg.hl,
+        );
         const row = {
+          platform,
           gl: pg.gl,
           hl: pg.hl,
           images: pg.images.length,
@@ -119,6 +137,8 @@ function merge(storage: Storage, parts: ProjectPart[], infos: ProjectInfo[]): Ga
   for (const { shas, ...e } of games.values()) {
     const asoByPage: string[] = [];
     for (const pg of e.pages) {
+      // Saved store text is Google Play's (App Store text gets its own folder, plan-app-store 3).
+      if (pg.platform !== "play") continue;
       const s = latestStoreText(storage, e.appId, pg.gl, pg.hl);
       if (!s) continue;
       e.category ||= s.official.genre.name ?? "";

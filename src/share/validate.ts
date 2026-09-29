@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { AttemptSchema } from "../analysis/attempts.ts";
+import { englishKey } from "../analysis/english-store.ts";
 import { ProjectSettingsSchema } from "../config/project-schema.ts";
 import { RunConfigSchema } from "../config/schema.ts";
 import { JournalSchema } from "../jobs/journal.ts";
@@ -26,6 +27,13 @@ export const RecordSchema = z
     final: z.record(z.string(), z.unknown()).nullable(),
   })
   .passthrough();
+
+/** A saved English text: stored under the hash of its own text and language. */
+const EnglishSchema = z.object({
+  text: z.string(),
+  language: z.string(),
+  english: z.string(),
+});
 
 export const AttemptLogSchema = z.object({ imageId: z.string(), attempts: z.array(AttemptSchema) });
 
@@ -92,6 +100,12 @@ export function checkFile(name: string, bytes: Buffer, refs: Set<string>): strin
   if (name.startsWith("library/google/")) {
     const g = GoogleIdSchema.safeParse(v);
     return g.success && LIB.google(g.data.googleId) === name ? null : bad("Google Play image link");
+  }
+  if (name.startsWith("library/english/")) {
+    const e = EnglishSchema.safeParse(v);
+    return e.success && englishKey(e.data.text, e.data.language) === name
+      ? null
+      : bad("saved English");
   }
   // Analysis records; other files kept beside them (e.g. layout notes) only need to be JSON.
   if (name.startsWith("library/analysis/") && isRecordLike(v)) {
