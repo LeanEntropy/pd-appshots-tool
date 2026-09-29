@@ -62,7 +62,8 @@ export function groupSetupLine(
   const where = list(markets.map((m) => countryName(m.label)));
   if (!shared.length && langs.length <= 5)
     return `These countries' listing languages (${list(langs.map(languageName))}) are theirs alone: test with a localised experiment in those languages, or give ${where} one custom store listing to keep the group's page apart.`;
-  return `${list([...new Set(shared.map((m) => countryName(m.label)))])} ${shared.length === 1 ? "uses" : "use"} the same language, so create one custom store listing targeting ${where} in Play Console and run the experiment on it (the tool cannot see your listings).`;
+  const names = [...new Set(shared.map((m) => countryName(m.label)))];
+  return `${list(names)} ${names.length === 1 ? "uses" : "use"} the same language, so create one custom store listing targeting ${where} in Play Console and run the experiment on it (the tool cannot see your listings).`;
 }
 
 export function recommendations(

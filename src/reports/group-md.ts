@@ -72,17 +72,17 @@ export function withGroupsMd(saved: string, g: GroupsPart | null): string {
   let md = saved;
   if (!g) return md;
   const lines = groupsMarkdown(g).join("\n");
-  const top = /^## 1\. Overall recommendations\s*$/m.exec(md);
+  const top = /^## 1\. Overall recommendations[ \t]*$/m.exec(md);
   if (top) {
     const at = top.index + top[0].length;
     md = `${md.slice(0, at)}\n\n**Across your countries:** ${g.bottomLine}${md.slice(at)}`;
   }
-  const across = /^## \d+\. Across countries\s*$/m.exec(md);
+  const across = /^## \d+\. Across countries[ \t]*$/m.exec(md);
   if (across) {
     const at = across.index + across[0].length;
     return `${md.slice(0, at)}\n\n${lines}\n${md.slice(at)}`;
   }
-  const per = /^## \d+\. (Per country|Recommendations per country)\s*$/m.exec(md);
+  const per = /^## \d+\. (Per country|Recommendations per country)[ \t]*$/m.exec(md);
   const block = `## Across countries\n\n${lines}\n`;
   return per ? `${md.slice(0, per.index)}${block}\n${md.slice(per.index)}` : `${md}\n${block}`;
 }

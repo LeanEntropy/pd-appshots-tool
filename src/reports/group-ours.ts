@@ -41,7 +41,7 @@ export function oursFindings(x: GroupData): GroupFinding[] {
       dimLabel: d.label,
       group: "",
       title: `Our pages differ: ${d.label.toLowerCase()}`,
-      text: `Our ${name(yes)} ${pl(yes.length)} ${d.does}; our ${name(no)} ${pl(no.length)} do not.${most.length ? ` There, ${most.map((p) => `${p.yes} of ${p.of} competitors in ${countryName(p.label)}`).join(", ")} do, so reusing our own image is the cheapest fix.` : " Competitors there are split, so this alone is no reason to change."}`,
+      text: `Our ${name(yes)} ${pl(yes.length)} ${yes.length === 1 ? d.does.replace(/^(\w+)/, "$1s") : d.does}; our ${name(no)} ${pl(no.length)} ${no.length === 1 ? "does" : "do"} not.${most.length ? ` There, ${most.map((p) => `${p.yes} of ${p.of} competitors in ${countryName(p.label)}`).join(", ")} do, so reusing our own image is the cheapest fix.` : " Competitors there are split, so this alone is no reason to change."}`,
       strength: null,
       fewGames: false,
       counts: null,

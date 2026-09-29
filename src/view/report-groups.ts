@@ -37,7 +37,7 @@ svg.sketch { color: var(--muted); flex: none; max-width: 100%; height: auto; }
 
 export const REPORT_GROUPS_SCRIPT = `
 const G_KIND = { ours: "Our pages differ", common: "Common in every country", group: "Different in this group", descriptive: "The same games everywhere" };
-const gList = (xs) => xs.length <= 1 ? (xs[0] || "") : xs.slice(0, -1).join(", ") + " and " + xs[xs.length - 1];
+const gid = (id) => String(id || "").replace(/[^a-z0-9-]/g, "");
 
 function gThumbs(f) {
   return f.examples.length ? '<div class="gthumbs">' + f.examples.map((t) => '<figure class="' + (t.ours ? "ours" : "") + '"><img loading="lazy" src="' + IMG + esc(t.thumb) + '" alt="' + esc(t.game + ", " + cname(t.label) + ", image " + t.position) + '"><figcaption>' + esc((t.ours ? "Ours" : t.game) + ", " + cname(t.label) + " #" + t.position) + "</figcaption></figure>").join("") + "</div>" : "";
@@ -79,7 +79,7 @@ function gEditor(c) {
 function ownReportsHtml(c) {
   const l = c.links || {};
   if (c.type !== "compare") return "";
-  const own = (l.countryReports || []).map((x) => { const cc = c.countries.find((y) => y.gl === x.gl); return '<button type="button" class="linkbtn rt-open" data-rid="' + rsafe(x.id) + '">' + esc(cname(cc ? cc.label : x.gl)) + "</button>"; }).join("");
+  const own = (l.countryReports || []).map((x) => { const cc = c.countries.find((y) => y.gl === x.gl); return '<button type="button" class="linkbtn rt-open" data-rid="' + gid(x.id) + '">' + esc(cname(cc ? cc.label : x.gl)) + "</button>"; }).join("");
   return '<p class="meta"><strong>One country reports from this comparison</strong> (made by code, no cost): ' + (own || "none yet.") + ' <button type="button" class="linkbtn g-derive" data-rid="' + repRid + '">Make country reports now</button></p><p class="act-msg" id="gd-' + repRid + '" hidden></p>';
 }
 function groupsHtml(c) {
@@ -108,8 +108,8 @@ function derivedBandHtml(c) {
   if (!d) return "";
   const l = (c.links || {}).derived || {};
   const name = cname((c.countries[0] || {}).label || "");
-  const others = (l.siblings || []).map((x) => { const o = d.others.find((y) => y.gl === x.gl); return '<button type="button" class="linkbtn rt-open" data-rid="' + rsafe(x.id) + '">' + esc(cname(o ? o.label : x.gl)) + "</button>"; }).join("");
-  return '<div class="gband"><p>' + (l.parentId ? 'Part of the comparison \\u201c' + esc(l.parentName || d.from.name) + "\\u201d (" + esc(fmtDate(d.from.generatedAt)) + '), made from its saved data with no AI call. <button type="button" class="linkbtn rt-open" data-rid="' + rsafe(l.parentId) + '">Open the comparison</button>' : "Made from the comparison \\u201c" + esc(d.from.name) + "\\u201d, which was deleted: this report stands on its own.") + "</p>"
+  const others = (l.siblings || []).map((x) => { const o = d.others.find((y) => y.gl === x.gl); return '<button type="button" class="linkbtn rt-open" data-rid="' + gid(x.id) + '">' + esc(cname(o ? o.label : x.gl)) + "</button>"; }).join("");
+  return '<div class="gband"><p>' + (l.parentId ? 'Part of the comparison \\u201c' + esc(l.parentName || d.from.name) + "\\u201d (" + esc(typeof fmtDate === "function" ? fmtDate(d.from.generatedAt) : d.from.generatedAt) + '), made from its saved data with no AI call. <button type="button" class="linkbtn rt-open" data-rid="' + gid(l.parentId) + '">Open the comparison</button>' : "Made from the comparison \\u201c" + esc(d.from.name) + "\\u201d, which was deleted: this report stands on its own.") + "</p>"
     + (others ? "<p>Also in it: " + others + "</p>" : "")
     + d.dropped.map((x) => '<p class="meta">Not kept: ' + esc(x) + ".</p>").join("")
     + '<p><button type="button" class="rc-approve" data-rid="' + repRid + '">Write A/B tests for ' + esc(name) + ' alone</button> <span class="meta">Optional and paid (about $0.20 to $0.50): the approval shows the exact steps and cost first, nothing runs until you approve, and the result is a new version.</span></p></div>';
@@ -121,7 +121,7 @@ function samePagesTop(c) {
 // "Open as its own report" at the top of a comparison's country tab.
 function ownReportLink(c, x) {
   const r = ((c.links || {}).countryReports || []).find((y) => y.gl === x.gl);
-  return r ? '<p class="ownrep"><button type="button" class="linkbtn rt-open" data-rid="' + rsafe(r.id) + '">Open ' + esc(cname(x.label)) + " as its own report</button></p>" : "";
+  return r ? '<p class="ownrep"><button type="button" class="linkbtn rt-open" data-rid="' + gid(r.id) + '">Open ' + esc(cname(x.label)) + " as its own report</button></p>" : "";
 }
 
 function groupRows(rid) {
@@ -134,7 +134,7 @@ function groupRows(rid) {
 document.addEventListener("click", (e) => {
   const b = e.target.closest && e.target.closest("button.g-save, button.g-reset, button.g-derive");
   if (!b) return;
-  const rid = rsafe(b.dataset.rid);
+  const rid = gid(b.dataset.rid);
   if (b.classList.contains("g-derive"))
     return act(b, { busy: "Making the country reports...", status: "gd-" + rid, run: () => send(API + "/reports/" + encodeURIComponent(rid) + "/derive", {}), done: (r) => { loadReport(); return r.message; } });
   const groups = b.classList.contains("g-reset") ? [] : groupRows(rid);
