@@ -6,6 +6,7 @@ import { importCommand, loadForCommand, printProjects, ROOT } from "./cli-projec
 import { type LoadedConfig, projectPaths } from "./config/load.ts";
 import { asiaVsUs, writeOverview } from "./overview/overview-report.ts";
 import { reportCommand } from "./reports/cli.ts";
+import { ensureSameScreens } from "./reports/same-screen-run.ts";
 import { openBrowser } from "./server/http-util.ts";
 import { startToolServer } from "./server/instance.ts";
 import { runAnalyzeStep } from "./steps/analyze.ts";
@@ -188,6 +189,8 @@ async function main(): Promise<number> {
     }
     case "report": {
       const name = args.positional.join(" ").trim();
+      // "Same screen uploaded twice" (free, cached per pair) before the report is built.
+      await ensureSameScreens(loaded);
       if (name) return reportCommand(loaded, name, log);
       const stage = args.flags.get("stage") === "core" ? "core" : "pilot";
       log(`Report from the saved analyses (no AI): ${writeCurrentReport(loaded, stage)}`);

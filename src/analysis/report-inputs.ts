@@ -7,6 +7,7 @@ import { openImageDb } from "../store/imagedb.ts";
 import type { AbTestsOutput } from "./ab-tests-schema.ts";
 import { reportLabeler } from "./categories.ts";
 import { withMeasuredRecords } from "./colour-store.ts";
+import { repeatsOfItems, sameCheck } from "./deck-repeats.ts";
 import { batchDataHash } from "./entries.ts";
 import { readLatest } from "./final-report.ts";
 import { labeler } from "./labels.ts";
@@ -124,6 +125,7 @@ export function reportInputs(
     estimateUsd: proposed.estimate.usd,
     leftOut: notInCoreMarket(loaded).map((c) => c.name),
     play: playContextOf(loaded.config, [m]),
+    repeats: repeatsOfItems(plan.items, (id) => db.get(id), sameCheck(paths, records)),
     storeText: compareStoreText(
       storage,
       loaded.config.markets,

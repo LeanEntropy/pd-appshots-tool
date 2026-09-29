@@ -1,4 +1,5 @@
 import { hamming, NEAR_IDENTICAL_BITS } from "../store/identity.ts";
+import { type RepeatOf, repeatReason } from "./deck-repeats.ts";
 
 export type CostTier = "identical" | "layer-diff" | "full";
 
@@ -9,6 +10,8 @@ export interface TierInput {
   position: number;
   imageId: string;
   phash: string;
+  /** The same screen as an earlier position of this deck (uploaded twice). */
+  repeatOf?: RepeatOf;
 }
 
 export interface AnalysedImage {
@@ -29,7 +32,8 @@ export interface TierResult extends TierInput {
 /**
  * Cost tier per image, cheapest first, decided by code only:
  * 1. identical: the same image (content hash) already has a usable analysis, or appears earlier
- *    in this plan (analysed once, reused);
+ *    in this plan (analysed once, reused), or repeats an earlier screen of its deck in another
+ *    size (the earlier one's analysis is reused);
  * 2. layer-diff: a non-baseline image whose picture is near-identical (perceptual hash) to an
  *    analysed baseline image of the same app. Provisional until the pilot's capture-match test;
  * 3. full: everything else.
@@ -45,6 +49,11 @@ export function assignTiers(
   return items.map((it) => {
     if (done.has(it.imageId)) {
       return { ...it, tier: "identical", basedOn: it.imageId, reason: "already analysed" };
+    }
+    // The same screen in another size in this deck: its earlier copy's analysis is reused.
+    if (it.repeatOf) {
+      const reason = repeatReason(it.repeatOf.position);
+      return { ...it, tier: "identical", basedOn: it.repeatOf.imageId, reason };
     }
     if (planned.has(it.imageId)) {
       return {

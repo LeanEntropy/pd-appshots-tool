@@ -2,6 +2,7 @@ import type { IncomingMessage, ServerResponse } from "node:http";
 import type { LoadedConfig } from "../config/load.ts";
 import { projectPaths } from "../config/load.ts";
 import { type ProjectState, projectState } from "../projects/state.ts";
+import { ensureSameScreens } from "../reports/same-screen-run.ts";
 import { renderGalleryHtml } from "../steps/deck-view.ts";
 import {
   type ApiResponse,
@@ -99,6 +100,8 @@ export async function projectRoute(
   if (isReportsPath(rest)) return reportsRoute(app, loaded, rest, req, res);
   // PDF export (milestone R2): the print page and the export job's endpoints.
   if (await exportRoute(app, loaded, rest, req, res, url)) return;
+  // "Same screen uploaded twice" (free, cached per pair): before a batch plan or report is read.
+  if (/^\/api\/(analysis|report)\//.test(rest)) await ensureSameScreens(loaded).catch(() => 0);
   const get = GETS[rest];
   if (get && req.method === "GET") {
     const r = get(loaded, url.searchParams, app);

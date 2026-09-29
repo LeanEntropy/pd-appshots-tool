@@ -42,11 +42,12 @@ function gameBlock(p, g) {
 function freeRow(f) {
   if (!f) return "";
   const other = f.others.reduce((n, o) => n + o.count, 0);
-  const total = f.thisProject + other + f.sameInBatch;
+  const total = f.thisProject + other + f.sameInBatch + (f.sameScreen || 0);
   if (!total) return "";
   const parts = ["by this project: " + f.thisProject];
   for (const o of f.others) parts.push("by another project (" + esc(o.name) + "): " + o.count);
   if (f.sameInBatch) parts.push("repeated in this batch, analysed once: " + f.sameInBatch);
+  if (f.sameScreen) parts.push("same screen in another size (free): " + f.sameScreen);
   return '<div class="freebox"><strong>Already analysed, free: ' + total + " images</strong> (" + parts.join("; ") + "). They count toward the core cap, not toward the cost.</div>";
 }
 
