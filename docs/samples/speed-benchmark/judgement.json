@@ -1,0 +1,11 @@
+{
+  "judgedAt": "2026-09-29",
+  "answers": { "c1": ["A"], "c2": ["B"], "c3": ["B"], "c4": ["A"] },
+  "decoded": {
+    "c1": { "case": "Rogue Legend US #4 marketing texts", "right": ["today"], "wrong": ["new (shorter answer)"], "note": "saved answer has the same text as today; only today's letter was ticked" },
+    "c2": { "case": "Rogue Legend US #2 marketing texts", "right": ["saved"], "wrong": ["today", "new (shorter answer)"] },
+    "c3": { "case": "Overgeared Hero US #2 marketing texts", "right": ["saved"], "wrong": ["new (shorter answer)"], "note": "today's pipeline did not run on this image" },
+    "c4": { "case": "Capybara Go US #2 marketing texts", "right": ["saved"], "wrong": ["today", "new (shorter answer)"] }
+  },
+  "gate": "critical fields: the new answer is wrong where today's is right on c1, so the shorter answer fails (stays off)"
+}
