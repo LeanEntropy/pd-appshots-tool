@@ -3,12 +3,13 @@ import {
   allowedMetrics,
   GUARDRAIL,
   PLAY_METRICS,
-  playSetup,
   VARIABLE_NAMES,
 } from "../analysis/play-experiments.ts";
 import { rowTags } from "../analysis/report-sorting.ts";
+import { PPO_GUARDRAIL, PPO_METRIC } from "../appstore/ppo.ts";
 import { codeTestPositions, codeTestText, type Evidence } from "./ab-candidates.ts";
 import type { AbSectionInput, AbTestCard, PlayContext } from "./ab-section.ts";
+import { testSetup } from "./test-setup.ts";
 
 /** The cards of the A/B tests (ab-section.ts): control, Play setup, plain wording. */ export function control(
   x: AbSectionInput,
@@ -43,15 +44,13 @@ export function card(
   countries: readonly string[],
 ): AbTestCard {
   const markets = x.play.reportMarkets.filter((m) => countries.includes(m.gl));
-  const traffic = (gl: string) => x.play.traffic[gl] ?? "unknown";
-  const setup = playSetup(
-    markets.length ? markets : [x.market],
-    x.play.reportMarkets,
-    x.play.projectMarkets,
-    traffic,
-    !!base.secondVariant,
-  );
-  const metric = PLAY_METRICS[allowedMetrics(x.play.preRegistration)[0] ?? "installs"];
+  const where = markets.length ? markets : [x.market];
+  // The App Store: a Product Page Optimization test, written for Apple (plan-app-store 7.3).
+  const apple = x.play.platform === "appstore";
+  const setup = testSetup(x.play, where, x.play.reportMarkets, !!base.secondVariant);
+  const metric = apple
+    ? PPO_METRIC
+    : PLAY_METRICS[allowedMetrics(x.play.preRegistration)[0] ?? "installs"];
   return {
     ...base,
     secondVariant: setup.variants === 2 ? base.secondVariant : null,
@@ -68,7 +67,7 @@ export function card(
     countries: (markets.length ? markets : [x.market]).map((m) => m.label),
     control: control(x),
     metric: { name: metric.name, meaning: metric.meaning },
-    guardrail: GUARDRAIL,
+    guardrail: apple ? PPO_GUARDRAIL : GUARDRAIL,
     setup,
   };
 }

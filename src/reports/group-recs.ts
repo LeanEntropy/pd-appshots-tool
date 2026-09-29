@@ -1,5 +1,5 @@
 import type { CountryAdvice } from "../analysis/country-advice-schema.ts";
-import { languageName, playSetup, VARIABLE_NAMES } from "../analysis/play-experiments.ts";
+import { languageName, VARIABLE_NAMES } from "../analysis/play-experiments.ts";
 import type { PlayContext } from "./ab-section.ts";
 import { MAIN_DIMS, type MainDim } from "./group-dims.ts";
 import type { GroupData } from "./group-findings.ts";
@@ -7,6 +7,7 @@ import { sketchSvg } from "./group-sketch.ts";
 import type { GroupFinding, GroupRecommendation } from "./group-types.ts";
 import type { CountryPages } from "./groups.ts";
 import { countryName } from "./names.ts";
+import { testSetup } from "./test-setup.ts";
 
 /**
  * Group recommendations, each framed as an A/B test to run (plan-cross-country 3.7), by code:
@@ -95,13 +96,7 @@ export function recommendations(
       variableName: VARIABLE_NAMES[v.v],
       positions: v.at,
       hypothesis,
-      setup: playSetup(
-        markets,
-        play.reportMarkets,
-        play.projectMarkets,
-        (gl) => play.traffic[gl] ?? "unknown",
-        false,
-      ),
+      setup: testSetup(play, markets, play.reportMarkets, false),
       conflicts: conflictsOf(g.dim, countries, advice),
       sketch: sketchSvg(g.dim, "the variant · schematic, not measured"),
     });

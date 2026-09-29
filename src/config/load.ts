@@ -17,6 +17,8 @@ export interface LoadedConfig {
   projectId?: string;
   /** Forces the old or the library layout (the import's before/after comparison only). */
   layout?: LayoutOverride;
+  /** The store a report reads (appstore/platform.ts); missing: Google Play. */
+  platform?: "play" | "appstore";
 }
 
 const TaxonomySchema = z.object({
@@ -69,6 +71,8 @@ export function projectPaths(loaded: LoadedConfig) {
   // Once imported, images, pixel facts, analysis records and per-image answers are shared.
   const library = libraryLayout(loaded.config, workspace, loaded.layout);
   const images = library ? join(library.dir, "images") : join(base, "images");
+  // The App Store view: its own deck and order folders; images from both stores' refs.
+  const apple = loaded.platform === "appstore";
   return {
     workspace,
     projectId: loaded.config.project,
@@ -81,10 +85,11 @@ export function projectPaths(loaded: LoadedConfig) {
     /** Prompts, JSON schemas and synthesis answers (always the project's own). */
     objects: join(base, "objects"),
     analysis: join(base, "analysis"),
-    orders: join(base, "orders"),
+    orders: join(base, apple ? "orders-appstore" : "orders"),
     reports: join(base, "reports"),
     imageDb: join(base, "images", "db.json"),
-    decks: join(base, "decks"),
+    decks: join(base, apple ? "decks-appstore" : "decks"),
+    platform: apple ? ("appstore" as const) : ("play" as const),
     pending: join(base, "pending"),
     runs: join(base, "runs"),
     own: join(base, "own"),

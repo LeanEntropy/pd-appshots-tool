@@ -5,7 +5,7 @@ import { z } from "zod";
  * (name, type, scope, archived, versions) in reports/defs/<id>.json; each version is an
  * immutable folder reports/<version id>/ (the existing run-folder convention).
  */
-export const ReportTypeSchema = z.enum(["pilot", "core", "country", "compare"]);
+export const ReportTypeSchema = z.enum(["pilot", "core", "country", "compare", "stores"]);
 export type ReportType = z.infer<typeof ReportTypeSchema>;
 
 /** Plain names shown in the page (never the codes). */
@@ -14,16 +14,40 @@ export const TYPE_NAMES: Record<ReportType, string> = {
   core: "Full check",
   country: "One country",
   compare: "Compare countries",
+  stores: "Google Play vs App Store",
 };
 
 /** Pilot and Full check are presets: never deleted, and re-doing one archives the previous version. */
 export const isPreset = (t: ReportType): t is "pilot" | "core" => t === "pilot" || t === "core";
+
+/** The store a report reads (plan-app-store 7.1); missing: Google Play. */
+export const PlatformSchema = z.enum(["play", "appstore"]);
+export type ReportPlatform = z.infer<typeof PlatformSchema>;
+export const platformOfScope = (s: { platform?: ReportPlatform | undefined }): ReportPlatform =>
+  s.platform === "appstore" ? "appstore" : "play";
+
+/**
+ * A preset of the Analysis page: the Pilot or the Google Play Full check. An App Store Full check
+ * is a report of the builder (its main country and the core pick), built and run from the Reports tab.
+ */
+export const isPresetScope = (s: { type: ReportType; platform?: ReportPlatform | undefined }) =>
+  isPreset(s.type) && platformOfScope(s) === "play";
+/**
+ * The store view a report's run and approval read images from: a "Google Play vs App Store"
+ * report needs both stores' images, which the App Store view holds (plan-app-store 7.2).
+ */
+export const runPlatform = (d: { type: ReportType; scope: { platform?: ReportPlatform } }) =>
+  d.type === "stores" ? "appstore" : platformOfScope(d.scope);
+export const isPresetDef = (d: { type: ReportType; scope: { platform?: ReportPlatform } }) =>
+  isPresetScope({ type: d.type, platform: d.scope.platform });
 
 export const MarketRefSchema = z.object({ gl: z.string(), hl: z.string(), label: z.string() });
 export type MarketRef = z.infer<typeof MarketRefSchema>;
 
 export const ReportScopeSchema = z.object({
   type: ReportTypeSchema,
+  /** The store the report reads; missing: Google Play (every report made before the App Store). */
+  platform: PlatformSchema.optional(),
   markets: z.array(MarketRefSchema),
   /** App ids, in priority order. Empty for the presets: they are derived from the pick. */
   competitors: z.array(z.string()).default([]),

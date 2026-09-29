@@ -109,7 +109,7 @@ export async function assembleCountryReport(
   const { config } = loaded;
   const x = countryInputs(loaded, plan, ctx);
   const problems: string[] = [];
-  const play = playContextOf(config, plan.markets);
+  const play = playContextOf(config, plan.markets, plan.platform === "appstore");
   const generatedAt = now.toISOString();
   const entries = new Map(x.slices.map((s) => [s.market.gl, sliceEntries(x, s)]));
   const withPlay = (s: CountrySlice) => ({ ...s.inputs, play, generatedAt });
@@ -210,6 +210,7 @@ export async function assembleCountryReport(
         ours: first.ours,
         brief,
         recommendations: x.base.recommendations,
+        store: play.platform,
       },
       ai.ctx,
     );

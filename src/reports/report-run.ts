@@ -14,6 +14,7 @@ import { analyseChunk, layoutAfterSave, modelCopy } from "../analysis/run-chunk.
 import { withOwnCost } from "../analysis/run-context.ts";
 import { analyseImages } from "../analysis/run-images.ts";
 import { STOPPED_STEP, stepTracker } from "../analysis/run-status.ts";
+import { forPlatform } from "../appstore/platform.ts";
 import { type LoadedConfig, loadTaxonomy, projectPaths } from "../config/load.ts";
 import { projectKey, workspaceStorage } from "../storage/index.ts";
 import { openImageDb } from "../store/imagedb.ts";
@@ -25,7 +26,7 @@ import { layerPixelFor } from "./pixel-pairs.ts";
 import { plannedSteps, stepKey, stopGuard } from "./run-steps.ts";
 import type { ScopePlan } from "./scope-plan.ts";
 import { researchSnapshot } from "./suggest.ts";
-import type { ReportDef } from "./types.ts";
+import { type ReportDef, runPlatform } from "./types.ts";
 
 const money = (n: number) => `$${n.toFixed(2)}`;
 
@@ -51,6 +52,7 @@ export async function runReport(
   report: string;
   synthesisSkipped: string | null;
 }> {
+  loaded = forPlatform(loaded, runPlatform(def));
   const { config } = loaded;
   const paths = projectPaths(loaded);
   const { taxonomy } = loadTaxonomy(loaded);
@@ -106,8 +108,9 @@ export async function runReport(
   // The store order of every deck in the report is saved first (kept if the run stops early).
   for (const d of plan.decks) {
     if (d.state !== "ok") continue;
-    const deck = readDeck(paths.decks, { appId: d.appId, gl: d.gl, hl: d.hl });
-    if (deck) snapshotOrder(paths, deck, d.name);
+    const at = projectPaths(forPlatform(loaded, d.platform));
+    const deck = readDeck(at.decks, { appId: d.appId, gl: d.gl, hl: d.hl });
+    if (deck) snapshotOrder(at, deck, d.name);
   }
   const writeRec = recordWriter(loaded, db);
   const produce = await analyseImages(full, {

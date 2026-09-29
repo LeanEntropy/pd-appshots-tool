@@ -10,6 +10,7 @@ import {
   pixelKey,
   readPixelCheck,
 } from "../store/pixel-diff.ts";
+import { reshapedPair } from "./layer-crops.ts";
 import type { ImageAnalysis } from "./schema.ts";
 
 /** The anchor's analysed boxes the pixel check splits by: texts, bands, elements. */
@@ -42,7 +43,8 @@ export async function pairPixel(
 ): Promise<PixelResult | null> {
   const img = db.get(imageId);
   const anc = db.get(anchor.imageId);
-  if (!img || !anc) return null;
+  // Another shape (an App Store image against a Play anchor): no pixel-by-pixel check.
+  if (!img || !anc || reshapedPair(img, anc)) return null;
   const regions = anchorRegions(anchor.final);
   return pixelCheck(
     workspaceStorage(paths.workspace),

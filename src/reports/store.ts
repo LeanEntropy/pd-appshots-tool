@@ -1,6 +1,6 @@
 import { type ProjectContext, projectKey, type Storage } from "../storage/index.ts";
 import {
-  isPreset,
+  isPresetDef,
   type ReportDef,
   ReportDefSchema,
   type ReportScope,
@@ -149,7 +149,7 @@ export function addVersion(
   const newest = versions.at(-1)?.id;
   const next = {
     ...def,
-    versions: isPreset(def.type)
+    versions: isPresetDef(def)
       ? versions.map((v) => ({ ...v, archived: v.id !== newest }))
       : versions,
   };
@@ -183,7 +183,7 @@ export function setArchived(s: Storage, c: ProjectContext, id: string, archived:
 export function deleteReport(s: Storage, c: ProjectContext, id: string): Change {
   const def = readDef(s, c, id);
   if (!def) return { ok: false, status: 404, problem: "This report no longer exists." };
-  if (isPreset(def.type))
+  if (isPresetDef(def))
     return {
       ok: false,
       status: 409,

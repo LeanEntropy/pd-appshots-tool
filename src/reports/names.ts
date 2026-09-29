@@ -19,11 +19,17 @@ const count = (n: number) => `${n} ${n === 1 ? "competitor" : "competitors"}`;
  * "United States with 9 competitors". The user can change it.
  */
 export function suggestName(scope: ReportScope, main: MarketRef): string {
+  const base = playName(scope, main);
+  if (scope.type === "stores") return `Google Play vs App Store: ${base}`;
+  return scope.platform === "appstore" ? `App Store: ${base}` : base;
+}
+
+function playName(scope: ReportScope, main: MarketRef): string {
   const n = scope.competitors.length + scope.includeCharts.length;
   const names = scope.markets.map((m) => countryName(m.label));
   if (scope.type === "pilot") return "Pilot";
   if (scope.type === "core") return "Full check";
-  if (!names.length) return scope.type === "compare" ? "Compare countries" : "One country";
+  if (!names.length) return scope.type === "country" ? "One country" : "Compare countries";
   const isMain = scope.markets.length === 1 && scope.markets[0]?.gl === main.gl;
   if (scope.type === "country" && isMain) return `${names[0]} with ${count(n)}`;
   return `${names.join(", ")} vs ${count(n)}`;

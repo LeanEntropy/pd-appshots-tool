@@ -12,6 +12,12 @@ const TIER_TEXT = { full: "full analysis", "layer-diff": "text comparison", iden
 function usdRange(u) { return money(u[0]) + " to " + money(u[1]); }
 function shortDate(d) { const t = new Date(d + "T00:00:00Z"); return isNaN(t.getTime()) ? String(d) : t.toLocaleDateString(undefined, { day: "numeric", month: "short", year: "numeric" }); }
 
+// Per store (plan-app-store 4): what goes to AI and what is free on each store.
+function storeLines(b) {
+  const one = (k, name) => { const x = b[k]; const n = x.full + x.layerDiff + x.identical; if (!n) return ""; return "<tr><td>" + rStoreMark(k) + " " + name + ": full analysis " + x.full + ", text comparison " + x.layerDiff + ", free " + x.identical + (x.samePicture ? " (" + x.samePicture + " the same picture as on Google Play)" : "") + (x.toConfirm ? "; " + x.toConfirm + " may be the same screen as on Google Play in another shape: answer Same screen in the approval to compare only their text" : "") + '</td><td class="n">' + n + "</td></tr>"; };
+  return [one("play", "Google Play"), one("appstore", "App Store")].filter(Boolean);
+}
+
 function needsHtml(p) {
   const c = p.counts;
   const row = (label, n) => "<tr><td>" + esc(label) + '</td><td class="n">' + n + "</td></tr>";
@@ -20,6 +26,7 @@ function needsHtml(p) {
   const left = p.decks.filter((d) => d.state === "left-out");
   const again = p.items.filter((i) => i.repeatOf && i.basedOn !== i.imageId).length;
   const lines = [row("Already analysed or identical to an analysed image (free)", c.identical - again), ...(again ? [row("Same screen in another size (free)", again)] : []), row("Same picture, new text: compare the text layer", c.layerDiff), row("Different picture: full analysis", c.full)];
+  if (p.byStore) lines.push(...storeLines(p.byStore));
   if (c.newImages) lines.push(row("Images: estimated cost", usdRange(p.images.usd)));
   for (const t of p.text.parts) lines.push(row(t.label, usdRange(t.usd)));
   return "<h4>What this report needs</h4><table>" + lines.join("") + "</table>"

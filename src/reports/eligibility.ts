@@ -1,6 +1,8 @@
 import { buildAnalysisPlan } from "../analysis/plan.ts";
-import type { LoadedConfig } from "../config/load.ts";
+import { readAppStore } from "../appstore/data.ts";
+import { type LoadedConfig, projectPaths } from "../config/load.ts";
 import { settingsOf } from "../settings/access.ts";
+import { workspaceStorage } from "../storage/index.ts";
 import { theCountry } from "./names.ts";
 import { presetOutcome } from "./ready.ts";
 import type { ReportType } from "./types.ts";
@@ -45,10 +47,30 @@ export function eligibility(loaded: LoadedConfig): Eligibility {
   return {
     pilotReady: pilot,
     coreReady: core,
-    types: { pilot: { open: true, reason: "" }, core: after, country: after, compare: after },
+    types: {
+      pilot: { open: true, reason: "" },
+      core: after,
+      country: after,
+      compare: after,
+      stores: !pilot ? after : appStoreOn(loaded) ? after : { open: false, reason: NO_APPLE },
+    },
     warning,
     base: core ? "core" : pilot ? "pilot" : null,
   };
+}
+
+export const NO_APPLE =
+  "Add the App Store first: switch it on in Settings and add games or countries on the Competitors or Countries page.";
+
+/** The project holds App Store pairs to read (the explicit opt-in, plan-app-store 5). */
+export function appStoreOn(loaded: LoadedConfig): boolean {
+  try {
+    const paths = projectPaths(loaded);
+    const a = readAppStore(workspaceStorage(paths.workspace), { projectId: paths.projectId });
+    return a.enabled && a.pairs.length > 0;
+  } catch {
+    return false;
+  }
 }
 
 /** Why a builder scope cannot be planned or built yet (a draft may be saved incomplete). */
@@ -58,6 +80,8 @@ export function scopeIncomplete(scope: {
 }): string | null {
   if (scope.type === "country" && scope.markets.length !== 1)
     return "Pick the country of this report.";
+  if ((scope.type === "compare" || scope.type === "stores") && scope.markets.length < 1)
+    return "Pick at least one country.";
   if (scope.type === "compare" && scope.markets.length < 2)
     return "Tick at least two countries to compare.";
   return null;

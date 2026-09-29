@@ -1,3 +1,5 @@
+import { appleRefsKey } from "../appstore/data.ts";
+import { BothStoresImageDb } from "../appstore/image-db.ts";
 import type { ProjectPaths } from "../config/load.ts";
 import { LibraryImageDb } from "../library/imagedb.ts";
 import type { DeviceClass } from "../play/screenshots.ts";
@@ -53,7 +55,9 @@ export interface ImageDb {
 }
 
 export function openImageDb(paths: ProjectPaths): ImageDb {
-  return paths.library
-    ? LibraryImageDb.open(paths.workspace, paths.library.refsKey, paths.projectId)
-    : LegacyImageDb.open(paths.imageDb, paths.imagesOrig, paths.imagesThumb);
+  if (!paths.library) return LegacyImageDb.open(paths.imageDb, paths.imagesOrig, paths.imagesThumb);
+  const play = LibraryImageDb.open(paths.workspace, paths.library.refsKey, paths.projectId);
+  if (paths.platform !== "appstore") return play;
+  const refs = appleRefsKey({ projectId: paths.projectId });
+  return new BothStoresImageDb(LibraryImageDb.open(paths.workspace, refs, paths.projectId), play);
 }

@@ -1,4 +1,5 @@
 import { join } from "node:path";
+import { appleManifest, isAppleDecksDir, readAppleDeckFile } from "../appstore/platform.ts";
 import type { DeckTarget } from "../core/targets.ts";
 import { type DeviceClass, withDeckDeviceClasses } from "../play/screenshots.ts";
 import { readJsonIfExists, safeName, writeJsonAtomic, writeJsonOnce } from "../util/fsx.ts";
@@ -42,6 +43,11 @@ export function readDeck(
   decksDir: string,
   t: { appId: string; gl: string; hl: string },
 ): DeckManifest | undefined {
+  // The App Store view of the project (appstore/platform.ts): its own deck files, same shape.
+  if (isAppleDecksDir(decksDir)) {
+    const a = readAppleDeckFile(decksDir, t);
+    return a && appleManifest(a);
+  }
   const d = readJsonIfExists(deckPath(decksDir, t)) as DeckManifest | undefined;
   return d && withDeckClasses(d);
 }

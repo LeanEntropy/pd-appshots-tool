@@ -1,4 +1,4 @@
-import { isPreset, type ReportDef, type ReportScope } from "./types.ts";
+import { isPresetDef, isPresetScope, type ReportDef, type ReportScope } from "./types.ts";
 
 /** Another report with exactly the same setup: a draft (never run) or a report with versions. */
 export interface SameReport {
@@ -13,6 +13,7 @@ const sorted = (xs: readonly string[]) => [...xs].sort().join(",");
 export function scopeKey(s: ReportScope): string {
   return [
     s.type,
+    s.platform ?? "play",
     sorted(s.markets.map((m) => `${m.gl}|${m.hl}`)),
     sorted(s.competitors),
     sorted(s.includeCharts),
@@ -29,10 +30,10 @@ export function sameScope(
   scope: ReportScope,
   exceptId = "",
 ): SameReport[] {
-  if (isPreset(scope.type)) return [];
+  if (isPresetScope(scope)) return [];
   const key = scopeKey(scope);
   return defs
-    .filter((d) => d.id !== exceptId && !d.archived && !isPreset(d.type))
+    .filter((d) => d.id !== exceptId && !d.archived && !isPresetDef(d))
     .filter((d) => scopeKey(d.scope) === key)
     .sort(
       (a, b) =>

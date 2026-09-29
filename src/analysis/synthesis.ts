@@ -1,4 +1,5 @@
 import type { z } from "zod";
+import { type Store, storeFacts } from "../appstore/store-prompts.ts";
 import type { Taxonomy } from "../config/load.ts";
 import type { KbRecord } from "../kb/step.ts";
 import { patternsKb, recommendKb, reviewKb, type SynthesisKb, withKbMarks } from "../kb/step-io.ts";
@@ -136,6 +137,7 @@ async function writeAndReview(
     ours: readonly DeckEntry[];
     competitors: readonly DeckEntry[];
     ourDeckLength: number;
+    store?: Store;
   },
   ctx: CallContext,
   report: (phase: string, message: string) => void,
@@ -154,6 +156,7 @@ async function writeAndReview(
     `Computed patterns (JSON):\n${JSON.stringify(input.patterns)}`,
     `Our deck vs the patterns, computed (JSON):\n${JSON.stringify(input.oursVs)}`,
     `Pattern check, computed (JSON): verdict, key points in priority order, and every pattern with whether we fit:\n${JSON.stringify(input.fit, (k, v) => (k === "basis" ? undefined : v))}`,
+    ...storeFacts(input.store),
   ].join("\n\n");
   report("patterns", "Finding patterns…");
   const interp = await textStep(
@@ -192,7 +195,8 @@ async function writeAndReview(
   const contextBefore = [facts, interpretation, ...lines, range].join("\n\n");
   const schema = recommendationSchema(taxonomy);
   const oursTypes = new Map(input.ours.map((e) => [e.position, e.final.screenshot.screenType]));
-  const check = (v: Recommendations) => recommendationProblems(v, minLen, maxLen, oursTypes);
+  const check = (v: Recommendations) =>
+    recommendationProblems(v, minLen, maxLen, oursTypes, input.store);
   report("recommend", "Writing recommendations…");
   const rec = await textStep(
     "recommend",

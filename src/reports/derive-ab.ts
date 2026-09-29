@@ -1,8 +1,8 @@
-import { playSetup } from "../analysis/play-experiments.ts";
 import type { ReportData } from "../analysis/report-data.ts";
 import type { AbTestCard, AbTestsPart, PlayContext } from "./ab-section.ts";
 import type { CountryReport } from "./country-report-types.ts";
 import { countryName } from "./names.ts";
+import { testSetup } from "./test-setup.ts";
 import type { MarketRef } from "./types.ts";
 
 /**
@@ -84,14 +84,7 @@ export function derivedAbTests(
   const market: MarketRef = { gl: c.gl, hl: c.hl, label: c.label };
   const name = countryName(c.label);
   const control = controlOf(c.data);
-  const setupFor = (second: boolean) =>
-    playSetup(
-      [market],
-      [market],
-      play.projectMarkets,
-      (gl) => play.traffic[gl] ?? "unknown",
-      second,
-    );
+  const setupFor = (second: boolean) => testSetup(play, [market], [market], second);
   const leftOut: AbTestsPart["leftOut"] = [];
   const tests: AbTestCard[] = [];
   for (const t of parent.abTests.tests.filter((x) => x.source === "ai")) {

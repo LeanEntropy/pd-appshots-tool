@@ -13,6 +13,17 @@ export interface LayerPixel {
   verdict: PixelVerdict;
 }
 
+/** Two pictures of different shapes (more than 3% apart): an App Store image and its Play anchor. */
+export function reshapedPair(
+  a: { width: number; height: number } | undefined,
+  b: { width: number; height: number } | undefined,
+): boolean {
+  if (!a?.height || !b?.height) return false;
+  const ra = a.width / a.height;
+  const rb = b.width / b.height;
+  return Math.abs(ra - rb) / Math.max(ra, rb) > 0.03;
+}
+
 /** A share of changed pixels (0 to 1) above which a part of the layer counts as changed. */
 const NOTICE = 0.0002;
 
@@ -99,6 +110,8 @@ export async function layerCrops(
   imageId: string,
   anchor: ImageAnalysis,
   pixel?: LayerPixel | null,
+  /** The same screen in another shape: the anchor's boxes do not fit, the whole image is sent. */
+  reshaped = false,
 ): Promise<{ images: ModelImage[]; hashes: string[] }> {
   const rec = db.get(imageId);
   if (!rec) throw new Error(`Image ${imageId} is not in the project image database.`);
@@ -113,7 +126,7 @@ export async function layerCrops(
     fit: "inside" as const,
     withoutEnlargement: true,
   });
-  const boxes = cropBoxes(anchor, pixel);
+  const boxes = reshaped ? [] : cropBoxes(anchor, pixel);
   for (const box of boxes) {
     const left = Math.min(W - 1, Math.floor((box.x / 100) * W));
     const top = Math.min(H - 1, Math.floor((box.y / 100) * H));
@@ -129,7 +142,7 @@ export async function layerCrops(
   }
   if (!boxes.length)
     shots.push(await sharp(file).resize(fit(CROP_EDGE)).jpeg({ quality: 90 }).toBuffer());
-  if (layerParts(pixel).whole)
+  if (!reshaped && layerParts(pixel).whole)
     shots.push(await sharp(file).resize(fit(384)).jpeg({ quality: 85 }).toBuffer());
   const storage = workspaceStorage(paths.workspace);
   const images: ModelImage[] = [];

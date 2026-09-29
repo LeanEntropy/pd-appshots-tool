@@ -443,5 +443,13 @@ The review was run once, on the finished draft, with gpt-5.6-sol through Codex C
 | 12 | Milestone order: dependencies, duplicate rules with the KB, A3 too large | **Applied in part.** A3 is split into A3a (ingest and dedup) and A3b (UI), and the dependencies and merge points are listed (section 8). **Declined:** making the KB a prerequisite. The KB plan is not approved yet and would block this work; `apple-rules.ts` is the one rule source until its entries move into the KB. |
 | 13 | Missing adversarial tests | **Applied.** Tests are added for failure statuses, identity changes, locale collisions, multiple previews, URL reuse with new bytes, false-reuse traps, silent downgrade, fresh approval, rule provenance, and a per-image title-art check (section 9). |
 
+## A4 benchmark result (2026-09-29, approved cap $1.50, spent $0.53)
+
+Run with `scripts/appstore-bench/bench.ts` on a scratch copy of the workspace (the real one is never written). Five of Rogue Legend's US App Store images (1242×2688) against their Google Play anchors (1080×1920), checked by eye as the same screens in the taller shape:
+- **Text comparison (reshaped mode, whole image at 1024 px, Opus 5.5): 5 of 5 correct.** Same screen recognised every time; every headline read exactly (only a space before "!" differs in two). Cost **$0.029 to $0.045, mean $0.034 per image**.
+- **Full analysis of 2 of the same images (Fable 5.1, no layout): $0.11 and $0.25**, the same headlines and screen types. Layout adds about $0.11 per image, as on Google Play.
+- The "one word changed" traps for free reuse are covered by the fetch's unit tests (strict pixel check: a changed word, a new size or a new picture never passes).
+- Real data (all 9 US games): 55 App Store images; 4 free (same picture as Play), 8 text comparisons, 43 full analyses, of which 31 become text comparisons once you answer "Same screen" in the approval.
+
 ## User decisions (2026-09-29)
 All recommended options accepted: local language per country; US first; preview videos recorded as cover image only (no video analysis yet); the $1.50 test run is approved; small Play/Apple store icons with tooltips; read the public App Store page after a check of Apple's terms; priority after the current queue (wireframe redraw, then games directory + image page).

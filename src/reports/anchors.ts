@@ -2,6 +2,7 @@ import { type RepeatOf, repeatReason } from "../analysis/deck-repeats.ts";
 import type { CostTier } from "../analysis/tiers.ts";
 import { hamming, NEAR_IDENTICAL_BITS } from "../store/identity.ts";
 import { PIXEL_MAX_BITS, type PixelVerdict } from "../store/pixel-diff.ts";
+import { type CrossStore, crossMatch } from "./cross-store.ts";
 import { theCountry } from "./names.ts";
 
 /** One store image a report needs: a game's phone screenshot at one position in one country. */
@@ -20,6 +21,10 @@ export interface ScopeInput {
   height: number;
   /** The same screen as an earlier position of this deck (uploaded twice). */
   repeatOf?: RepeatOf;
+  /** An App Store image (plan-app-store 4); missing: Google Play. */
+  platform?: "appstore";
+  /** App Store: the Play picture this one equals apart from file compression (strict check). */
+  sameAs?: string;
 }
 
 /** An image that can anchor a text-layer comparison (the same picture, analysed once). */
@@ -34,9 +39,13 @@ export interface AnchorCandidate {
   width: number;
   height: number;
   analysed: boolean;
+  /** Its store, for the plain reason ("Google Play", "App Store"). */
+  store?: string;
 }
 
 export interface ScopeItem extends ScopeInput {
+  /** App Store: a text comparison against a picture of another shape (whole image sent). */
+  reshaped?: boolean;
   tier: CostTier;
   /** identical: the image reused; layer-diff: the anchor its text is compared with. */
   basedOn: string | null;
@@ -103,8 +112,12 @@ export function tierScope(
   mainCountry: string,
   different: ReadonlySet<string> = new Set(),
   pixel?: PixelInput,
+  /** App Store images: the other store's pictures as anchors (plan-app-store 4). */
+  cross?: CrossStore,
 ): ScopeItem[] {
   const planned = new Set<string>();
+  // Images planned as text comparisons: never an anchor of another (they are not analysed).
+  const layered = new Set<string>();
   const out: ScopeItem[] = [];
   const abroad = new Map<string, AnchorCandidate[]>();
   for (const [app, list] of abroadAnalysed) abroad.set(app, [...list]);
@@ -121,6 +134,7 @@ export function tierScope(
     (list ?? []).filter(
       (c) =>
         c.imageId !== it.imageId &&
+        !layered.has(c.imageId) &&
         !different.has(pairKey(c.imageId, it.imageId)) &&
         (c.analysed || !copies.has(c.imageId)),
     );
@@ -141,6 +155,12 @@ export function tierScope(
           hamming(a.phash, it.phash) - hamming(b.phash, it.phash),
       )[0];
   for (const it of inputs) {
+    // App Store: the same picture as an analysed Play image, apart from file compression.
+    if (it.sameAs && (analysedIds.has(it.sameAs) || planned.has(it.sameAs))) {
+      const reason = "the same picture as a Google Play image (only file compression differs)";
+      out.push({ ...it, tier: "identical", basedOn: it.sameAs, reason });
+      continue;
+    }
     if (analysedIds.has(it.imageId)) {
       out.push({ ...it, tier: "identical", basedOn: it.imageId, reason: "already analysed" });
       continue;
@@ -175,6 +195,7 @@ export function tierScope(
             reason: `analysed once in ${mainCountry}, so the other countries only need their text compared`,
           });
         }
+        layered.add(it.imageId);
         out.push({
           ...it,
           tier: "layer-diff",
@@ -185,6 +206,7 @@ export function tierScope(
       }
       const other = match(it, abroad.get(it.appId));
       if (other) {
+        layered.add(it.imageId);
         out.push({
           ...it,
           tier: "layer-diff",
@@ -195,16 +217,29 @@ export function tierScope(
         continue;
       }
     }
+    const other =
+      cross && it.platform === "appstore"
+        ? crossMatch(it, { samePicture: sameAs, ...cross }, open, planned)
+        : null;
+    if (other?.tier === "layer-diff") {
+      layered.add(it.imageId);
+      out.push(other);
+      continue;
+    }
     planned.add(it.imageId);
-    const noMain = !it.main;
-    const pixelSuggested = suggested(it);
+    const noMain = !it.main && !other;
+    const pixelSuggested = other?.pixelSuggested ?? suggested(it);
     out.push({
       ...it,
       tier: "full",
       basedOn: null,
       ...(noMain ? { noMainVersion: true } : {}),
       ...(pixelSuggested ? { pixelSuggested } : {}),
-      reason: noMain ? "no main-country version: full analysis" : "not analysed before",
+      reason: other
+        ? other.reason
+        : noMain
+          ? "no main-country version: full analysis"
+          : "not analysed before",
     });
     if (noMain) abroad.set(it.appId, [...(abroad.get(it.appId) ?? []), { ...it, analysed: false }]);
   }

@@ -1,4 +1,5 @@
 import { layerAttemptId } from "../analysis/layer-diff-run.ts";
+import { forPlatform } from "../appstore/platform.ts";
 import { type LoadedConfig, projectPaths } from "../config/load.ts";
 import { type EnqueueResult, type RunnerOptions, running, startJob } from "../jobs/runner.ts";
 import { projectKey, workspaceStorage } from "../storage/index.ts";
@@ -7,7 +8,7 @@ import { blocking, doubtfulInPlan, type MatchPair } from "./match-check.ts";
 import { runReport } from "./report-run.ts";
 import { buildScopePlan, type ScopePlan } from "./scope-plan.ts";
 import { readDef } from "./store.ts";
-import { isPreset, type ReportDef } from "./types.ts";
+import { isPresetDef, type ReportDef, runPlatform } from "./types.ts";
 
 /**
  * The paid part of a One country or Compare countries report (plan-reports 1.2, 2.2, 2.3): the
@@ -32,7 +33,7 @@ export interface ReportApproval {
 }
 
 function problemOf(loaded: LoadedConfig, def: ReportDef): string | null {
-  if (isPreset(def.type)) return "The Pilot and the Full check are approved on the Analysis page.";
+  if (isPresetDef(def)) return "The Pilot and the Full check are approved on the Analysis page.";
   return eligibilityProblem(eligibility(loaded), def.type) ?? scopeIncomplete(def.scope);
 }
 
@@ -43,6 +44,7 @@ export function reportApproval(
 ): ReportApproval | { problem: string } {
   const problem = problemOf(loaded, def);
   if (problem) return { problem };
+  loaded = forPlatform(loaded, runPlatform(def));
   const paths = projectPaths(loaded);
   const s = workspaceStorage(paths.workspace);
   const plan = buildScopePlan(loaded, def.scope);
@@ -90,6 +92,7 @@ export function enqueueReport(
     return { ok: false, status: 404, problem: "This report no longer exists. Reload the page." };
   const refused = problemOf(loaded, def);
   if (refused) return { ok: false, status: 409, problem: refused };
+  loaded = forPlatform(loaded, runPlatform(def));
   const saved = s.getJson(planKey(paths, def.id)) as Saved | undefined;
   const current = buildScopePlan(loaded, def.scope);
   const problem = reportApprovalProblem(loaded, saved, current, input.planHash);
