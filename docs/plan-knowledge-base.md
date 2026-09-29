@@ -318,3 +318,15 @@ One review by gpt-5.6-sol on the finished draft (2026-09-29), verdict **"rework"
 - "Remove the official exception" fully: kept as your choice (15.1) with a recommendation, because store specs and policies have only one primary source.
 - "Include representative cases for all nine markets": partly. Evaluation covers the six countries with saved data plus crafted script and regulation cases; the other markets are covered by the held-out comparison when their data exists. Creating data for all nine only for evaluation would cost more than the benefit.
 - "Generate all visible prose from structured fields": partly. Only the "why" line, the KB numbers and the source labels are rendered by code; the recommendation wording stays with the model, as it is today.
+
+## User decisions (2026-09-29)
+All recommended options accepted, with this refinement to D1:
+- **D1:** current official Google Play and Apple specs and policies count as trusted sources on their own. Split them into **enforced rules** (breaking them gets the listing rejected or removed: hard constraints, never recommended against) and **official guidance** (best practices the platform suggests but doesn't enforce). The agent's job is to recommend what works best for the game **without getting rejected**: it may recommend going against non-enforced guidance when competitor data or corroborated evidence says it helps, and it says so in plain words. It never recommends breaking an enforced rule.
+- **D2:** data decides; conflicts become A/B test ideas.
+- **D3:** one KB-led A/B test idea per report, clearly labelled.
+- **D4:** the user approves entries that can drive recommendations (2+ independent sources); unverified entries are approved in bulk and can only become test ideas.
+- **D5:** research Asia and Google Play first, then the App Store and other regions.
+- **D6:** KB cost cap of $0.50 per report.
+- **D7:** Rogue Legend genres: roguelike, RPG, idle, survivor-like (not casual).
+- **D8:** a generated review list first; a Knowledge page later.
+- **Citations:** a [1] marker shows only the source link(s), opening in a new tab. Nothing else.

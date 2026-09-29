@@ -46,8 +46,11 @@ try { suggestOpen = localStorage.getItem(SG_KEY) === "1"; } catch {}
 // A suggestion of a report over several countries also offers adding countries to the project.
 const multiCountry = (s) => [s.action, s.second].some((a) => a && a.scope && (a.scope.type === "compare" || (a.scope.markets || []).length > 1));
 
+// Links only to this page ("#...") or this site ("/..."), never to another scheme.
+const safeHref = (h) => (typeof h === "string" && /^(#[\\w-]*|\\/(?!\\/)[\\w\\-.\\/?=&%#]*)$/.test(h) ? h : "#");
+
 function suggestionCard(s) {
-  const act1 = s.action ? (s.action.scope ? '<button type="button" class="sgo primary" data-sid="' + esc(s.id) + '" data-which="1">' + esc(s.action.label) + "</button>" : '<a class="btn" href="' + esc(s.action.href) + '">' + esc(s.action.label) + "</a>") : "";
+  const act1 = s.action ? (s.action.scope ? '<button type="button" class="sgo primary" data-sid="' + esc(s.id) + '" data-which="1">' + esc(s.action.label) + "</button>" : '<a class="btn" href="' + esc(safeHref(s.action.href)) + '">' + esc(s.action.label) + "</a>") : "";
   const act2 = s.second ? '<button type="button" class="sgo" data-sid="' + esc(s.id) + '" data-which="2">' + esc(s.second.label) + "</button>" : "";
   const more = multiCountry(s) ? '<button type="button" class="cpOpen" data-act-key="cp-' + esc(s.id) + '">Add countries</button>' : "";
   const chip = s.costChip || (s.costText === "free" ? "Free" : "");

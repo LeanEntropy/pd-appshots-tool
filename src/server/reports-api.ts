@@ -4,7 +4,11 @@ import { buildReportData } from "../analysis/report-data.ts";
 import { reportInputs } from "../analysis/report-inputs.ts";
 import { type LoadedConfig, projectPaths } from "../config/load.ts";
 import { readJournal } from "../jobs/journal.ts";
+import type { CountryReport } from "../reports/country-report-types.ts";
+import { suppressChild } from "../reports/derived-relations.ts";
 import { draftsFromExpansion } from "../reports/drafts.ts";
+import { withGroupsMd } from "../reports/group-md.ts";
+import { countryReportsOf, derivedLink, groupsFor } from "../reports/groups-load.ts";
 import { listReports } from "../reports/list.ts";
 import { mainMarketRef } from "../reports/main-market.ts";
 import { repeatUpgrader, tryUpgrade } from "../reports/repeat-upgrade.ts";
@@ -23,16 +27,17 @@ import { settingsOf } from "../settings/access.ts";
 import { workspaceStorage } from "../storage/index.ts";
 import { markdownToHtml } from "../view/md-html.ts";
 import type { ApiResponse } from "./api.ts";
+import { GroupsBody, safe, saveGroupsOf } from "./reports-groups-api.ts";
 
 /** Several reports per project (plan-reports R1): list, read a version, rename, archive, delete. */
 
 const REPORT_ID = /^r-[a-z0-9-]{1,80}$/;
-const gone = (): ApiResponse => ({
+export const gone = (): ApiResponse => ({
   status: 404,
   body: { problems: ["This report no longer exists. Reload the page."] },
 });
 
-function findDef(loaded: LoadedConfig, id: string) {
+export function findDef(loaded: LoadedConfig, id: string) {
   if (!REPORT_ID.test(id)) return undefined;
   const paths = projectPaths(loaded);
   return listDefs(workspaceStorage(paths.workspace), paths).find((d) => d.id === id);
@@ -124,21 +129,39 @@ export function getReportVersion(loaded: LoadedConfig, id: string, vid: string):
         kind?: unknown;
         countries?: unknown;
       } & Parameters<typeof upgradeWordsMd>[1];
-      if (raw?.kind === "countries" && Array.isArray(raw.countries))
+      if (raw?.kind === "countries" && Array.isArray(raw.countries)) {
+        // "Words to use" statuses are derived by code from the saved data (no AI).
+        const country = artWordingDeep(withWordStatus(tryUpgrade(raw, repeats().country)));
+        // Across countries: the group patterns, from this version's pages (code only).
+        const groups = safe(() => groupsFor(loaded, def, country as unknown as CountryReport));
         return {
           status: 200,
           body: {
             ...meta,
-            // "Words to use" statuses are derived by code from the saved data (no AI).
-            country: artWordingDeep(withWordStatus(tryUpgrade(raw, repeats().country))),
+            country: {
+              ...country,
+              groups,
+              links: {
+                derived: safe(() => derivedLink(loaded, def)),
+                countryReports:
+                  def.type === "compare" ? safe(() => countryReportsOf(loaded, def.id)) : null,
+              },
+            },
             // The written report too: the basic PDF export prints it.
             html: markdownToHtml(
               artWording(
-                upgradeWordsMd(s.getText(versionFileKey(paths, entry.id, "report.md")) ?? "", raw),
+                withGroupsMd(
+                  upgradeWordsMd(
+                    s.getText(versionFileKey(paths, entry.id, "report.md")) ?? "",
+                    raw,
+                  ),
+                  groups,
+                ),
               ),
             ),
           },
         };
+      }
     } catch {
       // Unreadable: shown as its markdown below.
     }
@@ -200,9 +223,13 @@ export function getReportVersion(loaded: LoadedConfig, id: string, vid: string):
 }
 
 const PatchBody = z
-  .object({ name: z.string().max(120).optional(), archived: z.boolean().optional() })
+  .object({
+    name: z.string().max(120).optional(),
+    archived: z.boolean().optional(),
+    groups: GroupsBody.optional(),
+  })
   .strict()
-  .refine((b) => b.name !== undefined || b.archived !== undefined);
+  .refine((b) => b.name !== undefined || b.archived !== undefined || b.groups !== undefined);
 
 export function patchReport(loaded: LoadedConfig, id: string, body: unknown): ApiResponse {
   const parsed = PatchBody.safeParse(body);
@@ -212,7 +239,11 @@ export function patchReport(loaded: LoadedConfig, id: string, body: unknown): Ap
   if (!def) return gone();
   const paths = projectPaths(loaded);
   const s = workspaceStorage(paths.workspace);
-  const { name, archived } = parsed.data;
+  const { name, archived, groups } = parsed.data;
+  if (groups !== undefined) {
+    const r = saveGroupsOf(loaded, def, groups);
+    if (r.status !== 200 || (name === undefined && archived === undefined)) return r;
+  }
   const changes = [
     name === undefined ? null : () => renameReport(s, paths, def.id, name),
     archived === undefined ? null : () => setArchived(s, paths, def.id, archived),
@@ -238,6 +269,9 @@ export function removeReport(loaded: LoadedConfig, id: string): ApiResponse {
       status: 409,
       body: { problems: ["This report is running. Stop the run first, then delete it."] },
     };
+  // A country report made from a comparison is not recreated by its later versions (saved first:
+  // a crash after it leaves the report, never a deleted one that comes back).
+  suppressChild(s, paths, def);
   const r = deleteReport(s, paths, def.id);
   if (!r.ok) return { status: r.status, body: { problems: [r.problem] } };
   return { status: 200, body: { id: def.id, deleted: true } };

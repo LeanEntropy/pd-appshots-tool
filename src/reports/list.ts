@@ -6,6 +6,8 @@ import { type LoadedConfig, projectPaths } from "../config/load.ts";
 import { legacyAnalysisJob, readJournal } from "../jobs/journal.ts";
 import { workspaceStorage } from "../storage/index.ts";
 import { builderNewer, draftStatus } from "./builder-status.ts";
+import { reconcileDerived } from "./derived-relations.ts";
+import { derivedNewer } from "./derived-stale.ts";
 import { eligibility } from "./eligibility.ts";
 import { mainMarketRef } from "./main-market.ts";
 import { syncPresetReports } from "./migrate.ts";
@@ -52,6 +54,8 @@ export interface ReportSummary {
   canNow: boolean;
   /** Newest first. */
   versions: VersionSummary[];
+  /** A One country report made from a comparison: the comparison (its name null once deleted). */
+  derivedFrom?: { id: string; name: string | null } | null;
 }
 
 /** Plain country names, never codes (from the version's own scope when saved). */
@@ -74,6 +78,12 @@ export function listReports(loaded: LoadedConfig): ReportSummary[] {
       .map((c) => c.gl),
   );
   syncPresetReports(s, paths, main);
+  try {
+    // Country reports of finished comparisons (code only, idempotent; plan-cross-country 2.2).
+    reconcileDerived(loaded);
+  } catch {
+    // Finished on the next list.
+  }
   const folders = runFolders(s, paths);
   const job = readJournal(s, paths).jobs.ai ?? legacyAnalysisJob(s, paths) ?? undefined;
   const now = new Map<string, ReportInputs>();
@@ -138,7 +148,9 @@ export function listReports(loaded: LoadedConfig): ReportSummary[] {
     } else {
       elig ??= eligibility(loaded);
       ctx ??= planContext(loaded);
-      newer = builderNewer(loaded, d, inputs, elig, ctx);
+      newer = inputs?.derivedFrom
+        ? derivedNewer(loaded, d, inputs, defs, ctx)
+        : builderNewer(loaded, d, inputs, elig, ctx);
       const left =
         newest && files?.has("country-report.json") ? missingParts(s, paths, newest.id) : 0;
       if (left)
@@ -169,6 +181,12 @@ export function listReports(loaded: LoadedConfig): ReportSummary[] {
       deletable: !isPreset(d.type),
       canNow: isPreset(d.type),
       versions,
+      derivedFrom: d.derivedFrom
+        ? {
+            id: d.derivedFrom.reportId,
+            name: defs.find((x) => x.id === d.derivedFrom?.reportId)?.name ?? null,
+          }
+        : null,
     };
   });
   // Drafts first, then newest first; reports never run go last.

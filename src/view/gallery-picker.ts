@@ -96,7 +96,7 @@ function renderPanel() {
   const f = fit();
   const rows = selection.map((id, i) => {
     const a = named.get(id); const skip = f.skipped.find((s) => s[0] === id);
-    return '<li tabindex="0" data-index="' + i + '"' + (skip ? ' class="skip"' : "") + ' aria-label="' + esc((a ? a.name : id) + ", position " + (i + 1)) + '"><span class="grip" aria-hidden="true">&#8801;</span><span class="nm">' + esc(a ? a.name : id) + " (" + (a ? a.analysedLength : 0) + ")" + (skip ? " &ndash; " + skip[1] : "") + '</span><button data-remove="' + i + '" aria-label="Remove">Remove</button></li>';
+    return '<li tabindex="0" data-index="' + i + '"' + (skip ? ' class="skip"' : "") + ' aria-label="' + esc((a ? a.name : id) + ", position " + (i + 1)) + '"><span class="grip" aria-hidden="true">&#8801;</span><span class="nm">' + esc(a ? a.name : id) + " (" + (a ? a.analysedLength : 0) + ")" + (skip ? " &ndash; " + esc(skip[1]) : "") + '</span><button data-remove="' + i + '" aria-label="Remove">Remove</button></li>';
   }).join("");
   const status = f.ok ? "Ready" : "Needs at least " + DATA.core.min + " whole competitor decks";
   const whole = f.kept.reduce((n, id) => n + (named.get(id) ? named.get(id).baselineLength : 0), ourWhole);

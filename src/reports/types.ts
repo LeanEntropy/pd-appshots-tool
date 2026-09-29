@@ -33,6 +33,14 @@ export const ReportScopeSchema = z.object({
    * (explicit, shown in the report; distinct from "not sold here").
    */
   leftOut: z.array(z.object({ appId: z.string(), gl: z.string() })).optional(),
+  /**
+   * Compare countries: the groups of countries the "Across countries" section looks at (named by
+   * the user, suggested by region and language). Absent: the suggested groups.
+   */
+  groups: z
+    .array(z.object({ name: z.string().min(1).max(60), countries: z.array(z.string()) }))
+    .max(4)
+    .optional(),
 });
 export type ReportScope = z.infer<typeof ReportScopeSchema>;
 
@@ -54,6 +62,8 @@ export const ReportDefSchema = z.object({
   archived: z.boolean().default(false),
   /** Oldest first. */
   versions: z.array(VersionEntrySchema).default([]),
+  /** A One country report made by code from a Compare countries report (its country's part). */
+  derivedFrom: z.object({ reportId: z.string(), gl: z.string() }).optional(),
 });
 export type ReportDef = z.infer<typeof ReportDefSchema>;
 
@@ -93,6 +103,36 @@ export const VersionInputsSchema = z.object({
   aiRunId: z.string().nullable(),
   /** Reports of the builder: the check they rest on ("pilot" while there is no Full check). */
   base: z.enum(["pilot", "core"]).nullable().optional(),
+  /** A version made by code from a comparison's version (no AI call): where it came from. */
+  derivedFrom: z
+    .object({
+      reportId: z.string(),
+      versionId: z.string(),
+      gl: z.string(),
+      projection: z.string(),
+    })
+    .optional(),
+  /** Derived versions: the country the report shows. */
+  displayScope: z.object({ gl: z.string(), hl: z.string(), label: z.string() }).optional(),
+  /**
+   * Derived versions: every input that shaped the content, for "Newer data": this country's
+   * analysed images and store dates, and the main country's check the advice rests on.
+   */
+  dependencyScope: z
+    .object({
+      records: z.array(
+        z.object({
+          appId: z.string(),
+          position: z.number(),
+          imageId: z.string().nullable(),
+          updatedAt: z.string().nullable(),
+        }),
+      ),
+      orderDates: z.record(z.string(), z.string().nullable()),
+      /** The newest Full check (or Pilot) version when the comparison was made. */
+      baseVersionId: z.string().nullable(),
+    })
+    .optional(),
 });
 export type VersionInputs = z.infer<typeof VersionInputsSchema>;
 
