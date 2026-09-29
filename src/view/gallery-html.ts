@@ -4,6 +4,7 @@ import { ADD_CSS } from "./gallery-add.ts";
 import { CSS } from "./gallery-css.ts";
 import { GALLERY_SCRIPT } from "./gallery-script.ts";
 import type { ViewModel } from "./model.ts";
+import { PAIR_GROUP_CSS } from "./pair-group.ts";
 import { BUILDER_CSS } from "./report-builder.ts";
 import { REPORT_COUNTRY_CSS } from "./report-country.ts";
 import { REPORT_LIST_CSS } from "./report-list.ts";
@@ -44,7 +45,7 @@ export function galleryHtml(vm: ViewModel, token = "", served?: GalleryServed): 
 <meta name="ssr-token" content="${escHtml(token)}">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Store Screenshot Recipe</title>
-<style>${CSS}${REPORT_LIST_CSS}${REPORT_SUMMARY_CSS}${ADD_CSS}${BUILDER_CSS}${SUGGEST_CSS}${FLAG_CSS}${COUNTRY_ADD_CSS}${REPORT_COUNTRY_CSS}${REPORT_WORDS_CSS}${REPORTS_A_CSS}</style>
+<style>${CSS}${REPORT_LIST_CSS}${REPORT_SUMMARY_CSS}${ADD_CSS}${BUILDER_CSS}${PAIR_GROUP_CSS}${SUGGEST_CSS}${FLAG_CSS}${COUNTRY_ADD_CSS}${REPORT_COUNTRY_CSS}${REPORT_WORDS_CSS}${REPORTS_A_CSS}</style>
 </head>
 <body>
 <div id="runbar" role="status" aria-live="polite" hidden></div>
