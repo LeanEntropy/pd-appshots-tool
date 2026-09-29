@@ -57,6 +57,12 @@ export const countryAdviceSchema = z.strictObject({
       z.strictObject({
         concept: z.string().describe("the idea in English, e.g. battle"),
         use: z.string().describe("the local word to use, exactly"),
+        // Answers saved before this field read as "" (their cache keys do not change).
+        meaning: z
+          .preprocess((v) => v ?? "", z.string())
+          .describe(
+            'the word\'s literal English meaning, then its reading in Latin letters when the script is not Latin, e.g. "adventure (bouken)"',
+          ),
         avoid: z.string().describe("a local word to avoid, or empty"),
         why: z.string(),
       }),

@@ -15,6 +15,7 @@ import { REPORT_PARTS_SCRIPT } from "../src/view/gallery-report-parts.ts";
 import { REPORT_COUNTRY_SCRIPT } from "../src/view/report-country.ts";
 import { REPORT_COUNTRY_PARTS_SCRIPT } from "../src/view/report-country-parts.ts";
 import { REPORT_SUMMARY_SCRIPT } from "../src/view/report-summary.ts";
+import { REPORT_WORDS_SCRIPT } from "../src/view/report-words.ts";
 import {
   addDeck,
   analyse,
@@ -209,7 +210,7 @@ function renderCountry(c: CountryReport, withFlags: boolean): string {
       : {}),
   };
   runInNewContext(
-    `${REPORT_SCRIPT}\n${REPORT_PARTS_SCRIPT}\n${REPORT_SUMMARY_SCRIPT}\n${REPORT_COUNTRY_SCRIPT}\n${REPORT_COUNTRY_PARTS_SCRIPT}\nthis.draw = renderCountryReport;`,
+    `${REPORT_SCRIPT}\n${REPORT_PARTS_SCRIPT}\n${REPORT_SUMMARY_SCRIPT}\n${REPORT_COUNTRY_SCRIPT}\n${REPORT_COUNTRY_PARTS_SCRIPT}\n${REPORT_WORDS_SCRIPT}\nthis.draw = renderCountryReport;`,
     ctx,
   );
   const draw = ctx.draw as (b: unknown, c: unknown, rid: string, research: string) => void;

@@ -47,7 +47,7 @@ const Mask = z.strictObject({
 
 const TextBlock = z.strictObject({
   role: z.enum(["headline", "subheadline", "label", "badge", "legal", "other"]),
-  text: z.string().describe("exact text, character for character, in its original script"),
+  text: z.string().describe("one separate text block, exactly as drawn: case, spaces, punctuation"),
   language: z.string().describe("BCP-47 code, e.g. en, ja, ko, zh-Hant, th"),
   colour: z.string().describe("fill colour name and hex, e.g. yellow #f7f704"),
   strokeColour: z.string().describe('outline or shadow colour, or "none"'),

@@ -28,10 +28,13 @@ export type PromptName = keyof typeof PROMPT_VERSIONS;
  * contract version, so existing analyses and approvals stay valid. The 2026-09-28 revision only
  * forbids claiming that an art screen is not from the game. full-analysis.v6 (2026-09-29) removes
  * the title vs feature contradiction with the taxonomy (the game's logo decides; a publisher's
- * logo does not count), wording only, so no analysis is redone.
+ * logo does not count), wording only, so no analysis is redone. full-analysis.v8 (lean: v9,
+ * 2026-09-29) adds the text-reading rules (one entry per visually separate block, exact spaces
+ * and punctuation, game UI text is not marketing text): the answer shape is unchanged, so saved
+ * analyses stay current and only new analyses read text with the new rules.
  */
 export const PROMPT_FILES: Record<PromptName, string> = {
-  fullAnalysis: "full-analysis.v6",
+  fullAnalysis: "full-analysis.v8",
   adjudicate: "adjudicate.v4",
   patterns: "patterns.v5",
   recommend: "recommend.v5",
@@ -89,7 +92,7 @@ export function renderReportPrompt(
  */
 export const LEAN_FULL_ANALYSIS = {
   version: "full-analysis.v5",
-  file: "full-analysis.v7",
+  file: "full-analysis.v9",
 } as const;
 
 /** The full-analysis prompt of either answer shape. */

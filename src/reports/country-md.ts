@@ -1,6 +1,8 @@
 import { noFactIds } from "../analysis/country-advice-schema.ts";
 import type { CountryReport } from "./country-report-types.ts";
 import { countryName } from "./names.ts";
+import { wordsTableMd } from "./words-md.ts";
+import { wordsBlock } from "./words-status.ts";
 
 /**
  * The written report of a country version (report.md): the bottom line, the advice per country,
@@ -62,11 +64,12 @@ export function countryMarkdown(r: CountryReport, research: string[] = []): stri
           `| ${d.position} | ${d.fromMainPosition || "new"} | ${d.change} | ${cell(d.screen)} | ${cell(d.headline)} | ${cell(d.backTranslation)} | ${d.logo.show ? "yes" : "no"} |`,
       ),
       "",
-      ...a.advice.terms.map(
-        (t) =>
-          `- ${t.concept}: use **${t.use}**${t.avoid ? `, not ${t.avoid}` : ""}. ${noFactIds(t.why)}`,
+    );
+    out.push(
+      ...wordsTableMd(
+        wordsBlock(a.advice.terms, r.terminology.find((t) => t.gl === a.gl) ?? null),
+        a.label,
       ),
-      "",
     );
   }
   if (r.localisation) {
