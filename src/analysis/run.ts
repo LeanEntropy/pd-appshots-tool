@@ -1,14 +1,12 @@
 import { join } from "node:path";
 import { type LoadedConfig, loadTaxonomy, projectPaths } from "../config/load.ts";
 import { coreDeck } from "../core/selection.ts";
-import { answerKey } from "../library/layout.ts";
 import { abFactsFor } from "../reports/play-context.ts";
-import { workspaceStorage } from "../storage/index.ts";
 import { openImageDb } from "../store/imagedb.ts";
 import { newRunId } from "../store/manifest.ts";
 import { writeJsonOnce } from "../util/fsx.ts";
 import { endAttempt, SYNTHESIS, startAttempt } from "./attempts.ts";
-import type { CallContext } from "./call.ts";
+import { STEP_CEILING_USD } from "./budget.ts";
 import { batchDataHash, batchEntries } from "./entries.ts";
 import { writeFinalReport } from "./final-report.ts";
 import { labeler } from "./labels.ts";
@@ -17,11 +15,12 @@ import { compareOurs, type OursVsPatterns } from "./ours-vs.ts";
 import { patternFit } from "./pattern-fit.ts";
 import { findPatterns, type Patterns } from "./patterns.ts";
 import type { AnalysisPlan } from "./plan.ts";
-import { type PromptName, renderPrompt } from "./prompts.ts";
+import { type PromptName, renderAnalysisPrompt, renderPrompt } from "./prompts.ts";
 import type { Provider } from "./providers.ts";
 import { recordWriter, withCurrentMapping } from "./record-refresh.ts";
 import { type AnalysisRecord, readRecords } from "./records.ts";
 import { analyseChunk, modelCopy } from "./run-chunk.ts";
+import { batchContext, withOwnCost } from "./run-context.ts";
 import { analyseImages } from "./run-images.ts";
 import { type SynthesisResult, synthesise } from "./synthesis.ts";
 
@@ -98,20 +97,11 @@ export async function runAnalysis(
   const runId = newRunId(plan.stage);
   const budget = deps.budgetUsd ?? batchLimit(loaded, plan);
   const batchId = deps.batchId ?? null;
-  let spent = 0;
-  const ctx: CallContext = {
-    storage: workspaceStorage(paths.workspace),
-    answerKey: (step, key) => answerKey(paths, step, key),
-    taxonomy,
-    taxonomyHash,
-    maxBudgetUsd: 3,
-    remainingUsd: () => budget - spent,
-    timeoutMs: 900_000,
-    onCost: (u) => {
-      spent += u;
-    },
-  };
-  const analysePrompt = renderPrompt(loaded.root, paths.objects, "fullAnalysis", taxonomy);
+  const bc = batchContext(paths, taxonomy, taxonomyHash, budget);
+  const { ctx } = bc;
+  const speed = config.options.speed;
+  const lean = speed.leanAnswer;
+  const analysePrompt = renderAnalysisPrompt(loaded.root, paths.objects, taxonomy, lean);
   const adjudicatePrompt = renderPrompt(loaded.root, paths.objects, "adjudicate", taxonomy);
   const full = plan.items.filter((i) => i.tier === "full");
   const records: AnalysisRecord[] = [];
@@ -123,7 +113,7 @@ export async function runAnalysis(
       done: counter.done,
       total: full.length,
       message,
-      spentUsd: Math.round(spent * 100) / 100,
+      spentUsd: Math.round(bc.spent() * 100) / 100,
     });
   const fail = (message: string, name: string | null, position: number | null) => {
     const e = { message, name, position, at: new Date().toISOString() };
@@ -144,9 +134,14 @@ export async function runAnalysis(
     batchId,
     size: config.estimates.imagesPerCall,
     stopAfterSameErrors: config.run.stopAfterSameErrors,
-    estimatePerImage: full.length ? plan.estimate.usd[1] / full.length : 0,
+    // Several calls at once: a crash counts each open image at the reserved ceiling.
+    estimatePerImage: Math.max(
+      full.length ? plan.estimate.usd[1] / full.length : 0,
+      speed.parallelCalls > 1 ? (STEP_CEILING_USD["full-analysis"] ?? 0) : 0,
+    ),
+    concurrency: speed.parallelCalls,
     image: (id) => modelCopy(paths, db, id),
-    analyse: (chunk, part, label) =>
+    analyse: (chunk, part, label, onCost) =>
       analyseChunk(chunk, part, label, {
         producer: deps.producer,
         reviewer: deps.reviewer,
@@ -156,12 +151,13 @@ export async function runAnalysis(
         taxonomy,
         coverage: config.review.enabled ? config.review.coreCoverage : 0,
         runId,
-        ctx,
+        ctx: withOwnCost(ctx, onCost),
+        lean,
         phase: report,
       }),
     save: writeRec,
-    spent: () => spent,
-    budgetLeft: () => budget - spent,
+    spent: bc.spent,
+    budgetLeft: bc.ledger.remaining,
     shouldStop: deps.shouldStop ?? (() => false),
     progress: report,
     fail,
@@ -191,7 +187,7 @@ export async function runAnalysis(
     patterns = findPatterns(entries.competitors, entries.decks);
     oursVs = compareOurs(entries.ours, patterns, entries.ourDeckLength, labeler(taxonomy));
     if (deps.writer) {
-      const before = spent;
+      const before = bc.spent();
       const attempt = startAttempt(paths, SYNTHESIS, {
         runId,
         batchId,
@@ -234,7 +230,7 @@ export async function runAnalysis(
         ctx,
         report,
       );
-      endAttempt(paths, SYNTHESIS, attempt, batchId, "finished", spent - before);
+      endAttempt(paths, SYNTHESIS, attempt, batchId, "finished", bc.spent() - before);
       for (const p of synthesis.problems) fail(p, null, null);
     }
   }
@@ -242,7 +238,7 @@ export async function runAnalysis(
   const outcome: RunOutcome = {
     runId,
     records,
-    spentUsd: spent,
+    spentUsd: bc.spent(),
     stoppedForBudget,
     cancelled,
     aborted,
@@ -268,10 +264,13 @@ export async function runAnalysis(
     configHash: loaded.hash,
     versions: plan.versions,
     models: plan.models,
-    spentUsd: spent,
+    spentUsd: bc.spent(),
     stoppedForBudget,
     aborted,
     errors,
+    // Every paid call with its tokens and seconds (plan-analysis-speed S0).
+    calls: bc.calls,
+    warnings: bc.ledger.warnings,
     report: outcome.report,
     records: records.map((r) => ({
       imageId: r.imageId,

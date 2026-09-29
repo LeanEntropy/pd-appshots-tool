@@ -133,6 +133,8 @@ export interface RecordInput {
   runId: string;
   /** Checks a merged (adjudicated) reading; problems keep the record disputed. */
   check?: (a: ImageAnalysis) => string[];
+  /** Answer shape of the readings (the lean one leaves unread fields out). */
+  schema?: string;
 }
 
 /**
@@ -167,7 +169,7 @@ export function buildRecord(x: RecordInput): AnalysisRecord {
   }
   return {
     imageId: id,
-    schema: SCHEMA_VERSION,
+    schema: x.schema ?? SCHEMA_VERSION,
     appId: x.item.appId,
     gl: x.item.gl,
     hl: x.item.hl,

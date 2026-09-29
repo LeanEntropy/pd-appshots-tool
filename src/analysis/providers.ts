@@ -1,3 +1,4 @@
+import { randomBytes } from "node:crypto";
 import { existsSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
@@ -5,6 +6,7 @@ import { ensureDir } from "../util/fsx.ts";
 import { sha256, stableStringify } from "../util/hash.ts";
 import { run } from "../util/proc.ts";
 import type { RenderedPrompt } from "./prompts.ts";
+import { claudeProvider } from "./providers-claude.ts";
 
 /**
  * A provider-neutral image (plan 12B, B1): providers never know about storage. Command-line
@@ -36,85 +38,32 @@ export interface VisionCall {
   timeoutMs: number;
 }
 
+/** Tokens and time of one model call, as the CLI reports them (unknown parts left out). */
+export interface CallUsage {
+  inputTokens?: number;
+  outputTokens?: number;
+  cacheReadTokens?: number;
+  cacheWriteTokens?: number;
+  /** The CLI's own duration of the call. */
+  durationMs?: number | null;
+  /** Model turns (1 when the image travels inside the request). */
+  turns?: number | null;
+  /** Wall time from process start to exit. */
+  wallMs?: number;
+}
+
 export interface VisionResult {
   ok: boolean;
   output: unknown;
   costUsd: number | null;
   error: string | null;
+  usage?: CallUsage;
 }
 
 export interface Provider {
   family: "anthropic" | "openai";
   model: string;
   call(c: VisionCall): Promise<VisionResult>;
-}
-
-/**
- * Claude Code CLI with the cost-saving flags proven in the bake-off (custom system prompt file).
- * The JSON schema must be an argument (the CLI takes no file); util/proc.ts starts claude.exe
- * directly, never through cmd.exe, so the JSON arrives intact on Windows.
- */
-export function claudeProvider(model: string): Provider {
-  return {
-    family: "anthropic",
-    model,
-    async call(c) {
-      const files = c.images.map((i) => ({ ref: i.ref, ...localFile(i.image) }));
-      const list = files.map((i) => `${i.ref}: ${i.path}`).join("\n");
-      const input = c.images.length
-        ? `${c.prompt}\n\nRead each image file with the Read tool, then answer.\n${list}`
-        : c.prompt;
-      const tools = c.images.length
-        ? ["--tools", "Read", "--allowedTools", "Read"]
-        : ["--tools", ""];
-      const args = [
-        "-p",
-        "--model",
-        model,
-        "--setting-sources",
-        "",
-        "--disable-slash-commands",
-        "--strict-mcp-config",
-        "--system-prompt-file",
-        c.system.file,
-        ...tools,
-        "--output-format",
-        "json",
-        "--json-schema",
-        JSON.stringify(c.schema),
-        "--max-budget-usd",
-        c.maxBudgetUsd.toFixed(2),
-      ];
-      const r = await run("claude", args, { input, timeoutMs: c.timeoutMs }).finally(() => {
-        for (const f of files) f.done();
-      });
-      try {
-        const out = JSON.parse(r.stdout) as {
-          is_error?: boolean;
-          structured_output?: unknown;
-          total_cost_usd?: number;
-          result?: string;
-        };
-        const cost = typeof out.total_cost_usd === "number" ? out.total_cost_usd : null;
-        if (r.code !== 0 || out.is_error || out.structured_output === undefined) {
-          return {
-            ok: false,
-            output: null,
-            costUsd: cost,
-            error: (out.result ?? r.stderr ?? "no structured output").slice(0, 400),
-          };
-        }
-        return { ok: true, output: out.structured_output, costUsd: cost, error: null };
-      } catch {
-        return {
-          ok: false,
-          output: null,
-          costUsd: null,
-          error: r.timedOut ? "timed out" : (r.stderr || r.stdout).slice(0, 400),
-        };
-      }
-    },
-  };
 }
 
 /** Codex CLI: images via -i, prompt on stdin (the Windows sandbox blocks file reads). */
@@ -127,7 +76,8 @@ export function codexProvider(model: string, schemaDir: string): Provider {
       const schemaText = stableStringify(c.schema);
       const schemaFile = join(schemaDir, `${sha256(schemaText)}.json`);
       if (!existsSync(schemaFile)) writeFileSync(schemaFile, schemaText);
-      const out = join(tmpdir(), `ssr-codex-${process.pid}-${Date.now()}.json`);
+      // A random part: several calls may run at once in one process.
+      const out = join(tmpdir(), `ssr-codex-${process.pid}-${randomBytes(6).toString("hex")}.json`);
       const refs = c.images.map((i) => i.ref).join(", ");
       const input = c.images.length
         ? `${c.system.text}\n\n${c.prompt}\n\nThe attached images are, in order: ${refs}.`
@@ -158,10 +108,16 @@ export function codexProvider(model: string, schemaDir: string): Provider {
   };
 }
 
+export interface ProviderOptions {
+  /** Claude only: the image travels inside the request (Settings, "Send the image inside the request"). */
+  inlineImages?: boolean;
+}
+
 /** Provider for a config model reference like "claude:claude-fable-5-1". */
-export function providerFor(ref: string, schemaDir: string): Provider {
+export function providerFor(ref: string, schemaDir: string, o: ProviderOptions = {}): Provider {
   const [kind, model] = ref.split(":") as [string, string];
-  if (kind === "claude") return claudeProvider(model);
+  if (kind === "claude")
+    return claudeProvider(model, { inlineImages: !!o.inlineImages, localFile });
   if (kind === "codex") return codexProvider(model, schemaDir);
   throw new Error(`Unknown model provider in "${ref}".`);
 }

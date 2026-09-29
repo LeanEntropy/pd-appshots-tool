@@ -54,6 +54,8 @@ function deps(p = good(), writer = good(), reviewSeverity?: "major" | "minor") {
 
 test("an all-failing batch stops early, and the failed images are retried next time", async () => {
   const loaded = await setup();
+  // One call at a time: exactly the old behaviour (the parallel case is in analysis-pool.test).
+  loaded.config.options.speed.parallelCalls = 1;
   const plan = buildAnalysisPlan(loaded, "pilot");
   const broken = good();
   broken.call = async (c) => {

@@ -1,7 +1,7 @@
 import type { Config } from "../config/schema.ts";
 import { stableHash } from "../util/hash.ts";
-import { PROMPT_VERSIONS } from "./prompts.ts";
-import { SCHEMA_VERSION } from "./schema.ts";
+import { LEAN_FULL_ANALYSIS, PROMPT_VERSIONS } from "./prompts.ts";
+import { LEAN_SCHEMA_VERSION, SCHEMA_VERSION } from "./schema.ts";
 
 /**
  * Model copy of an image: long edge 1568 px, JPEG quality 90. Changing any of these needs a new
@@ -45,12 +45,14 @@ export function reviewPolicy(config: Config): ReviewPolicy | "none" {
 
 /** The pipeline a project's settings run today. */
 export function currentPipeline(config: Config): PipelineSpec {
+  const lean = config.options.speed.leanAnswer;
+  const analysis = lean ? LEAN_FULL_ANALYSIS.version : PROMPT_VERSIONS.fullAnalysis;
   return {
-    schema: SCHEMA_VERSION,
+    schema: lean ? LEAN_SCHEMA_VERSION : SCHEMA_VERSION,
     // The second opinion reads the image with the same analysis prompt as the producer.
     prompts: {
-      fullAnalysis: PROMPT_VERSIONS.fullAnalysis,
-      review: PROMPT_VERSIONS.fullAnalysis,
+      fullAnalysis: analysis,
+      review: analysis,
       adjudicate: PROMPT_VERSIONS.adjudicate,
     },
     models: {
@@ -67,6 +69,29 @@ export function currentPipeline(config: Config): PipelineSpec {
 /** The one place an analysis key is made. */
 export function analysisKey(spec: PipelineSpec): string {
   return stableHash(spec).slice(0, 32);
+}
+
+export const isLean = (spec: PipelineSpec) => spec.schema === LEAN_SCHEMA_VERSION;
+
+/**
+ * Keys whose records a project with this pipeline reads as current, own key first. One
+ * direction only: the lean pipeline also accepts records of the same pipeline with today's full
+ * answer (a complete superset of the lean one); a pipeline with the full answer never accepts
+ * lean records.
+ */
+export function acceptedKeys(spec: PipelineSpec): string[] {
+  const own = analysisKey(spec);
+  if (!isLean(spec)) return [own];
+  const full: PipelineSpec = {
+    ...spec,
+    schema: SCHEMA_VERSION,
+    prompts: {
+      ...spec.prompts,
+      fullAnalysis: PROMPT_VERSIONS.fullAnalysis,
+      review: PROMPT_VERSIONS.fullAnalysis,
+    },
+  };
+  return [own, analysisKey(full)];
 }
 
 /** Name of the per-project record for analyses whose settings cannot be proven (import only). */

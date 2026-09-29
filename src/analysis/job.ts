@@ -50,10 +50,11 @@ export function defaultDeps(loaded: LoadedConfig, onProgress: (p: Progress) => v
   const m = loaded.config.models;
   const schemaDir = join(projectPaths(loaded).objects, "schemas");
   const review = loaded.config.review.enabled;
+  const images = { inlineImages: loaded.config.options.speed.inlineImages };
   return {
-    producer: providerFor(m.fullAnalysis, schemaDir),
-    reviewer: review ? providerFor(m.imageReview, schemaDir) : null,
-    adjudicator: providerFor(m.adjudicate, schemaDir),
+    producer: providerFor(m.fullAnalysis, schemaDir, images),
+    reviewer: review ? providerFor(m.imageReview, schemaDir, images) : null,
+    adjudicator: providerFor(m.adjudicate, schemaDir, images),
     writer: providerFor(m.recommend, schemaDir),
     recommendationReviewer: secondOpinionOn(loaded.config, "recommendations")
       ? providerFor(m.recommendationReview, schemaDir)

@@ -11,7 +11,7 @@ import type { PlanItem } from "./plan.ts";
 import type { RenderedPrompt } from "./prompts.ts";
 import type { ModelImage, Provider } from "./providers.ts";
 import type { AnalysisRecord } from "./records.ts";
-import { semanticProblems } from "./schema.ts";
+import { LEAN_SCHEMA_VERSION, SCHEMA_VERSION, semanticProblems } from "./schema.ts";
 import { buildRecord, type Decision, settle } from "./settle.ts";
 
 /**
@@ -71,6 +71,8 @@ export interface ChunkDeps {
   coverage: number;
   runId: string;
   ctx: CallContext;
+  /** Ask for the lean answer (Settings, "Shorter answers"). */
+  lean?: boolean;
   /** Phase changes inside the chunk ("review", "settle"). */
   phase: (phase: string, message: string) => void;
 }
@@ -82,7 +84,15 @@ export async function analyseChunk(
   label: string,
   d: ChunkDeps,
 ): Promise<AnalysisRecord[]> {
-  const produced = await analyseImages("full-analysis", d.producer, d.analysePrompt, chunk, d.ctx);
+  const lean = !!d.lean;
+  const produced = await analyseImages(
+    "full-analysis",
+    d.producer,
+    d.analysePrompt,
+    chunk,
+    d.ctx,
+    lean,
+  );
   const sample = reviewSample(
     chunk.map((c) => c.imageId),
     d.coverage,
@@ -91,7 +101,7 @@ export async function analyseChunk(
   let reviewed: ChunkResult = { readings: new Map(), failed: new Map(), objects: new Map() };
   if (d.reviewer && toReview.length) {
     d.phase("review", `Checking ${label} (second opinion)…`);
-    reviewed = await analyseImages("review", d.reviewer, d.analysePrompt, toReview, d.ctx);
+    reviewed = await analyseImages("review", d.reviewer, d.analysePrompt, toReview, d.ctx, lean);
   }
   const disputes = new Map<string, string[]>();
   const notes = new Map<string, string[]>();
@@ -136,6 +146,7 @@ export async function analyseChunk(
         adjudicator: d.adjudicator.model,
       },
       runId: d.runId,
+      schema: lean ? LEAN_SCHEMA_VERSION : SCHEMA_VERSION,
     }),
   );
 }

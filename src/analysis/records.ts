@@ -7,7 +7,7 @@ import { type Labeler, plainLabel, screenName } from "./labels.ts";
 import type { PipelineSpec } from "./pipeline.ts";
 import type { MappedFrom } from "./record-refresh.ts";
 import { readStoredRecord, readStoredRecords, writeStoredRecord } from "./record-store.ts";
-import { type ImageAnalysis, SCHEMA_VERSION } from "./schema.ts";
+import { type ImageAnalysis, READABLE_SCHEMAS } from "./schema.ts";
 
 /** Plan-v2 statuses, plus "unreviewed": a required second opinion could not be read. */
 export type AnalysisStatus =
@@ -73,7 +73,8 @@ export const USABLE: readonly AnalysisStatus[] = ["ok", "adjudicated", "correcte
 export function isUsable(r: AnalysisRecord | undefined): r is AnalysisRecord & {
   final: ImageAnalysis;
 } {
-  return !!r && USABLE.includes(r.status) && r.schema === SCHEMA_VERSION && !!r.final;
+  // Which shapes a project accepts is decided by its analysis key (record-store.ts).
+  return !!r && USABLE.includes(r.status) && READABLE_SCHEMAS.has(r.schema ?? "") && !!r.final;
 }
 
 export function writeRecord(paths: ProjectPaths, r: AnalysisRecord): void {

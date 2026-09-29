@@ -2,8 +2,9 @@ import type { ProjectPaths } from "../config/load.ts";
 import { LIB } from "../library/layout.ts";
 import { readRefs } from "../library/refs.ts";
 import { projectKey, workspaceStorage } from "../storage/index.ts";
-import { unprovenKey } from "./pipeline.ts";
-import type { AnalysisRecord } from "./records.ts";
+import { acceptedKeys, isLean, unprovenKey } from "./pipeline.ts";
+import { type AnalysisRecord, isUsable } from "./records.ts";
+import { LEAN_SCHEMA_VERSION } from "./schema.ts";
 
 /**
  * Where a project's analysis records live. Before the import: one file per image in the
@@ -22,16 +23,25 @@ export function readStoredRecord(paths: ProjectPaths, imageId: string): Analysis
       | AnalysisRecord
       | undefined;
   }
-  const current = storage.getJson(LIB.record(imageId, lib.analysisKey)) as
-    | AnalysisRecord
-    | undefined;
-  if (current) return current;
+  // Its own key first, then the keys it accepts as current (the lean pipeline reads the full
+  // records of the same settings; never the other way round).
+  const accepted = [
+    lib.analysisKey,
+    ...acceptedKeys(lib.pipeline).filter((k) => k !== lib.analysisKey),
+  ];
+  for (const key of accepted) {
+    const current = storage.getJson(LIB.record(imageId, key)) as AnalysisRecord | undefined;
+    if (current && (key === lib.analysisKey || isUsable(current))) return current;
+  }
   let best: AnalysisRecord | undefined;
   const own = unprovenKey(paths.projectId);
+  const lean = isLean(lib.pipeline);
   for (const k of storage.list(LIB.analysisDir(imageId))) {
     if (!k.endsWith(".json")) continue;
     const r = storage.getJson(k) as AnalysisRecord | undefined;
     if (!r || (r.key !== own && r.writtenBy !== paths.projectId)) continue;
+    // A lean record never stands in for a pipeline that asks for the full answer.
+    if (!lean && r.schema === LEAN_SCHEMA_VERSION) continue;
     if (!best || r.updatedAt > best.updatedAt) best = r;
   }
   return best;

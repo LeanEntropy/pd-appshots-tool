@@ -94,11 +94,11 @@ export function assertShellSafe(file: string, args: readonly string[]): void {
 export function run(
   cmd: string,
   args: readonly string[],
-  opts: { input?: string; timeoutMs?: number; cwd?: string } = {},
+  opts: { input?: string; timeoutMs?: number; cwd?: string; env?: NodeJS.ProcessEnv } = {},
 ): Promise<ProcResult> {
   let r: Resolved;
   try {
-    r = resolveCommand(cmd);
+    r = resolveCommand(cmd, opts.env ?? process.env);
     if (r.shell) assertShellSafe(r.file, args);
   } catch (e) {
     return Promise.resolve({
@@ -113,7 +113,12 @@ export function run(
     : [...r.prefixArgs, ...args];
   const file = r.shell && /\s/.test(r.file) ? `"${r.file}"` : r.file;
   return new Promise((resolve) => {
-    const child = spawn(file, finalArgs, { shell: r.shell, cwd: opts.cwd, windowsHide: true });
+    const child = spawn(file, finalArgs, {
+      shell: r.shell,
+      cwd: opts.cwd,
+      env: opts.env,
+      windowsHide: true,
+    });
     let stdout = "";
     let stderr = "";
     let timedOut = false;

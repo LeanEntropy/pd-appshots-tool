@@ -2,20 +2,35 @@ import type { z } from "zod";
 import type { Taxonomy } from "../config/load.ts";
 import type { Storage } from "../storage/index.ts";
 import { stableHash } from "../util/hash.ts";
+import type { Reservation } from "./budget.ts";
 import type { RenderedPrompt } from "./prompts.ts";
-import type { ModelImage, Provider } from "./providers.ts";
+import type { CallUsage, ModelImage, Provider, VisionResult } from "./providers.ts";
 import { clampRegions } from "./regions.ts";
 import {
   deckAnalysisSchema,
   type ImageAnalysis,
+  LEAN_SCHEMA_VERSION,
   SCHEMA_VERSION,
   semanticProblems,
   toJsonSchema,
 } from "./schema.ts";
+import { expandLean, leanDeckSchema } from "./schema-lean.ts";
 
 export interface ChunkImage {
   imageId: string;
   image: ModelImage;
+}
+
+/** One paid model call as it happened (kept per run, going forward, for time and cost). */
+export interface CallLog {
+  step: string;
+  model: string;
+  key: string;
+  imageIds: string[];
+  ok: boolean;
+  costUsd: number | null;
+  usage: CallUsage | null;
+  at: string;
 }
 
 export interface CallContext {
@@ -34,6 +49,13 @@ export interface CallContext {
   timeoutMs: number;
   /** Adds the real cost of each model call (for the budget guard). */
   onCost: (usd: number) => void;
+  /**
+   * Reserves a call's ceiling before it starts (calls running at the same time); null when
+   * what is left cannot fund it. Without it, a call only needs something left.
+   */
+  reserve?: (step: string) => Reservation | null;
+  /** Every paid call, with its tokens and time. */
+  onCall?: (c: CallLog) => void;
 }
 
 export interface StoredObject {
@@ -45,6 +67,8 @@ export interface StoredObject {
   costUsd: number | null;
   attempts: number;
   createdAt: string;
+  /** Tokens and time of the calls that produced this answer (summed over repairs). */
+  usage?: CallUsage;
 }
 
 export interface ChunkResult {
@@ -55,6 +79,22 @@ export interface ChunkResult {
 }
 
 const MAX_REPAIRS = 2;
+const LIMIT_REACHED = "the spending limit for this batch was reached";
+
+function addUsage(a: CallUsage | undefined, b: CallUsage | undefined): CallUsage | undefined {
+  if (!b) return a;
+  if (!a) return { ...b };
+  const n = (x?: number | null) => x ?? 0;
+  return {
+    inputTokens: n(a.inputTokens) + n(b.inputTokens),
+    outputTokens: n(a.outputTokens) + n(b.outputTokens),
+    cacheReadTokens: n(a.cacheReadTokens) + n(b.cacheReadTokens),
+    cacheWriteTokens: n(a.cacheWriteTokens) + n(b.cacheWriteTokens),
+    durationMs: n(a.durationMs) + n(b.durationMs),
+    turns: n(a.turns) + n(b.turns),
+    wallMs: n(a.wallMs) + n(b.wallMs),
+  };
+}
 
 /**
  * One validated model call for a set of images, cached by content: the key covers the step,
@@ -73,6 +113,7 @@ export async function validatedCall<T>(
   ctx: CallContext,
   extraKey: unknown = null,
   tidy: (value: T) => T = (v) => v,
+  schemaVersion: string = SCHEMA_VERSION,
 ): Promise<{ value: T | null; key: string; problems: string[] }> {
   const refs = images.map((_, i) => `img${i + 1}`);
   const key = stableHash({
@@ -80,7 +121,7 @@ export async function validatedCall<T>(
     model: provider.model,
     prompt: system.hash,
     task: prompt,
-    schema: SCHEMA_VERSION,
+    schema: schemaVersion,
     taxonomy: ctx.taxonomyHash,
     images: images.map((i) => i.imageId),
     extraKey,
@@ -95,24 +136,46 @@ export async function validatedCall<T>(
   let problems: string[] = [];
   let repairs: string[] = [];
   let callErrors = 0;
+  let usage: CallUsage | undefined;
   const jsonSchema = toJsonSchema(schema);
   for (let attempt = 0; attempt <= MAX_REPAIRS; attempt++) {
+    // Check and reservation in one synchronous step: no other call can take the same dollars.
     const left = ctx.remainingUsd();
-    if (left <= 0.01)
-      return { value: null, key, problems: ["the spending limit for this batch was reached"] };
+    if (left <= 0.01) return { value: null, key, problems: [LIMIT_REACHED] };
+    const held = ctx.reserve ? ctx.reserve(step) : undefined;
+    if (held === null) return { value: null, key, problems: [LIMIT_REACHED] };
     const repair = repairs.length
       ? `\n\nYour previous answer had these problems; fix them:\n- ${repairs.join("\n- ")}`
       : "";
-    const r = await provider.call({
-      model: provider.model,
-      system,
-      prompt: prompt + repair,
-      images: images.map((im, i) => ({ ref: refs[i] as string, image: im.image })),
-      schema: jsonSchema,
-      maxBudgetUsd: Math.min(ctx.maxBudgetUsd, left),
-      timeoutMs: ctx.timeoutMs,
-    });
+    const r: VisionResult = await provider
+      .call({
+        model: provider.model,
+        system,
+        prompt: prompt + repair,
+        images: images.map((im, i) => ({ ref: refs[i] as string, image: im.image })),
+        schema: jsonSchema,
+        maxBudgetUsd: Math.min(ctx.maxBudgetUsd, held ? held.maxUsd : left),
+        timeoutMs: ctx.timeoutMs,
+      })
+      .catch((e: unknown) => ({
+        ok: false,
+        output: null,
+        costUsd: null,
+        error: e instanceof Error ? e.message : String(e),
+      }));
     if (r.costUsd) ctx.onCost(r.costUsd);
+    held?.done(r.costUsd ?? 0);
+    usage = addUsage(usage, r.usage);
+    ctx.onCall?.({
+      step,
+      model: provider.model,
+      key,
+      imageIds: images.map((i) => i.imageId),
+      ok: r.ok,
+      costUsd: r.costUsd,
+      usage: r.usage ?? null,
+      at: new Date().toISOString(),
+    });
     if (!r.ok) {
       // A failed call (CLI error, timeout) is retried once; the same error twice ends it.
       const err = `${provider.model}: ${r.error ?? "the model call failed"}`;
@@ -139,6 +202,7 @@ export async function validatedCall<T>(
         costUsd: r.costUsd,
         attempts: attempt + 1,
         createdAt: new Date().toISOString(),
+        ...(usage ? { usage } : {}),
       };
       ctx.storage.putJson(file, obj);
       return { value, key, problems: [] };
@@ -150,21 +214,31 @@ export async function validatedCall<T>(
 const DECK_TASK =
   "Analyse each screenshot. They are consecutive store screenshots of one game, in store order.";
 
-/** Deck in one call; if that fails validation, falls back to one call per image. */
+type Deck = { images: ImageAnalysis[] };
+
+/**
+ * Deck in one call; if that fails validation, falls back to one call per image. `lean` asks for
+ * the lean answer (LEAN_SCHEMA_VERSION); it is expanded to the record shape before the checks.
+ */
 export async function analyseImages(
   step: string,
   provider: Provider,
   system: RenderedPrompt,
   images: readonly ChunkImage[],
   ctx: CallContext,
+  lean = false,
 ): Promise<ChunkResult> {
-  const schema = deckAnalysisSchema(ctx.taxonomy);
-  const check = (v: z.infer<typeof schema>, refs: string[]) =>
-    semanticProblems(ctx.taxonomy, refs, v.images);
+  // Cast: the lean answer lacks the capture share until `tidy` (expandLean) adds it, before
+  // any check or caller sees the value; both shapes are one type from then on.
+  const schema: z.ZodType<Deck> = lean
+    ? (leanDeckSchema(ctx.taxonomy) as unknown as z.ZodType<Deck>)
+    : deckAnalysisSchema(ctx.taxonomy);
+  const version = lean ? LEAN_SCHEMA_VERSION : SCHEMA_VERSION;
+  const check = (v: Deck, refs: string[]) => semanticProblems(ctx.taxonomy, refs, v.images);
   // Boxes slightly past an edge are clamped for every model (producer and reviewer alike).
-  const tidy = (v: z.infer<typeof schema>) => ({ ...v, images: v.images.map(clampRegions) });
+  const tidy = (v: Deck) => ({ ...v, images: v.images.map((a) => clampRegions(expandLean(a))) });
   const result: ChunkResult = { readings: new Map(), failed: new Map(), objects: new Map() };
-  const take = (value: z.infer<typeof schema>, key: string, subset: readonly ChunkImage[]) => {
+  const take = (value: Deck, key: string, subset: readonly ChunkImage[]) => {
     value.images.forEach((a) => {
       const idx = Number(a.imageRef.replace("img", "")) - 1;
       const im = subset[idx];
@@ -174,18 +248,9 @@ export async function analyseImages(
       }
     });
   };
-  const deck = await validatedCall(
-    step,
-    provider,
-    system,
-    DECK_TASK,
-    images,
-    schema,
-    check,
-    ctx,
-    null,
-    tidy,
-  );
+  const one = (task: string, subset: readonly ChunkImage[]) =>
+    validatedCall(step, provider, system, task, subset, schema, check, ctx, null, tidy, version);
+  const deck = await one(DECK_TASK, images);
   if (deck.value) {
     take(deck.value, deck.key, images);
     return result;
@@ -196,20 +261,9 @@ export async function analyseImages(
     return result;
   }
   for (const im of images) {
-    const one = await validatedCall(
-      step,
-      provider,
-      system,
-      "Analyse this screenshot.",
-      [im],
-      schema,
-      check,
-      ctx,
-      null,
-      tidy,
-    );
-    if (one.value) take(one.value, one.key, [im]);
-    else result.failed.set(im.imageId, one.problems.join("; "));
+    const r = await one("Analyse this screenshot.", [im]);
+    if (r.value) take(r.value, r.key, [im]);
+    else result.failed.set(im.imageId, r.problems.join("; "));
   }
   return result;
 }

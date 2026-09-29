@@ -83,6 +83,27 @@ export function renderReportPrompt(
   return renderFile(root, objectsDir, REPORT_PROMPTS[name], taxonomy);
 }
 
+/**
+ * The lean full-analysis prompt (plan-analysis-speed item 5): its own contract version, kept
+ * apart from PROMPT_VERSIONS so plans and reports made with today's prompt keep their keys.
+ */
+export const LEAN_FULL_ANALYSIS = {
+  version: "full-analysis.v5",
+  file: "full-analysis.v7",
+} as const;
+
+/** The full-analysis prompt of either answer shape. */
+export function renderAnalysisPrompt(
+  root: string,
+  objectsDir: string,
+  taxonomy: Taxonomy,
+  lean: boolean,
+): RenderedPrompt {
+  return lean
+    ? renderFile(root, objectsDir, LEAN_FULL_ANALYSIS.file, taxonomy)
+    : renderPrompt(root, objectsDir, "fullAnalysis", taxonomy);
+}
+
 /** Renders a versioned prompt with the taxonomy and stores it by content hash. */
 export function renderPrompt(
   root: string,

@@ -5,6 +5,16 @@ import type { Taxonomy } from "../config/load.ts";
 export const SCHEMA_VERSION = "analysis-schema.v3";
 
 /**
+ * The lean answer (plan-analysis-speed item 5): v3 without the fields nothing reads (capture
+ * descriptions, element scale and "breaks the frame", confidence) and without the capture
+ * share, which code adds up from the captures. A v3 reading is a complete superset of it.
+ */
+export const LEAN_SCHEMA_VERSION = "analysis-schema.v4";
+
+/** Answer shapes a stored record may have and still be read. */
+export const READABLE_SCHEMAS: ReadonlySet<string> = new Set([SCHEMA_VERSION, LEAN_SCHEMA_VERSION]);
+
+/**
  * Every object is strict and every field required (empty or "unknown" instead of optional), so
  * the same JSON Schema works for Claude structured output and OpenAI strict mode.
  */
@@ -127,7 +137,26 @@ export function imageAnalysisSchema(taxonomy: Taxonomy) {
     notes: z.string(),
   });
 }
-export type ImageAnalysis = z.infer<ReturnType<typeof imageAnalysisSchema>>;
+type FullAnalysis = z.infer<ReturnType<typeof imageAnalysisSchema>>;
+type FullCapture = FullAnalysis["screenshot"]["captures"][number];
+type FullElement = FullAnalysis["marketingLayer"]["elements"][number];
+
+/**
+ * A reading of either answer shape. The lean shape (LEAN_SCHEMA_VERSION) leaves out the fields
+ * nothing reads; they are absent, never filled with invented values.
+ */
+export type ImageAnalysis = Omit<FullAnalysis, "confidence" | "screenshot" | "marketingLayer"> & {
+  confidence?: number;
+  screenshot: Omit<FullAnalysis["screenshot"], "captures"> & {
+    captures: (Omit<FullCapture, "description"> & { description?: string })[];
+  };
+  marketingLayer: Omit<FullAnalysis["marketingLayer"], "elements"> & {
+    elements: (Omit<FullElement, "scale" | "breaksFrame"> & {
+      scale?: FullElement["scale"];
+      breaksFrame?: boolean;
+    })[];
+  };
+};
 
 export function deckAnalysisSchema(taxonomy: Taxonomy) {
   return z.strictObject({ images: z.array(imageAnalysisSchema(taxonomy)) });
@@ -193,7 +222,7 @@ export function semanticProblems(
     }
     if (s.screenType === "other" && !i.notes.trim())
       problems.push(`${i.imageRef}: "other" needs a note`);
-    if (!(i.confidence >= 0 && i.confidence <= 1))
+    if (i.confidence !== undefined && !(i.confidence >= 0 && i.confidence <= 1))
       problems.push(`${i.imageRef}: confidence out of range`);
     const regions = [...m.backgroundMasks, ...m.texts, ...m.elements, ...s.captures].map(
       (x) => x.region,

@@ -1,5 +1,5 @@
 import { fitProblem } from "../analysis/job.ts";
-import { analysisKey, currentPipeline } from "../analysis/pipeline.ts";
+import { acceptedKeys, analysisKey, currentPipeline } from "../analysis/pipeline.ts";
 import { buildAnalysisPlan, type Stage } from "../analysis/plan.ts";
 import { configHash, type LoadedConfig } from "../config/load.ts";
 import type { Config } from "../config/schema.ts";
@@ -59,7 +59,10 @@ export function consequences(loaded: LoadedConfig, after: Config): Consequence[]
   const out: Consequence[] = [];
   const oldMain = mainMarket(before);
   const newMain = mainMarket(after);
-  const keyChanged = analysisKey(currentPipeline(before)) !== analysisKey(currentPipeline(after));
+  // Switching to the shorter answer keeps every saved analysis (its key accepts them).
+  const keyChanged = !acceptedKeys(currentPipeline(after)).includes(
+    analysisKey(currentPipeline(before)),
+  );
   const moved = oldMain.gl !== newMain.gl;
   if (keyChanged || moved) {
     const now = nextWork(loaded);

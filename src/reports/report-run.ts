@@ -1,14 +1,16 @@
 import { join } from "node:path";
 import { endAttempt, SYNTHESIS, startAttempt } from "../analysis/attempts.ts";
+import { ledger, STEP_CEILING_USD } from "../analysis/budget.ts";
 import { compareLayers, type LayerItem } from "../analysis/layer-diff-run.ts";
 import { snapshotOrder } from "../analysis/orders.ts";
 import type { PlanItem } from "../analysis/plan.ts";
-import { renderPrompt, renderReportPrompt } from "../analysis/prompts.ts";
+import { renderAnalysisPrompt, renderPrompt, renderReportPrompt } from "../analysis/prompts.ts";
 import { type Provider, providerFor } from "../analysis/providers.ts";
 import { recordWriter, withCurrentMapping } from "../analysis/record-refresh.ts";
 import { readRecords } from "../analysis/records.ts";
 import type { RunDeps, RunError } from "../analysis/run.ts";
 import { analyseChunk, modelCopy } from "../analysis/run-chunk.ts";
+import { withOwnCost } from "../analysis/run-context.ts";
 import { analyseImages } from "../analysis/run-images.ts";
 import { type LoadedConfig, loadTaxonomy, projectPaths } from "../config/load.ts";
 import { openImageDb } from "../store/imagedb.ts";
@@ -52,12 +54,15 @@ export async function runReport(
   const batchId = deps.batchId ?? null;
   const budget = deps.budgetUsd ?? plan.limitUsd;
   let spent = 0;
+  const book = ledger(budget, () => spent);
+  const speed = config.options.speed;
   const ctx = callContext(loaded, {
-    remainingUsd: () => budget - spent,
+    remainingUsd: book.remaining,
     onCost: (u) => {
       spent += u;
     },
   });
+  ctx.reserve = book.reserve;
   const full: PlanItem[] = plan.items.filter((i) => i.tier === "full");
   const layers = plan.items.filter((i) => i.tier === "layer-diff" && i.basedOn);
   const total = full.length + layers.length;
@@ -90,24 +95,29 @@ export async function runReport(
     batchId,
     size: config.estimates.imagesPerCall,
     stopAfterSameErrors: config.run.stopAfterSameErrors,
-    estimatePerImage: config.estimates.fullAnalysisUsdPerImage[1],
+    estimatePerImage: Math.max(
+      config.estimates.fullAnalysisUsdPerImage[1],
+      speed.parallelCalls > 1 ? (STEP_CEILING_USD["full-analysis"] ?? 0) : 0,
+    ),
+    concurrency: speed.parallelCalls,
     image: (id) => modelCopy(paths, db, id),
-    analyse: (chunk, part, label) =>
+    analyse: (chunk, part, label, onCost) =>
       analyseChunk(chunk, part, label, {
         producer: deps.producer,
         reviewer: deps.reviewer,
         adjudicator: deps.adjudicator,
-        analysePrompt: renderPrompt(loaded.root, paths.objects, "fullAnalysis", taxonomy),
+        analysePrompt: renderAnalysisPrompt(loaded.root, paths.objects, taxonomy, speed.leanAnswer),
         adjudicatePrompt: renderPrompt(loaded.root, paths.objects, "adjudicate", taxonomy),
         taxonomy,
         coverage: config.review.enabled ? config.review.expansionCoverage : 0,
         runId,
-        ctx,
+        ctx: withOwnCost(ctx, onCost),
+        lean: speed.leanAnswer,
         phase: report,
       }),
     save: writeRec,
     spent: () => spent,
-    budgetLeft: () => budget - spent,
+    budgetLeft: book.remaining,
     shouldStop,
     progress: report,
     fail,
@@ -121,7 +131,9 @@ export async function runReport(
   if (!cancelled && !stoppedForBudget && !aborted && layers.length) {
     const provider = make
       ? make(config.models.layerDiff)
-      : providerFor(config.models.layerDiff, join(paths.objects, "schemas"));
+      : providerFor(config.models.layerDiff, join(paths.objects, "schemas"), {
+          inlineImages: config.options.speed.inlineImages,
+        });
     const items: LayerItem[] = layers.map((i) => ({
       imageId: i.imageId,
       anchorId: i.basedOn as string,
