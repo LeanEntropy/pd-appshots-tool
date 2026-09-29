@@ -23,10 +23,10 @@ export function gameValue(
   appId: string,
   dim: MainDim,
 ): GameVal {
-  const vals = gamePages(pages, gls, appId)
-    .map((p) => pageValues(p.game)[dim])
-    .filter((v): v is boolean => v !== null);
-  if (!vals.length) return "unknown";
+  const all = gamePages(pages, gls, appId).map((p) => pageValues(p.game)[dim]);
+  // A page not analysed leaves the game unknown here: never counted either way.
+  if (!all.length || all.some((v) => v === null)) return "unknown";
+  const vals = all as boolean[];
   if (vals.every(Boolean)) return "yes";
   if (vals.every((v) => !v)) return "no";
   return "mixed";

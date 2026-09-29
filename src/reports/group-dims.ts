@@ -109,8 +109,9 @@ const analysed = (r: OrderRow) => r.state !== "not analysed" && r.state !== "exc
 
 /** The share of the image the screenshots cover, from the capture lines ("85% of the image"). */
 export function captureShare(r: OrderRow): number | null {
-  if (!r.captures.length) return null;
-  return r.captures.reduce((n, c) => n + Number(/(\d+)% of the image/.exec(c)?.[1] ?? 0), 0);
+  const shares = r.captures.map((c) => /(\d+)% of the image/.exec(c)?.[1]);
+  if (!shares.length || shares.some((x) => x === undefined)) return null;
+  return shares.reduce((n, x) => n + Number(x), 0);
 }
 
 /** Yes when any is yes, no when all are known no, else unknown. */

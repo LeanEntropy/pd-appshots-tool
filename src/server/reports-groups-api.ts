@@ -23,7 +23,9 @@ export function saveGroupsOf(
   if (def.type !== "compare")
     return { status: 409, body: { problems: ["Only a comparison has groups of countries."] } };
   const gls = new Set(def.scope.markets.map((m) => m.gl));
-  const bad = groups.find((g) => g.countries.some((gl) => !gls.has(gl)) || g.countries.length < 2);
+  const bad = groups.find(
+    (g) => g.countries.some((gl) => !gls.has(gl)) || new Set(g.countries).size < 2,
+  );
   if (bad)
     return {
       status: 400,

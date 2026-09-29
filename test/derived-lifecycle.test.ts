@@ -4,6 +4,7 @@ import { projectPaths } from "../src/config/load.ts";
 import { buildReportVersion } from "../src/reports/build.ts";
 import type { CountryReport } from "../src/reports/country-report-types.ts";
 import {
+  derivedKey,
   makeCountryReportsNow,
   readDerived,
   reconcileDerived,
@@ -196,4 +197,14 @@ test("staleness is on the dependency scope: this country's pages or the main bas
       "",
     /the United States baseline changed/,
   );
+});
+
+test("an unreadable derived.json makes nothing by itself (a deleted report never comes back)", async () => {
+  const { loaded, paths, s, def, versionId } = await comparison();
+  s.putText(derivedKey(paths), "{ broken");
+  assert.deepEqual(reconcileDerived(loaded).made, []);
+  assert.deepEqual(reconcileDerived(loaded, { reportId: def.id }).made, []);
+  // The user's own "Make country reports now" still works (it rebuilds the file).
+  assert.equal(makeCountryReportsNow(loaded, def.id).made.length, 2);
+  assert.ok(versionId);
 });

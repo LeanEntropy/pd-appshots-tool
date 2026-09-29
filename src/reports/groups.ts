@@ -94,8 +94,16 @@ export function effectiveGroups(
   suggested: readonly GroupDef[],
   pages: readonly CountryPages[],
 ): { group: GroupDef; problem: string | null; suggested: boolean }[] {
-  const list = saved?.length ? saved : suggested;
-  return list.slice(0, MAX_GROUPS).map((group) => ({
+  const key = (g: GroupDef) => [...new Set(g.countries)].sort().join(",");
+  const all = suggested.find((g) => g.name === ALL_NAME);
+  // "All compared countries" is always there, also next to the user's own groups.
+  const own = saved?.length
+    ? saved.map((g) => ({ ...g, countries: [...new Set(g.countries)] }))
+    : null;
+  const list = own
+    ? [...(all && !own.some((g) => key(g) === key(all)) ? [all] : []), ...own]
+    : suggested;
+  return list.slice(0, MAX_GROUPS + 1).map((group) => ({
     group: {
       name: group.name,
       countries: group.countries.filter((gl) => pages.some((p) => p.gl === gl)),

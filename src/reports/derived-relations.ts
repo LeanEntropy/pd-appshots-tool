@@ -57,13 +57,19 @@ export type DerivedEntry = z.infer<typeof EntrySchema>;
 export const derivedKey = (c: ProjectContext) => projectKey(c, "reports", "derived.json");
 
 export function readDerived(s: Storage, c: ProjectContext): DerivedFile {
+  return readDerivedOrNull(s, c) ?? { version: 1, comparisons: [] };
+}
+
+/** The file, or null when it exists but cannot be read (then nothing is made by itself). */
+function readDerivedOrNull(s: Storage, c: ProjectContext): DerivedFile | null {
   try {
-    const p = DerivedFileSchema.safeParse(s.getJson(derivedKey(c)));
-    if (p.success) return p.data;
+    const raw = s.getJson(derivedKey(c));
+    if (raw === undefined) return { version: 1, comparisons: [] };
+    const p = DerivedFileSchema.safeParse(raw);
+    return p.success ? p.data : null;
   } catch {
-    // A broken file is rebuilt: every step below is idempotent.
+    return null;
   }
-  return { version: 1, comparisons: [] };
 }
 
 const childIdOf = (parentId: string, gl: string) => `${parentId}-${gl}`;
@@ -104,8 +110,10 @@ export function reconcileDerived(
 ): ReconcileResult {
   const paths = projectPaths(loaded);
   const s = workspaceStorage(paths.workspace);
-  const file = readDerived(s, paths);
+  // Unreadable: nothing is made by itself (a deleted report must never come back).
+  const file = o.force ? readDerived(s, paths) : readDerivedOrNull(s, paths);
   const made: ReconcileResult["made"] = [];
+  if (!file) return { made };
   let defs = listDefs(s, paths);
   const compares = defs.filter((d) => d.type === "compare" && (!o.reportId || d.id === o.reportId));
   if (!compares.length) return { made };

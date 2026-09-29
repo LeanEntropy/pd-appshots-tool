@@ -269,9 +269,10 @@ export function removeReport(loaded: LoadedConfig, id: string): ApiResponse {
       status: 409,
       body: { problems: ["This report is running. Stop the run first, then delete it."] },
     };
+  // A country report made from a comparison is not recreated by its later versions (saved first:
+  // a crash after it leaves the report, never a deleted one that comes back).
+  suppressChild(s, paths, def);
   const r = deleteReport(s, paths, def.id);
   if (!r.ok) return { status: r.status, body: { problems: [r.problem] } };
-  // A country report made from a comparison is not recreated by its later versions.
-  suppressChild(s, paths, def);
   return { status: 200, body: { id: def.id, deleted: true } };
 }

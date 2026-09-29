@@ -44,7 +44,10 @@ export function textFits(text: string, hl: string): boolean {
   if (!t) return true;
   const lang = hl.split("-")[0] ?? hl;
   const own = SCRIPTS[lang] ?? /[A-Za-z]/;
-  const foreign = FOREIGN[lang];
+  // Latin-script listings: no CJK, Hangul or Thai letters in the new text.
+  const foreign =
+    FOREIGN[lang] ??
+    (SCRIPTS[lang] ? undefined : /[\u3040-\u30ff\u4e00-\u9fff\uac00-\ud7af\u0e00-\u0e7f]/);
   return own.test(t) && !(foreign?.test(t) ?? false);
 }
 
