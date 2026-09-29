@@ -4,6 +4,7 @@ import { readSettings, settingsKey } from "../config/project.ts";
 import { ProjectSettingsSchema } from "../config/project-schema.ts";
 import { readRegistry, upsertEntry } from "../config/registry.ts";
 import { list } from "../jobs/index.ts";
+import { appIconSrc, appIconStale } from "../library/app-icon.ts";
 import { describeImport } from "../library/import/describe.ts";
 import { runImport } from "../library/import/run-import.ts";
 import { hasLegacyData } from "../library/import/survey.ts";
@@ -20,7 +21,9 @@ export function getProjects(app: AppContext): ApiResponse {
       const s = readSettings(app.storage, { projectId: p.id });
       if (s) counts = { competitors: s.competitors.length, countries: s.markets.length };
     } catch {}
-    return { ...p, ...counts };
+    // The game's icon from the library; a missing or stale one is fetched by the page afterwards.
+    const appIcon = appIconSrc(app.storage, p.ourAppId);
+    return { ...p, ...counts, appIcon, iconStale: appIconStale(app.storage, p.ourAppId) };
   });
   projects.sort(
     (a, b) =>

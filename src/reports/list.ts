@@ -1,6 +1,7 @@
 import { readLatest } from "../analysis/final-report.ts";
 import type { ReportInputs } from "../analysis/report-data.ts";
 import { reportInputs } from "../analysis/report-inputs.ts";
+import { loadCountries } from "../config/countries.ts";
 import { type LoadedConfig, projectPaths } from "../config/load.ts";
 import { legacyAnalysisJob, readJournal } from "../jobs/journal.ts";
 import { workspaceStorage } from "../storage/index.ts";
@@ -33,6 +34,8 @@ export interface ReportSummary {
   markets: string[];
   /** The plain country names in the same order ("Hong Kong", never its language). */
   countryNames: string[];
+  /** The same, with the language where the country offers more than one ("Hong Kong (Traditional Chinese)", "United States"). */
+  countryLabels: string[];
   /** Another report set up exactly like this one (same kind, countries and games), or null. */
   sameAs: string | null;
   competitors: number | null;
@@ -64,6 +67,12 @@ export function listReports(loaded: LoadedConfig): ReportSummary[] {
   const paths = projectPaths(loaded);
   const s = workspaceStorage(paths.workspace);
   const main = mainMarketRef(loaded);
+  // A country's language is named only where the country offers more than one.
+  const multiLang = new Set(
+    loadCountries()
+      .countries.filter((c) => c.languages.length > 1)
+      .map((c) => c.gl),
+  );
   syncPresetReports(s, paths, main);
   const folders = runFolders(s, paths);
   const job = readJournal(s, paths).jobs.ai ?? legacyAnalysisJob(s, paths) ?? undefined;
@@ -149,6 +158,7 @@ export function listReports(loaded: LoadedConfig): ReportSummary[] {
       countries: countriesOf(markets),
       markets: markets.map((m) => m.gl),
       countryNames: markets.map((m) => countryName(m.label)),
+      countryLabels: markets.map((m) => (multiLang.has(m.gl) ? m.label : countryName(m.label))),
       sameAs: d.archived ? null : (sameScope(defs, d.scope, d.id)[0]?.name ?? null),
       competitors: names ? names.length : null,
       competitorNames: names ?? [],

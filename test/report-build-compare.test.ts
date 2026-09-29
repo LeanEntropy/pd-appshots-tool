@@ -70,6 +70,10 @@ test("a Compare countries report with nothing new to analyse builds at once, one
   assert.equal(card?.status.kind, "partial");
   assert.equal(card?.versions[0]?.format, "data");
   assert.equal(card?.newer, null);
+  // The cards' flag tooltips: a language only where the country offers more than one.
+  assert.deepEqual(card?.countryLabels, ["Japan", "South Korea"]);
+  const pilot = listReports(loaded).find((x) => x.type === "pilot");
+  assert.deepEqual(pilot?.countryLabels, ["United States"]);
   // A Full check now exists: the report built on the Pilot only says so.
   readyReport(loaded, "core");
   assert.match(
