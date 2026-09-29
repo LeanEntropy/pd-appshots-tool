@@ -18,7 +18,12 @@ type Dependency = NonNullable<VersionInputs["dependencyScope"]>;
 export function derivedReasons(
   dep: Dependency,
   now: {
-    records: { appId: string; position: number; imageId: string | null; updatedAt: string | null }[];
+    records: {
+      appId: string;
+      position: number;
+      imageId: string | null;
+      updatedAt: string | null;
+    }[];
     orderDates: Record<string, string | null>;
     baseVersionId: string | null;
   },

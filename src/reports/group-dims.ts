@@ -18,6 +18,8 @@ export const MAIN_DIMS: {
   question: string;
   /** What a "yes" page does, as a verb phrase ("open with title art"). */
   does: string;
+  /** Our image that does it ("title art"). */
+  noun: string;
   definition: string;
 }[] = [
   {
@@ -25,6 +27,7 @@ export const MAIN_DIMS: {
     label: "Landscape image",
     question: "Uses a landscape (wide) image anywhere in the set",
     does: "use a landscape image",
+    noun: "landscape image",
     definition:
       "An image wider than it is tall, measured from the pixels of every image. Portrait images are taller than wide.",
   },
@@ -33,6 +36,7 @@ export const MAIN_DIMS: {
     label: "Opens with title art",
     question: "Image 1 is a title screen / full-screen art",
     does: "open with title art",
+    noun: "title art first",
     definition:
       "Image 1 is one full-screen artwork (title, loading or key art style) rather than a screenshot of play or menus.",
   },
@@ -41,6 +45,7 @@ export const MAIN_DIMS: {
     label: "Screenshot inside marketing art",
     question: "One of images 1 to 3 shows a screenshot set inside marketing art",
     does: "set a screenshot inside marketing art in images 1 to 3",
+    noun: "screenshot inside marketing art",
     definition:
       "The in-game screenshot sits framed or inset inside a designed background (one or several screenshots), instead of filling the image.",
   },
@@ -50,6 +55,7 @@ export const MAIN_DIMS: {
     question:
       "Most screenshots in images 1 to 3 leave 20 % or more of the image to the marketing layer",
     does: "give the marketing layer a large share of images 1 to 3",
+    noun: "large marketing layer",
     definition:
       "The marketing layer (bands, headline, characters) covers 20 % or more of the image, so the screenshot fills less than 80 %. Title art is not counted.",
   },
@@ -58,6 +64,7 @@ export const MAIN_DIMS: {
     label: "Logo early",
     question: "The game logo is on one of images 1 to 3",
     does: "show the game logo in images 1 to 3",
+    noun: "logo in images 1 to 3",
     definition: "The game's logo (its name as artwork) is visible on image 1, 2 or 3.",
   },
 ];
@@ -141,4 +148,14 @@ export function pageValues(g: GameOrder): PageValues {
       ? (art?.message ?? (first3.some((r) => r.category === ART) ? null : "none"))
       : null,
   };
+}
+
+/** The image that shows a "yes" on this dimension (for the thumbnails behind a finding). */
+export function exampleRow(g: GameOrder, dim: MainDim): OrderRow | undefined {
+  const first3 = g.rows.filter((r) => r.position <= 3 && analysed(r));
+  if (dim === "landscape") return g.rows.find((r) => r.orientation === "landscape");
+  if (dim === "titleArt") return g.rows.find((r) => r.position === 1);
+  if (dim === "inset") return first3.find((r) => INSET.test(r.composition));
+  if (dim === "logo") return first3.find((r) => r.logo === true);
+  return first3.find((r) => r.category !== ART && (captureShare(r) ?? 100) < 80);
 }

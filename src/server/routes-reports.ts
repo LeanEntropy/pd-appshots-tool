@@ -2,14 +2,9 @@ import type { IncomingMessage, ServerResponse } from "node:http";
 import type { LoadedConfig } from "../config/load.ts";
 import type { AppContext } from "./app-context.ts";
 import { send, writeRequest } from "./http-util.ts";
-import {
-  deriveNow,
-  getReports,
-  getReportVersion,
-  patchReport,
-  removeReport,
-} from "./reports-api.ts";
+import { getReports, getReportVersion, patchReport, removeReport } from "./reports-api.ts";
 import { saveScope } from "./reports-builder-api.ts";
+import { deriveNow } from "./reports-derive-api.ts";
 import { builderRoute, GONE } from "./routes-builder.ts";
 
 const PATH = /^\/api\/reports(?:\/([^/]+)(?:\/versions\/([^/]+))?)?$/;

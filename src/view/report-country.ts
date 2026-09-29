@@ -1,4 +1,5 @@
 import { COUNTRY_TABS_CSS, COUNTRY_TABS_SCRIPT } from "./report-country-tabs.ts";
+import { REPORT_GROUPS_CSS, REPORT_GROUPS_SCRIPT } from "./report-groups.ts";
 
 /**
  * A One country or Compare countries version (country-report.json), drawn into its card, in
@@ -17,7 +18,7 @@ export const REPORT_COUNTRY_CSS = `
 .missing { border-left: 5px solid var(--warn); background: var(--bg); padding: 6px 12px; margin: 8px 0; }
 table.rt td.local { font-weight: 700; } .bt { color: var(--muted); font-style: italic; }
 .cmp2 { display: inline-flex; gap: 4px; align-items: center; } .cmp2 img { width: 44px; height: 78px; object-fit: contain; border: 1px solid var(--line); border-radius: 3px; background: var(--bg); }
-${COUNTRY_TABS_CSS}`;
+${COUNTRY_TABS_CSS}${REPORT_GROUPS_CSS}`;
 
 export const REPORT_COUNTRY_SCRIPT = `
 const cname = (label) => String(label || "").replace(/\\s*\\([^)]*\\)\\s*$/, "");
@@ -113,8 +114,8 @@ function renderCountryReport(box, c, rid, research) {
   const n = (id) => repSecs.findIndex((s) => s.id === id);
   const part = (id, body, imgs) => (n(id) < 0 ? "" : sec(n(id), body, imgs, false));
   box.classList.toggle("noimg", !showImgs);
-  box.innerHTML = part("summary", countrySummaryHtml(c), false) + countryTocHtml(c, across)
+  box.innerHTML = part("summary", samePagesTop(c) + countrySummaryHtml(c) + groupsLine(c) + derivedBandHtml(c), false) + countryTocHtml(c, across)
     + part("across", across.map(subSec).join(""), false)
     + part("countries", countryTabsHtml(c), true);
 }
-${COUNTRY_TABS_SCRIPT}`;
+${COUNTRY_TABS_SCRIPT}${REPORT_GROUPS_SCRIPT}`;

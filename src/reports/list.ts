@@ -6,11 +6,11 @@ import { type LoadedConfig, projectPaths } from "../config/load.ts";
 import { legacyAnalysisJob, readJournal } from "../jobs/journal.ts";
 import { workspaceStorage } from "../storage/index.ts";
 import { builderNewer, draftStatus } from "./builder-status.ts";
+import { reconcileDerived } from "./derived-relations.ts";
+import { derivedNewer } from "./derived-stale.ts";
 import { eligibility } from "./eligibility.ts";
 import { mainMarketRef } from "./main-market.ts";
 import { syncPresetReports } from "./migrate.ts";
-import { reconcileDerived } from "./derived-relations.ts";
-import { derivedNewer } from "./derived-stale.ts";
 import { countryName } from "./names.ts";
 import { sameScope } from "./same-scope.ts";
 import { type PlanContext, planContext } from "./scope-plan.ts";
@@ -55,7 +55,7 @@ export interface ReportSummary {
   /** Newest first. */
   versions: VersionSummary[];
   /** A One country report made from a comparison: the comparison (its name null once deleted). */
-  derivedFrom: { id: string; name: string | null } | null;
+  derivedFrom?: { id: string; name: string | null } | null;
 }
 
 /** Plain country names, never codes (from the version's own scope when saved). */

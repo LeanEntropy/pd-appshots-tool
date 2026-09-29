@@ -4,8 +4,11 @@ import { buildReportData } from "../analysis/report-data.ts";
 import { reportInputs } from "../analysis/report-inputs.ts";
 import { type LoadedConfig, projectPaths } from "../config/load.ts";
 import { readJournal } from "../jobs/journal.ts";
-import { makeCountryReportsNow, suppressChild } from "../reports/derived-relations.ts";
+import type { CountryReport } from "../reports/country-report-types.ts";
+import { suppressChild } from "../reports/derived-relations.ts";
 import { draftsFromExpansion } from "../reports/drafts.ts";
+import { withGroupsMd } from "../reports/group-md.ts";
+import { countryReportsOf, derivedLink, groupsFor, saveGroups } from "../reports/groups-load.ts";
 import { listReports } from "../reports/list.ts";
 import { mainMarketRef } from "../reports/main-market.ts";
 import { repeatUpgrader, tryUpgrade } from "../reports/repeat-upgrade.ts";
@@ -28,12 +31,12 @@ import type { ApiResponse } from "./api.ts";
 /** Several reports per project (plan-reports R1): list, read a version, rename, archive, delete. */
 
 const REPORT_ID = /^r-[a-z0-9-]{1,80}$/;
-const gone = (): ApiResponse => ({
+export const gone = (): ApiResponse => ({
   status: 404,
   body: { problems: ["This report no longer exists. Reload the page."] },
 });
 
-function findDef(loaded: LoadedConfig, id: string) {
+export function findDef(loaded: LoadedConfig, id: string) {
   if (!REPORT_ID.test(id)) return undefined;
   const paths = projectPaths(loaded);
   return listDefs(workspaceStorage(paths.workspace), paths).find((d) => d.id === id);
@@ -116,21 +119,39 @@ export function getReportVersion(loaded: LoadedConfig, id: string, vid: string):
         kind?: unknown;
         countries?: unknown;
       } & Parameters<typeof upgradeWordsMd>[1];
-      if (raw?.kind === "countries" && Array.isArray(raw.countries))
+      if (raw?.kind === "countries" && Array.isArray(raw.countries)) {
+        // "Words to use" statuses are derived by code from the saved data (no AI).
+        const country = artWordingDeep(withWordStatus(tryUpgrade(raw, repeats().country)));
+        // Across countries: the group patterns, from this version's pages (code only).
+        const groups = safe(() => groupsFor(loaded, def, country as unknown as CountryReport));
         return {
           status: 200,
           body: {
             ...meta,
-            // "Words to use" statuses are derived by code from the saved data (no AI).
-            country: artWordingDeep(withWordStatus(tryUpgrade(raw, repeats().country))),
+            country: {
+              ...country,
+              groups,
+              links: {
+                derived: safe(() => derivedLink(loaded, def)),
+                countryReports:
+                  def.type === "compare" ? safe(() => countryReportsOf(loaded, def.id)) : null,
+              },
+            },
             // The written report too: the basic PDF export prints it.
             html: markdownToHtml(
               artWording(
-                upgradeWordsMd(s.getText(versionFileKey(paths, entry.id, "report.md")) ?? "", raw),
+                withGroupsMd(
+                  upgradeWordsMd(
+                    s.getText(versionFileKey(paths, entry.id, "report.md")) ?? "",
+                    raw,
+                  ),
+                  groups,
+                ),
               ),
             ),
           },
         };
+      }
     } catch {
       // Unreadable: shown as its markdown below.
     }
@@ -191,10 +212,32 @@ export function getReportVersion(loaded: LoadedConfig, id: string, vid: string):
   };
 }
 
+const GroupsBody = z
+  .array(
+    z.object({
+      name: z.string().trim().min(1).max(60),
+      countries: z.array(z.string().regex(/^[a-z]{2}$/)).max(20),
+    }),
+  )
+  .max(4);
+
 const PatchBody = z
-  .object({ name: z.string().max(120).optional(), archived: z.boolean().optional() })
+  .object({
+    name: z.string().max(120).optional(),
+    archived: z.boolean().optional(),
+    groups: GroupsBody.optional(),
+  })
   .strict()
-  .refine((b) => b.name !== undefined || b.archived !== undefined);
+  .refine((b) => b.name !== undefined || b.archived !== undefined || b.groups !== undefined);
+
+/** Something computed for display only: left out (null) rather than failing the page. */
+function safe<T>(f: () => T): T | null {
+  try {
+    return f();
+  } catch {
+    return null;
+  }
+}
 
 export function patchReport(loaded: LoadedConfig, id: string, body: unknown): ApiResponse {
   const parsed = PatchBody.safeParse(body);
@@ -204,7 +247,23 @@ export function patchReport(loaded: LoadedConfig, id: string, body: unknown): Ap
   if (!def) return gone();
   const paths = projectPaths(loaded);
   const s = workspaceStorage(paths.workspace);
-  const { name, archived } = parsed.data;
+  const { name, archived, groups } = parsed.data;
+  if (groups !== undefined) {
+    if (def.type !== "compare")
+      return { status: 409, body: { problems: ["Only a comparison has groups of countries."] } };
+    const gls = new Set(def.scope.markets.map((m) => m.gl));
+    const bad = groups.find(
+      (g) => g.countries.some((gl) => !gls.has(gl)) || g.countries.length < 2,
+    );
+    if (bad)
+      return {
+        status: 400,
+        body: { problems: [`"${bad.name}" needs at least 2 of the compared countries.`] },
+      };
+    saveGroups(loaded, def, groups);
+    if (name === undefined && archived === undefined)
+      return { status: 200, body: { id: def.id, groups, message: "Groups saved." } };
+  }
   const changes = [
     name === undefined ? null : () => renameReport(s, paths, def.id, name),
     archived === undefined ? null : () => setArchived(s, paths, def.id, archived),
@@ -235,25 +294,4 @@ export function removeReport(loaded: LoadedConfig, id: string): ApiResponse {
   // A country report made from a comparison is not recreated by its later versions.
   suppressChild(s, paths, def);
   return { status: 200, body: { id: def.id, deleted: true } };
-}
-
-/** "Make country reports now" on a comparison (code only, no AI): made, or already there. */
-export function deriveNow(loaded: LoadedConfig, id: string): ApiResponse {
-  const def = findDef(loaded, id);
-  if (!def) return gone();
-  if (def.type !== "compare")
-    return { status: 409, body: { problems: ["Only a comparison makes country reports."] } };
-  if (!def.versions.length)
-    return { status: 409, body: { problems: ["Build the comparison first."] } };
-  const r = makeCountryReportsNow(loaded, def.id);
-  const n = new Set(r.made.map((m) => m.reportId)).size;
-  return {
-    status: 200,
-    body: {
-      made: n,
-      message: n
-        ? `${n} country ${n === 1 ? "report" : "reports"} made from this comparison, at no cost.`
-        : "The country reports of this comparison are already there.",
-    },
-  };
 }

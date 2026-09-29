@@ -34,10 +34,7 @@ const pagesOf = (c: CountryReport["countries"][number]) =>
  * (Hong Kong and Taiwan today), or null. Decided game by game; a game missing in either counts
  * as different.
  */
-export function samePagesAs(
-  r: CountryReport,
-  gl: string,
-): { gl: string; label: string } | null {
+export function samePagesAs(r: CountryReport, gl: string): { gl: string; label: string } | null {
   const i = r.countries.findIndex((c) => c.gl === gl);
   const here = r.countries[i];
   if (!here) return null;
@@ -97,7 +94,10 @@ export function deriveCountry(
   const missing = parent.missing.filter(
     (m) =>
       !namesOther(m.what, otherNames).length &&
-      !(m.what.startsWith("The AI wording of the A/B tests") && ab.tests.some((t) => t.source === "ai")),
+      !(
+        m.what.startsWith("The AI wording of the A/B tests") &&
+        ab.tests.some((t) => t.source === "ai")
+      ),
   );
   for (const a of advice)
     if (!a.advice && !missing.some((m) => m.what === `The advice for ${name}`))

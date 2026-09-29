@@ -32,11 +32,12 @@ section[data-page="report"] .rbox button.ctab[aria-selected="true"] .pill { back
 
 export const COUNTRY_TABS_SCRIPT = `
 const CTAB_KEY = "ssr.countryTab.";
-// The parts of "Across countries", in order (empty ones left out). Cross-country group patterns
-// (docs/plan-cross-country.md) go first here once they are built.
+// The parts of "Across countries", in order (empty ones left out): the patterns across groups of
+// countries first (report-groups.ts, docs/plan-cross-country.md).
 function acrossParts(c, research) {
   const L0 = c.localisation;
   return [
+    c.type === "compare" && { id: "groups", t: "Patterns across your countries", body: groupsHtml(c), imgs: true },
     L0 && { id: "local", t: "How each game localises", body: localisationHtml(c), imgs: true, closed: true },
     L0 && { id: "habits", t: "Our localisation vs the competitors\\u2019", body: habitsHtml(c) },
     { id: "words", t: "Words compared across languages", body: wordsCrossHtml(c) },
@@ -80,7 +81,7 @@ function countryPanelHtml(c, x) {
   const t = c.terminology.find((y) => y.gl === x.gl);
   const kp = x.data.fit ? x.data.fit.keyPoints : [];
   const fold = (title, body) => '<details class="sec"><summary><span class="sec-t">' + title + '</span></summary><div class="sec-b">' + body + "</div></details>";
-  return "<h3>Recommendations" + (x.isMain ? " (main country)" : "") + "</h3>" + recs
+  return ownReportLink(c, x) + "<h3>Recommendations" + (x.isMain ? " (main country)" : "") + "</h3>" + recs
     + "<h3>Patterns and our fit</h3>" + (kp.length ? '<h4>Key points to optimise here</h4><ol class="keypoints">' + kp.map((k) => "<li>" + esc(k) + "</li>").join("") + "</ol>" : "") + fitHtml(d)
     + '<h3 id="rep-' + repRid + "-pos-" + esc(x.gl) + '">Position by position</h3>' + positionsHtml(d)
     + (t ? fold("Words used here " + '<span class="meta">' + t.rows.filter((r) => r.ours === "differs").length + " where we differ</span>", WORDS_NOTE + wordsCountry(t)) : "")

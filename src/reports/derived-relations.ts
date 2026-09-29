@@ -1,6 +1,11 @@
 import { z } from "zod";
 import { type LoadedConfig, projectPaths } from "../config/load.ts";
-import { type ProjectContext, projectKey, type Storage, workspaceStorage } from "../storage/index.ts";
+import {
+  type ProjectContext,
+  projectKey,
+  type Storage,
+  workspaceStorage,
+} from "../storage/index.ts";
 import { countryMarkdown } from "./country-md.ts";
 import type { CountryReport } from "./country-report-types.ts";
 import { deriveCountry, PROJECTION } from "./derive-country.ts";
@@ -152,10 +157,15 @@ export function reconcileDerived(
           s.putText(versionFileKey(paths, vid, "report.md"), countryMarkdown(r));
           const stage = parentInputs?.base ?? report.base.stage;
           const baseId = stage ? presetId(defs, stage, main) : null;
-          writeVersionInputs(s, paths, vid, childInputs(parentInputs, d.def, c, v, {
-            baseVersionId: baseId ? baseVersionAt(defs, baseId, v.generatedAt) : null,
-            main,
-          }));
+          writeVersionInputs(
+            s,
+            paths,
+            vid,
+            childInputs(parentInputs, d.def, c, v, {
+              baseVersionId: baseId ? baseVersionAt(defs, baseId, v.generatedAt) : null,
+              main,
+            }),
+          );
           made.push({ reportId: childId, versionId: vid, gl: c.gl });
         }
         addVersion(s, paths, childId, { id: vid, generatedAt: v.generatedAt });
@@ -265,7 +275,7 @@ export function makeCountryReportsNow(loaded: LoadedConfig, reportId: string): R
   const paths = projectPaths(loaded);
   const s = workspaceStorage(paths.workspace);
   const def = readDef(s, paths, reportId);
-  if (!def || def.type !== "compare") return { made: [] };
+  if (def?.type !== "compare") return { made: [] };
   const file = readDerived(s, paths);
   const entry = file.comparisons.find((e) => e.reportId === reportId);
   if (entry) {
