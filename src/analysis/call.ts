@@ -70,6 +70,7 @@ export interface StoredObject {
   output: unknown;
   costUsd: number | null;
   attempts: number;
+  spentUsd?: number; // every attempt together (costUsd is the last call only)
   createdAt: string;
   /** Tokens and time of the calls that produced this answer (summed over repairs). */
   usage?: CallUsage;
@@ -153,6 +154,7 @@ export async function validatedCall<T>(
   let problems: string[] = [];
   let repairs: string[] = [];
   let callErrors = 0;
+  let paid = 0;
   let usage: CallUsage | undefined;
   const jsonSchema = toJsonSchema(schema);
   for (let attempt = 0; attempt <= MAX_REPAIRS; attempt++) {
@@ -185,6 +187,7 @@ export async function validatedCall<T>(
     const cost =
       r.costUsd ?? (held && provider.family === "anthropic" && !r.ok ? held.maxUsd : null);
     if (cost) ctx.onCost(cost);
+    paid += cost ?? 0;
     held?.done(cost ?? 0);
     usage = addUsage(usage, r.usage);
     ctx.onCall?.({
@@ -228,6 +231,7 @@ export async function validatedCall<T>(
         output: r.output,
         costUsd: r.costUsd,
         attempts: attempt + 1,
+        spentUsd: paid,
         createdAt: new Date().toISOString(),
         ...(usage ? { usage } : {}),
       };

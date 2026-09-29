@@ -11,10 +11,11 @@ export const LAYOUT_CONTRACT = "layout.v2";
 export const LAYOUT_SCHEMA_VERSION = "layout-schema.v1";
 
 /**
- * Cost of one layout call per newly analysed image, low and high (benchmark 2026-09-29: $0.09 to
- * $0.14 with a warm prompt cache; the first call of a batch also writes the prompt, about $0.07).
+ * One image's layout, typical and high, retries included: used only until a project has recorded
+ * enough layout calls (layout/cost.ts). The 2026-09-29 backfill of 69 images cost $0.18 each
+ * ($0.13 to $0.16 per call, about 1.3 calls per image), against $0.09 to $0.15 planned.
  */
-export const LAYOUT_USD_PER_IMAGE: readonly [number, number] = [0.09, 0.15];
+export const LAYOUT_USD_PER_IMAGE: readonly [number, number] = [0.16, 0.19];
 
 /** At most this many boxes per layer (user decision D4, 2026-09-29). */
 export const MAX_PER_LAYER = 8;

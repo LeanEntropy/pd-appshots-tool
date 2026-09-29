@@ -110,8 +110,10 @@ export function renderAnalysisPrompt(
 /**
  * The layout breakdown's own call (plan-layout-wireframes, separate-call version, 2026-09-29):
  * kept apart from PROMPT_VERSIONS, so the main analysis, its keys and plans never change.
+ * v2 (2026-09-29) spells out the checks the answer must pass (cut-outs, logo, headlines,
+ * captures, the cap); the layout contract is unchanged, so saved layouts stay current.
  */
-export const LAYOUT_PROMPT_FILE = "layout-only.v1";
+export const LAYOUT_PROMPT_FILE = "layout-only.v2";
 
 export function renderLayoutPrompt(
   root: string,
