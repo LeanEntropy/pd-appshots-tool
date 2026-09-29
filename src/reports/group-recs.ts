@@ -103,7 +103,7 @@ export function recommendations(
         false,
       ),
       conflicts: conflictsOf(g.dim, countries, advice),
-      sketch: sketchSvg(g.dim, "the variant, schematic, not measured"),
+      sketch: sketchSvg(g.dim, "the variant · schematic, not measured"),
     });
   };
   const done = new Set<string>();

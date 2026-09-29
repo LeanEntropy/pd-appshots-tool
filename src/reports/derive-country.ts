@@ -1,7 +1,10 @@
 import type { PlayContext } from "./ab-section.ts";
 import type { AdvicePart, CountryReport, DerivedInfo } from "./country-report-types.ts";
 import { dates, keyActions, shortAnswer, verdicts } from "./country-summary.ts";
-import { derivedAbTests } from "./derive-ab.ts";
+import { derivedAbTests, namesOther } from "./derive-ab.ts";
+
+export { namesOther };
+
 import { countryName } from "./names.ts";
 import { mergedSorting } from "./sorting-merge.ts";
 
@@ -46,11 +49,6 @@ export function samePagesAs(r: CountryReport, gl: string): { gl: string; label: 
       return { gl: other.gl, label: other.label };
   }
   return null;
-}
-
-/** The other compared countries this text names, if any (country names only, whole words). */
-export function namesOther(text: string, others: readonly string[]): string[] {
-  return others.filter((n) => new RegExp(`(^|[^A-Za-z])${n}([^A-Za-z]|$)`).test(text));
 }
 
 export function deriveCountry(

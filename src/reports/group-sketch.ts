@@ -33,7 +33,16 @@ function frame(w: number, h: number, boxes: Box[], caption: string): string {
           : ""),
     )
     .join("");
-  return `<svg class="sketch" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${w + 2} ${h + 16}" width="${w + 2}" height="${h + 16}" role="img" aria-label="${caption}"><rect x="1" y="1" width="${w}" height="${h}" rx="6" fill="none" stroke="currentColor" stroke-width="1.5"/>${body}<text x="${(w + 2) / 2}" y="${h + 12}" font-size="7.5" text-anchor="middle" fill="currentColor" fill-opacity=".7">${caption}</text></svg>`;
+  // One caption line per part ("image 1: title art", "schematic, not measured"), so it fits.
+  const lines = caption.split(" · ");
+  const H = h + 6 + lines.length * 9;
+  const text = lines
+    .map(
+      (l, i) =>
+        `<text x="${(w + 2) / 2}" y="${h + 11 + i * 9}" font-size="7" text-anchor="middle" fill="currentColor" fill-opacity=".75">${l}</text>`,
+    )
+    .join("");
+  return `<svg class="sketch" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${w + 2} ${H}" width="${w + 2}" height="${H}" role="img" aria-label="${lines.join(", ")}"><rect x="1" y="1" width="${w}" height="${h}" rx="6" fill="none" stroke="currentColor" stroke-width="1.5"/>${body}${text}</svg>`;
 }
 
 const P = { w: 90, h: 160 };

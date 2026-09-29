@@ -43,7 +43,7 @@ test("the comparison shows the group part first in Across countries, with sketch
   assert.match(html, /Our pages differ: opens with title art/);
   assert.match(
     html,
-    /<svg class="sketch"[^>]*aria-label="image 1: title art · schematic, not measured"/,
+    /<svg class="sketch"[^>]*aria-label="image 1: title art, schematic, not measured"/,
   );
   assert.match(html, /Japan: 4 of 6 · ours no/);
   assert.match(html, /Recommendations, as A\/B tests/);

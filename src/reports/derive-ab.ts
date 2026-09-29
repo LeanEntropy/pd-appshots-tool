@@ -33,6 +33,11 @@ const FOREIGN: Record<string, RegExp> = {
   ja: /[가-힯]/,
 };
 
+/** The other compared countries this text names, if any (country names only, whole words). */
+export function namesOther(text: string, others: readonly string[]): string[] {
+  return others.filter((n) => new RegExp(`(^|[^A-Za-z])${n}([^A-Za-z]|$)`).test(text));
+}
+
 /** True when a new headline is written in the script of this listing language. */
 export function textFits(text: string, hl: string): boolean {
   const t = text.trim();
@@ -87,7 +92,14 @@ export function derivedAbTests(
   const leftOut: AbTestsPart["leftOut"] = [];
   const tests: AbTestCard[] = [];
   for (const t of parent.abTests.tests.filter((x) => x.source === "ai")) {
-    const problem = reuseProblem(t, market, control.length);
+    const others = parent.countries.map((x) => countryName(x.label)).filter((n) => n !== name);
+    const named = namesOther(
+      [t.title, t.hypothesis, t.variantText, t.variant?.summary ?? ""].join(" "),
+      others,
+    );
+    const problem =
+      reuseProblem(t, market, control.length) ??
+      (named.length ? `its text names ${named.join(", ")}, not only ${name}` : null);
     if (problem) {
       if (t.countries.some((x) => countryName(x) === name))
         leftOut.push({ title: t.title, reason: `From the comparison, not kept: ${problem}.` });
