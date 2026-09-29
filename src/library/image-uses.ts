@@ -1,3 +1,4 @@
+import { platformOf } from "../appstore/data.ts";
 import { REGISTRY_KEY, RegistrySchema } from "../config/registry.ts";
 import type { Storage } from "../storage/index.ts";
 import { refsKey } from "./layout.ts";
@@ -39,7 +40,7 @@ export function useOf(projectId: string, s: unknown): ImageUse | null {
     gl: o.gl,
     hl: o.hl,
     position,
-    platform: o.platform === "apple" ? "apple" : "play",
+    platform: platformOf(o.platform) === "appstore" ? "apple" : "play",
   };
 }
 

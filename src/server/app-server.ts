@@ -8,6 +8,7 @@ import type { ApiResponse } from "./api.ts";
 import { type AppContext, type AppOptions, createAppContext } from "./app-context.ts";
 import { redirect, send, sendHtml, writeRequest } from "./http-util.ts";
 import { appIconRoute } from "./routes-app-icon.ts";
+import { appStoreRoute } from "./routes-appstore.ts";
 import { competitorsRoute } from "./routes-competitors.ts";
 import { countriesRoute } from "./routes-countries.ts";
 import { getImport, getJobs, getProjects, postArchive, postImport } from "./routes-home.ts";
@@ -166,6 +167,7 @@ export function createAppServer(app: AppContext): Server {
       }
       if (await competitorsRoute(app, found.loaded, rest, req, res, url)) return;
       if (await countriesRoute(app, found.loaded, rest, req, res)) return;
+      if (await appStoreRoute(app, found.loaded, rest, req, res)) return;
       return await projectRoute(app, found.loaded, rest, req, res, url);
     } catch (e) {
       // The details go to the terminal; the page gets a plain sentence.

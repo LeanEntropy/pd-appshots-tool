@@ -72,7 +72,7 @@ Output per locale:
   - No integration with the Unity game project.
 
 ## Scope
-- Google Play only in V1. App Store deferred.
+- Google Play is the default. The App Store is opt-in per project (Settings switch), built from docs/plan-app-store.md.
 - Markets: Asia, with localized store pages per country. Taiwan represents China.
   - Default set: JP, KR, TW, HK, TH, VN, ID, PH, with US-English as the baseline.
   - HK uses zh-TW (zh-HK probed at M1). PH uses en only.
@@ -194,7 +194,7 @@ Output per locale:
 - Reports: what is OPEN by default must be clean, accurate, insightful and easy to read (user, 2026-09-29). Everything else (evidence details, tables, method notes, statistics, long lists) goes behind folds. Reduce noise everywhere.
 - Platform rules (user, 2026-09-29): official Google/Apple specs and policies are trusted. Never recommend breaking an ENFORCED rule (rejection risk). Non-enforced official guidance may be overridden when evidence says it helps the game; say so plainly. Goal: what works best for the game without getting rejected.
 - Report card order (user, 2026-09-29): Full check → Compare countries → individual countries (in the comparison's country order) → Pilot last → action cards.
-- Apple App Store (user, 2026-09-29): to be covered, but Google Play stays the default; Apple only when the user explicitly adds it. Interesting: same game's page on Play vs App Store, and between countries. Plan: docs/plan-app-store.md (in progress).
+- Apple App Store (user, 2026-09-29): to be covered, but Google Play stays the default; Apple only when the user explicitly adds it. Interesting: same game's page on Play vs App Store, and between countries. Plan: docs/plan-app-store.md (approved). Apple data is read ONLY through the iTunes Lookup/Search API: Apple's website terms forbid page-scraping apps.apple.com (A0 check 2026-09-29), so no video covers, events, subtitle or promotional text, and the set is "not verified". App Store images are downloaded only, never analysed in advance (user rule 2026-09-29): analysis happens only when the user builds and approves a report that needs it. Fetch: `npm run appstore -- --project <id>` (free, no AI).
 - Wireframes (user, 2026-09-29): exactly two per image, a screenshot-layer wireframe and a marketing-layer wireframe, like docs/samples/wireframe-*/. Characters drawn as simple shapes showing size and pose only, never detailed silhouettes.
 - Wireframe content (user, 2026-09-29): only compositionally important elements, each one simple shape (e.g. hero, monster, background; HUD, panel; bands, headline, logo, badges, cut-outs). Minor props and details (bats, crystals, runes) go in the layer's written description, never as boxes.
 - Wireframe detail (user, 2026-09-29): repeated items (cards, slots, rows) = one box each, no inner marks; each character = one shape, optional pose hint only (never hair, face or costume).

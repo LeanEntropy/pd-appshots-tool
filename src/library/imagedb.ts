@@ -139,7 +139,12 @@ export class LibraryImageDb implements ImageDb {
   addSource(id: string, s: ImageSource): void {
     const ref = this.adopt(id);
     const dup = ref.sources.some(
-      (x) => x.appId === s.appId && x.gl === s.gl && x.hl === s.hl && x.position === s.position,
+      (x) =>
+        x.appId === s.appId &&
+        x.gl === s.gl &&
+        x.hl === s.hl &&
+        x.position === s.position &&
+        x.platform === s.platform,
     );
     if (!dup) ref.sources.push(s);
   }

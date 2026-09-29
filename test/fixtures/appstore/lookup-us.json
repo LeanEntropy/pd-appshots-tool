@@ -1,0 +1,136 @@
+{
+  "resultCount": 3,
+  "results": [
+    {
+      "wrapperType": "software",
+      "kind": "software",
+      "trackId": 6754965520,
+      "bundleId": "com.pockethaven.roguelegend",
+      "trackName": "Rogue Legend - Roguelike RPG",
+      "sellerName": "PocketHaven Games Ltd.",
+      "artistName": "PocketHaven Games",
+      "screenshotUrls": [
+        "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/0e/cc/22/0ecc22cc-968c-6475-0561-46991344d821/A.png/320x480bb.jpg",
+        "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/db/41/ec/db41ec6c-e956-7427-349e-48bad4bac26c/B.png/320x480bb.jpg",
+        "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/67/20/d2/6720d2c7-e25c-b320-43b3-924557f2754d/C.png/320x480bb.jpg",
+        "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/b0/3e/02/b03e027b-0deb-5fc0-0514-7dbef13dfcf4/D.png/320x480bb.jpg",
+        "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/e2/d4/80/e2d480cf-9a0a-65ab-13b8-44797402de82/E.png/320x480bb.jpg",
+        "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/99/b6/f3/99b6f3b6-df48-9c31-934b-45a3348e26d3/F.png/320x480bb.jpg"
+      ],
+      "ipadScreenshotUrls": [
+        "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/f6/89/cc/f689cc0e-ea4e-d07c-ed62-ecc20c7dca75/1.png/360x480bb.jpg",
+        "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/c2/54/ac/c254acb8-435b-e37f-3524-1d1bbdc0a096/2.png/360x480bb.jpg",
+        "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/71/54/26/7154266f-e471-1814-2623-3fddaefa527a/4.png/360x480bb.jpg",
+        "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/60/60/a4/6060a4cc-58ef-8438-c308-04dbdc9b7968/3.png/360x480bb.jpg",
+        "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/26/77/b8/2677b851-5c2d-82fc-9dd8-ef296b5144e7/5.png/360x480bb.jpg",
+        "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/c1/d2/59/c1d259d9-ccab-a3b2-8285-dc20732b9ffe/6.png/360x480bb.jpg"
+      ],
+      "artworkUrl512": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/ec/5f/0e/ec5f0ed8-30eb-0f9b-b763-6ffac35419bb/AppIcon-0-0-1x_U007emarketing-0-8-0-85-220.png/512x512bb.jpg",
+      "artworkUrl100": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/ec/5f/0e/ec5f0ed8-30eb-0f9b-b763-6ffac35419bb/AppIcon-0-0-1x_U007emarketing-0-8-0-85-220.png/100x100bb.jpg",
+      "description": "Embark on an action roguelike RPG adventure with Rogue Legend, where every battle makes your hero stronger.\n\nIn Rogue Legend, you journey through worlds filled ",
+      "releaseNotes": "What's New\n* New Saga — A brand-new Saga is here, ready for you to explore.\n* Bu",
+      "version": "0.596",
+      "genres": ["Games", "Adventure", "Action"],
+      "primaryGenreName": "Games",
+      "languageCodesISO2A": [
+        "EN",
+        "FR",
+        "DE",
+        "JA",
+        "KO",
+        "PT",
+        "RU",
+        "ZH",
+        "ES",
+        "TH",
+        "ZH",
+        "TR",
+        "VI"
+      ],
+      "contentAdvisoryRating": "12+",
+      "averageUserRating": 4.88086,
+      "userRatingCount": 5968,
+      "currentVersionReleaseDate": "2026-09-27T13:12:04Z",
+      "trackViewUrl": "https://apps.apple.com/us/app/rogue-legend-roguelike-rpg/id6754965520?uo=4"
+    },
+    {
+      "wrapperType": "software",
+      "kind": "software",
+      "trackId": 6502820653,
+      "bundleId": "com.xq.archeroii",
+      "trackName": "Archero 2",
+      "sellerName": "HABBY PTE. LTD.",
+      "artistName": "HABBY",
+      "screenshotUrls": [
+        "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/65/c4/8b/65c48b78-271a-7bcc-98f3-fa00f056bcff/1242x2688-_U82f1_U6587.jpg/320x480bb.jpg",
+        "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/cb/d8/bc/cbd8bca2-89ab-df94-c60d-704409420917/2.jpg/320x480bb.jpg",
+        "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/8d/42/48/8d4248c9-20d1-39f3-3d3c-7f7df3ec864e/3.jpg/320x480bb.jpg",
+        "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/8f/7e/9d/8f7e9d2d-351d-5d26-aadf-297bc58e61c8/4.jpg/320x480bb.jpg",
+        "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/3b/c5/f1/3bc5f1f6-7b75-da2d-f65b-8ce3741826de/5.jpg/320x480bb.jpg",
+        "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/bc/42/25/bc422585-a64b-d19f-5ebb-d940f0a819c4/1.png/320x480bb.jpg",
+        "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/37/73/32/3773326b-c710-c210-47c6-ac4bf70fb473/battle.png/320x480bb.jpg"
+      ],
+      "ipadScreenshotUrls": [
+        "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/f9/b5/88/f9b5889c-92ff-2fe7-ab5c-97568ed4b91a/726b296b-8fef-4d07-9d6e-967d74bf671a_1.png/576x768bb.png",
+        "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/64/a2/f5/64a2f578-ef2f-d495-61b8-f3209955441a/2ce12e50-4519-4024-b8ab-87c1663643e2_3.png/576x768bb.png",
+        "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/fa/0a/10/fa0a1080-e62a-9b13-5450-541216441953/f33f0311-5730-4c4f-a1ef-6db72995a1e5_4.png/576x768bb.png",
+        "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/8b/36/5f/8b365f77-be6f-db3e-fc92-0a595ad5b899/cc5acb5e-f5e4-4b62-9567-6795416b54fb_2.png/576x768bb.png",
+        "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/71/c2/2f/71c22f18-6488-b942-50d8-8ecdf357150f/405a20fb-8a3e-409b-863b-af8b55e50acb_5.png/576x768bb.png"
+      ],
+      "artworkUrl512": "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/9d/7a/43/9d7a4312-9ed9-8308-78f7-0036fb64245e/AppIcon-0-0-1x_U007emarketing-0-8-0-85-220.png/512x512bb.jpg",
+      "artworkUrl100": "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/9d/7a/43/9d7a4312-9ed9-8308-78f7-0036fb64245e/AppIcon-0-0-1x_U007emarketing-0-8-0-85-220.png/100x100bb.jpg",
+      "description": "Welcome to the new era of the legendary roguelike mobile game—Archero 2! Join 200 million players in unlocking the memories of the archer!\n\nThe once-great hero ",
+      "releaseNotes": "1.Mid-Autumn Event: Starmoon Vow\n-Limited Legendary Skins: Artemis - Moonwake Sh",
+      "version": "1.1.9",
+      "genres": ["Games", "Entertainment", "Action", "Casual"],
+      "primaryGenreName": "Games",
+      "languageCodesISO2A": ["EN", "JA", "KO", "ZH", "TH", "ZH"],
+      "contentAdvisoryRating": "4+",
+      "averageUserRating": 4.58871,
+      "userRatingCount": 23188,
+      "currentVersionReleaseDate": "2026-09-17T03:40:24Z",
+      "trackViewUrl": "https://apps.apple.com/us/app/archero-2/id6502820653?uo=4"
+    },
+    {
+      "wrapperType": "software",
+      "kind": "software",
+      "trackId": 6753709030,
+      "bundleId": "com.TornadoBear.WayOfKings",
+      "trackName": "Path of Kings",
+      "sellerName": "Voodoo",
+      "artistName": "Voodoo",
+      "screenshotUrls": [
+        "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/d9/7c/f4/d97cf447-c401-3894-62a7-f42fce605666/iPhone__U00286.7_U0027_U0027_U0029_-__U00281290_x_2796px.jpg/320x480bb.jpg",
+        "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/c6/c8/4b/c6c84bb5-575e-629b-91a0-f30973aaa1eb/iPhone__U00286.7_U0027_U0027_U0029_-__U00281290_x_2796px-3.jpg/320x480bb.jpg",
+        "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/d6/c3/22/d6c32219-b364-72ba-55b6-81e160803ff8/iPhone__U00286.7_U0027_U0027_U0029_-__U00281290_x_2796px-2.jpg/320x480bb.jpg",
+        "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/2c/d2/42/2cd24290-9aab-4d5e-014f-3c744bcdb0ec/iPhone__U00286.7_U0027_U0027_U0029_-__U00281290_x_2796px-1.jpg/320x480bb.jpg",
+        "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/96/2b/6d/962b6d44-9c64-3691-393c-28321310b30d/iPhone__U00286.7_U0027_U0027_U0029_-__U00281290_x_2796px-4.jpg/320x480bb.jpg"
+      ],
+      "ipadScreenshotUrls": [
+        "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/f3/8b/83/f38b8348-6f6a-0966-7132-8f1c84ac154e/iPad__U002813_U0027_U0027_U0029_-__U00282064_x_2752px.jpg/360x480bb.jpg",
+        "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/67/26/f3/6726f3ca-a4ea-3cd0-aea2-e4929ae9ea8b/iPad__U002813_U0027_U0027_U0029_-__U00282064_x_2752px_U00281_U0029.jpg/360x480bb.jpg",
+        "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/91/8f/22/918f22b1-c9d6-290b-6770-9c2e8e9874ef/iPad__U002813_U0027_U0027_U0029_-__U00282064_x_2752px-2.jpg/360x480bb.jpg",
+        "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/dd/e5/e7/dde5e713-daa2-0eca-77c8-8ce20fd50152/iPad__U002813_U0027_U0027_U0029_-__U00282064_x_2752px-1.jpg/360x480bb.jpg",
+        "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/48/51/87/48518754-73e4-bd8f-cf49-a0cb08ddf8fd/iPad__U002813_U0027_U0027_U0029_-__U00282064_x_2752px-4.jpg/360x480bb.jpg"
+      ],
+      "artworkUrl512": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/7c/3e/c8/7c3ec868-051e-717d-2b7c-10cdf9833976/AppIcon-0-0-1x_U007emarketing-0-8-0-85-220.png/512x512bb.jpg",
+      "artworkUrl100": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/7c/3e/c8/7c3ec868-051e-717d-2b7c-10cdf9833976/AppIcon-0-0-1x_U007emarketing-0-8-0-85-220.png/100x100bb.jpg",
+      "description": "Path of Kings - First-Person Fantasy RPG\n\nEnter the shadows of a twisted fantasy world, where danger lurks in every corner and only the strongest survive.\n\nPath",
+      "releaseNotes": "Small improvements & bug fixes",
+      "version": "1.4.1",
+      "genres": ["Games", "Roleplaying", "Strategy"],
+      "primaryGenreName": "Games",
+      "languageCodesISO2A": ["AR", "EN", "FR", "DE", "IT", "JA", "PT", "RU", "ZH", "ES", "ZH"],
+      "contentAdvisoryRating": "9+",
+      "averageUserRating": 4.87301,
+      "userRatingCount": 45485,
+      "currentVersionReleaseDate": "2026-09-19T02:49:13Z",
+      "trackViewUrl": "https://apps.apple.com/us/app/path-of-kings/id6753709030?uo=4"
+    },
+    {
+      "wrapperType": "artist",
+      "artistId": 1,
+      "artistName": "Not an app"
+    }
+  ]
+}

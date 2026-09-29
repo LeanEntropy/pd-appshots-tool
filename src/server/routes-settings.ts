@@ -1,5 +1,6 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
 import { z } from "zod";
+import { readAppStore } from "../appstore/data.ts";
 import { loadDefaults, readSettings, settingsKey } from "../config/project.ts";
 import { type ProjectSettings, ProjectSettingsSchema } from "../config/project-schema.ts";
 import type { Config } from "../config/schema.ts";
@@ -137,7 +138,15 @@ export async function settingsRoute(
       const view = s ? settingsView(s, found.loaded.config, app.root) : null;
       sendHtml(
         res,
-        settingsPage(id, app.names(id), view, app.token, FIXED, s ? (s.archived ?? false) : null),
+        settingsPage(
+          id,
+          app.names(id),
+          view,
+          app.token,
+          FIXED,
+          s ? (s.archived ?? false) : null,
+          readAppStore(app.storage, { projectId: id }).enabled,
+        ),
       );
     }
     return true;
