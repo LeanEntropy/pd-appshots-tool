@@ -45,6 +45,10 @@ const CONTROLS: [string, RegExp][] = [
   ["Approve and run", /id === "approve"\)\s*act\(/],
   ["Build / Rebuild the overview", /id === "rebuildOverview"\)\s*act\(/],
   ["Stop", /if \(stop\)\s*act\(/],
+  ["Save to a file (share)", /id === "shareExport"\) \{[\s\S]{0,200}?\n\s*act\(b,/],
+  ["Download full-size pictures", /id === "shareOriginals"\) \{\s*act\(b,/],
+  ["Open a shared project", /act\(document\.getElementById\("openShared"\),/],
+  ["Import (shared project)", /function shareImport\(btn, mode\) \{\s*act\(btn,/],
 ];
 
 test("every button that starts work goes through act()", () => {

@@ -31,5 +31,9 @@ export function libraryImageKey(paths: ProjectPaths, rel: string): string | null
   const m = IMAGE.exec(rel);
   if (!lib || !m || !referenced(paths, lib.refsKey).has(m[2] as string)) return null;
   const k = LIB.imageFile(rel.slice("images/".length));
-  return workspaceStorage(paths.workspace).exists(k) ? k : null;
+  const storage = workspaceStorage(paths.workspace);
+  if (storage.exists(k)) return k;
+  // A picture shared as a small preview only (a Light copy): its preview is shown instead.
+  const thumb = LIB.imageFile(`thumb/${m[2]}.webp`);
+  return storage.exists(thumb) ? thumb : null;
 }

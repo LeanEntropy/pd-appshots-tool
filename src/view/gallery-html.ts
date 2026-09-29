@@ -13,6 +13,7 @@ import { REPORTS_A_CSS } from "./report-style-a.ts";
 import { SUGGEST_CSS } from "./report-suggest.ts";
 import { REPORT_SUMMARY_CSS } from "./report-summary.ts";
 import { REPORT_WORDS_CSS } from "./report-words.ts";
+import { SHARE_PANEL_CSS, SHARE_PANEL_HTML, SHARE_PANEL_SCRIPT } from "./share-panel.ts";
 import { appBar, escHtml, type Step, stepBar } from "./shell.ts";
 
 /** Served by the tool server: where the project's API is, and the project's steps. */
@@ -56,7 +57,7 @@ export function galleryTop(token = "", served?: GalleryServed): string {
 <meta name="ssr-token" content="${escHtml(token)}">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Store Screenshot Recipe</title>
-<style>${CSS}${REPORT_LIST_CSS}${REPORT_SUMMARY_CSS}${ADD_CSS}${BUILDER_CSS}${PAIR_GROUP_CSS}${SUGGEST_CSS}${FLAG_CSS}${COUNTRY_ADD_CSS}${REPORT_COUNTRY_CSS}${REPORT_WORDS_CSS}${REPORTS_A_CSS}${REPORT_CARDS_CSS}</style>
+<style>${CSS}${REPORT_LIST_CSS}${REPORT_SUMMARY_CSS}${ADD_CSS}${BUILDER_CSS}${PAIR_GROUP_CSS}${SUGGEST_CSS}${FLAG_CSS}${COUNTRY_ADD_CSS}${REPORT_COUNTRY_CSS}${REPORT_WORDS_CSS}${REPORTS_A_CSS}${REPORT_CARDS_CSS}${SHARE_PANEL_CSS}</style>
 </head>
 <body>
 <div id="runbar" role="status" aria-live="polite" hidden></div>
@@ -73,7 +74,7 @@ export function galleryRest(vm: ViewModel, served?: GalleryServed): string {
 <nav class="tabs" aria-label="Pages"><a href="#overview" data-tab="overview">Overview</a><a href="#competitors" data-tab="competitors">Competitors</a><a href="#screenshots" data-tab="screenshots">Screenshots</a><a href="#analysis" data-tab="analysis">Analysis</a><a href="#report" data-tab="report">Report</a></nav>
 </header>
 <main class="pages">
-<section data-page="overview" hidden><h2 class="ph" tabindex="-1">Store overview</h2>
+<section data-page="overview" hidden>${served ? SHARE_PANEL_HTML : ""}<h2 class="ph" tabindex="-1">Store overview</h2>
 <p class="meta">Free: computed from the downloaded images only, no AI. Orientation mix, aspect ratios, deck lengths, reuse of US images and measured colours per country.</p>
 <div id="overview"></div></section>
 <section data-page="competitors" hidden><h2 class="ph" tabindex="-1">Competitors</h2>
@@ -106,6 +107,7 @@ export function galleryRest(vm: ViewModel, served?: GalleryServed): string {
 <script type="application/json" id="data">${data}</script>
 <script type="application/json" id="app">${app.replace(/</g, "\\u003c")}</script>
 <script>${GALLERY_SCRIPT}</script>
+${served ? `<script>${SHARE_PANEL_SCRIPT}</script>` : ""}
 </body>
 </html>
 `;

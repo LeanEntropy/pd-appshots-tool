@@ -15,6 +15,7 @@ import { getCountries, getLookup, getSearch, postProject } from "./routes-play.t
 import { projectRoute } from "./routes-project.ts";
 import { settingsRoute } from "./routes-settings.ts";
 import { setupRoute } from "./routes-setup.ts";
+import { shareGlobalRoute } from "./routes-share.ts";
 
 const PROJECT_PATH = /^\/p\/([^/]+)(\/.*)?$/;
 const FLAG_PATH = /^\/flags\/([a-z]{2})\.svg$/;
@@ -53,6 +54,7 @@ async function globalRoute(
   const p = url.pathname;
   const get = req.method === "GET";
   if (await appIconRoute(app, req, res, p)) return true;
+  if (await shareGlobalRoute(app, req, res, p)) return true;
   if (p === "/" && get) {
     sendHtml(res, homeHtml(app.token));
     return true;
