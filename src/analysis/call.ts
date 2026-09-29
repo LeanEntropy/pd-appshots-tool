@@ -3,6 +3,7 @@ import type { Taxonomy } from "../config/load.ts";
 import type { Storage } from "../storage/index.ts";
 import { stableHash } from "../util/hash.ts";
 import type { Reservation } from "./budget.ts";
+import { rateLimitWait } from "./pool.ts";
 import type { RenderedPrompt } from "./prompts.ts";
 import type { CallUsage, ModelImage, Provider, VisionResult } from "./providers.ts";
 import { clampRegions } from "./regions.ts";
@@ -15,6 +16,7 @@ import {
   toJsonSchema,
 } from "./schema.ts";
 import { expandLean, leanDeckSchema } from "./schema-lean.ts";
+import { addUsage } from "./usage.ts";
 
 export interface ChunkImage {
   imageId: string;
@@ -80,22 +82,6 @@ export interface ChunkResult {
 
 const MAX_REPAIRS = 2;
 const LIMIT_REACHED = "the spending limit for this batch was reached";
-
-function addUsage(a: CallUsage | undefined, b: CallUsage | undefined): CallUsage | undefined {
-  if (!b) return a;
-  if (!a) return { ...b };
-  const n = (x?: number | null) => x ?? 0;
-  return {
-    inputTokens: n(a.inputTokens) + n(b.inputTokens),
-    outputTokens: n(a.outputTokens) + n(b.outputTokens),
-    cacheReadTokens: n(a.cacheReadTokens) + n(b.cacheReadTokens),
-    cacheWriteTokens: n(a.cacheWriteTokens) + n(b.cacheWriteTokens),
-    durationMs: n(a.durationMs) + n(b.durationMs),
-    turns: n(a.turns) + n(b.turns),
-    requests: n(a.requests) + n(b.requests),
-    wallMs: n(a.wallMs) + n(b.wallMs),
-  };
-}
 
 export interface AnswerQuery {
   step: string;
@@ -192,8 +178,12 @@ export async function validatedCall<T>(
         costUsd: null,
         error: e instanceof Error ? e.message : String(e),
       }));
-    if (r.costUsd) ctx.onCost(r.costUsd);
-    held?.done(r.costUsd ?? 0);
+    // A Claude call that reports no cost (killed, timed out) may still have spent up to its
+    // reservation: it counts at that amount, so the spending limit stays a hard limit.
+    const cost =
+      r.costUsd ?? (held && provider.family === "anthropic" && !r.ok ? held.maxUsd : null);
+    if (cost) ctx.onCost(cost);
+    held?.done(cost ?? 0);
     usage = addUsage(usage, r.usage);
     ctx.onCall?.({
       step,
@@ -209,7 +199,9 @@ export async function validatedCall<T>(
       // A failed call (CLI error, timeout) is retried once; the same error twice ends it.
       const err = `${provider.model}: ${r.error ?? "the model call failed"}`;
       callErrors++;
-      if (callErrors >= 2 || problems[0] === err) return { value: null, key, problems: [err] };
+      // A rate limit is not retried here: the batch waits and retries it once (pool.ts).
+      if (callErrors >= 2 || problems[0] === err || rateLimitWait(err) !== null)
+        return { value: null, key, problems: [err] };
       problems = [err];
       continue;
     }

@@ -184,5 +184,8 @@ test("each model call gets at most what is left of the batch limit", async () =>
   });
   const limits = producer.calls.map((c) => c.maxBudgetUsd);
   assert.ok(limits.every((l) => l <= 3));
-  assert.ok((limits.at(-1) ?? 99) < (limits[0] ?? 0));
+  // Each call may spend exactly what it reserved: the full-analysis ceiling, raised once a
+  // call cost more than that (never more than what was left).
+  assert.equal(limits[0], 0.4);
+  assert.ok(limits.slice(1).every((l) => l >= 0.4));
 });

@@ -39,28 +39,28 @@ function tasks(n: number) {
   return Array.from({ length: n }, (_, i) => i);
 }
 
-test("pool: the first task runs alone, then N at a time; results do not depend on order", async () => {
+test("pool: one at a time until a paid call finished, then N at a time; order does not matter", async () => {
   let live = 0;
   let most = 0;
-  const started: number[] = [];
+  let paidDone = false;
   const done: number[] = [];
   await runPool(tasks(8), {
     concurrency: 3,
     gate: () => true,
     run: async (t) => {
-      started.push(t);
       live++;
       most = Math.max(most, live);
-      if (t === 0) assert.equal(live, 1, "the first call warms the cache alone");
-      await new Promise((r) => setTimeout(r, 5 + ((t * 7) % 11)));
+      if (!paidDone) assert.equal(live, 1, "calls wait for the first paid call (cache warm-up)");
+      // Task 0 is a cache hit (nothing paid): the warm-up is the next task.
+      await new Promise((r) => setTimeout(r, t === 0 ? 1 : 5 + ((t * 7) % 11)));
       live--;
       done.push(t);
-      return true;
+      if (t > 0) paidDone = true;
+      return { ok: true, paid: t > 0 };
     },
     shouldStop: () => false,
     sleep: async () => {},
     slowDown: () => {},
-    rateLimit: () => null,
   });
   assert.equal(most, 3);
   assert.deepEqual(
@@ -79,19 +79,17 @@ test("pool: Stop starts nothing new and lets running tasks finish", async () => 
       if (t === 2) stop = true;
       await new Promise((r) => setTimeout(r, 10));
       finished.push(t);
-      return true;
+      return { ok: true, paid: true };
     },
     shouldStop: () => stop,
     sleep: async () => {},
     slowDown: () => {},
-    rateLimit: () => null,
   });
   assert.ok(finished.length >= 3 && finished.length <= 4, `finished ${finished.join(",")}`);
 });
 
-test("pool: a rate limit drops to one at a time and retries that task once", async () => {
+test("pool: a rate limit drops to one at a time and retries that same task once", async () => {
   const runs: number[] = [];
-  let pending: number | null = null;
   let slowed = 0;
   let live = 0;
   let mostAfter = 0;
@@ -103,27 +101,20 @@ test("pool: a rate limit drops to one at a time and retries that task once", asy
       runs.push(t);
       live++;
       if (limited) mostAfter = Math.max(mostAfter, live);
-      await new Promise((r) => setTimeout(r, 5));
+      await new Promise((r) => setTimeout(r, t === 1 ? 20 : 5));
       live--;
-      if (t === 1 && runs.filter((x) => x === 1).length === 1) {
-        pending = 30_000;
-        limited = true;
-      }
-      return true;
+      const first = t === 1 && runs.filter((x) => x === 1).length === 1;
+      if (first) limited = true;
+      return { ok: true, paid: true, retryAfterMs: first ? 30_000 : null };
     },
     shouldStop: () => false,
     sleep: async () => {},
     slowDown: () => {
       slowed++;
     },
-    rateLimit: () => {
-      const w = pending;
-      pending = null;
-      return w;
-    },
   });
   assert.equal(slowed, 1);
-  assert.equal(runs.filter((x) => x === 1).length, 2, "retried once");
+  assert.equal(runs.filter((x) => x === 1).length, 2, "the rate-limited task is retried once");
   assert.equal(new Set(runs).size, 6);
   assert.ok(mostAfter <= 3);
   assert.equal(rateLimitWait("API Error: 429 rate limit, retry after 12 seconds"), 12_000);

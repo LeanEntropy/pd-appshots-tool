@@ -22,7 +22,7 @@ export function crashEstimate(estimate: number, step: string, parallel: number):
 }
 
 export interface Reservation {
-  /** The most this call may spend (the CLI's own budget guard). */
+  /** The most this call may spend: exactly what was reserved (the CLI's own budget guard). */
   maxUsd: number;
   /** Drops the reservation; `usd` is the call's real cost (to raise the ceiling if above). */
   done: (usd: number) => void;
@@ -62,7 +62,7 @@ export function ledger(
       const id = next++;
       open.set(id, amount);
       return {
-        maxUsd: left,
+        maxUsd: amount,
         done(usd) {
           open.delete(id);
           if (ceiling !== undefined && usd > (ceilings[step] ?? 0)) {

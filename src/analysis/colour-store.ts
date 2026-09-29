@@ -68,7 +68,7 @@ export async function measuredRecords(
 /**
  * Records for statistics and the recommendation input. With "Colours measured by code" on,
  * every usable reading carries its measured colours (old and new records alike, never mixed
- * with the model's); a record not measured yet keeps the model's colours until it is.
+ * with the model's); until every usable record is measured, all keep the model's colours.
  */
 export function withMeasuredRecords(
   paths: ProjectPaths,
@@ -76,9 +76,17 @@ export function withMeasuredRecords(
   records: ReadonlyMap<string, AnalysisRecord>,
 ): Map<string, AnalysisRecord> {
   if (!config.options.speed.measuredColours) return new Map(records);
+  const measured = new Map<string, MeasuredColours>();
+  for (const [id, r] of records) {
+    if (!isUsable(r)) continue;
+    const m = readMeasured(paths, r);
+    // One image not measured yet: the model's colours for all, so the two never mix.
+    if (!m) return new Map(records);
+    measured.set(id, m);
+  }
   return new Map(
     [...records].map(([id, r]) => {
-      const m = isUsable(r) ? readMeasured(paths, r) : null;
+      const m = measured.get(id);
       return [id, m && r.final ? { ...r, final: withMeasuredColours(r.final, m) } : r];
     }),
   );

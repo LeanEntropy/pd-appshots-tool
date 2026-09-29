@@ -10,7 +10,7 @@ import {
   type LayerPixel,
   writeLayerDiff,
 } from "./layer-diff.ts";
-import { rateLimitWait, runPool, sleepUnlessStopped } from "./pool.ts";
+import { rateLimitWait, runPool, sleepUnlessStopped, type TaskOutcome } from "./pool.ts";
 import type { RenderedPrompt } from "./prompts.ts";
 import type { Provider } from "./providers.ts";
 import { type AnalysisRecord, isUsable } from "./records.ts";
@@ -97,7 +97,6 @@ export async function compareLayers(
     noAnchor: [],
   };
   let streak = { key: "", n: 0 };
-  let rateWait: number | null = null;
   const gate = () => {
     if (d.shouldStop()) out.cancelled = true;
     // What is left must fund one call's reserved ceiling (budget.ts).
@@ -105,12 +104,13 @@ export async function compareLayers(
     return !out.cancelled && !out.stoppedForBudget;
   };
   /** One image; false ends the batch (the same error repeated). */
-  async function one(it: LayerItem): Promise<boolean> {
+  async function one(it: LayerItem): Promise<TaskOutcome> {
+    let rateWait: number | null = null;
     const anchor = d.records.get(it.anchorId);
     if (!isUsable(anchor)) {
       out.noAnchor.push(it.imageId);
       d.counter.done++;
-      return true;
+      return { ok: true, paid: false };
     }
     const current = () =>
       currentLayerDiff(d.paths, it.imageId, anchor, d.provider.model, d.prompt.hash);
@@ -118,21 +118,21 @@ export async function compareLayers(
     if (done) {
       if (done.status === "different-screen") out.differentScreens.push(it.imageId);
       d.counter.done++;
-      return true;
+      return { ok: true, paid: false };
     }
     const pseudo = layerAttemptId(it.imageId);
     const lock = lockRecord(d.paths, pseudo, "layer-diff");
     if ("heldBy" in lock) {
       d.counter.done++;
       d.fail("being compared by another job; it will be reused, not paid", it.name, it.position);
-      return true;
+      return { ok: true, paid: false };
     }
     const beat = setInterval(() => lock.heartbeat(), HEARTBEAT_MS);
     beat.unref();
     try {
       if (current()) {
         d.counter.done++;
-        return true;
+        return { ok: true, paid: false };
       }
       const where = `${it.name} #${it.position} in ${it.label}`;
       d.progress(
@@ -188,7 +188,7 @@ export async function compareLayers(
         }
         if (ok) {
           streak = { key: "", n: 0 };
-          return true;
+          return { ok: true, paid: true };
         }
         const msg = rec.problems.join("; ") || "the comparison failed";
         d.fail(msg, it.name, it.position);
@@ -197,9 +197,9 @@ export async function compareLayers(
         streak = key === streak.key ? { key, n: streak.n + 1 } : { key, n: 1 };
         if (streak.n >= d.stopAfterSameErrors) {
           out.aborted = `Stopped: ${streak.n} images in a row failed with the same error: ${msg}`;
-          return false;
+          return { ok: false, paid: true };
         }
-        return true;
+        return { ok: true, paid: true, retryAfterMs: rateWait };
       } finally {
         endAttempt(d.paths, pseudo, attempt, d.batchId, ok ? "finished" : "failed", own);
       }
@@ -219,11 +219,6 @@ export async function compareLayers(
         "layer-diff",
         "The AI service asked us to slow down; continuing one image at a time.",
       ),
-    rateLimit: () => {
-      const w = rateWait;
-      rateWait = null;
-      return w;
-    },
   });
   return out;
 }

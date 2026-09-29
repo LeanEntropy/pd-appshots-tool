@@ -3,7 +3,7 @@ import { HEARTBEAT_MS, type Lease } from "../storage/leases.ts";
 import { endAttempt, lockRecord, startAttempt } from "./attempts.ts";
 import type { ChunkImage } from "./call.ts";
 import type { PlanItem } from "./plan.ts";
-import { rateLimitWait, runPool, sleepUnlessStopped } from "./pool.ts";
+import { rateLimitWait, runPool, sleepUnlessStopped, type TaskOutcome } from "./pool.ts";
 import { type AnalysisRecord, isUsable, readRecord } from "./records.ts";
 import { errorKey } from "./run-chunk.ts";
 
@@ -74,14 +74,6 @@ export async function analyseImages(
   };
   const deferred: PlanItem[] = [];
   let streak = { key: "", n: 0 };
-  let rateWait: number | null = null;
-  const lastRateLimit = {
-    take: () => {
-      const w = rateWait;
-      rateWait = null;
-      return w;
-    },
-  };
   const many = (d.concurrency ?? 1) > 1 ? ` (${d.concurrency} at a time)` : "";
   const usable = (id: string) => isUsable(readRecord(d.paths, id));
 
@@ -92,8 +84,9 @@ export async function analyseImages(
     return !out.cancelled && !out.stoppedForBudget;
   };
 
-  /** false when the batch must stop (repeated identical errors). */
-  async function run(items: PlanItem[], last: boolean): Promise<boolean> {
+  /** ok false when the batch must stop (repeated identical errors); this chunk's rate limit. */
+  async function run(items: PlanItem[], last: boolean): Promise<TaskOutcome> {
+    let rateWait: number | null = null;
     const leases: Lease[] = [];
     const part: PlanItem[] = [];
     for (const it of items) {
@@ -120,7 +113,7 @@ export async function analyseImages(
       leases.push(lock);
       part.push(it);
     }
-    if (!part.length) return true;
+    if (!part.length) return { ok: true, paid: false };
     const beat = setInterval(() => {
       for (const l of leases) l.heartbeat();
     }, HEARTBEAT_MS);
@@ -168,7 +161,7 @@ export async function analyseImages(
         if (leases.some((l) => !l.heartbeat())) {
           out.aborted =
             "Stopped: the computer paused during an analysis and another job took over the image. Nothing more was written.";
-          return false;
+          return { ok: false, paid: true };
         }
         for (const raw of recs) {
           const paid =
@@ -208,7 +201,7 @@ export async function analyseImages(
           streak = key === streak.key ? { key, n: streak.n + 1 } : { key, n: 1 };
           if (streak.n >= d.stopAfterSameErrors) {
             out.aborted = `Stopped: ${streak.n} images in a row failed with the same error: ${msg}`;
-            return false;
+            return { ok: false, paid: true };
           }
         }
       } finally {
@@ -216,7 +209,7 @@ export async function analyseImages(
         for (const id of attempt.keys()) close(id, false);
       }
       d.progress("analysis", `${label}: saved`);
-      return true;
+      return { ok: true, paid: true, retryAfterMs: rateWait };
     } finally {
       clearInterval(beat);
       for (const l of leases) l.release();
@@ -239,12 +232,11 @@ export async function analyseImages(
         "analysis",
         `The AI service asked us to slow down; continuing one image at a time (waiting ${Math.round(waitMs / 1000)} s).`,
       ),
-    rateLimit: () => lastRateLimit.take(),
   });
   // Images another job held: checked again once, at the end (free if finished meanwhile).
   for (const it of deferred) {
     if (out.aborted || !gate()) break;
-    if (!(await run([it], true))) break;
+    if (!(await run([it], true)).ok) break;
   }
   return out;
 }

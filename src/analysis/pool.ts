@@ -1,46 +1,53 @@
 /**
- * A small worker pool for per-image AI calls (plan-analysis-speed, item 1). The first task runs
- * alone (its answer warms the prompt cache for the others); then up to `concurrency` tasks run
- * at once. Stop means "start nothing new": running tasks finish and are saved. A rate-limit
- * answer drops the pool to one task at a time for the rest of the batch and retries that task
- * once, after the wait the error names.
+ * A small worker pool for per-image AI calls (plan-analysis-speed, item 1). Tasks run one at a
+ * time until the first task that paid for a model call has finished (its answer warms the
+ * prompt cache for the others); then up to `concurrency` run at once. Stop means "start nothing
+ * new": running tasks finish and are saved. A task that met a rate limit drops the pool to one
+ * task at a time for the rest of the batch and is retried once, after the wait it names.
  */
+export interface TaskOutcome {
+  /** false ends the whole batch (e.g. the same error repeated). */
+  ok: boolean;
+  /** A model call was paid for (cache hits and skipped images are not). */
+  paid?: boolean;
+  /** This task met a rate limit: the wait it asked for. */
+  retryAfterMs?: number | null;
+}
+
 export interface PoolDeps<T> {
   concurrency: number;
   /** false when nothing more may start (Stop pressed, spending limit reached). */
   gate: () => boolean;
-  /** Runs one task; false ends the whole batch (e.g. the same error repeated). */
-  run: (task: T) => Promise<boolean>;
+  run: (task: T) => Promise<TaskOutcome>;
   shouldStop: () => boolean;
   sleep: (ms: number, shouldStop: () => boolean) => Promise<void>;
   /** Told once when the pool slows down. */
   slowDown: (waitMs: number) => void;
-  /** After each task: the wait a rate-limit answer asked for, or null. Taking it clears it. */
-  rateLimit: () => number | null;
 }
 
 export async function runPool<T>(tasks: readonly T[], d: PoolDeps<T>): Promise<void> {
   const queue = [...tasks];
   const retried = new Set<T>();
   let limit = d.concurrency;
+  let warm = false;
   let ended = false;
 
   async function one(task: T): Promise<void> {
-    if (!(await d.run(task))) ended = true;
-    const wait = d.rateLimit();
-    if (wait !== null) {
-      if (limit > 1) d.slowDown(wait);
-      limit = 1;
-      if (!retried.has(task)) {
-        retried.add(task);
-        await d.sleep(wait, d.shouldStop);
-        queue.unshift(task);
-      }
-    }
+    const r = await d.run(task);
+    if (!r.ok) ended = true;
+    if (r.paid) warm = true;
+    const wait = r.retryAfterMs ?? null;
+    if (wait === null) return;
+    if (limit > 1) d.slowDown(wait);
+    limit = 1;
+    if (retried.has(task) || ended) return;
+    retried.add(task);
+    await d.sleep(wait, d.shouldStop);
+    queue.unshift(task);
   }
 
   async function worker(n: number): Promise<void> {
-    while (!ended && n < limit && queue.length) {
+    while (!ended && queue.length && n < limit) {
       if (!d.gate()) {
         ended = true;
         return;
@@ -49,11 +56,13 @@ export async function runPool<T>(tasks: readonly T[], d: PoolDeps<T>): Promise<v
     }
   }
 
-  const first = queue.shift();
-  if (first === undefined) return;
-  if (!d.gate()) return;
-  await one(first);
-  // A task put back after a rate limit may arrive when the workers have ended: go round again.
+  // One at a time until a paid call has finished (it warms the prompt cache)...
+  while (!ended && queue.length && !warm) {
+    if (!d.gate()) return;
+    await one(queue.shift() as T);
+  }
+  // ...then up to `limit` at once. A task put back after a rate limit may arrive when the
+  // workers have ended: go round again.
   while (!ended && queue.length)
     await Promise.all(Array.from({ length: Math.max(1, limit) }, (_, n) => worker(n)));
 }
