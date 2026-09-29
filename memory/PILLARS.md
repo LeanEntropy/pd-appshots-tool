@@ -190,3 +190,4 @@ Output per locale:
 - Home project card (user, 2026-09-29, angry): ONLY an "Open" button. No extra buttons, no Next/suggestion text. Keep icon, name, one meta line, one status line. Archive lives on the project page.
 - Knowledge base trust rule (user, 2026-09-29): no single source is trusted. A claim needs 2+ independent sources before it counts as common practice or trustworthy; single-source claims are unverified and at most inspire a test idea.
 - Plan review process (user, 2026-09-29): Opus writes the complete plan -> exactly ONE gpt-5.6-sol review of the finished plan -> Opus 5.5 processes the feedback (apply or decline with reasons). No repeated review rounds.
+- Sources never appear as plain text in recommendations or report text (user, 2026-09-29). Cite with a marker such as [1] or [src] that shows the sources in a tooltip.
