@@ -305,3 +305,6 @@ Reviewer: gpt-5.6-sol, 2026-09-29, one review (plan, requirements and code facts
 | 13 | Analysis date undefined | Accepted | `paidBy.at`, else `updatedAt` labelled "last updated" |
 | 14 | XSS surface wider than text | Accepted | One escaping path per context (JSON `<`, `esc`, `encodeURIComponent`, prefix-checked links, `textContent`); payload tests |
 | 15 | App Store `platform` conflict strategy vague | Accepted | Fixed identity rule, one source helper shared with A1, test for sources without `platform` |
+
+## User decisions (2026-09-29)
+All recommended options accepted: D1 directory and game page right after the image page; D2 rating only when already saved; D3 add the paid English-translation step behind approval; D4 reinforcement added to the layout prompt (done with the wireframe merge); D5 numbered wireframes on the image page only; D6 link report thumbnails later; D7 games from all projects, archived tagged and last; D8 directory countries as flag chips. The user also approved the new two-layer wireframe look.
