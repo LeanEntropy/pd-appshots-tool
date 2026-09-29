@@ -5,6 +5,7 @@ import { CSS } from "./gallery-css.ts";
 import { GALLERY_SCRIPT } from "./gallery-script.ts";
 import type { ViewModel } from "./model.ts";
 import { BUILDER_CSS } from "./report-builder.ts";
+import { REPORT_CARDS_CSS } from "./report-cards.ts";
 import { REPORT_COUNTRY_CSS } from "./report-country.ts";
 import { REPORT_LIST_CSS } from "./report-list.ts";
 import { REPORTS_A_CSS } from "./report-style-a.ts";
@@ -44,7 +45,7 @@ export function galleryHtml(vm: ViewModel, token = "", served?: GalleryServed): 
 <meta name="ssr-token" content="${escHtml(token)}">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Store Screenshot Recipe</title>
-<style>${CSS}${REPORT_LIST_CSS}${REPORT_SUMMARY_CSS}${ADD_CSS}${BUILDER_CSS}${SUGGEST_CSS}${FLAG_CSS}${COUNTRY_ADD_CSS}${REPORT_COUNTRY_CSS}${REPORT_WORDS_CSS}${REPORTS_A_CSS}</style>
+<style>${CSS}${REPORT_LIST_CSS}${REPORT_SUMMARY_CSS}${ADD_CSS}${BUILDER_CSS}${SUGGEST_CSS}${FLAG_CSS}${COUNTRY_ADD_CSS}${REPORT_COUNTRY_CSS}${REPORT_WORDS_CSS}${REPORTS_A_CSS}${REPORT_CARDS_CSS}</style>
 </head>
 <body>
 <div id="runbar" role="status" aria-live="polite" hidden></div>
@@ -78,8 +79,8 @@ ${served ? appBar(served.name, settingsLink(served.apiBase)) + stepBar(served.st
 </div></div></div></section>
 <section data-page="report" hidden><h2 class="ph" tabindex="-1">Reports</h2>
 <div class="card noprint"><button type="button" id="newReport" class="primary">+ New report</button> <label><input type="checkbox" id="showImages" checked> Show images</label>
-<span class="meta">All reports of this project, newest first. Each one is folded: open it to read it.</span><p id="reportStatus" class="act-msg" hidden></p></div>
-<div id="builder" class="card noprint" hidden></div><div id="expansion" class="noprint"></div><div id="suggestPanel" class="noprint"></div>
+<p id="reportStatus" class="act-msg" hidden></p></div>
+<div id="reportCards" class="noprint"></div><div id="builder" class="card noprint" hidden></div><div id="suggestPanel" class="noprint"></div>
 <div id="reportList"></div></section>
 </main>
 <dialog id="approvalDlg" aria-label="Analysis approval and progress"><div id="approval" tabindex="-1"></div></dialog>

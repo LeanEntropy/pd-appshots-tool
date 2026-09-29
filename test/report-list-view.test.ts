@@ -134,11 +134,10 @@ test("What to research next is numbered 7, before the statistics, only when give
   assert.match(b.innerHTML, /class="secno">7\.<\/span> Detailed statistics/);
 });
 
-test("a report card is folded, shows its facts, and offers the right actions", () => {
+test("the shown report shows its facts and offers the right actions", () => {
   const p = page();
   const pilot = p.card(summary({ newer: "New or updated analyses since this version was made." }));
-  assert.match(pilot, /^<details class="rcard t-pilot"/);
-  assert.doesNotMatch(pilot, /<details class="rcard[^>]*\bopen\b/, "folded");
+  assert.match(pilot, /^<section class="rcard t-pilot"/);
   assert.match(pilot, /<span class="rc-name">Pilot report<\/span>/);
   assert.match(
     pilot,
