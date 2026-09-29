@@ -16,6 +16,8 @@ import {
   versionFileKey,
 } from "../reports/store.ts";
 import { isPreset } from "../reports/types.ts";
+import { upgradeWordsMd } from "../reports/words-md.ts";
+import { withWordStatus } from "../reports/words-status.ts";
 import { settingsOf } from "../settings/access.ts";
 import { workspaceStorage } from "../storage/index.ts";
 import { markdownToHtml } from "../view/md-html.ts";
@@ -105,16 +107,19 @@ export function getReportVersion(loaded: LoadedConfig, id: string, vid: string):
       const raw = s.getJson(versionFileKey(paths, entry.id, "country-report.json")) as {
         kind?: unknown;
         countries?: unknown;
-      };
+      } & Parameters<typeof upgradeWordsMd>[1];
       if (raw?.kind === "countries" && Array.isArray(raw.countries))
         return {
           status: 200,
           body: {
             ...meta,
-            country: artWordingDeep(raw),
+            // "Words to use" statuses are derived by code from the saved data (no AI).
+            country: artWordingDeep(withWordStatus(raw)),
             // The written report too: the basic PDF export prints it.
             html: markdownToHtml(
-              artWording(s.getText(versionFileKey(paths, entry.id, "report.md")) ?? ""),
+              artWording(
+                upgradeWordsMd(s.getText(versionFileKey(paths, entry.id, "report.md")) ?? "", raw),
+              ),
             ),
           },
         };

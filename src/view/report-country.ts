@@ -56,12 +56,11 @@ function adviceOne(a) {
   const x = a.advice;
   const acts = x.actions.map((t) => "<tr><td><strong>" + esc(noIdText(t.action)) + "</strong></td><td>" + esc(noIdText(t.why)) + "</td><td>" + (t.positions.length ? esc(t.positions.join(", ")) : "all") + "</td><td>" + pill(t.impact === "large" ? "following" : t.impact === "medium" ? "slightly" : "none", t.impact) + "</td></tr>").join("");
   const deck = x.deck.map((p) => '<tr class="' + (p.change === "same" ? "" : "miss") + '"><th>' + p.position + "</th><td>" + esc(CHANGE_WORDS[p.change] || p.change) + (p.fromMainPosition ? ' <span class="meta">(main #' + p.fromMainPosition + ")</span>" : ' <span class="meta">(new)</span>') + "</td><td>" + esc(p.screen) + '</td><td class="local">' + esc(p.headline) + (p.subline ? "<br>" + esc(p.subline) : "") + '<div class="bt">' + esc(p.backTranslation) + "</div></td><td>" + esc(p.band) + "</td><td>" + (p.logo.show ? "yes" : "no") + '<div class="meta">' + esc(p.logo.why) + "</div></td><td>" + esc(p.wordingNotes) + '<div class="meta">' + esc(noIdText(p.why)) + "</div></td></tr>").join("");
-  const terms = x.terms.map((t) => "<li><strong>" + esc(t.concept) + ":</strong> use <strong>" + esc(t.use) + "</strong>" + (t.avoid ? ", not " + esc(t.avoid) : "") + ". " + esc(noIdText(t.why)) + "</li>").join("");
   const rv = a.review;
   return '<p class="short">' + esc(noIdText(x.shortAnswer)) + "</p><h4>What to change, most important first</h4>"
     + '<div class="tablewrap"><table class="rt"><tr><th>Change</th><th>Why (evidence)</th><th>Positions</th><th>Impact</th></tr>' + acts + "</table></div>"
     + "<h4>The deck for this country</h4>" + '<div class="tablewrap"><table class="rt"><tr><th>#</th><th>Change</th><th>Screen to capture</th><th>Local text (back-translation)</th><th>Band</th><th>Game logo</th><th>Wording and why</th></tr>' + deck + "</table></div>"
-    + (terms ? "<h4>Words to use</h4><ul>" + terms + "</ul>" : "")
+    + wordsToUseHtml(a)
     + (x.keepFromMain ? "<p><strong>Keep as on the main page:</strong> " + esc(x.keepFromMain) + "</p>" : "")
     + (rv ? "<p><strong>Second opinion:</strong> " + (rv.verdict === "ok" ? "no major problems" : "changes requested") + (a.revised ? " (the advice above was revised after it)" : "") + ".</p>" + (rv.findings.length ? "<ul>" + rv.findings.map((f) => "<li>" + (f.severity === "major" ? "<strong>Major</strong>" : "Minor") + ", " + (f.position ? "position " + f.position : "whole deck") + ": " + esc(f.issue) + " " + esc(f.suggestion) + "</li>").join("") + "</ul>" : "") : "")
     + '<p class="meta">' + esc(a.note) + "</p>";

@@ -94,7 +94,15 @@ function adviceAnswer(prompt: string): CountryAdvice {
       wordingNotes: "",
       why: "most competitors translate",
     })),
-    terms: [{ concept: "battle", use: "バトル", avoid: "", why: "the common word here" }],
+    terms: [
+      {
+        concept: "battle",
+        use: "バトル",
+        meaning: "battle (batoru)",
+        avoid: "",
+        why: "the common word here",
+      },
+    ],
     keepFromMain: "the order",
   };
 }
