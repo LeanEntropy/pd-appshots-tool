@@ -110,10 +110,18 @@ ${S} .rbox > details.sec:not([data-sec]):not(.research) { margin: 0; padding: 0;
 ${S} .rbox > details.sec:not([data-sec]):not(.research) > summary { display: flex; align-items: center; gap: 10px; padding: 18px 24px 12px; background: none; border-radius: 0; color: var(--a-h); }
 ${S} .rbox > details.sec:not([data-sec]):not(.research) > summary .sec-t { flex: 1; font-size: 22px; font-weight: 800; }
 ${S} .rbox > details.sec:not([data-sec]):not(.research) > .sec-b { padding: 0; }
-${S} .rbox nav.toc { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 10px; margin: 0; padding: 14px 24px; border: 0; border-radius: 0; background: var(--a-grey2); }
-${S} .rbox nav.toc strong { font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+/* The contents: a dark teal navigation band with light pills, kept in view on wide screens */
+${S} .rbox nav.toc { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 10px; margin: 0; padding: 14px 24px; border: 0; border-radius: 0; background: var(--a-head); color: #fff; box-shadow: 0 2px 10px rgba(0,0,0,.18); }
+${S} .rbox nav.toc strong { font-size: 12px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: #fff; margin-right: 4px; }
 ${S} .rbox nav.toc ol { display: contents; list-style: none; } ${S} .rbox nav.toc li { display: inline; margin: 0; }
-${S} .rbox nav.toc .linkbtn { background: var(--a-surface); border-radius: 999px; padding: 3px 11px; text-decoration: none; font-size: 13px; }
+${S} .rbox nav.toc .linkbtn { background: rgba(255,255,255,.14); color: #fff; border: 1px solid rgba(255,255,255,.3); border-radius: 999px; padding: 4px 12px; text-decoration: none; font-size: 13px; font-weight: 600; }
+${S} .rbox nav.toc .linkbtn:hover { background: rgba(255,255,255,.28); border-color: rgba(255,255,255,.55); }
+${S} .rbox nav.toc .linkbtn:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+${S} .rbox nav.toc .linkbtn img.flag { box-shadow: 0 0 0 1px rgba(255,255,255,.4); }
+@container (min-width: 760px) {
+  ${S} .rbox nav.toc { position: sticky; top: var(--toc-top, 0px); z-index: 6; }
+  ${S} .rbox details.sec, ${S} .rbox .cpanel h3 { scroll-margin-top: var(--toc-room, 140px); }
+}
 ${S} .rbox .banner { border: 0; border-radius: 10px; background: var(--a-bad-bg); }
 
 /* Inside the sections: rows with dividers, no boxes */

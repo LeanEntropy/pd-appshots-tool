@@ -107,6 +107,20 @@ export function renderAnalysisPrompt(
     : renderPrompt(root, objectsDir, "fullAnalysis", taxonomy);
 }
 
+/**
+ * The layout breakdown's own call (plan-layout-wireframes, separate-call version, 2026-09-29):
+ * kept apart from PROMPT_VERSIONS, so the main analysis, its keys and plans never change.
+ */
+export const LAYOUT_PROMPT_FILE = "layout-only.v1";
+
+export function renderLayoutPrompt(
+  root: string,
+  objectsDir: string,
+  taxonomy: Taxonomy,
+): RenderedPrompt {
+  return renderFile(root, objectsDir, LAYOUT_PROMPT_FILE, taxonomy);
+}
+
 /** Renders a versioned prompt with the taxonomy and stores it by content hash. */
 export function renderPrompt(
   root: string,

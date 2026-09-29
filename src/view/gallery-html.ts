@@ -38,8 +38,18 @@ function settingsLink(apiBase: string): string {
  * served by the local gallery server) authorises the page's saves and analysis requests.
  */
 export function galleryHtml(vm: ViewModel, token = "", served?: GalleryServed): string {
-  const data = JSON.stringify(vm).replace(/</g, "\\u003c");
-  const app = JSON.stringify({ apiBase: served?.apiBase ?? "/api", stage: served?.stage ?? "" });
+  return galleryTop(token, served) + galleryRest(vm, served);
+}
+
+/**
+ * The served page goes out in two parts: the top (bar, steps and this loading line) at once,
+ * the rest when the view model is ready (it removes the loading line first).
+ */
+export const GALLERY_BOOT = `<div id="boot" class="card" role="status" aria-live="polite"><p>Loading the project...</p><progress aria-label="Loading the project"></progress></div>\n`;
+export const GALLERY_BOOT_DONE = `<script>document.getElementById("boot").remove();</script>\n`;
+
+/** Everything before the page's own header: needs no project data beyond the name and steps. */
+export function galleryTop(token = "", served?: GalleryServed): string {
   return `<!doctype html>
 <html lang="en">
 <head>
@@ -52,7 +62,14 @@ export function galleryHtml(vm: ViewModel, token = "", served?: GalleryServed): 
 <body>
 <div id="runbar" role="status" aria-live="polite" hidden></div>
 ${served ? appBar(served.name, settingsLink(served.apiBase)) + stepBar(served.steps) : ""}
-<header class="top">
+`;
+}
+
+/** The header, the pages and the scripts, with the view model as the page's data. */
+export function galleryRest(vm: ViewModel, served?: GalleryServed): string {
+  const data = JSON.stringify(vm).replace(/</g, "\\u003c");
+  const app = JSON.stringify({ apiBase: served?.apiBase ?? "/api", stage: served?.stage ?? "" });
+  return `<header class="top">
 <div class="titlebar"><h1>${served ? escHtml(served.name) : `Store Screenshot Recipe: ${escHtml(vm.project)}`}</h1><span class="meta grow">Downloaded run ${escHtml(vm.runId)}. Market for the analysis: ${escHtml(vm.coreMarket.label)}.</span><label>Show country: <select id="locale"></select></label></div>
 <nav class="tabs" aria-label="Pages"><a href="#overview" data-tab="overview">Overview</a><a href="#competitors" data-tab="competitors">Competitors</a><a href="#screenshots" data-tab="screenshots">Screenshots</a><a href="#analysis" data-tab="analysis">Analysis</a><a href="#report" data-tab="report">Report</a></nav>
 </header>
@@ -78,7 +95,7 @@ ${served ? appBar(served.name, settingsLink(served.apiBase)) + stepBar(served.st
 <p><label>Batch: <select id="stage"><option value="pilot">Core pilot (ours + first ${escHtml(vm.pilotCompetitors)} competitors)</option><option value="core">Full core check</option></select></label></p>
 <button id="startAnalysis" class="primary">Start analysis</button>
 <p class="meta">Shows the image count, model passes and estimated cost first. Nothing is sent to an AI model until you press Approve and run. Screenshots already analysed are never sent again.</p>
-</div></div></div></section>
+</div><div id="layoutBackfill" class="card" hidden></div></div></div></section>
 <section data-page="report" hidden><h2 class="ph" tabindex="-1">Reports</h2>
 <div class="card noprint"><button type="button" id="newReport" class="primary">+ New report</button> <label><input type="checkbox" id="showImages" checked> Show images</label>
 <p id="reportStatus" class="act-msg" hidden></p></div>

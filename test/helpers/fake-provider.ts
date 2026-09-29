@@ -1,5 +1,6 @@
 import type { Provider, VisionCall, VisionResult } from "../../src/analysis/providers.ts";
 import type { ImageAnalysis } from "../../src/analysis/schema.ts";
+import { layoutFor } from "./layout.ts";
 
 export function reading(
   imageRef: string,
@@ -238,6 +239,7 @@ export function fakeProvider(o: FakeOptions): Provider & { calls: VisionCall[] }
         }));
         return ok({ decisions });
       }
+      if (c.prompt.startsWith("Draw the layout")) return ok({ layout: layoutFor(c.prompt) });
       const images = c.images.map((i) => {
         const r = o.read(i.image.localPath ?? "");
         return reading(i.ref, r.screenType, r.headline);

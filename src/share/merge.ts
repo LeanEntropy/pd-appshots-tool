@@ -1,4 +1,4 @@
-import { USABLE } from "../analysis/records.ts";
+import { type AnalysisRecord, isUsable } from "../analysis/records.ts";
 import { GoogleIdSchema } from "../library/refs.ts";
 import type { Storage } from "../storage/index.ts";
 import { AttemptLogSchema, isRecordLike, RecordSchema } from "./validate.ts";
@@ -11,8 +11,7 @@ import { AttemptLogSchema, isRecordLike, RecordSchema } from "./validate.ts";
  */
 export type MergeResult = "added" | "same" | "kept" | "updated";
 
-const usable = (r: { status: string; final: unknown }) =>
-  (USABLE as readonly string[]).includes(r.status) && r.final !== null && r.final !== undefined;
+const usable = (r: unknown) => isUsable(r as AnalysisRecord);
 
 function parse(bytes: Buffer | undefined): unknown {
   if (!bytes) return undefined;
@@ -35,7 +34,8 @@ export function mergeLibraryFile(storage: Storage, key: string, bytes: Buffer): 
   if (key.startsWith("library/analysis/") && isRecordLike(parse(bytes))) {
     const mine = RecordSchema.safeParse(parse(local));
     const theirs = RecordSchema.parse(parse(bytes));
-    const newer = !mine.success || theirs.updatedAt > mine.data.updatedAt;
+    // Replaced only by a usable record that is strictly newer, or when the local one is unusable.
+    const newer = !mine.success || Date.parse(theirs.updatedAt) > Date.parse(mine.data.updatedAt);
     const better = usable(theirs) && (!mine.success || !usable(mine.data) || newer);
     if (!better) return "kept";
     storage.putJson(key, parse(bytes));

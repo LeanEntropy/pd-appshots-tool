@@ -1,4 +1,5 @@
 import type { Storage } from "../storage/index.ts";
+import { LOCKS, lockHolder } from "../storage/leases.ts";
 import { listShared, removeShared, SHARE_PREFIX } from "../storage/share-files.ts";
 import { type ExportResult, exportKey, writePackage } from "./export.ts";
 import type { ShareKind } from "./format.ts";
@@ -80,6 +81,13 @@ export function startExport(
 ): { ok: true; task: Task<unknown> } | { ok: false; problem: string } {
   if (exports.get(projectId)?.state === "running")
     return { ok: false, problem: "This project is being saved to a file already." };
+  // A running analysis or download changes the files being saved: wait for it.
+  if ([LOCKS.ai, LOCKS.store].some((k) => lockHolder(storage, k)?.projectId === projectId))
+    return {
+      ok: false,
+      problem:
+        "This project is analysing or downloading. Save it to a file when that has finished.",
+    };
   cleanOld(storage);
   const t = start(async (progress) => ({
     ...(await writePackage(storage, projectId, { ...o, kind, progress })),

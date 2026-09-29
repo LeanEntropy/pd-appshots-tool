@@ -1,0 +1,821 @@
+{
+ "usableImages": 142,
+ "backfill": 84,
+ "ours": 34,
+ "competitorsTop3": 50,
+ "byGame": {
+  "Rogue Legend": 34,
+  "Capybara Go": 4,
+  "Archero 2": 4,
+  "Survivor.io": 8,
+  "Overgeared Hero": 14,
+  "Legend of Mushroom": 3,
+  "Clash of Critters": 8,
+  "Sword x Staff": 6,
+  "Path of Kings": 3
+ },
+ "costUsd": {
+  "low": 8.4,
+  "mid": 10.5,
+  "high": 12.6
+ },
+ "rows": [
+  {
+   "imageId": "7faff58709212d086a139273115e53d6da1d71879ac3d002b5001044060fd939",
+   "game": "Rogue Legend",
+   "ours": true,
+   "where": [
+    "ID-id #2",
+    "PH-en #2",
+    "TH-th #2",
+    "US-en #2"
+   ]
+  },
+  {
+   "imageId": "ddd7f0710af668e6ed7d088a2e010a8704b1b3a34b6500f2de30c5f9a8dea732",
+   "game": "Rogue Legend",
+   "ours": true,
+   "where": [
+    "ID-id #1",
+    "PH-en #1",
+    "TH-th #1",
+    "US-en #1"
+   ]
+  },
+  {
+   "imageId": "b8248720d13a1f19c5644f14871d4ab6f8f0a0cada40e551d75f1a288fadd958",
+   "game": "Rogue Legend",
+   "ours": true,
+   "where": [
+    "ID-id #3",
+    "PH-en #3",
+    "TH-th #3",
+    "US-en #3"
+   ]
+  },
+  {
+   "imageId": "892bc472f6fc8c50925f42f0a176839fbaf3bb167288f999dd4c0a168fc54b26",
+   "game": "Rogue Legend",
+   "ours": true,
+   "where": [
+    "ID-id #5",
+    "PH-en #5",
+    "TH-th #5",
+    "US-en #5"
+   ]
+  },
+  {
+   "imageId": "704abf82eeab6b27de6739215198dc59ea29b5a551e1186129dc848c7ca85406",
+   "game": "Rogue Legend",
+   "ours": true,
+   "where": [
+    "ID-id #4",
+    "PH-en #4",
+    "TH-th #4",
+    "US-en #4"
+   ]
+  },
+  {
+   "imageId": "cd46ee02beb1726100b2f453b821d5647885ff1fa0e75f9cb846bb6a86e984a7",
+   "game": "Rogue Legend",
+   "ours": true,
+   "where": [
+    "ID-id #6",
+    "PH-en #6",
+    "TH-th #6",
+    "US-en #6"
+   ]
+  },
+  {
+   "imageId": "35b5b35262a6265d72d52a49d8e8d534da6a22e68bd83190c6804711618e785e",
+   "game": "Rogue Legend",
+   "ours": true,
+   "where": [
+    "ID-id #7",
+    "PH-en #7",
+    "TH-th #7",
+    "US-en #7"
+   ]
+  },
+  {
+   "imageId": "abf9d0605d8cf38238d0d23fa4d870fed7bf2a3bb7877baaac76308e07a5e8c1",
+   "game": "Rogue Legend",
+   "ours": true,
+   "where": [
+    "JP-ja #1"
+   ]
+  },
+  {
+   "imageId": "65e7e4f166517ff2a4e2e796a91930ab86da0d2c5042237f4a1f5c616594b8c5",
+   "game": "Rogue Legend",
+   "ours": true,
+   "where": [
+    "JP-ja #2"
+   ]
+  },
+  {
+   "imageId": "71c3e8d3fe99cbd17206ea0034e549f7f6d54b925486f3667423964d4995e35a",
+   "game": "Rogue Legend",
+   "ours": true,
+   "where": [
+    "JP-ja #4"
+   ]
+  },
+  {
+   "imageId": "dd853ada50a95e0ab7f96061a20a223f1a6145e84151b46af27cea6824b619e6",
+   "game": "Rogue Legend",
+   "ours": true,
+   "where": [
+    "JP-ja #3"
+   ]
+  },
+  {
+   "imageId": "1e9d128d232a73edf48d137d1d0aff236e6e3cbe2d88996c168dbd1f957e5d2c",
+   "game": "Rogue Legend",
+   "ours": true,
+   "where": [
+    "JP-ja #5"
+   ]
+  },
+  {
+   "imageId": "6191f3abac69b01533205eeb5f1feb4f409769bd070b85fb94d7e45528dd1dec",
+   "game": "Rogue Legend",
+   "ours": true,
+   "where": [
+    "JP-ja #6"
+   ]
+  },
+  {
+   "imageId": "8b074756cdbf43a0b3c98375191e1a858ff09a8a1e4817a25a270e8609082f1f",
+   "game": "Rogue Legend",
+   "ours": true,
+   "where": [
+    "JP-ja #7"
+   ]
+  },
+  {
+   "imageId": "12f5f2d93e7b09617f737c835a8465f48916f6afebc93261fcc7c9ae96949d2f",
+   "game": "Rogue Legend",
+   "ours": true,
+   "where": [
+    "JP-ja #8"
+   ]
+  },
+  {
+   "imageId": "e695101785913dd860d63eabac5ccdd841095d14c0934ac8730beb07b2c17a9d",
+   "game": "Rogue Legend",
+   "ours": true,
+   "where": [
+    "JP-ja #9"
+   ]
+  },
+  {
+   "imageId": "368ca8f930c3abcbf2e263e0fbffc989362878cfd3ea8fc0856a401596fd8d46",
+   "game": "Rogue Legend",
+   "ours": true,
+   "where": [
+    "JP-ja #10"
+   ]
+  },
+  {
+   "imageId": "78bd9ee39d364f1a6623132435df97b825e038c3bbb6239e2094afa592762267",
+   "game": "Rogue Legend",
+   "ours": true,
+   "where": [
+    "JP-ja #11"
+   ]
+  },
+  {
+   "imageId": "6edbb9c01c4ddcef107d8aa7e7772825d483a22ce04d67a0f79ff04e6a6be7b3",
+   "game": "Rogue Legend",
+   "ours": true,
+   "where": [
+    "JP-ja #12"
+   ]
+  },
+  {
+   "imageId": "edfcee97ced7fc535a15e3ecd0cc307f6ef3a678366541e53ed915a4b2758b4a",
+   "game": "Rogue Legend",
+   "ours": true,
+   "where": [
+    "KR-ko #1"
+   ]
+  },
+  {
+   "imageId": "79d71f9f1dc331dc00d4616f5b7c3897332724845cdb5d04c14f8b89c0e9c2d5",
+   "game": "Rogue Legend",
+   "ours": true,
+   "where": [
+    "KR-ko #2"
+   ]
+  },
+  {
+   "imageId": "010814af5073cb152aa70b055180d4fdb8c42e6cfc142a5d53eaab8394ace095",
+   "game": "Rogue Legend",
+   "ours": true,
+   "where": [
+    "KR-ko #3"
+   ]
+  },
+  {
+   "imageId": "058706786373935d1eef83103cbe6368518328b3129d9002ae62fa0a41cda197",
+   "game": "Rogue Legend",
+   "ours": true,
+   "where": [
+    "KR-ko #4"
+   ]
+  },
+  {
+   "imageId": "c27fba5cd5bd0e518d7b5abf7261a09b360f6e443df6d32dd1b054b041436058",
+   "game": "Rogue Legend",
+   "ours": true,
+   "where": [
+    "KR-ko #8"
+   ]
+  },
+  {
+   "imageId": "4d6a9c1e1a6c9f3259b2067a5598110cc20a2565992d00fc002bfce352a4cb7c",
+   "game": "Rogue Legend",
+   "ours": true,
+   "where": [
+    "KR-ko #9"
+   ]
+  },
+  {
+   "imageId": "fe2fa4e92d0db5ae999fd48438d23eec329331bb8ed7562c8449ba72885a0ecf",
+   "game": "Rogue Legend",
+   "ours": true,
+   "where": [
+    "KR-ko #11"
+   ]
+  },
+  {
+   "imageId": "38025f19d202c7932cff43f9bf443c42b4180718a9974728314f4a5b9c1bbfc0",
+   "game": "Rogue Legend",
+   "ours": true,
+   "where": [
+    "HK-zh-TW #1",
+    "TW-zh-TW #1"
+   ]
+  },
+  {
+   "imageId": "16500b26c872fb5fa4d5731bc5400eec78ec89a36881512d8fd051c140a6c0c5",
+   "game": "Rogue Legend",
+   "ours": true,
+   "where": [
+    "HK-zh-TW #3",
+    "TW-zh-TW #3"
+   ]
+  },
+  {
+   "imageId": "30c2103568222c57e8010829d76f2a109d6d61bf6ae0311d878aec708109b7c2",
+   "game": "Rogue Legend",
+   "ours": true,
+   "where": [
+    "HK-zh-TW #5",
+    "TW-zh-TW #5"
+   ]
+  },
+  {
+   "imageId": "beee0c186734114d1e85c43e33f08b626d3b2f19599a6d1f0f7791d34c516a10",
+   "game": "Rogue Legend",
+   "ours": true,
+   "where": [
+    "HK-zh-TW #6",
+    "TW-zh-TW #6"
+   ]
+  },
+  {
+   "imageId": "4bc62e8ace313989eb9849e9a7f9ad70fea03f5acaca198e57e216e14212c5f3",
+   "game": "Rogue Legend",
+   "ours": true,
+   "where": [
+    "HK-zh-TW #7",
+    "TW-zh-TW #7"
+   ]
+  },
+  {
+   "imageId": "4394ce22205a5ccecfa212e8d9a0ddeca86319c7164e16591f3c3b8ff57fcc93",
+   "game": "Rogue Legend",
+   "ours": true,
+   "where": [
+    "HK-zh-TW #9",
+    "TW-zh-TW #9"
+   ]
+  },
+  {
+   "imageId": "18827aa3a85c7ded50fa913211889bf8a34a7ca2ff82a2b88eb7203e6cda8a93",
+   "game": "Rogue Legend",
+   "ours": true,
+   "where": [
+    "HK-zh-TW #10",
+    "TW-zh-TW #10"
+   ]
+  },
+  {
+   "imageId": "6eb5abe947ed421ebc68d2cba3bb5b2f916d95d0953a74305a3e4deee667474e",
+   "game": "Rogue Legend",
+   "ours": true,
+   "where": [
+    "HK-zh-TW #11",
+    "TW-zh-TW #11"
+   ]
+  },
+  {
+   "imageId": "e85608365af1d24fb861a70d33d7740f0d9ca720d6ab7a3c20bdbd2770b46811",
+   "game": "Capybara Go",
+   "ours": false,
+   "where": [
+    "PH-en #1",
+    "US-en #1"
+   ]
+  },
+  {
+   "imageId": "98742f3c3a9bb7d06b74fd8c5614010412b94df90b3960eef9345b0f02f1cd45",
+   "game": "Capybara Go",
+   "ours": false,
+   "where": [
+    "PH-en #2",
+    "US-en #2"
+   ]
+  },
+  {
+   "imageId": "3e01ca3faea167103aaa0767f282957a54dceac9b80f04b02a0cb440b4a2979e",
+   "game": "Capybara Go",
+   "ours": false,
+   "where": [
+    "PH-en #3",
+    "US-en #3"
+   ]
+  },
+  {
+   "imageId": "a09e24ef3b6b709cd0c6932ab68fc99d0e6a0796cecceedf68fe873e7cfe2d6f",
+   "game": "Capybara Go",
+   "ours": false,
+   "where": [
+    "JP-ja #1"
+   ]
+  },
+  {
+   "imageId": "f2b013c4130ccf24741fcb51441614eda15993e8eea344e2c57c11f445774afa",
+   "game": "Archero 2",
+   "ours": false,
+   "where": [
+    "ID-id #1",
+    "PH-en #1",
+    "TH-th #1",
+    "US-en #1"
+   ]
+  },
+  {
+   "imageId": "342346eb7741a0d50e8a016165a9dd4788915be172f8e30616ba22616c78aec2",
+   "game": "Archero 2",
+   "ours": false,
+   "where": [
+    "PH-en #2",
+    "US-en #2"
+   ]
+  },
+  {
+   "imageId": "fb3e0d19bee34d979583eb5197e7d6d95b60a189d9d1e374e119fce4ee892b66",
+   "game": "Archero 2",
+   "ours": false,
+   "where": [
+    "PH-en #3",
+    "US-en #3"
+   ]
+  },
+  {
+   "imageId": "9d520164697242d8006acf9e810691a920db2b877b4e1d21a7ff2a3073aaf677",
+   "game": "Archero 2",
+   "ours": false,
+   "where": [
+    "KR-ko #3"
+   ]
+  },
+  {
+   "imageId": "b6f07457879b50e4498424c4854cb79bf455290b9559dc4164d76c8ca20e50ba",
+   "game": "Survivor.io",
+   "ours": false,
+   "where": [
+    "PH-en #1",
+    "US-en #1"
+   ]
+  },
+  {
+   "imageId": "da3a13da161872b2d750ab587d0792502415b7c721a0ae26cb7fc77c967418b2",
+   "game": "Survivor.io",
+   "ours": false,
+   "where": [
+    "PH-en #2",
+    "US-en #2"
+   ]
+  },
+  {
+   "imageId": "a1cb5491722241fb458380c95b4ef203fe0136f319783a5afc778e3a174ffd1d",
+   "game": "Survivor.io",
+   "ours": false,
+   "where": [
+    "PH-en #3",
+    "US-en #3"
+   ]
+  },
+  {
+   "imageId": "d8595bf06095061390285a3b25cee2088436137a80ff4c7f003b230b9cdc8576",
+   "game": "Survivor.io",
+   "ours": false,
+   "where": [
+    "JP-ja #2"
+   ]
+  },
+  {
+   "imageId": "be55245f450694c8223305b609795833e6c9d6210a027d440b56a1fb7afa7560",
+   "game": "Survivor.io",
+   "ours": false,
+   "where": [
+    "JP-ja #3"
+   ]
+  },
+  {
+   "imageId": "1057044e93d258813eda8cfa5ece12f67d7c2f129c5e46a25e75cdddac32fae0",
+   "game": "Survivor.io",
+   "ours": false,
+   "where": [
+    "KR-ko #3"
+   ]
+  },
+  {
+   "imageId": "267226a37e1338201d54f2ca79fc5191c1eb1a7fb81e0303d6d22e23a0ecddfe",
+   "game": "Survivor.io",
+   "ours": false,
+   "where": [
+    "KR-ko #2"
+   ]
+  },
+  {
+   "imageId": "998e04587c9d17ea10d07ba4218aae255f92e8d72151030b79e1e8c4f40a6dd8",
+   "game": "Survivor.io",
+   "ours": false,
+   "where": [
+    "HK-zh-TW #3",
+    "TW-zh-TW #3"
+   ]
+  },
+  {
+   "imageId": "8e2e50491fbdd9fba750464a16a0cc69e221107bcc2621b79980d679b9a78e35",
+   "game": "Overgeared Hero",
+   "ours": false,
+   "where": [
+    "ID-id #1",
+    "PH-en #1",
+    "US-en #1"
+   ]
+  },
+  {
+   "imageId": "afd912586ad48ca57f98665b1d6b7e87931314d16e7b97f66493ab36a084f15c",
+   "game": "Overgeared Hero",
+   "ours": false,
+   "where": [
+    "ID-id #2",
+    "PH-en #2",
+    "US-en #2"
+   ]
+  },
+  {
+   "imageId": "fa27e906fd1a5872c9dc9b496344ca822028a4170c8fb6ce1a0e0cf6b5919059",
+   "game": "Overgeared Hero",
+   "ours": false,
+   "where": [
+    "ID-id #3",
+    "PH-en #3",
+    "US-en #3"
+   ]
+  },
+  {
+   "imageId": "a0c6f8a2fbd70128edb420cd8a8b9150fc71fc147c2fd46dd6e0496fc8e329bb",
+   "game": "Overgeared Hero",
+   "ours": false,
+   "where": [
+    "JP-ja #1"
+   ]
+  },
+  {
+   "imageId": "d76a4b38a132c27498326357fb5aca69a6ef70693d61cb1001d3b02245be7a54",
+   "game": "Overgeared Hero",
+   "ours": false,
+   "where": [
+    "JP-ja #2"
+   ]
+  },
+  {
+   "imageId": "6008fb4ad8bbaa75db2656d485055e751238f8756577ec7f5203417c7f157ea8",
+   "game": "Overgeared Hero",
+   "ours": false,
+   "where": [
+    "JP-ja #3"
+   ]
+  },
+  {
+   "imageId": "eee6ded7e358fba979460cdf49539445b30efda3f6b847a28ddf777c783c4f50",
+   "game": "Overgeared Hero",
+   "ours": false,
+   "where": [
+    "KR-ko #1"
+   ]
+  },
+  {
+   "imageId": "4a726d13451a5be3b3b079f1809c3db66c0f224228738b9b9504bb9d57ffb5c0",
+   "game": "Overgeared Hero",
+   "ours": false,
+   "where": [
+    "KR-ko #2"
+   ]
+  },
+  {
+   "imageId": "9acd086efbeb06c10d92d8ff4dfa53a97b8b31d684c7807fa8030b15ca8f9e5a",
+   "game": "Overgeared Hero",
+   "ours": false,
+   "where": [
+    "KR-ko #3"
+   ]
+  },
+  {
+   "imageId": "e4da56f8a805ba4f743c1dfcc15e4b513b71aaf20dcb3257ce52ec5863cd6691",
+   "game": "Overgeared Hero",
+   "ours": false,
+   "where": [
+    "HK-zh-TW #1",
+    "TW-zh-TW #1"
+   ]
+  },
+  {
+   "imageId": "92b4ad98a661fe8a8d988e37b31787e47e41fb1b0b978cdd76272f137f6046c5",
+   "game": "Overgeared Hero",
+   "ours": false,
+   "where": [
+    "HK-zh-TW #2",
+    "TW-zh-TW #2"
+   ]
+  },
+  {
+   "imageId": "ff3e5b2da53ba272f7ed780da1f3fe65237be7f195a020b9c69b094eabedb103",
+   "game": "Overgeared Hero",
+   "ours": false,
+   "where": [
+    "HK-zh-TW #3",
+    "TW-zh-TW #3"
+   ]
+  },
+  {
+   "imageId": "f8e959773bedd8cbc7652ecc90107b218130c0cf63e3642079e45fbda0704af0",
+   "game": "Overgeared Hero",
+   "ours": false,
+   "where": [
+    "TH-th #1"
+   ]
+  },
+  {
+   "imageId": "fe0df9b69851a6da0bdb0eb705de04e66766d80f9c54fc5c824cfa993f9b01ca",
+   "game": "Overgeared Hero",
+   "ours": false,
+   "where": [
+    "TH-th #3"
+   ]
+  },
+  {
+   "imageId": "ceebb5ae8a5f4c2d5bf80e0f034c1b2d026c3a38d0b304108aef345cd7cb4b62",
+   "game": "Legend of Mushroom",
+   "ours": false,
+   "where": [
+    "HK-zh-TW #2",
+    "ID-id #2",
+    "JP-ja #2",
+    "KR-ko #2",
+    "PH-en #2",
+    "TH-th #2",
+    "TW-zh-TW #2",
+    "US-en #2",
+    "VN-vi #2"
+   ]
+  },
+  {
+   "imageId": "6f3f9e0a2e6b4115f954667b6a31ef840292fe29f5204430703cf59a997fc947",
+   "game": "Legend of Mushroom",
+   "ours": false,
+   "where": [
+    "HK-zh-TW #1",
+    "ID-id #1",
+    "JP-ja #1",
+    "KR-ko #1",
+    "PH-en #1",
+    "TH-th #1",
+    "TW-zh-TW #1",
+    "US-en #1",
+    "VN-vi #1"
+   ]
+  },
+  {
+   "imageId": "ce1c0012193fae117746075beee7b27af321fd86e732f5610ffc2837d938545b",
+   "game": "Legend of Mushroom",
+   "ours": false,
+   "where": [
+    "HK-zh-TW #3",
+    "ID-id #3",
+    "JP-ja #3",
+    "KR-ko #3",
+    "PH-en #3",
+    "TH-th #3",
+    "TW-zh-TW #3",
+    "US-en #3",
+    "VN-vi #3"
+   ]
+  },
+  {
+   "imageId": "8b3561674797ad8fd796f657e65122f1f4bab89fb20c9cd4385a8dc7481bb6c6",
+   "game": "Clash of Critters",
+   "ours": false,
+   "where": [
+    "PH-en #1",
+    "US-en #1"
+   ]
+  },
+  {
+   "imageId": "938e503412eccdd60d0b627a0020e289d86056b43097fd7909ca0037afffa792",
+   "game": "Clash of Critters",
+   "ours": false,
+   "where": [
+    "PH-en #2",
+    "US-en #2"
+   ]
+  },
+  {
+   "imageId": "00cf31d70bb85244d6007c2c8943c716121385778622d7e5809c74056b9db451",
+   "game": "Clash of Critters",
+   "ours": false,
+   "where": [
+    "PH-en #3",
+    "US-en #3"
+   ]
+  },
+  {
+   "imageId": "f2ce4ac39934b0a78d546899bbdf3f475ff95a686ef8029aa2a9b6769c2387b5",
+   "game": "Clash of Critters",
+   "ours": false,
+   "where": [
+    "KR-ko #2"
+   ]
+  },
+  {
+   "imageId": "bd58f783599b8b539d7a972ea0fcde1f02b76bd640c10bfa20f92d8445aefe16",
+   "game": "Clash of Critters",
+   "ours": false,
+   "where": [
+    "KR-ko #3"
+   ]
+  },
+  {
+   "imageId": "4147c40dd12f4d40eddf49cfd092e4ff1a4d48a15deffcd20987167ac88c70e0",
+   "game": "Clash of Critters",
+   "ours": false,
+   "where": [
+    "HK-zh-TW #1",
+    "TW-zh-TW #1"
+   ]
+  },
+  {
+   "imageId": "916f193fa4a6d05d5c0edebe01dadfaefbcda5942a27493ce86f905baeabd8ae",
+   "game": "Clash of Critters",
+   "ours": false,
+   "where": [
+    "HK-zh-TW #2",
+    "TW-zh-TW #2"
+   ]
+  },
+  {
+   "imageId": "e3237b230d2d5b87002b3b5bfdcc0cffe21a42622c3505de4a4d0edbcdf4b618",
+   "game": "Clash of Critters",
+   "ours": false,
+   "where": [
+    "HK-zh-TW #3",
+    "TW-zh-TW #3"
+   ]
+  },
+  {
+   "imageId": "7247c5f8188d920dda3d81a96c833cf4ff1dc2ad048bd340658663de1dcac586",
+   "game": "Sword x Staff",
+   "ours": false,
+   "where": [
+    "ID-id #1",
+    "JP-ja #1",
+    "KR-ko #1",
+    "PH-en #1",
+    "TH-th #1",
+    "US-en #1",
+    "VN-vi #1"
+   ]
+  },
+  {
+   "imageId": "50643e8866172cebd500b7cf5b1e6128c90cd2ed1b72f768522ca55f3d1ef9f7",
+   "game": "Sword x Staff",
+   "ours": false,
+   "where": [
+    "ID-id #2",
+    "JP-ja #2",
+    "KR-ko #2",
+    "PH-en #2",
+    "TH-th #2",
+    "US-en #2",
+    "VN-vi #2"
+   ]
+  },
+  {
+   "imageId": "becfd866eec1767e69bd47f5a4592b1e7ca07a8ee817dd690337e84da0a41278",
+   "game": "Sword x Staff",
+   "ours": false,
+   "where": [
+    "ID-id #3",
+    "JP-ja #3",
+    "KR-ko #3",
+    "PH-en #3",
+    "TH-th #3",
+    "US-en #3",
+    "VN-vi #3"
+   ]
+  },
+  {
+   "imageId": "1a86d2ffc56ad77ab06a25712bb8954c323c3157fd2d9a4eaff7f826a719e873",
+   "game": "Sword x Staff",
+   "ours": false,
+   "where": [
+    "HK-zh-TW #1",
+    "TW-zh-TW #1"
+   ]
+  },
+  {
+   "imageId": "1b3150b34e7d5139883746872b218cc4716ac8ac8528f18f4bcd15652d912076",
+   "game": "Sword x Staff",
+   "ours": false,
+   "where": [
+    "HK-zh-TW #2",
+    "TW-zh-TW #2"
+   ]
+  },
+  {
+   "imageId": "5f53641d1706af5ea411bd2b494f34a1740c9ade635a7f4ab70f5d80b3d6ab05",
+   "game": "Sword x Staff",
+   "ours": false,
+   "where": [
+    "HK-zh-TW #3",
+    "TW-zh-TW #3"
+   ]
+  },
+  {
+   "imageId": "801946e0037188cea48e674136414d39746343ce2722588288fba6aae490c30a",
+   "game": "Path of Kings",
+   "ours": false,
+   "where": [
+    "HK-zh-TW #7",
+    "ID-id #7",
+    "JP-ja #7",
+    "KR-ko #7",
+    "PH-en #2",
+    "TH-th #2",
+    "TW-zh-TW #7",
+    "US-en #2",
+    "VN-vi #2"
+   ]
+  },
+  {
+   "imageId": "90beb989d06daade4a11bfb03beda7bd4558a287b54d58d7e13f0263bdca92b7",
+   "game": "Path of Kings",
+   "ours": false,
+   "where": [
+    "HK-zh-TW #6",
+    "ID-id #6",
+    "JP-ja #6",
+    "KR-ko #6",
+    "PH-en #1",
+    "TH-th #1",
+    "TW-zh-TW #6",
+    "US-en #1",
+    "VN-vi #1"
+   ]
+  },
+  {
+   "imageId": "f356a78eb337d3d48f87d0cd9132edcec1cb202235cc38dcb9f98def4925e58b",
+   "game": "Path of Kings",
+   "ours": false,
+   "where": [
+    "HK-zh-TW #8",
+    "ID-id #8",
+    "JP-ja #8",
+    "KR-ko #8",
+    "PH-en #3",
+    "TH-th #3",
+    "TW-zh-TW #8",
+    "US-en #3",
+    "VN-vi #3"
+   ]
+  }
+ ]
+}

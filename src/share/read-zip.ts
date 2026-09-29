@@ -23,8 +23,10 @@ function listEntries(zip: ZipFile): Promise<Entry[]> {
     const out: Entry[] = [];
     zip.on("entry", (e: Entry) => {
       out.push(e);
-      if (out.length > LIMITS.entries) reject(new PackageError("The file has too many entries."));
-      else zip.readEntry();
+      if (out.length > LIMITS.entries) {
+        zip.close();
+        reject(new PackageError("The file has too many entries."));
+      } else zip.readEntry();
     });
     zip.once("end", () => resolve(out));
     zip.once("error", reject);

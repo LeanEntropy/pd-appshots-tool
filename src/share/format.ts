@@ -91,6 +91,7 @@ const LIBRARY_DIRS = new Set([
   "layer-diff",
   "pixel-check",
   "same-screen",
+  "layout",
   "store-text",
   "concept-maps",
   "icons",

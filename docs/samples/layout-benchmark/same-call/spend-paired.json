@@ -1,0 +1,68 @@
+{
+ "usd": 0.4996,
+ "calls": [
+  {
+   "step": "full-analysis",
+   "model": "claude-fable-5-1",
+   "key": "22fc4fb2e8facf1cf20fbe19e65184ce70314f35d4db522584928b52241e1405",
+   "imageIds": [
+    "b799e91aee76927b805be9c807e1892ea169d45aadc645dbc29608176b35ba21"
+   ],
+   "ok": true,
+   "costUsd": 0.2605,
+   "usage": {
+    "inputTokens": 2,
+    "outputTokens": 1238,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 9929,
+    "durationMs": 17901,
+    "turns": 2,
+    "wallMs": 37558,
+    "requests": 1
+   },
+   "at": "2026-09-29T08:05:11.835Z"
+  },
+  {
+   "step": "full-analysis",
+   "model": "claude-fable-5-1",
+   "key": "f42be7aca9fbe38a94228f6d8d1ec7ea5a12a59d62ca3e9c44c35b5b1ab68d58",
+   "imageIds": [
+    "ddd7f0710af668e6ed7d088a2e010a8704b1b3a34b6500f2de30c5f9a8dea732"
+   ],
+   "ok": true,
+   "costUsd": 0.10377575,
+   "usage": {
+    "inputTokens": 2,
+    "outputTokens": 1004,
+    "cacheReadTokens": 7343,
+    "cacheWriteTokens": 2586,
+    "durationMs": 15266,
+    "turns": 2,
+    "wallMs": 28036,
+    "requests": 1
+   },
+   "at": "2026-09-29T08:05:39.918Z"
+  },
+  {
+   "step": "full-analysis",
+   "model": "claude-fable-5-1",
+   "key": "6f0deb665d408ca18f5459960107ae474a9196caf5ebae091826e9d3a151737c",
+   "imageIds": [
+    "ce1c0012193fae117746075beee7b27af321fd86e732f5610ffc2837d938545b"
+   ],
+   "ok": true,
+   "costUsd": 0.13532575000000002,
+   "usage": {
+    "inputTokens": 2,
+    "outputTokens": 1635,
+    "cacheReadTokens": 7343,
+    "cacheWriteTokens": 2586,
+    "durationMs": 21746,
+    "turns": 2,
+    "wallMs": 30079,
+    "requests": 1
+   },
+   "at": "2026-09-29T08:06:10.027Z"
+  }
+ ]
+}

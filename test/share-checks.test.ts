@@ -4,6 +4,7 @@ import { entryKey } from "../src/share/format.ts";
 import { importPackage } from "../src/share/import.ts";
 import { inspectPackage, uploadKey } from "../src/share/inspect.ts";
 import { openPackage, readEntry } from "../src/share/read-zip.ts";
+import { exportBytes, scrubContext } from "../src/share/scrub.ts";
 import { checkFile } from "../src/share/validate.ts";
 import type { LocalFsStorage } from "../src/storage/index.ts";
 import { sha256 } from "../src/util/hash.ts";
@@ -72,6 +73,9 @@ test("damaged, incomplete or padded packages are refused before anything is writ
     await refused(r.storage, withManifest(es, { ...m, formatVersion: 99 })),
     /newer version/,
   );
+  // The summary cannot be made to show another project than the one inside.
+  const other = { ...m, project: { ...m.project, name: "Something else" } };
+  assert.match(await refused(r.storage, withManifest(es, other)), /does not match the project/);
   assert.match(
     await refused(
       r.storage,
@@ -134,4 +138,17 @@ test("each file is checked against what the tool expects there", () => {
     /analysis/,
   );
   assert.equal(checkFile("project/reports/a/report.md", Buffer.from("# ok"), refs), null);
+  // Privacy rewrite keeps JSON valid; store pages keep their public contact addresses.
+  const ctx = scrubContext("C:\\ws", "C:\\tool", []);
+  const text = JSON.stringify({ note: "mail:\nme@example.com", path: "C:\\ws\\x.json" });
+  const out = exportBytes("project/runs/a.json", Buffer.from(text), ctx).toString();
+  assert.deepEqual(JSON.parse(out), { note: "mail:\n<e-mail>", path: "<workspace>\\x.json" });
+  const store = exportBytes("library/store-text/a/us-en/d.json", Buffer.from(text), ctx);
+  assert.match(store.toString(), /me@example\.com/);
+  // A record cannot claim a time far in the future (it would win every later merge).
+  const future = { imageId: sha, status: "ok", updatedAt: "2999-01-01T00:00:00.000Z", final: {} };
+  const recordName = `library/analysis/${sha}/k.json`;
+  assert.match(checkFile(recordName, Buffer.from(JSON.stringify(future)), refs) ?? "", /analysis/);
+  const fine = { ...future, updatedAt: "2026-01-01T00:00:00.000Z" };
+  assert.equal(checkFile(recordName, Buffer.from(JSON.stringify(fine)), refs), null);
 });

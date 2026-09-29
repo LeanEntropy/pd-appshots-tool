@@ -175,17 +175,26 @@ async function write(
   let droppedLimits = false;
   let done = 0;
   const total = manifest.files.length;
+  // Every destination is worked out first: two entries may never end up in one place.
+  const targets = new Map<string, NonNullable<ReturnType<typeof entryKey>>>();
+  const used = new Set<string>();
+  for (const f of manifest.files) {
+    const t = entryKey(renamed(f.path, o.from, o.to), o.to, staged);
+    if (!t || used.has(t.key)) throw new PackageError(`"${f.path}" cannot be imported.`);
+    used.add(t.key);
+    targets.set(f.path, t);
+  }
   try {
     for (const f of manifest.files) {
       const e = ix.entries.get(f.path);
-      const target = entryKey(renamed(f.path, o.from, o.to), o.to, staged);
+      const target = targets.get(f.path);
       if (!e || !target) throw new PackageError(`"${f.path}" cannot be imported.`);
       const r = await readEntry(ix, e);
       if (r.sha256 !== f.sha256)
         throw new PackageError(`"${f.path}" changed while it was being imported.`);
       if (f.path === "project/project.json") {
-        const o = JSON.parse(r.bytes.toString("utf8")).overrides;
-        droppedLimits = !!(o?.budget || o?.options?.spending);
+        const ov = JSON.parse(r.bytes.toString("utf8")).overrides;
+        droppedLimits = !!(ov?.budget || ov?.options?.spending);
       }
       const fresh = target.area === "project" || !storage.exists(target.key);
       const bytes = rewrite(f.path, r.bytes, o.from, o.to, fresh);
@@ -205,6 +214,16 @@ async function write(
     }
     await pending.drain(0);
     progress("Opening the project", total, total);
+    // Everything the project needs is in the staging folder before it goes live.
+    storage.putJson(key(staged, "state", "shared-from.json"), {
+      version: 1,
+      packageId: manifest.packageId,
+      kind: manifest.kind,
+      sharedAt: manifest.createdAt,
+      importedAt: new Date().toISOString(),
+      fromProject: o.from,
+    });
+    const settings = storage.getJson(key(staged, "project.json")) as { name: string };
     const stamp = new Date().toISOString().replace(/[:.]/g, "-");
     let replacedTo: string | null = null;
     if (o.mode === "replace" && storage.listProjectIds().includes(o.to))
@@ -215,17 +234,11 @@ async function write(
       if (replacedTo) commitStagedProject(storage, replacedTo, o.to);
       throw e;
     }
-    forgetRefs(storage.localPath(key("projects", o.to, "refs.json")));
-    storage.putJson(key("projects", o.to, "state", "shared-from.json"), {
-      version: 1,
-      packageId: manifest.packageId,
-      kind: manifest.kind,
-      sharedAt: manifest.createdAt,
-      importedAt: new Date().toISOString(),
-      fromProject: o.from,
-    });
-    readRegistry(storage);
-    const settings = storage.getJson(key("projects", o.to, "project.json")) as { name: string };
+    // After the switch nothing may fail the import: the project is live.
+    try {
+      forgetRefs(storage.localPath(key("projects", o.to, "refs.json")));
+      readRegistry(storage);
+    } catch {}
     return {
       projectId: o.to,
       name: settings.name,

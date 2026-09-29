@@ -104,4 +104,6 @@ export const PER_IMAGE_STEPS: ReadonlySet<string> = new Set([
   "full-analysis",
   "review",
   "adjudicate",
+  // The layout breakdown's own call (src/layout/call.ts); not part of the analysis key.
+  "layout",
 ]);

@@ -65,8 +65,8 @@ export function saveStoreText(
 
 function snapshotDates(storage: Storage, dir: string): string[] {
   const dates: string[] = [];
-  for (const k of storage.list(dir)) {
-    const name = k.slice(dir.length + 1);
+  // One folder read (the snapshots sit directly in it).
+  for (const name of storage.children(dir)) {
     if (name.endsWith(".json") && DATE.test(name.slice(0, -5))) dates.push(name.slice(0, -5));
   }
   return dates.sort();

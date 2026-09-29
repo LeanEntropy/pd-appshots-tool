@@ -54,6 +54,8 @@ export async function writePackage(
   if (!settings) throw new Error(`There is no project "${projectId}".`);
   o.progress?.("Counting files", 0, 0);
   const c = o.collected ?? (await collectProject(storage, projectId));
+  if (o.kind === "full" && !c.fullSize)
+    throw new Error("This project has no full-size pictures to include. Save it as Light.");
   const files = filesFor(c, o.kind);
   const others = readRegistry(storage)
     .projects.map((p) => p.id)

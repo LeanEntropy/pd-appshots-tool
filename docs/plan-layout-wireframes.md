@@ -1,6 +1,6 @@
 # Plan: layout breakdown and wireframes per store image
 
-Date: 2026-09-28. Status: **draft for user approval**, reviewed by gpt-5.6-sol (review in `docs/reviews/plan-layout-wireframes-review-gpt.md`; what was applied or declined is at the end). No code yet.
+Date: 2026-09-28. Status: **approved 2026-09-29 (decisions in section 11); the separate-call version passed its benchmark and is merged (section 14)**. Reviewed by gpt-5.6-sol (review in `docs/reviews/plan-layout-wireframes-review-gpt.md`; what was applied or declined is at the end). No code yet.
 Authority: `memory/PILLARS.md`. Builds on `docs/plan-reports.md` (R2b A/B test cards, R3 builder, R4 country step), `docs/analysis-requirements-user-2026-09-27.md`, `docs/report-requirements-user-2026-09-28.md`. Answer key: the four agent breakdowns in `docs/samples/wireframe-*/`.
 
 ## 0. Bottom line
@@ -287,3 +287,101 @@ The sandbox could not read files, so the plan, the pillars, plan-reports 3B, 3C 
 | 18 | Language fit not typographically exact | **Partly applied:** font named, always "approximate", no shrink percentage on the fallback. **Declined:** a separate shaping engine; sharp's text rendering already shapes Thai and CJK |
 | 19 | Internal terms and decisions without consequences | **Applied:** plain summary above the decisions; D4 as one choice (8 or 10). Milestone codes are kept only as short handles in this plan, next to plain names; the tool's own text uses plain words |
 | 20 | PDF too early | **Applied:** PDF moved to its own last step (L4b) |
+
+## 11. User decisions (2026-09-29)
+
+All recommended options accepted:
+
+| # | Decision |
+|---|---|
+| D1 | Run the 4-image benchmark first, about $0.85 to $1.10, hard cap $1.20 for everything. The optional extras (a layout-only pricing call, a real composite, a paired core-only run) are NOT approved. |
+| D2 | Keep existing analyses; the layout is its own write-once file next to the image's analysis in the shared library. |
+| D3 | Backfill later, only our images and the competitors' first 3 positions. Not approved to spend yet: the exact count and cost come first (section 12). |
+| D4 | At most 8 boxes per layer. |
+| D5 | Small-size check with the default thresholds (200 px preview, headline at least 8 px, at most 2 competing text blocks). |
+| D6 | The A/B test AI does not draw variant layouts now. |
+| D7 | A layout pattern needs at least 3 different competitor games. |
+
+## 12. Benchmark result (2026-09-29) and how the build differs from this plan
+
+**Verdict: NO-GO, not merged.** Spent $0.92 of the $1.20 cap: 4 calls, all valid on the first call, no repairs. Result page: `docs/samples/layout-benchmark/index.html`; numbers in `results.json`, `scores.json`, `spend.json`; frozen answer keys and their rules in `answer-keys/` (checked by gpt-5.6-sol, `key-check-gpt.md`).
+
+| Gate | Result | Numbers |
+|---|---|---|
+| 1. Each part | FAIL | Elements F1 0.93, placement error 1.5 points: pass. Text character error 14%: the only error is Survivor.io's logo, which the core reading does not transcribe as a text and the layout contract gives no text of its own (headlines and sublines: 0% on all 4). Band tilt and edges within tolerance 2 of 7: Survivor.io has two bands (a slab at -7.7 degrees and a purple band at -11.2); the model drew one band, and its measured top edge equals the slab's (-7.5 degrees, 0.6 points off) |
+| 2. Total | pass | 84.9 on average after measuring (92.0, 90.9, 85.4, 71.1) |
+| 3. Core reading unchanged | FAIL | Archero 2: headline now joins the subline ("Beyond All Limits Deep progression, maximum fun"). Rogue Legends: composition full-screen art instead of one capture, headline empty instead of "ROGUE LEGEND". Legend of Mushroom: composition one capture instead of capture inside marketing art. Survivor.io: unchanged. All 4 saved records predate the current prompt (text-reading rules, full-analysis.v8, 2026-09-29 08:00), so the layout block, the newer prompt and run-to-run variation cannot be told apart without a paired run |
+| 4. Cost and time | pass | Added by the layout (its share of each answer's output tokens): +$0.050 and +12 s per image (991 output tokens). Against the measured baseline ($0.154, 28 s): +$0.076 on average, of which about $0.05 is the one-time cache write of the longer prompt on the first call (+$0.025 without it); +9 s wall |
+| 5. Valid answers, cap | pass | 4 of 4 valid, at most 7 boxes per layer |
+| 6. Measuring never worse by more than 2 points | FAIL | Legend of Mushroom coverage: the model's estimate was exact (40%), the measured upper bound 42.3% (2.3 points off). All band edges, tilts and snapped boxes improved or stayed within 0.6 points |
+| 7. Experimental | not validated | The key has a glyph height for one image only (Survivor.io), where the tool found none |
+
+Ways forward (each needs your decision): (a) a paired core-only run of the current prompt on the 3 changed images (about $0.45) to see whether the layout block or the newer prompt moved the core reading; (b) path B of section 7: the layout in its own call (about +$0.10 to $0.12 per image, core never touched); (c) a layout contract v2 that lets logo and badge elements carry their own text (fixes the text gate) and asks for every band separately.
+
+**Backfill scope for D3 (counted, not spent):** 84 images with a usable analysis and no layout: 34 of ours (all countries) and 50 at competitors' positions 1 to 3 (Overgeared Hero 14, Survivor.io 8, Clash of Critters 8, Sword x Staff 6, Capybara Go 4, Archero 2 4, Legend of Mushroom 3, Path of Kings 3), out of 142 analysed images. At about $0.125 per image (measured: ~1,000 layout output tokens plus the image and core reading written to the cache) that is about $10.50 (range $8.40 to $12.60). `scripts/layout-bench/backfill-count.ts`, `backfill-scope.json`.
+
+**Built on branch feat/layout-capture (capture is switched off by default):**
+- Layout vocabulary, schema and ownership checks (`src/layout/vocab.ts`, `schema.ts`, `checks.ts`); prompt block `prompts/analysis/layout-block.v1.md` added after the producer's prompt only.
+- Split validation (`SplitCheck` in `src/analysis/call.ts`, used by `src/analysis/call-images.ts`): a bad layout never drops a valid core; one repair of its own; the raw answer is cached as soon as the core is valid.
+- Layout file and status (`src/layout/store.ts`), measuring tool (`src/layout/measure/`), both written once after every record save (`src/layout/capture.ts`, called from `recordWriter`); wireframe drawer `src/layout/wireframe-svg.ts`.
+- Settings switch "Layout breakdown for new analyses" (`options.speed.layoutCapture`, default off after this result).
+- Trial-file cleanup: `npm run cleanup-trials` removes `library/analysis/<sha>/structure-test-v0.json` only when it equals its copy in `docs/samples/`; the record reader now only reads record-named files.
+
+**Differences from this plan (adapted to master after the speed-up and R4):**
+1. The benchmark runs the production call path (split validation, image inside the request) against a scratch copy, instead of a separate copy of the call loop; tokens and time come from the per-call records the speed-up added (no provider change needed).
+2. Time and cost increase: the measured baseline of `docs/analysis-speed-measurements.md`, no paired run (D1); the layout's own share is computed from each answer's output tokens.
+3. Calls ran one at a time (each reserves a $0.45 ceiling under the $1.20 cap); per-call times are unaffected.
+4. The layout is read from the producer's cached answer when the record is saved, and checked against the record's final reading: this also covers the settled-dispute re-check (2.4). A failed or missing layout writes no file (a write-once "missing" file would block a later backfill); its status is computed.
+5. Measured values are stored at 0.1 point and 0.5 degree (scoring needs more than whole points).
+6. Two measuring-tool changes after the paid run, both free and disclosed: edges are found by colour step (bands of the same brightness as the screen), and a frame or backdrop counts for coverage only outside the capture (a full-image frame had counted 100%). Neither changed a gate result.
+7. The answer keys were made by a separate agent while the paid calls ran, with no access to the answers, and frozen before scoring (the plan had them frozen before the run).
+8. Not built yet: the layout-only backfill call (D3 not approved), the approval-screen cost line and the (i) popover wireframe (both wait for a go), the element cap as a setting (fixed at 8, D4).
+
+## 13. Follow-up (2026-09-29, approved: layout contract v2, paired check up to $0.60)
+
+**Verdict: still NO-GO, not merged.** Paired check spent $0.50 of its $0.60 cap (3 calls, `spend-paired.json`, `paired.json`). Benchmark total so far: $1.42.
+
+**Gate 3, now against a paired run** (the same 3 images, today's main-analysis prompt, same model and path, without the layout request):
+
+| Image | With layout vs without | Without layout vs the saved record |
+|---|---|---|
+| Archero 2 | unchanged | headline now joins the subline (newer text-reading rules) |
+| Rogue Legend | **headline "ROGUE LEGEND" becomes empty** | composition full-screen art instead of one capture |
+| Legend of Mushroom | unchanged | composition one capture instead of capture inside marketing art |
+| Survivor.io | (no paired run; unchanged vs saved) | unchanged |
+
+So 3 of the 4 earlier differences come from the newer prompt or run-to-run variation, not from the layout. One remains and points at the layout request: on our own title image the logo became a layout "logo" element and the headline was left empty. One sample cannot rule out variation, but the headline feeds patterns, terminology and A/B cards, so gate 3 fails.
+
+**Proposal: the layout in its own call (plan path B).** The main analysis runs exactly as today (its prompt and answer never change); a second, layout-only call per new image gets the image and the finished reading as text. Estimated cost per image: about 1,000 to 1,300 layout output tokens ($0.05 to $0.065) plus the image and reading written to the prompt cache (about 3,600 tokens, $0.07): **about $0.12 to $0.14 per image**, against **+$0.064** for the same-call version (measured, see below). Time: about 15 to 20 s per image in the second call; run 3 at a time next to the main analyses, it adds little to a batch's wall time. The same call serves the backfill (84 images, about $10 to $12, D3). A 4-image benchmark of the separate call would cost about $0.60 (cap $0.80).
+
+**Gate 4, exact on the paired images:** +1,266 output tokens, **+$0.064 per image** with a warm prompt cache (+$0.059 once per batch for writing the longer prompt to the cache), **+11.9 s** per image (model writing time). Passes ($0.07, 25 s), with little headroom.
+
+**Gate 1 (contract v2 built, not yet re-measured):** layout contract `layout.v2` and prompt block `layout-block.v2.md`: a logo or badge element carries its own text in the original script when no marketing text holds it (a headline or subline must still point at the transcribed text), and every band is asked for separately (two bands of different colour or angle are two boxes, even when they touch); at most 8 boxes per layer as before. Re-scoring the existing answers cannot show the effect: they were made with v1. Checking it needs new layout calls (Survivor.io alone about $0.35 with a cold cache; all 4 about $0.90).
+
+**Gate 6, which coverage is right for Legend of Mushroom:** neither is exact. The key's 40% is the agent's rounded area budget (card margin ~6 + headline ~7 + pill ~4 + cat ~10 + knight ~3.5 + chick ~1.5 + blurred foreground ~8), not a pixel count; only the cat was measured (8.9%). The tool's 42.3% is an upper bound by design: cut-outs count by their rectangle (the cat's box is 34% x 68% of the image), and the blurred foreground has no box. The model's 40% equals the key's rounded estimate. The 2.3-point gap is within the key's own rounding, so this gate result says little either way; a pixel-mask coverage for the key (free) would settle it.
+
+## 14. Separate layout call: benchmark GO, merged (2026-09-29)
+
+Approved: the layout in its own call per image (the main analysis untouched), with the gate-1 fixes, a 4-image test capped at $0.80, a pixel-exact coverage for Legend of Mushroom's key, and the backfill built as a button but not run.
+
+**How it works now.** After each new analysis is saved, the same pool task (so 3 at a time alongside the main analyses, under the batch's spending limit; Stop ends the batch after the current images) makes one layout call (`src/layout/call.ts`, prompt `layout-only.v1`, step "layout" in the shared library). It gets the image and the finished reading (captures and marketing texts by index) and returns only the layout, checked against the reading: text and capture references, marketing layer present or not, and every character, creature or item the analysis puts on the marketing layer must be a cut-out (its logo a logo). A layout that never fits (at most 2 repairs) or cannot be paid leaves the analysis saved and the layout "missing". The layout is saved write-once, then measured by code; its cost is part of the image's paid attempt. The main analysis files (call, schemas, settle, compare, regions, the full-analysis and settle prompts) are identical to master; the analysis key never changes. Settings: "Layout breakdown for new analyses", on by default. The approval screen shows the layout call as its own row with its cost (so a plan approved before but not yet run asks for approval again).
+
+**Benchmark (spent $0.64 of $0.80; `docs/samples/layout-benchmark/`).** 5 calls: one per image, plus one repeat of Survivor.io after the cut-out check was added (its first layout drew the mascot as an in-game character; the repeat, a fresh call, drew it as a cut-out). The main readings given to the layout call: this morning's paired run (today's prompt) for 3 images, the saved record for Survivor.io.
+
+| Gate | Result | Numbers |
+|---|---|---|
+| 1. Each part | pass | Elements F1 0.93, placement error 1.2 points, text error 0% (the logo now carries its own text), band tilt and edges within tolerance 7 of 7 |
+| 2. Total | pass | 90.3 on average after measuring (90.5, 89.3, 87.0, 94.4) |
+| 3. Main analysis unchanged | pass | The layout is its own call after the analysis is saved; the 9 main-call files are identical to master |
+| 4. Cost and time | pass | $0.114 per image on average with a warm prompt cache ($0.092 to $0.140), plus about $0.07 once per batch for writing the prompt to the cache; 16 s per image (12.8 to 18.3 s), in the same pool as the analyses. Approved at up to $0.14 |
+| 5. Valid answers, cap | pass | 4 of 4, at most 8 boxes per layer |
+| 6. Measuring never worse by more than 2 points | pass | Legend of Mushroom's key coverage is now pixel-exact (40.4%, see `coverageMethod` in its key); the tool measured 39.0%, the model said 45% |
+| 7. Experimental | not validated | Glyph height and contrast stay experimental |
+
+**Changes made after seeing the benchmark images (free code, disclosed; 4 images is a sanity check, not statistics):** band edges are found among all long straight edges near the model's bands (within 6 degrees and 8% of the height; a band's top has its colour below it, its bottom above it), and bands the model drew touching share their boundary (up to 15% from the model's edge); the cut-out and logo consistency check. The first production batches log the same numbers.
+
+**Backfill button (built, not run).** Analysis page, card "Layouts for earlier images": the count (ours in every country and competitors' positions 1 to 3 without a current layout), the cost range and "Add layouts ($x to $y)". It opens an approval dialog listing every image; only "Approve and add layouts" starts it, for exactly that list, 3 at a time, stopping at the top of the range (at least one call's $0.25 ceiling), with progress and Stop, under the AI lock. With the workspace of 2026-09-29: 84 images, about $7.60 to $12.60.
+
+After the gpt-5.6-sol code review (`docs/reviews/layout-separate-call-review-gpt.md`): a layout saved for an analysis whose reading changed later is kept as "stale" and never paid for again, and the layout must cover every capture and every headline of the reading.
+
+**(i) popover.** Every analysed image with a layout shows its wireframe (measured boxes solid, estimated ones dashed), the one-line summary and the measured coverage; images analysed before say "Layout missing".

@@ -1,0 +1,540 @@
+{
+ "prompt": {
+  "hash": "ba047973e54ae15db2ac76cdff7bc0a4dd7e38fd33e4756ebc441450ae84ce6d",
+  "chars": 10994
+ },
+ "images": [
+  {
+   "name": "archero2-4",
+   "imageId": "b799e91aee76927b805be9c807e1892ea169d45aadc645dbc29608176b35ba21",
+   "reading": {
+    "imageRef": "img1",
+    "screenshot": {
+     "composition": "single_full_capture",
+     "screenType": "metagame",
+     "subtype": "gear",
+     "captures": [
+      {
+       "orientation": "portrait",
+       "screenType": "metagame",
+       "subtype": "gear",
+       "region": {
+        "x": 0,
+        "y": 0,
+        "w": 100,
+        "h": 85
+       },
+       "areaPercent": 83,
+       "framing": "full_bleed",
+       "description": "A hero showcase hall with seven chibi heroes standing on tiered purple podiums, and below it the Gear tab of the collection screen showing a grid of S-rank equipment cards (axe, spear, helmet, armour, ring) with By Quality and Blacksmith buttons."
+      }
+     ],
+     "captureAreaPercent": 83,
+     "description": "Top half shows a lineup of chibi heroes (pirate bear, green-armoured elf, ice mage, red horned warrior, golden winged knight, dark hooded sorcerer) on glowing purple stage tiers; bottom half shows the Characters / Gear / Runes tabs with the Gear tab active and a grid of purple-red S-rank gear cards.",
+     "action": "The player is browsing their collection of heroes and S-rank gear in the Gear tab.",
+     "atmosphere": "Vibrant, epic, collectible",
+     "mainColours": [
+      {
+       "name": "deep purple",
+       "hex": "#3a2a7a"
+      },
+      {
+       "name": "navy blue",
+       "hex": "#243a7a"
+      },
+      {
+       "name": "magenta red",
+       "hex": "#a02060"
+      },
+      {
+       "name": "gold yellow",
+       "hex": "#f5c020"
+      },
+      {
+       "name": "neon green",
+       "hex": "#5ee040"
+      }
+     ]
+    },
+    "marketingLayer": {
+     "present": true,
+     "coveragePercent": 28,
+     "backgroundMasks": [
+      {
+       "shape": "diagonal_band",
+       "colourName": "light blue",
+       "colourHex": "#9ad8f5",
+       "location": "bottom",
+       "region": {
+        "x": 0,
+        "y": 83,
+        "w": 100,
+        "h": 17
+       }
+      }
+     ],
+     "texts": [
+      {
+       "role": "headline",
+       "text": "Beyond All Limits",
+       "language": "en",
+       "colour": "yellow #f7d52a",
+       "strokeColour": "dark blue outline with white edge",
+       "fontStyle": "heavy rounded sans, bold, slightly tilted, outlined",
+       "size": "huge",
+       "position": "bottom",
+       "region": {
+        "x": 6,
+        "y": 84,
+        "w": 88,
+        "h": 9
+       }
+      },
+      {
+       "role": "subheadline",
+       "text": "Deep progression, maximum fun",
+       "language": "en",
+       "colour": "white #ffffff",
+       "strokeColour": "dark blue outline",
+       "fontStyle": "heavy rounded sans, bold, slightly tilted, outlined",
+       "size": "large",
+       "position": "bottom",
+       "region": {
+        "x": 4,
+        "y": 92,
+        "w": 94,
+        "h": 7
+       }
+      }
+     ],
+     "elements": [
+      {
+       "kind": "character",
+       "what": "Chibi female hero with long brown hair, golden crown, gold earrings and white-gold armour",
+       "position": "bottom-right, over the gear grid and the band",
+       "pose": "front-facing, standing, glowing eyes",
+       "colours": "brown, gold, white, red",
+       "scale": "large",
+       "breaksFrame": false,
+       "region": {
+        "x": 60,
+        "y": 58,
+        "w": 40,
+        "h": 28
+       }
+      }
+     ],
+     "mainColours": [
+      {
+       "name": "light blue",
+       "hex": "#9ad8f5"
+      },
+      {
+       "name": "yellow",
+       "hex": "#f7d52a"
+      },
+      {
+       "name": "white",
+       "hex": "#ffffff"
+      },
+      {
+       "name": "gold",
+       "hex": "#e8a020"
+      }
+     ],
+     "relationToScreen": "describes"
+    },
+    "headline": "Beyond All Limits Deep progression, maximum fun",
+    "confidence": 0.85,
+    "notes": "The gear grid at the bottom is partially covered by the added hero character and the diagonal blue band."
+   },
+   "failed": null,
+   "calls": [
+    {
+     "step": "full-analysis",
+     "model": "claude-fable-5-1",
+     "key": "22fc4fb2e8facf1cf20fbe19e65184ce70314f35d4db522584928b52241e1405",
+     "imageIds": [
+      "b799e91aee76927b805be9c807e1892ea169d45aadc645dbc29608176b35ba21"
+     ],
+     "ok": true,
+     "costUsd": 0.2605,
+     "usage": {
+      "inputTokens": 2,
+      "outputTokens": 1238,
+      "cacheReadTokens": 0,
+      "cacheWriteTokens": 9929,
+      "durationMs": 17901,
+      "turns": 2,
+      "wallMs": 37558,
+      "requests": 1
+     },
+     "at": "2026-09-29T08:05:11.835Z"
+    }
+   ]
+  },
+  {
+   "name": "roguelegend-1",
+   "imageId": "ddd7f0710af668e6ed7d088a2e010a8704b1b3a34b6500f2de30c5f9a8dea732",
+   "reading": {
+    "imageRef": "img1",
+    "screenshot": {
+     "composition": "pure_art",
+     "screenType": "title_image",
+     "subtype": "logo_with_art",
+     "captures": [],
+     "captureAreaPercent": 0,
+     "description": "Full-screen title art: the game logo 'ROGUE LEGEND' sits at the top over a dark blue cave scene; a small elf hero with white hair, orange armour, a round shield and a glowing sword faces a large dark stone golem with glowing cyan runes and red eyes, while silhouetted monsters (spider, bats, werewolf, slime creatures) with red eyes lurk on ledges above; glowing cyan crystals and rune stones light the cave floor.",
+     "action": "A small elf hero confronts a giant rune-covered stone golem in a monster-filled cave.",
+     "atmosphere": "Dark, adventurous and slightly ominous but stylised and playful",
+     "mainColours": [
+      {
+       "name": "dark navy blue",
+       "hex": "#0e1a3a"
+      },
+      {
+       "name": "steel blue",
+       "hex": "#2b4a7a"
+      },
+      {
+       "name": "glowing cyan",
+       "hex": "#3ee6ff"
+      },
+      {
+       "name": "golden yellow",
+       "hex": "#f5c518"
+      },
+      {
+       "name": "orange",
+       "hex": "#e07a2a"
+      }
+     ]
+    },
+    "marketingLayer": {
+     "present": true,
+     "coveragePercent": 18,
+     "backgroundMasks": [],
+     "texts": [
+      {
+       "role": "headline",
+       "text": "ROGUE",
+       "language": "en",
+       "colour": "white #ffffff",
+       "strokeColour": "dark navy #1a2a4a",
+       "fontStyle": "heavy rounded sans, bold, outlined logo lettering",
+       "size": "huge",
+       "position": "top",
+       "region": {
+        "x": 19,
+        "y": 7,
+        "w": 62,
+        "h": 9
+       }
+      },
+      {
+       "role": "headline",
+       "text": "LEGEND",
+       "language": "en",
+       "colour": "golden yellow #f5c518",
+       "strokeColour": "dark navy #1a2a4a",
+       "fontStyle": "heavy rounded sans, bold, outlined logo lettering",
+       "size": "huge",
+       "position": "top",
+       "region": {
+        "x": 19,
+        "y": 16,
+        "w": 62,
+        "h": 9
+       }
+      }
+     ],
+     "elements": [
+      {
+       "kind": "logo",
+       "what": "the game logo 'ROGUE LEGEND' in white and yellow block letters",
+       "position": "top-centre",
+       "pose": "n/a",
+       "colours": "white, golden yellow, dark navy outline",
+       "scale": "large",
+       "breaksFrame": false,
+       "region": {
+        "x": 18,
+        "y": 6,
+        "w": 64,
+        "h": 20
+       }
+      }
+     ],
+     "mainColours": [
+      {
+       "name": "white",
+       "hex": "#ffffff"
+      },
+      {
+       "name": "golden yellow",
+       "hex": "#f5c518"
+      },
+      {
+       "name": "dark navy",
+       "hex": "#1a2a4a"
+      }
+     ],
+     "relationToScreen": "describes"
+    },
+    "headline": "ROGUE LEGEND",
+    "confidence": 0.9,
+    "notes": "The only added element is the game's own logo; the rest is full-screen title art with no visible game UI."
+   },
+   "failed": null,
+   "calls": [
+    {
+     "step": "full-analysis",
+     "model": "claude-fable-5-1",
+     "key": "f42be7aca9fbe38a94228f6d8d1ec7ea5a12a59d62ca3e9c44c35b5b1ab68d58",
+     "imageIds": [
+      "ddd7f0710af668e6ed7d088a2e010a8704b1b3a34b6500f2de30c5f9a8dea732"
+     ],
+     "ok": true,
+     "costUsd": 0.10377575,
+     "usage": {
+      "inputTokens": 2,
+      "outputTokens": 1004,
+      "cacheReadTokens": 7343,
+      "cacheWriteTokens": 2586,
+      "durationMs": 15266,
+      "turns": 2,
+      "wallMs": 28036,
+      "requests": 1
+     },
+     "at": "2026-09-29T08:05:39.918Z"
+    }
+   ]
+  },
+  {
+   "name": "legend-of-mushroom-3",
+   "imageId": "ce1c0012193fae117746075beee7b27af321fd86e732f5610ffc2837d938545b",
+   "reading": {
+    "imageRef": "img1",
+    "screenshot": {
+     "composition": "single_full_capture",
+     "screenType": "gameplay",
+     "subtype": "battle",
+     "captures": [
+      {
+       "orientation": "landscape",
+       "screenType": "gameplay",
+       "subtype": "battle",
+       "region": {
+        "x": 1,
+        "y": 1,
+        "w": 98,
+        "h": 98
+       },
+       "areaPercent": 95,
+       "framing": "full_bleed",
+       "description": "A landscape auto-battle stage 1-6 in a mushroom forest where a mushroom-capped hero with a sword and animal companions (fox, banana, turtle, cat) fight skeleton and goat-horned enemies with floating damage numbers; a left-side grid of level 10 equipment icons and a top HUD with player level, HP bar and currencies."
+      }
+     ],
+     "captureAreaPercent": 95,
+     "description": "Landscape battle screen: mushroom hero and cute companions attack blue skeleton and goblin enemies on a grassy field with a giant fallen log, mushroom houses and a bright sky; equipment icon grid (Lv.10) on the left, HUD at top (LV 17, 13450/1520, 999,999 coins, 9,999 gems, stage 1-6 progress bar).",
+     "action": "The hero and companion squad auto-fight a wave of enemies, dealing damage shown as -583, -2774, -587 numbers with a bright slash effect.",
+     "atmosphere": "cheerful, cute, energetic",
+     "mainColours": [
+      {
+       "name": "sky blue",
+       "hex": "#8fd0f0"
+      },
+      {
+       "name": "grass green",
+       "hex": "#7cc44a"
+      },
+      {
+       "name": "beige ground",
+       "hex": "#e8d8a8"
+      },
+      {
+       "name": "purple",
+       "hex": "#8a5bd0"
+      },
+      {
+       "name": "orange red",
+       "hex": "#e8613a"
+      }
+     ]
+    },
+    "marketingLayer": {
+     "present": true,
+     "coveragePercent": 40,
+     "backgroundMasks": [
+      {
+       "shape": "frame",
+       "colourName": "white",
+       "colourHex": "#ffffff",
+       "location": "full",
+       "region": {
+        "x": 0,
+        "y": 0,
+        "w": 100,
+        "h": 100
+       }
+      },
+      {
+       "shape": "band",
+       "colourName": "white with light blue",
+       "colourHex": "#e6f3fb",
+       "location": "bottom",
+       "region": {
+        "x": 10,
+        "y": 87,
+        "w": 43,
+        "h": 9
+       }
+      }
+     ],
+     "texts": [
+      {
+       "role": "headline",
+       "text": "Collect Companions",
+       "language": "en",
+       "colour": "blue #2f7fd6",
+       "strokeColour": "white",
+       "fontStyle": "heavy rounded sans, bold, white outline",
+       "size": "huge",
+       "position": "bottom",
+       "region": {
+        "x": 2,
+        "y": 73,
+        "w": 58,
+        "h": 14
+       }
+      },
+      {
+       "role": "subheadline",
+       "text": "Combat Squad, Auto Upgrade",
+       "language": "en",
+       "colour": "blue #2f7fd6",
+       "strokeColour": "none",
+       "fontStyle": "bold rounded sans",
+       "size": "medium",
+       "position": "bottom",
+       "region": {
+        "x": 18,
+        "y": 88,
+        "w": 34,
+        "h": 7
+       }
+      }
+     ],
+     "elements": [
+      {
+       "kind": "creature",
+       "what": "giant white round mascot creature with blue horn, star pendant and blue collar",
+       "position": "bottom-right, over the capture",
+       "pose": "facing front, mouth open, smiling",
+       "colours": "white, pink, blue, yellow",
+       "scale": "dominant",
+       "breaksFrame": true,
+       "region": {
+        "x": 68,
+        "y": 30,
+        "w": 32,
+        "h": 66
+       }
+      },
+      {
+       "kind": "character",
+       "what": "mushroom-capped hero holding a golden sword",
+       "position": "bottom-centre-right",
+       "pose": "standing, facing front, sword raised",
+       "colours": "green, brown, yellow",
+       "scale": "medium",
+       "breaksFrame": true,
+       "region": {
+        "x": 56,
+        "y": 68,
+        "w": 20,
+        "h": 30
+       }
+      },
+      {
+       "kind": "creature",
+       "what": "small yellow chick in a pink hood",
+       "position": "bottom-right, beside the mascot",
+       "pose": "sitting, facing front",
+       "colours": "yellow, pink, white",
+       "scale": "small",
+       "breaksFrame": false,
+       "region": {
+        "x": 76,
+        "y": 76,
+        "w": 12,
+        "h": 20
+       }
+      },
+      {
+       "kind": "badge",
+       "what": "small mushroom hero icon with sword on the subheadline band",
+       "position": "bottom-left, left end of the band",
+       "pose": "n/a",
+       "colours": "green, brown, white",
+       "scale": "small",
+       "breaksFrame": false,
+       "region": {
+        "x": 10,
+        "y": 86,
+        "w": 8,
+        "h": 10
+       }
+      }
+     ],
+     "mainColours": [
+      {
+       "name": "white",
+       "hex": "#ffffff"
+      },
+      {
+       "name": "blue",
+       "hex": "#2f7fd6"
+      },
+      {
+       "name": "pink",
+       "hex": "#f5b8c8"
+      },
+      {
+       "name": "green",
+       "hex": "#6fae3c"
+      }
+     ],
+     "relationToScreen": "describes"
+    },
+    "headline": "Collect Companions",
+    "confidence": 0.9,
+    "notes": "Landscape gameplay capture with a white rounded frame; the large mascot and hero art overlap the bottom-right corner and break the frame edge."
+   },
+   "failed": null,
+   "calls": [
+    {
+     "step": "full-analysis",
+     "model": "claude-fable-5-1",
+     "key": "6f0deb665d408ca18f5459960107ae474a9196caf5ebae091826e9d3a151737c",
+     "imageIds": [
+      "ce1c0012193fae117746075beee7b27af321fd86e732f5610ffc2837d938545b"
+     ],
+     "ok": true,
+     "costUsd": 0.13532575000000002,
+     "usage": {
+      "inputTokens": 2,
+      "outputTokens": 1635,
+      "cacheReadTokens": 7343,
+      "cacheWriteTokens": 2586,
+      "durationMs": 21746,
+      "turns": 2,
+      "wallMs": 30079,
+      "requests": 1
+     },
+     "at": "2026-09-29T08:06:10.027Z"
+    }
+   ]
+  }
+ ]
+}

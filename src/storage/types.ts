@@ -33,6 +33,8 @@ export interface Storage {
   exists(key: string): boolean;
   /** Every key under a prefix (recursive, unordered). */
   list(prefix: string): Iterable<string>;
+  /** Names directly under a prefix (files and folders, one level); empty when it does not exist. */
+  children(prefix: string): string[];
   /** Ids of every project folder with settings (project.json) or library references (refs.json). */
   listProjectIds(): string[];
   /** Local-disk capability: the OS path of a key, for tools that need a file (sharp, CLIs). */
@@ -42,7 +44,15 @@ export interface Storage {
    * or one of its version folders (projects/<id>/reports/<version id>). Any other key is refused.
    */
   deleteReportFiles(key: string): void;
+  /**
+   * One-off cleanup (plan-layout-wireframes section 4): one trial file
+   * library/analysis/<sha>/structure-test-v0.json. Any other key is refused.
+   */
+  deleteTrialFile(key: string): void;
 }
+
+/** The only key deleteTrialFile accepts: a layout trial file in an image's analysis folder. */
+export const TRIAL_DELETE_KEY = /^library\/analysis\/[0-9a-f]{64}\/structure-test-v0\.json$/;
 
 /** Keys deleteReportFiles accepts: a report def file, or a report version folder. */
 export const REPORT_DELETE_KEY =

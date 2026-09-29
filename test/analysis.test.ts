@@ -56,7 +56,13 @@ test("estimate: one call per image by default, review of every image, review of 
       basedOn: null,
       reason: "",
     }));
-  const e = estimate(config, [...mk("ours", 7), ...mk("a", 12), ...mk("b", 5)]);
+  const items = [...mk("ours", 7), ...mk("a", 12), ...mk("b", 5)];
+  const off = { ...config.options, speed: { ...config.options.speed, layoutCapture: false } };
+  const e = estimate({ ...config, options: off }, items);
+  // With the layout breakdown on: one more call per image and its cost in the range.
+  const on = estimate(config, items);
+  assert.equal(on.passes.find((p) => p.role.startsWith("Layout"))?.calls, 24);
+  assert.ok((on.usd[1] as number) > (e.usd[1] as number));
   const full = e.passes[0];
   assert.equal(full?.calls, 24);
   assert.equal(full?.images, 24);

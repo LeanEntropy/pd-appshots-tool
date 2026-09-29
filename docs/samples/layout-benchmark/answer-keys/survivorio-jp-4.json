@@ -1,0 +1,180 @@
+{
+  "name": "survivorio-jp-4",
+  "imageId": "9890be41062c557eb4ac1b6261516a3d47acc9c41009f68aca3302b930c01ce7",
+  "width": 1242,
+  "height": 2208,
+  "captures": 1,
+  "marketingPresent": true,
+  "inGame": [
+    {
+      "id": "S1",
+      "role": "main-scene",
+      "box": {
+        "x": 0,
+        "y": 0,
+        "w": 100,
+        "h": 82.5
+      },
+      "tiltDeg": 0,
+      "z": 0,
+      "text": null,
+      "textEn": null
+    },
+    {
+      "id": "S2",
+      "role": "panel",
+      "box": {
+        "x": 17,
+        "y": 2,
+        "w": 16,
+        "h": 69
+      },
+      "tiltDeg": 0,
+      "z": 1,
+      "text": null,
+      "textEn": null
+    },
+    {
+      "id": "S3",
+      "role": "dialog",
+      "box": {
+        "x": 45.5,
+        "y": 17.5,
+        "w": 52.5,
+        "h": 28
+      },
+      "tiltDeg": 0,
+      "z": 2,
+      "text": "ラッキードッグ\n戦闘開始時に1個のスキルを獲得\nすべてのサバイバーは神のお気に入り",
+      "textEn": "Lucky Dog\nGain 1 skill at the start of battle\nAll survivors are the favourites of the gods"
+    }
+  ],
+  "marketing": [
+    {
+      "id": "M1",
+      "role": "band",
+      "box": {
+        "x": 0,
+        "y": 79,
+        "w": 100,
+        "h": 4.5
+      },
+      "tiltDeg": -7.7,
+      "z": 0,
+      "text": null,
+      "textEn": null,
+      "covers": [
+        "S1"
+      ]
+    },
+    {
+      "id": "M2",
+      "role": "band",
+      "box": {
+        "x": 0,
+        "y": 83.5,
+        "w": 100,
+        "h": 16.5
+      },
+      "tiltDeg": -11.2,
+      "z": 1,
+      "text": null,
+      "textEn": null,
+      "covers": []
+    },
+    {
+      "id": "M3",
+      "role": "cut-out",
+      "box": {
+        "x": 51.5,
+        "y": 42.5,
+        "w": 48.5,
+        "h": 36.5
+      },
+      "tiltDeg": 0,
+      "z": 2,
+      "text": null,
+      "textEn": null,
+      "covers": [
+        "S1",
+        "S3"
+      ]
+    },
+    {
+      "id": "M4",
+      "role": "headline",
+      "box": {
+        "x": 1.5,
+        "y": 88.5,
+        "w": 96,
+        "h": 5.5
+      },
+      "tiltDeg": -9.7,
+      "z": 3,
+      "text": "タレントを進化させて!",
+      "textEn": "Evolve your talents!",
+      "covers": []
+    },
+    {
+      "id": "M5",
+      "role": "logo",
+      "box": {
+        "x": 4,
+        "y": 1.5,
+        "w": 48.5,
+        "h": 5.5
+      },
+      "tiltDeg": 0,
+      "z": 4,
+      "text": "ダダサバイバー",
+      "textEn": "Dada Survivor (Survivor.io Japanese title)",
+      "covers": [
+        "S2"
+      ]
+    }
+  ],
+  "composition": {
+    "focal": {
+      "x": 62.4,
+      "y": 57.5,
+      "id": "M3"
+    },
+    "readingOrder": [
+      "M4",
+      "M3",
+      "S3",
+      "S2",
+      "M5"
+    ],
+    "overlaySharePercent": 33.9
+  },
+  "measurements": {
+    "bands": [
+      {
+        "id": "M1",
+        "tiltDeg": -7.7,
+        "top": {
+          "left": 82.5,
+          "right": 75.0
+        },
+        "bottom": {
+          "left": 89.0,
+          "right": 77.9
+        }
+      },
+      {
+        "id": "M2",
+        "tiltDeg": -11.2,
+        "top": {
+          "left": 89.0,
+          "right": 77.9
+        },
+        "bottom": null
+      }
+    ],
+    "coveragePercent": 33.9,
+    "headlineGlyphPercent": 5.3,
+    "headlineContrast": null
+  },
+  "reductionNotes": "S1 wall backdrop (upper/lower wall, seams, strut) -> S1 main-scene; S2 talent column (rail + five nodes) -> S2 panel; S3 tooltip (header, body, flavour text, tail) plus the S4 level badge '2' docked to its header -> S3 dialog (badge merged as part of the tooltip, which is ambiguous: it is top-level in the breakdown). Marketing: M2 ledge slab (white rim, dark slate, -7.7 deg) kept as its own band because it differs from the purple band in colour and angle (rule 8), not merged as a shadow; M3 purple band -> M2 band; M4 mascot (bulbs, head, eye, fin, stalk) -> M3 cut-out; M5 headline -> M4; M1 logo -> M5 (drawn on top, z 5). Band edges from the least-squares fits: ledge y = 1822 - 0.134x, band outline y = 1966 - 0.198x (px); the ledge's bottom edge is the band's top edge. Tilted boxes are unrotated: band boxes are full-width rects placed at their mid-width heights; the headline box is solved from its measured outline bounds (1194 x 319 px at -9.7 deg -> ~1191 x 120 px). headlineGlyphPercent = measured glyph height 118 px."
+}

@@ -1,150 +1,8 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { runInNewContext } from "node:vm";
-import type { ReportSummary } from "../src/reports/list.ts";
 import { renderGalleryHtml } from "../src/steps/deck-view.ts";
-import { FLAG_SCRIPT } from "../src/view/flags.ts";
-import { EXPAND_SCRIPT } from "../src/view/gallery-expand.ts";
-import { REPORT_SCRIPT } from "../src/view/gallery-report.ts";
-import { BUILDER_SCRIPT } from "../src/view/report-builder.ts";
-import { REPORT_CARDS_SCRIPT } from "../src/view/report-cards.ts";
-import { REPORT_LIST_SCRIPT } from "../src/view/report-list.ts";
-import { REPORT_ROW_SCRIPT } from "../src/view/report-list-row.ts";
 import { tempProject } from "./helpers/project.ts";
-
-const rep = (o: Partial<ReportSummary> & { id: string }): ReportSummary => ({
-  name: o.id,
-  type: "country",
-  typeName: "One country",
-  countries: "Japan",
-  markets: ["jp"],
-  countryNames: ["Japan"],
-  sameAs: null,
-  competitors: 2,
-  competitorNames: [],
-  generatedAt: "2026-09-28T10:00:00.000Z",
-  status: { kind: "ready", text: "Ready" },
-  newer: null,
-  archived: false,
-  deletable: true,
-  canNow: false,
-  versions: [
-    { id: `v-${o.id}`, generatedAt: "2026-09-28T10:00:00.000Z", archived: false, format: "data" },
-  ],
-  ...o,
-});
-
-const PILOT = rep({
-  id: "r-pilot",
-  name: "Pilot report",
-  type: "pilot",
-  typeName: "Pilot",
-  markets: ["us"],
-  countryNames: ["United States"],
-  deletable: false,
-  canNow: true,
-});
-const CORE = rep({
-  id: "r-core",
-  name: "Full check report",
-  type: "core",
-  typeName: "Full check",
-  markets: ["us"],
-  countryNames: ["United States"],
-  deletable: false,
-  canNow: true,
-  generatedAt: "2026-09-27T10:00:00.000Z",
-});
-const cmp = (id: string, o: Partial<ReportSummary> = {}) =>
-  rep({
-    id,
-    type: "compare",
-    typeName: "Compare countries",
-    markets: ["jp", "kr"],
-    countryNames: ["Japan", "South Korea"],
-    ...o,
-  });
-// The server's order: drafts first, then newest first.
-const LIST = [
-  cmp("r-cmp-draft", {
-    name: "Japan, South Korea vs 2",
-    generatedAt: null,
-    versions: [],
-    status: { kind: "draft", text: "Draft" },
-  }),
-  rep({
-    id: "r-jp-2",
-    name: "Japan vs 2 (2)",
-    generatedAt: "2026-09-29T10:00:00.000Z",
-    status: { kind: "partial", text: "Partial · 3 parts missing" },
-  }),
-  PILOT,
-  CORE,
-  rep({ id: "r-jp-1", name: "Japan vs 2" }),
-  rep({
-    id: "r-kr",
-    name: "South Korea vs 2",
-    markets: ["kr"],
-    countryNames: ["South Korea"],
-    countries: "South Korea",
-  }),
-  cmp("r-cmp-old", {
-    name: "Japan, South Korea vs 2 (old)",
-    generatedAt: "2026-09-20T10:00:00.000Z",
-  }),
-];
-
-function page(opts: { hash?: string; kept?: string } = {}) {
-  const boxes: Record<string, { innerHTML: string }> = {
-    reportCards: { innerHTML: "" },
-    reportList: { innerHTML: "" },
-  };
-  const store = new Map<string, string>(opts.kept ? [["ssr.report.open:/p/x/api", opts.kept]] : []);
-  const hashes: string[] = [];
-  const location = { hash: "", protocol: "http:" };
-  const ctx: Record<string, unknown> = {
-    API: "/p/x/api",
-    esc: (s: unknown) => String(s).replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`),
-    actEsc: (s: unknown) => String(s).replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`),
-    localStorage: {
-      getItem: (k: string) => store.get(k) ?? null,
-      setItem: (k: string, v: string) => store.set(k, v),
-      removeItem: (k: string) => store.delete(k),
-    },
-    history: {
-      replaceState: (_s: unknown, _t: string, h: string) => {
-        hashes.push(h);
-        location.hash = h;
-      },
-    },
-    document: {
-      addEventListener: () => {},
-      getElementById: (id: string) => boxes[id] ?? null,
-      querySelector: () => null,
-    },
-    window: { addEventListener: () => {} },
-    location,
-    pageFromHash: (h: string) => (String(h).startsWith("#report") ? "report" : "overview"),
-  };
-  runInNewContext(
-    `${FLAG_SCRIPT}\n${REPORT_SCRIPT}\n${BUILDER_SCRIPT}\n${REPORT_ROW_SCRIPT}\n${REPORT_LIST_SCRIPT}\n${REPORT_CARDS_SCRIPT}\n${EXPAND_SCRIPT}
-this.setList = (l) => { reportList = l; }; this.render = renderReportList; this.open = () => openRid; this.forget = forgetOpen;
-this.setNext = (o) => { whatNext = o; };`,
-    ctx,
-  );
-  location.hash = opts.hash ?? "#report";
-  const t = ctx as typeof ctx & {
-    setList: (l: ReportSummary[]) => void;
-    render: (deep?: string | null) => Promise<void>;
-    open: () => string | null;
-    forget: (rid: string) => void;
-    setNext: (o: unknown) => void;
-  };
-  return { t, boxes, store, hashes };
-}
-
-const titles = (html: string) =>
-  [...html.matchAll(/<h4>(.*?)<\/h4>/g)].map((m) => (m[1] ?? "").replace(/<[^>]+>/g, ""));
+import { CORE, cmp, LIST, PILOT, page, rep, titles } from "./helpers/report-cards.ts";
 
 test("one card per report type: Full check first, the others by their newest report, the Pilot last", () => {
   const { t, boxes } = page();
@@ -164,7 +22,9 @@ test("one card per report type: Full check first, the others by their newest rep
     /<h4><span class="cty"><img class="flag"[^>]*src="\/flags\/jp.svg"[^>]*>Japan<\/span><\/h4>/,
   );
   assert.equal((cards.match(/class="rtcard /g) ?? []).length, 5);
-  assert.equal((cards.match(/>Open<\/button>/g) ?? []).length, 5);
+  // The report drawn below: its card says so (disabled); the others offer Open.
+  assert.equal((cards.match(/>Open<\/button>/g) ?? []).length, 4);
+  assert.equal((cards.match(/class="rt-open" disabled[^>]*>Showing<\/button>/g) ?? []).length, 1);
 });
 
 test("a dropdown only when a type has more than one report, newest first with date and status", () => {
@@ -183,7 +43,7 @@ test("a dropdown only when a type has more than one report, newest first with da
     opts.map((o) => o[0]),
     ["r-jp-2", "r-jp-1"],
   );
-  assert.match(opts[0]?.[1] ?? "", /^Japan vs 2 \(2\) · [^·]*2026 · Partial$/);
+  assert.match(opts[0]?.[1] ?? "", /^Japan vs 2 \(2\) · 2 competitors · [^·]*2026 · Partial$/);
   assert.match(opts[1]?.[1] ?? "", / · Ready$/);
   const compare = cards.find((c) => c.includes("<h4>Compare countries")) ?? "";
   assert.match(compare, /Not generated yet · Draft/);
@@ -251,6 +111,90 @@ test("the What next options follow the report cards in their own colour", () => 
   ]);
   assert.equal((cards.match(/class="rtcard rt-act /g) ?? []).length, 2);
   assert.equal((cards.match(/>Cost shown first</g) ?? []).length, 2);
+  // The title leads, the chip follows it, and the button does not repeat the title.
+  assert.match(cards, /<h4>Compare countries<\/h4><span class="chip">Cost shown first<\/span>/);
+  assert.match(cards, /aria-label="Set up a country comparison">Set up<\/button>/);
+  assert.match(cards, /data-next="more">Add competitors<\/button>/);
+});
+
+const cardOf = (html: string, title: string) =>
+  html.split('<div class="rtcard ').find((c) => c.includes(`<h4>${title}`)) ?? "";
+const metaOf = (card: string) => card.match(/<p class="rt-meta">(.*?)<\/p>/)?.[1] ?? "";
+const flagsOf = (meta: string) =>
+  [
+    ...meta.matchAll(
+      /<span class="rt-flag" role="img" title="([^"]+)" aria-label="([^"]+)"><img class="flag" src="\/flags\/(\w+)\.svg"/g,
+    ),
+  ].map((m) => [m[3], m[1], m[2]]);
+
+test("each card's meta line: competitors, and flags named in tooltips where the title has none", () => {
+  const { t, boxes } = page();
+  t.setList([
+    cmp("r-cmp", {
+      markets: ["jp", "hk"],
+      countryNames: ["Japan", "Hong Kong"],
+      countryLabels: ["Japan", "Hong Kong (Traditional Chinese)"],
+      competitors: 8,
+    }),
+    rep({ id: "r-jp", competitors: 1 }),
+    PILOT,
+    { ...CORE, competitors: 6 },
+  ]);
+  t.render();
+  const cards = boxes.reportCards?.innerHTML ?? "";
+  const compare = metaOf(cardOf(cards, "Compare countries"));
+  assert.match(compare, /^<span>8 competitors<\/span><span class="rt-flags">/);
+  assert.deepEqual(flagsOf(compare), [
+    ["jp", "Japan", "Japan"],
+    ["hk", "Hong Kong (Traditional Chinese)", "Hong Kong (Traditional Chinese)"],
+  ]);
+  const full = metaOf(cardOf(cards, "Full check"));
+  assert.match(full, /^<span>6 competitors<\/span>/);
+  assert.deepEqual(flagsOf(full), [["us", "United States", "United States"]]);
+  const pilot = metaOf(cardOf(cards, "Pilot"));
+  assert.match(pilot, /^<span>2 competitors<\/span>/);
+  assert.deepEqual(flagsOf(pilot), [["us", "United States", "United States"]]);
+  // One country: the count only (its flag is in the title), singular for one.
+  const japan = cardOf(cards, '<span class="cty">');
+  assert.equal(metaOf(japan), "<span>1 competitor</span>");
+});
+
+test("choosing another report in a dropdown updates its meta line and its option counts", () => {
+  const { t, boxes, choose } = page();
+  t.setList([
+    cmp("r-new", {
+      name: "Asia",
+      markets: ["jp", "kr", "tw"],
+      countryNames: ["Japan", "South Korea", "Taiwan"],
+      countryLabels: ["Japan", "South Korea", "Taiwan"],
+      competitors: 5,
+    }),
+    cmp("r-old", { name: "Japan, South Korea vs 2 competitors" }),
+    cmp("r-long", { name: "Our launch countries in Asia, second round after the update" }),
+    CORE,
+  ]);
+  t.render();
+  const compare = () => cardOf(boxes.reportCards?.innerHTML ?? "", "Compare countries");
+  assert.equal(flagsOf(metaOf(compare())).length, 3);
+  assert.match(metaOf(compare()), /5 competitors/);
+  // The counts join an option only when its name does not already give them.
+  assert.match(compare(), /<option value="r-new"[^>]*>Asia · 3 countries · 5 competitors · /);
+  assert.match(
+    compare(),
+    /<option value="r-old"[^>]*>Japan, South Korea vs 2 competitors · [^·]*2026 · Ready</,
+  );
+  // A long name leaves no room: the counts stay in the meta line only.
+  assert.match(
+    compare(),
+    /<option value="r-long"[^>]*>Our launch countries in Asia, second round after the update · [^·]*2026 · Ready</,
+  );
+  choose("compare", "r-old");
+  assert.match(metaOf(compare()), /^<span>2 competitors<\/span>/);
+  assert.deepEqual(
+    flagsOf(metaOf(compare())).map((f) => f[0]),
+    ["jp", "kr"],
+  );
+  assert.match(compare(), /class="rt-open primary" data-rid="r-old"[^>]*>Open</);
 });
 
 test("the served Reports tab: cards row, no helper sentence, no What next block", async () => {

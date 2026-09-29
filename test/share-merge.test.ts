@@ -57,8 +57,16 @@ test("library merge: existing records win unless the incoming one is newer and u
   const r = receiver();
   const sha = "c".repeat(64);
   const k = `library/analysis/${sha}/key1.json`;
-  const rec = (updatedAt: string, status: string, final: unknown) =>
-    Buffer.from(JSON.stringify({ imageId: sha, status, updatedAt, final }));
+  const rec = (day: string, status: string, final: unknown) =>
+    Buffer.from(
+      JSON.stringify({
+        imageId: sha,
+        schema: "analysis-schema.v3",
+        status,
+        updatedAt: `${day}T00:00:00.000Z`,
+        final,
+      }),
+    );
   assert.equal(mergeLibraryFile(r.storage, k, rec("2026-01-02", "ok", { a: 1 })), "added");
   assert.equal(mergeLibraryFile(r.storage, k, rec("2026-01-02", "ok", { a: 1 })), "same");
   // Older, or newer but failed: the local one stays.

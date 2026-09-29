@@ -1,9 +1,11 @@
 import { z } from "zod";
 import { AttemptSchema } from "../analysis/attempts.ts";
 import { ProjectSettingsSchema } from "../config/project-schema.ts";
+import { RunConfigSchema } from "../config/schema.ts";
 import { JournalSchema } from "../jobs/journal.ts";
 import { LIB } from "../library/layout.ts";
 import { GoogleIdSchema, LibraryFactsSchema, RefsSchema } from "../library/refs.ts";
+import { ReportDefSchema } from "../reports/types.ts";
 import { sha256 } from "../util/hash.ts";
 import { isPicture } from "./format.ts";
 
@@ -16,9 +18,12 @@ import { isPicture } from "./format.ts";
 export const RecordSchema = z
   .object({
     imageId: z.string().regex(/^[0-9a-f]{64}$/),
-    status: z.string(),
-    updatedAt: z.string(),
-    final: z.unknown(),
+    status: z.enum(["ok", "failed", "disputed", "adjudicated", "corrected", "unreviewed"]),
+    // A real time, not in the future: a package cannot make its record win forever.
+    updatedAt: z.iso
+      .datetime({ offset: true })
+      .refine((t) => Date.parse(t) <= Date.now() + 24 * 3_600_000),
+    final: z.record(z.string(), z.unknown()).nullable(),
   })
   .passthrough();
 
@@ -36,7 +41,7 @@ const MAGIC: [RegExp, (b: Buffer) => boolean][] = [
 ];
 
 const SHA_IN =
-  /^library\/(?:images\/(?:orig|thumb|model|crops|facts|pixels)\/|analysis\/|attempts\/|layer-diff\/|pixel-check\/|same-screen\/)([0-9a-f]{64})/;
+  /^library\/(?:images\/(?:orig|thumb|model|crops|facts|pixels)\/|analysis\/|attempts\/|layer-diff\/|pixel-check\/|same-screen\/|layout\/)([0-9a-f]{64})/;
 
 /** An analysis record has a status; anything else in the analysis folder is a side file. */
 export const isRecordLike = (v: unknown) =>
@@ -74,6 +79,10 @@ export function checkFile(name: string, bytes: Buffer, refs: Set<string>): strin
     return ProjectSettingsSchema.safeParse(v).success ? null : bad("project settings file");
   if (name === "project/refs.json")
     return RefsSchema.safeParse(v).success ? null : bad("image list");
+  if (name === "project/run-config.json")
+    return RunConfigSchema.safeParse(v).success ? null : bad("competitor pick");
+  if (/^project\/reports\/defs\/[^/]+\.json$/.test(name))
+    return ReportDefSchema.safeParse(v).success ? null : bad("report definition");
   if (name === "project/state/job.json")
     return JournalSchema.safeParse(v).success ? null : bad("job history");
   if (name.startsWith("library/images/facts/")) {

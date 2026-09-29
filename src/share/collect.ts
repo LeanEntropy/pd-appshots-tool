@@ -28,7 +28,7 @@ export interface Collected {
 
 /** Project folders left out: rebuilt by the tool, local to this computer, or not project data. */
 const SKIP_PROJECT =
-  /^(cache|views|pending|images|analysis|_before-library|same-screen|layer-diff|pixel-check)(\/|$)|^state\/(import(\.json|\/)|locks\/)|\/exports\/|\.bad-|\.tmp$|\.partial$|\.pdf$/;
+  /^(cache|views|pending|images|analysis|_before-library|same-screen|layer-diff|pixel-check|layout)(\/|$)|^state\/(import(\.json|\/)|locks\/)|\/exports\/|\.bad-|\.tmp$|\.partial$|\.pdf$/;
 
 const SHA = /^[0-9a-f]{64}$/;
 
@@ -89,9 +89,14 @@ export async function collectProject(storage: Storage, projectId: string): Promi
     img("pixels"),
     img("thumb"),
   ];
-  const perImage = ["analysis", "attempts", "layer-diff", "pixel-check", "same-screen"].map(
-    (f) => [f, grouped(libraryKey(f))] as const,
-  );
+  const perImage = [
+    "analysis",
+    "attempts",
+    "layer-diff",
+    "pixel-check",
+    "same-screen",
+    "layout",
+  ].map((f) => [f, grouped(libraryKey(f))] as const);
   let fullSize = 0;
   let analyses = 0;
   const cited = new Set<string>();
@@ -103,6 +108,11 @@ export async function collectProject(storage: Storage, projectId: string): Promi
     for (const [folder, of] of perImage)
       for (const k of of(sha)) {
         add(out, storage, k);
+        if (folder === "layout") {
+          // A layout breakdown cites the model answer it was read from.
+          const l = storage.getJson(k) as { object?: unknown } | undefined;
+          if (typeof l?.object === "string") cited.add(l.object);
+        }
         if (folder !== "analysis" || !k.endsWith(".json")) continue;
         const r = storage.getJson(k) as Record<string, { object?: unknown } | null> | undefined;
         if (r && "status" in r) analyses++;

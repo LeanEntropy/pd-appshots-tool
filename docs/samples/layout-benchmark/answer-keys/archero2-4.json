@@ -1,0 +1,179 @@
+{
+  "name": "archero2-4",
+  "imageId": "b799e91aee76927b805be9c807e1892ea169d45aadc645dbc29608176b35ba21",
+  "width": 1242,
+  "height": 2208,
+  "captures": 1,
+  "marketingPresent": true,
+  "inGame": [
+    {
+      "id": "S1",
+      "role": "main-scene",
+      "box": {
+        "x": 0,
+        "y": 0,
+        "w": 100,
+        "h": 49
+      },
+      "tiltDeg": 0,
+      "z": 0,
+      "text": null,
+      "textEn": null
+    },
+    {
+      "id": "S2",
+      "role": "character",
+      "box": {
+        "x": 11,
+        "y": 0,
+        "w": 78,
+        "h": 40
+      },
+      "tiltDeg": 0,
+      "z": 1,
+      "text": null,
+      "textEn": null
+    },
+    {
+      "id": "S3",
+      "role": "nav-bar",
+      "box": {
+        "x": 0,
+        "y": 49,
+        "w": 100,
+        "h": 5.5
+      },
+      "tiltDeg": 0,
+      "z": 2,
+      "text": null,
+      "textEn": null
+    },
+    {
+      "id": "S4",
+      "role": "hud",
+      "box": {
+        "x": 0,
+        "y": 54.5,
+        "w": 100,
+        "h": 7.5
+      },
+      "tiltDeg": 0,
+      "z": 2,
+      "text": null,
+      "textEn": null
+    },
+    {
+      "id": "S5",
+      "role": "panel",
+      "box": {
+        "x": 0,
+        "y": 61,
+        "w": 100,
+        "h": 39
+      },
+      "tiltDeg": 0,
+      "z": 2,
+      "text": null,
+      "textEn": null
+    }
+  ],
+  "marketing": [
+    {
+      "id": "M1",
+      "role": "band",
+      "box": {
+        "x": 0,
+        "y": 82.5,
+        "w": 100,
+        "h": 17.5
+      },
+      "tiltDeg": -4.8,
+      "z": 0,
+      "text": null,
+      "textEn": null,
+      "covers": [
+        "S5"
+      ]
+    },
+    {
+      "id": "M2",
+      "role": "cut-out",
+      "box": {
+        "x": 60,
+        "y": 58.5,
+        "w": 40,
+        "h": 27.5
+      },
+      "tiltDeg": 0,
+      "z": 1,
+      "text": null,
+      "textEn": null,
+      "covers": [
+        "S4",
+        "S5"
+      ]
+    },
+    {
+      "id": "M3",
+      "role": "headline",
+      "box": {
+        "x": 7,
+        "y": 85.5,
+        "w": 86,
+        "h": 6
+      },
+      "tiltDeg": -4.8,
+      "z": 2,
+      "text": "Beyond All Limits",
+      "textEn": "Beyond All Limits",
+      "covers": []
+    },
+    {
+      "id": "M4",
+      "role": "subline",
+      "box": {
+        "x": 5,
+        "y": 92.5,
+        "w": 91,
+        "h": 4.5
+      },
+      "tiltDeg": -4.8,
+      "z": 2,
+      "text": "Deep progression, maximum fun",
+      "textEn": "Deep progression, maximum fun",
+      "covers": []
+    }
+  ],
+  "composition": {
+    "focal": {
+      "x": 80,
+      "y": 67,
+      "id": "M2"
+    },
+    "readingOrder": [
+      "M2",
+      "M3",
+      "M4",
+      "S2",
+      "S3"
+    ],
+    "overlaySharePercent": 23
+  },
+  "measurements": {
+    "bands": [
+      {
+        "id": "M1",
+        "tiltDeg": -4.8,
+        "top": {
+          "left": 85.0,
+          "right": 80.2
+        },
+        "bottom": null
+      }
+    ],
+    "coveragePercent": 23,
+    "headlineGlyphPercent": null,
+    "headlineContrast": null
+  },
+  "reductionNotes": "Breakdown S1 (stage, pillars, arch, pedestals, floor) -> S1 main-scene; S2 six-unit roster -> S2 character (showcased group, own role on the stage); S3 tab bar -> nav-bar; S4 filter bar with its two buttons -> hud; S5 grid rows -> panel (union with row 1 starts at y 61.2). Marketing M1 band + M2 edge shadow -> M1 band; band edges are the breakdown polygon (0,85)-(100,80.2), no separate line fit. Tilted boxes are unrotated: the band box is the full-width rect whose top at x=50 is the mean of the two edge heights; the headline and subline keep the breakdown's x/w but their breakdown boxes are axis-aligned bounds, so y/h were reduced to the unrotated text line (checked on the pixels). Tab labels (Characters / Gear / Runes) not transcribed."
+}

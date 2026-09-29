@@ -1,4 +1,6 @@
 import { readSettings } from "../config/project.ts";
+import { ProjectSettingsSchema } from "../config/project-schema.ts";
+import { RefsSchema } from "../library/refs.ts";
 import type { Storage } from "../storage/index.ts";
 import { fileSize, freeDiskBytes, SHARE_PREFIX } from "../storage/share-files.ts";
 import {
@@ -111,6 +113,42 @@ export async function inspectPackage(
       throw new PackageError(
         `There is not enough free disk space: importing needs about ${sizeText(needed)} free.`,
       );
+
+    // What the summary shows comes from the project's own files, not only from the manifest.
+    const json = async (name: string) => {
+      const e = ix.entries.get(name);
+      if (!e) throw new PackageError("The file does not contain a complete project.");
+      try {
+        return JSON.parse((await readEntry(ix, e)).bytes.toString("utf8"));
+      } catch (err) {
+        if (err instanceof PackageError) throw err;
+        throw new PackageError(`"${name}" is damaged.`);
+      }
+    };
+    const settings = ProjectSettingsSchema.safeParse(await json("project/project.json"));
+    const refs = RefsSchema.safeParse(await json("project/refs.json"));
+    if (!settings.success || !refs.success)
+      throw new PackageError("The project's settings or picture list in this file have problems.");
+    const s = settings.data;
+    if (
+      s.id !== manifest.project.id ||
+      s.name !== manifest.project.name ||
+      s.ourApp.id !== manifest.project.ourAppId
+    )
+      throw new PackageError("The file's manifest does not match the project inside it.");
+    const origs = [...listed.keys()].filter((n) => n.startsWith("library/images/orig/")).length;
+    if ((manifest.kind === "light") !== (origs === 0))
+      throw new PackageError("The file's manifest does not match the pictures inside it.");
+    const defs = [...listed.keys()].filter((n) => /^project\/reports\/defs\/[^/]+\.json$/.test(n));
+    manifest.counts = {
+      ...manifest.counts,
+      images: Object.keys(refs.data.images).length,
+      fullSize: origs,
+      reports: defs.length,
+      competitors: s.competitors.length,
+      countries: s.markets.length,
+    };
+    if (manifest.reports.length !== defs.length) manifest.reports = [];
 
     const existing = readSettings(storage, { projectId: manifest.project.id });
     const taken = new Set(storage.listProjectIds());

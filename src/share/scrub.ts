@@ -78,6 +78,17 @@ export function shareableJournal(raw: unknown): unknown {
 }
 
 const TEXT = /\.(json|md)$/i;
+const EMAIL =
+  /[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.(?!(?:png|jpe?g|webp|gif|json|md|bin)\b)[A-Za-z]{2,}\b/g;
+
+/** E-mail addresses in every text value (an account identity never travels). */
+function withoutEmails(v: unknown): unknown {
+  if (typeof v === "string") return v.replace(EMAIL, "<e-mail>");
+  if (Array.isArray(v)) return v.map(withoutEmails);
+  if (v && typeof v === "object")
+    return Object.fromEntries(Object.entries(v).map(([k, x]) => [k, withoutEmails(x)]));
+  return v;
+}
 
 /** The bytes a file is exported with. */
 export function exportBytes(name: string, bytes: Buffer, c: ScrubContext): Buffer {
@@ -89,6 +100,15 @@ export function exportBytes(name: string, bytes: Buffer, c: ScrubContext): Buffe
       j === undefined
         ? '{"version":1,"jobs":{},"batches":[],"increments":[]}'
         : JSON.stringify(j, null, 2);
+  }
+  // Store pages keep their developers' public contact addresses (they are store data).
+  if (!name.startsWith("library/store-text/") && text.includes("@")) {
+    if (name.endsWith(".md")) text = text.replace(EMAIL, "<e-mail>");
+    else {
+      const before = JSON.parse(text);
+      const after = withoutEmails(before);
+      if (JSON.stringify(after) !== JSON.stringify(before)) text = JSON.stringify(after, null, 2);
+    }
   }
   return Buffer.from(scrubText(text, c), "utf8");
 }
