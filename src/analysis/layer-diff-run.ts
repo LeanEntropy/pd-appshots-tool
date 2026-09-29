@@ -7,12 +7,14 @@ import {
   compareLayer,
   currentLayerDiff,
   type LayerDiffRecord,
+  type LayerPixel,
   writeLayerDiff,
 } from "./layer-diff.ts";
 import type { RenderedPrompt } from "./prompts.ts";
 import type { Provider } from "./providers.ts";
 import { type AnalysisRecord, isUsable } from "./records.ts";
 import { errorKey } from "./run-chunk.ts";
+import type { ImageAnalysis } from "./schema.ts";
 
 /** One image whose text layer is compared with its anchor (the same picture, analysed). */
 export interface LayerItem {
@@ -46,6 +48,14 @@ export interface LayerLoopDeps {
   fail: (message: string, name: string | null, position: number | null) => void;
   counter: { done: number };
   total: number;
+  /**
+   * The pixel check of an image against its anchor (item 8): the crops then cover the texts
+   * and the changed areas, and only what changed is asked. Absent (check off): as before.
+   */
+  pixel?: (
+    imageId: string,
+    anchor: AnalysisRecord & { final: ImageAnalysis },
+  ) => Promise<LayerPixel | null>;
 }
 
 export interface LayerLoopResult {
@@ -131,7 +141,9 @@ export async function compareLayers(
       });
       let ok = false;
       try {
+        const pixel = d.pixel ? await d.pixel(it.imageId, anchor).catch(() => null) : null;
         const raw = await compareLayer(it, anchor, {
+          pixel,
           paths: d.paths,
           db: d.db,
           provider: d.provider,

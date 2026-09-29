@@ -12,8 +12,9 @@ import { stableHash } from "../util/hash.ts";
 import { latestRun } from "../view/model.ts";
 import { type AnchorCandidate, type ScopeInput, type ScopeItem, tierScope } from "./anchors.ts";
 import { layerLookup, withLayerResults } from "./layer-lookup.ts";
-import { readDifferentPairs } from "./match-check.ts";
+import { readDifferentPairs, readSamePairs } from "./match-check.ts";
 import { theCountry } from "./names.ts";
+import { pixelInput } from "./pixel-pairs.ts";
 import { type CostParts, costOf, dropProposal, presetCost } from "./scope-cost.ts";
 import type { MarketRef, ReportScope } from "./types.ts";
 
@@ -80,6 +81,8 @@ export interface PlanContext {
   names: Map<string, string>;
   /** The current text-layer comparison of an image against an anchor (none: not compared). */
   layer?: (imageId: string, anchorId: string) => LayerDiffRecord | undefined;
+  /** The pixel check (item 8); undefined when it is off (fingerprint only). */
+  pixel?: ReturnType<typeof pixelInput>;
 }
 
 export function planContext(loaded: LoadedConfig): PlanContext {
@@ -91,6 +94,7 @@ export function planContext(loaded: LoadedConfig): PlanContext {
     different: readDifferentPairs(loaded),
     names: gameNames(loaded),
     layer: layerLookup(loaded, records),
+    pixel: pixelInput(loaded, records, readSamePairs(loaded)),
   };
 }
 
@@ -256,6 +260,7 @@ export function buildScopePlan(
     analysedIds,
     theCountry(main.label),
     ctx.different,
+    ctx.pixel,
   );
   const items: PlanImage[] = withLayerResults(tiered, ctx).map((t) => ({
     ...t,

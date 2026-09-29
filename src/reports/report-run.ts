@@ -18,6 +18,7 @@ import { newRunId, readDeck } from "../store/manifest.ts";
 import { cachedAi, callContext, paidAi } from "./country-ai.ts";
 import { buildCountryVersion } from "./country-version.ts";
 import { countryName } from "./names.ts";
+import { layerPixelFor } from "./pixel-pairs.ts";
 import type { ScopePlan } from "./scope-plan.ts";
 import { researchSnapshot } from "./suggest.ts";
 import type { ReportDef } from "./types.ts";
@@ -162,6 +163,7 @@ export async function runReport(
       fail,
       counter,
       total,
+      pixel: layerPixelFor(loaded, db),
     });
     cancelled = r.cancelled;
     stoppedForBudget = r.stoppedForBudget;
