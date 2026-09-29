@@ -8,7 +8,7 @@ import type { CountryReport } from "../reports/country-report-types.ts";
 import { suppressChild } from "../reports/derived-relations.ts";
 import { draftsFromExpansion } from "../reports/drafts.ts";
 import { withGroupsMd } from "../reports/group-md.ts";
-import { countryReportsOf, derivedLink, groupsFor, saveGroups } from "../reports/groups-load.ts";
+import { countryReportsOf, derivedLink, groupsFor } from "../reports/groups-load.ts";
 import { listReports } from "../reports/list.ts";
 import { mainMarketRef } from "../reports/main-market.ts";
 import { repeatUpgrader, tryUpgrade } from "../reports/repeat-upgrade.ts";
@@ -27,6 +27,7 @@ import { settingsOf } from "../settings/access.ts";
 import { workspaceStorage } from "../storage/index.ts";
 import { markdownToHtml } from "../view/md-html.ts";
 import type { ApiResponse } from "./api.ts";
+import { GroupsBody, safe, saveGroupsOf } from "./reports-groups-api.ts";
 
 /** Several reports per project (plan-reports R1): list, read a version, rename, archive, delete. */
 
@@ -221,15 +222,6 @@ export function getReportVersion(loaded: LoadedConfig, id: string, vid: string):
   };
 }
 
-const GroupsBody = z
-  .array(
-    z.object({
-      name: z.string().trim().min(1).max(60),
-      countries: z.array(z.string().regex(/^[a-z]{2}$/)).max(20),
-    }),
-  )
-  .max(4);
-
 const PatchBody = z
   .object({
     name: z.string().max(120).optional(),
@@ -238,15 +230,6 @@ const PatchBody = z
   })
   .strict()
   .refine((b) => b.name !== undefined || b.archived !== undefined || b.groups !== undefined);
-
-/** Something computed for display only: left out (null) rather than failing the page. */
-function safe<T>(f: () => T): T | null {
-  try {
-    return f();
-  } catch {
-    return null;
-  }
-}
 
 export function patchReport(loaded: LoadedConfig, id: string, body: unknown): ApiResponse {
   const parsed = PatchBody.safeParse(body);
@@ -258,20 +241,8 @@ export function patchReport(loaded: LoadedConfig, id: string, body: unknown): Ap
   const s = workspaceStorage(paths.workspace);
   const { name, archived, groups } = parsed.data;
   if (groups !== undefined) {
-    if (def.type !== "compare")
-      return { status: 409, body: { problems: ["Only a comparison has groups of countries."] } };
-    const gls = new Set(def.scope.markets.map((m) => m.gl));
-    const bad = groups.find(
-      (g) => g.countries.some((gl) => !gls.has(gl)) || g.countries.length < 2,
-    );
-    if (bad)
-      return {
-        status: 400,
-        body: { problems: [`"${bad.name}" needs at least 2 of the compared countries.`] },
-      };
-    saveGroups(loaded, def, groups);
-    if (name === undefined && archived === undefined)
-      return { status: 200, body: { id: def.id, groups, message: "Groups saved." } };
+    const r = saveGroupsOf(loaded, def, groups);
+    if (r.status !== 200 || (name === undefined && archived === undefined)) return r;
   }
   const changes = [
     name === undefined ? null : () => renameReport(s, paths, def.id, name),
