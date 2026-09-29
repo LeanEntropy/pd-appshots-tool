@@ -1,5 +1,5 @@
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
-import { join } from "node:path";
+import { dirname, join } from "node:path";
 import type { Taxonomy } from "../config/load.ts";
 import { ensureDir } from "../util/fsx.ts";
 import { sha256 } from "../util/hash.ts";
@@ -151,5 +151,26 @@ function renderFile(
   ensureDir(dir);
   const file = join(dir, `${hash}.md`);
   if (!existsSync(file)) writeFileSync(file, text);
+  return { text, hash, file };
+}
+
+/** The shared knowledge-base rules block (plan-knowledge-base 4.2), added only when it is on. */
+export const KB_RULES_FILE = "kb-rules.v1";
+
+export function kbRulesText(root: string): string {
+  return readFileSync(join(root, "prompts", "analysis", `${KB_RULES_FILE}.md`), "utf8").trim();
+}
+
+/**
+ * A system prompt with material appended (the knowledge base's rules and core entries), stored
+ * by content hash next to the prompt it extends. Without material, the prompt is unchanged.
+ */
+export function extendPrompt(base: RenderedPrompt, extra: string): RenderedPrompt {
+  if (!extra) return base;
+  const text = `${base.text}\n\n${extra}`;
+  const hash = sha256(text);
+  const dir = dirname(base.file);
+  const file = join(dir, `${hash}.md`);
+  if (base.file && existsSync(dir) && !existsSync(file)) writeFileSync(file, text);
   return { text, hash, file };
 }

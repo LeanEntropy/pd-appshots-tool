@@ -1,9 +1,11 @@
+import { KB_CITE_SCRIPT } from "./kb-cite.ts";
+
 /**
  * Report page parts: computed pattern tables (with n and share bars), ours vs the patterns, and
  * the AI insights and recommendations (full screenshot and marketing-layer spec per slot, with
  * competitor examples). Every value is escaped; numbers are shown as text next to each bar.
  */
-export const REPORT_PARTS_SCRIPT = `
+export const REPORT_PARTS_SCRIPT = `${KB_CITE_SCRIPT}
 // Counts, never percentages (user rule): the bar shows the share, the text the count.
 function shares(cs, n, name) {
   return (cs || []).slice(0, n || 4).map((c) => '<div>' + esc(name ? name(c.key) : L(c.key)) + " " + bar(c.share) + c.n + "</div>").join("") || '<span class="meta">none</span>';
@@ -112,7 +114,7 @@ function slotHtml(d, p) {
   const hl = (m.texts[0] || {}).text;
   return '<details class="fold slotd slot"><summary>Position ' + esc(p.position) + ": " + esc(L(p.screenType)) + (p.subtype ? " / " + esc(L(p.subtype)) : "") + (hl ? ' <span class="meta">\\u201c' + esc(hl) + "\\u201d</span>" : "") + '</summary><div class="fold-b">' + definedHtml(d, [cat])
     + "<dl><dt>Source</dt><dd>" + esc(p.source) + "</dd>" + (p.logo ? "<dt>Game logo</dt><dd>" + (p.logo.show ? "yes" : "no") + ". " + esc(p.logo.why) + "</dd>" : "") + "<dt>Screen to capture</dt><dd>" + esc(s.whatToCapture) + " (" + esc(s.orientation) + ")</dd><dt>Action</dt><dd>" + esc(s.action) + "</dd><dt>Atmosphere</dt><dd>" + esc(s.atmosphere) + "</dd><dt>Main colours</dt><dd>" + esc(s.mainColours) + "</dd></dl>"
-    + layer + "<p><strong>Why:</strong> " + esc(p.why) + "</p>" + (ex ? '<p><strong>Competitor examples:</strong></p><div class="strip">' + ex + "</div>" : "") + "</div></details>";
+    + layer + "<p><strong>Why:</strong> " + esc(p.why) + kbMarks(d.ai && d.ai.recommendations, "position:" + p.position) + "</p>" + (ex ? '<p><strong>Competitor examples:</strong></p><div class="strip">' + ex + "</div>" : "") + "</div></details>";
 }
 
 // The recommended order (summary table), then the full screenshot and marketing-layer spec per slot.

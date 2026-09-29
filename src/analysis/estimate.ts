@@ -1,4 +1,5 @@
 import type { Config } from "../config/schema.ts";
+import { kbApprovalLine } from "../kb/cost.ts";
 import { LAYOUT_USD_PER_IMAGE } from "../layout/vocab.ts";
 import { secondOpinionOn } from "../settings/access.ts";
 import type { TierResult } from "./tiers.ts";
@@ -55,6 +56,8 @@ export function estimate(
   const disputes = config.review.enabled ? Math.ceil(reviewImages * e.expectedDisputeRate) : 0;
   const adjCalls = Math.min(disputes, byApp.size);
   const allowance = 1 + e.retryAllowance;
+  // The knowledge base's share of the text steps (Settings switch; off = nothing added).
+  const kb = kbApprovalLine(config, { main: true, abroad: 0, abTests: true });
   // The layout breakdown: its own call after each new full analysis (Settings switch).
   const layout = config.options.speed.layoutCapture ? full : 0;
   const usd: [number, number] = [0, 1].map((k) => {
@@ -65,7 +68,7 @@ export function estimate(
     // Synthesis covers the pattern wording, recommendations, check and revision; the A/B tests
     // are one more call of about a quarter of that (a retry at most doubles it).
     const s = e.synthesisUsd[k] as number;
-    const syn = synthesis ? s + (k === 0 ? s / 4 : s / 2) : 0;
+    const syn = synthesis ? s + (k === 0 ? s / 4 : s / 2) + (kb?.usd[k] ?? 0) : 0;
     return (
       Math.round(((fa + ld) * allowance + disputes * e.adjudicationUsdPerDispute + syn) * 100) / 100
     );
@@ -143,6 +146,9 @@ export function estimate(
         images: 0,
         note: "text only; one retry if a test fails the checks",
       },
+      ...(kb
+        ? [{ role: "Knowledge base material", model: rec, calls: 0, images: 0, note: kb.text }]
+        : []),
     );
   }
   return {

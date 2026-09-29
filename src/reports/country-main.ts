@@ -7,6 +7,7 @@ import { PROMPT_VERSIONS } from "../analysis/prompts.ts";
 import { buildReportData, type ReportData } from "../analysis/report-data.ts";
 import { synthesise } from "../analysis/synthesis.ts";
 import { type LoadedConfig, loadTaxonomy } from "../config/load.ts";
+import { ctxForCountry } from "../kb/run.ts";
 import type { PlayContext } from "./ab-section.ts";
 import type { CountrySlice } from "./build.ts";
 import type { ReportAi } from "./country-ai.ts";
@@ -57,7 +58,7 @@ export async function mainSynthesis(
       competitors: e.competitors,
       ourDeckLength: e.ourDeckLength,
     },
-    ai.ctx,
+    ctxForCountry(ai.ctx, s.market.gl),
     (phase, message) => {
       ai.report(phase, message);
       ai.steps?.start(stepKey.main(phase), mainLabel(phase, s.market.label));

@@ -1,0 +1,4060 @@
+{
+  "file": "entries-heuristics-images",
+  "entries": [
+    {
+      "id": "hr-001",
+      "kind": "heuristic",
+      "claim": "Close to half of store visitors look only at the first two screenshots.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [
+        {
+          "value": 50,
+          "unit": "% of visitors (approx.)",
+          "of": "look only at first two screenshots",
+          "context": "SplitMetrics 2024 as relayed by AppFollow"
+        }
+      ],
+      "appliesWhen": "Store visitors browsing a listing; SplitMetrics 2024 sample of about 200 apps and 3,500+ tests across both stores (category mix not stated).",
+      "scope": {
+        "store": [
+          "google_play",
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "1-3"
+        ],
+        "asset": [
+          "screenshots"
+        ]
+      },
+      "tags": [
+        "first_images",
+        "screenshots",
+        "store_page_layout"
+      ],
+      "support": [
+        {
+          "sourceId": "hr-s007",
+          "excerpt": "AppFollow, quoting SplitMetrics 2024: 'close to half of store visitors look only at the first two screenshots'; 'just 7% reach the fifth'.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "Justify putting the whole pitch into screenshots 1-2 of the Rogue Legend set; do not quote as Google Play data.",
+      "researcherNote": "Single origin (SplitMetrics report is gated, so the figure is second-hand via AppFollow). Not split by store, game genre or country; no Google Play-specific scroll data was found anywhere.",
+      "retired": false
+    },
+    {
+      "id": "hr-002",
+      "kind": "heuristic",
+      "claim": "Fewer than one in five App Store visitors scroll through a full five-screenshot gallery.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [
+        {
+          "value": "11-15",
+          "unit": "% scroll through all 5",
+          "of": "SplitMetrics 2018 portrait vs landscape sets",
+          "context": "App Store"
+        },
+        {
+          "value": "9 (portrait), 17 (games), 5 (landscape)",
+          "unit": "% scroll",
+          "of": "AppAgent 2017",
+          "context": "5 apps, 25,000+ visitors"
+        }
+      ],
+      "appliesWhen": "App Store galleries of five screenshots; SplitMetrics 2018 (1,800 tests) and AppAgent 2017 (five apps, 25,000+ visitors).",
+      "scope": {
+        "store": [
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "screenshots"
+        ]
+      },
+      "tags": [
+        "first_images",
+        "screenshots",
+        "deck_length"
+      ],
+      "support": [
+        {
+          "sourceId": "hr-s009",
+          "excerpt": "SplitMetrics 2018: only 11% scroll through all 5 portrait images and 15% through all 5 landscape images.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        },
+        {
+          "sourceId": "hr-s027",
+          "excerpt": "AppAgent 2017: only 9% scroll portrait screenshots, 17% for gamers, 5% for landscape.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "Assume most visitors never see screenshots 4-8; put the strongest hook and the core loop early.",
+      "researcherNote": "Both data sets are old (2017-18), iOS-era layouts; the two disagree on which orientation is scrolled more (see the orientation entries). No comparable Google Play scroll-depth study was found.",
+      "retired": false
+    },
+    {
+      "id": "hr-003",
+      "kind": "heuristic",
+      "claim": "About 60% of app store visitors are 'decisive' (decide without engaging with the gallery) and about 40% are 'explorers'.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [
+        {
+          "value": 60,
+          "unit": "% of traffic",
+          "of": "decisive visitors",
+          "context": "Storemaven via Branch guest post"
+        }
+      ],
+      "appliesWhen": "Storemaven's visitor model, derived from its own testing platform (undated, 'over one billion data points').",
+      "scope": {
+        "store": [
+          "google_play",
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "1-3"
+        ],
+        "asset": [
+          "screenshots"
+        ]
+      },
+      "tags": [
+        "first_images",
+        "store_page_layout",
+        "audience"
+      ],
+      "support": [
+        {
+          "sourceId": "hr-s048",
+          "excerpt": "Storemaven guest post: 'Decisive Visitors represents 60% of all app store traffic'; the remaining 40% are explorers.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "Framing only: design the first-impression frame for people who will never scroll.",
+      "researcherNote": "Vendor-only, undated, method not published; storemaven.com itself is no longer fetchable.",
+      "retired": false
+    },
+    {
+      "id": "hr-004",
+      "kind": "heuristic",
+      "claim": "Explorer visitors show 5-15% higher day-2 retention than instant installers.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [
+        {
+          "value": "5-15",
+          "unit": "% higher day-2 retention",
+          "of": "explorers vs instant installers",
+          "context": "Storemaven via Branch"
+        }
+      ],
+      "appliesWhen": "Storemaven audience model; App Store and Google Play not distinguished.",
+      "scope": {
+        "store": [
+          "google_play",
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "store_page"
+        ],
+        "asset": [
+          "screenshots"
+        ]
+      },
+      "tags": [
+        "audience",
+        "metrics"
+      ],
+      "support": [
+        {
+          "sourceId": "hr-s048",
+          "excerpt": "Storemaven: explorers show 'second day retention 5-15% above instant installers' and higher conversion to paying users.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "Optional argument that a richer gallery attracts higher-quality players; do not overweight.",
+      "researcherNote": "Vendor-only, undated, no method.",
+      "retired": false
+    },
+    {
+      "id": "hr-005",
+      "kind": "heuristic",
+      "claim": "Store visitors decide within seconds: about 7 seconds on the listing on average, and about half decide on first impression.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [
+        {
+          "value": 7,
+          "unit": "seconds",
+          "of": "average time on listing page",
+          "context": "AppAgent portfolio, 2017"
+        },
+        {
+          "value": 50,
+          "unit": "% of installers",
+          "of": "decide on first impression",
+          "context": "Storemaven"
+        }
+      ],
+      "appliesWhen": "AppAgent 2017 (five apps) and Storemaven (via Apptamin/Mobilespoon).",
+      "scope": {
+        "store": [
+          "google_play",
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "store_page"
+        ],
+        "asset": [
+          "screenshots"
+        ]
+      },
+      "tags": [
+        "first_images",
+        "store_page_layout",
+        "metrics"
+      ],
+      "support": [
+        {
+          "sourceId": "hr-s027",
+          "excerpt": "AppAgent 2017: users spend an average of just 7 seconds on the store listing page.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        },
+        {
+          "sourceId": "hr-s045",
+          "excerpt": "Apptamin quoting Storemaven: '50% of all installers make a decision only based on your first impression'.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "Design for glance value; test at thumbnail size.",
+      "researcherNote": "Two vendor sources, small or undocumented samples, old.",
+      "retired": false
+    },
+    {
+      "id": "hr-006",
+      "kind": "heuristic",
+      "claim": "Screenshot 1 should communicate the core promise on its own, like a stand-alone ad.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Any listing where users see only the first frame(s); advice, not a measured effect.",
+      "scope": {
+        "store": [
+          "google_play",
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "1"
+        ],
+        "asset": [
+          "screenshots"
+        ]
+      },
+      "tags": [
+        "first_images",
+        "screenshots",
+        "composition"
+      ],
+      "support": [
+        {
+          "sourceId": "hr-s004",
+          "excerpt": "Apple: the first one to three images appear in App Store search results, 'so make sure these highlight the essence of your app'.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        },
+        {
+          "sourceId": "hr-s031",
+          "excerpt": "AppFollow: frame one communicates the core promise; frames two and three reinforce value through use cases or outcomes.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        },
+        {
+          "sourceId": "hr-s063",
+          "excerpt": "SEM Nexus: 'treat screenshot 1 as a standalone ad unit, not a gallery opener' (self-described working hypothesis, not a controlled study).",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        },
+        {
+          "sourceId": "hr-s064",
+          "excerpt": "AppScreenshotStudio: panoramic sets work only when the first frame stands alone as a complete selling point.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "Make screenshot 1 for Rogue Legend a complete pitch (genre + hook + character) without needing frame 2.",
+      "researcherNote": "Convergent advice from four origins, but none is a controlled test of this exact rule.",
+      "retired": false
+    },
+    {
+      "id": "hr-007",
+      "kind": "heuristic",
+      "claim": "AppFollow states that the first three screenshots carry roughly 70% of the conversion weight.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [
+        {
+          "value": 70,
+          "unit": "% conversion weight",
+          "of": "first three frames",
+          "context": "AppFollow (unverified)"
+        }
+      ],
+      "appliesWhen": "AppFollow's own claim, attributed to a review of 1,200 top-grossing iOS apps; no data shown.",
+      "scope": {
+        "store": [
+          "google_play",
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "1-3"
+        ],
+        "asset": [
+          "screenshots"
+        ]
+      },
+      "tags": [
+        "first_images",
+        "screenshots"
+      ],
+      "support": [
+        {
+          "sourceId": "hr-s031",
+          "excerpt": "AppFollow: 'The first three frames carry roughly 70% of the conversion weight' (Yaroslav Rudnitskiy, reviewing 1,200 top-grossing iOS apps).",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "Do not cite as evidence.",
+      "researcherNote": "Unsourced, unverifiable; listed so the report agent does not reuse it as fact.",
+      "retired": false
+    },
+    {
+      "id": "hr-008",
+      "kind": "heuristic",
+      "claim": "About 63% of top game listings use landscape screenshots, against about 5% of non-game listings.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [
+        {
+          "value": 63,
+          "unit": "% of top game listings",
+          "of": "use landscape screenshots",
+          "context": "origin unstated"
+        },
+        {
+          "value": 5,
+          "unit": "% of non-game listings",
+          "of": "use landscape screenshots",
+          "context": "origin unstated"
+        }
+      ],
+      "appliesWhen": "Observation of top-listed games vs non-games; sample, date and store are not stated (Phiture 2026; Udonis attributes it to Storemaven).",
+      "scope": {
+        "store": [
+          "google_play",
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "screenshots"
+        ]
+      },
+      "tags": [
+        "orientation",
+        "genre_convention",
+        "screenshots"
+      ],
+      "support": [
+        {
+          "sourceId": "hr-s020",
+          "excerpt": "Phiture: 63% of top gaming apps use landscape-oriented screenshots, compared to just 5% of non-gaming apps.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        },
+        {
+          "sourceId": "hr-s091",
+          "excerpt": "Udonis: '63% of mobile games use landscape orientation', citing Storemaven.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "Describes the convention Rogue Legend would follow or deliberately break; not evidence of conversion.",
+      "researcherNote": "Both pages repeat one unsourced statistic; counted as one origin. Says what is common, not what converts.",
+      "retired": false
+    },
+    {
+      "id": "hr-009",
+      "kind": "heuristic",
+      "claim": "Screenshot orientation for a game has no proven universal winner, so it is a test variable.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Games on either store; evidence is one Rovio test plus vendor advice.",
+      "scope": {
+        "store": [
+          "google_play",
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "screenshots"
+        ]
+      },
+      "tags": [
+        "orientation",
+        "experiments",
+        "screenshots"
+      ],
+      "support": [
+        {
+          "sourceId": "hr-s010",
+          "excerpt": "Rovio's SplitMetrics test: portrait screenshots beat landscape for Angry Birds 2 'against industry standards'; earlier landscape gameplay tests had won.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        },
+        {
+          "sourceId": "hr-s006",
+          "excerpt": "Apple's PPO talk lists screenshot reordering and orientation (landscape vs portrait) among common test themes.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        },
+        {
+          "sourceId": "hr-s057",
+          "excerpt": "GameAnalytics: A/B test orientation, because 'what works for other games might be toxic for yours'.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [
+        {
+          "sourceId": "hr-s031",
+          "excerpt": "AppFollow: landscape layouts excel in gaming and streaming where immersion matters more, portrait for utility/finance.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "validFor": "as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "Plan an orientation test for Rogue Legend rather than assuming; check what the five competitors do first.",
+      "researcherNote": "No orientation test on Google Play was found. Apple guidance and Rovio are App Store.",
+      "retired": false
+    },
+    {
+      "id": "hr-010",
+      "kind": "heuristic",
+      "claim": "On the App Store, landscape screenshot sets were scrolled through to the end more often than portrait sets.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [
+        {
+          "value": 15,
+          "unit": "% of visitors",
+          "of": "scroll through all 5 landscape images",
+          "context": "SplitMetrics 2018"
+        },
+        {
+          "value": 11,
+          "unit": "% of visitors",
+          "of": "scroll through all 5 portrait images",
+          "context": "SplitMetrics 2018"
+        }
+      ],
+      "appliesWhen": "SplitMetrics 2018, 1,800 tests, 5-image sets; games not isolated.",
+      "scope": {
+        "store": [
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "screenshots"
+        ]
+      },
+      "tags": [
+        "orientation",
+        "screenshots",
+        "first_images"
+      ],
+      "support": [
+        {
+          "sourceId": "hr-s009",
+          "excerpt": "SplitMetrics 2018: landscape sets 15% scroll through all 5, portrait 11%; full scrollers convert about 18% (landscape) vs 13% (portrait).",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [
+        "hr-011"
+      ],
+      "counterSupport": [
+        {
+          "sourceId": "hr-s027",
+          "excerpt": "AppAgent 2017 found the opposite: 9% scroll portrait sets and 5% landscape.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "validFor": "as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "Only a hint that landscape can hold attention longer; do not rely on it.",
+      "researcherNote": "Directly contradicted by AppAgent 2017; both old and iOS-based.",
+      "retired": false
+    },
+    {
+      "id": "hr-011",
+      "kind": "heuristic",
+      "claim": "On the App Store, portrait screenshot sets were scrolled through more often than landscape sets, and gamers scrolled more than other users.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [
+        {
+          "value": 9,
+          "unit": "% scroll",
+          "of": "portrait screenshots (all apps)",
+          "context": "AppAgent 2017"
+        },
+        {
+          "value": 17,
+          "unit": "% scroll",
+          "of": "gamers",
+          "context": "AppAgent 2017"
+        },
+        {
+          "value": 5,
+          "unit": "% scroll",
+          "of": "landscape screenshots",
+          "context": "AppAgent 2017"
+        }
+      ],
+      "appliesWhen": "AppAgent 2017: five apps, 25,000+ visitors, three A/B tools.",
+      "scope": {
+        "store": [
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "screenshots"
+        ]
+      },
+      "tags": [
+        "orientation",
+        "screenshots",
+        "first_images"
+      ],
+      "support": [
+        {
+          "sourceId": "hr-s027",
+          "excerpt": "AppAgent: 'only 9% of people scroll portrait screenshots', 17% for gamers, 'the scroll rate drops down to 5%' for landscape.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        },
+        {
+          "sourceId": "hr-s028",
+          "excerpt": "AppsFlyer repeats the 9% / 17% figures citing the Phiture 2017 article.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [
+        "hr-010"
+      ],
+      "counterSupport": [
+        {
+          "sourceId": "hr-s009",
+          "excerpt": "SplitMetrics 2018: 15% landscape vs 11% portrait scroll through all five.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "validFor": "as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "Shows that scroll-depth evidence on orientation is contradictory; treat as unresolved.",
+      "researcherNote": "Tiny portfolio sample; AppsFlyer is a relay of the same origin.",
+      "retired": false
+    },
+    {
+      "id": "hr-012",
+      "kind": "heuristic",
+      "claim": "A casual audience that holds the phone in portrait can respond better to portrait screenshots than to landscape gameplay screenshots.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "One test (Angry Birds 2, App Store, 99.7% confidence); the audience explanation is the vendor's, not tested.",
+      "scope": {
+        "store": [
+          "google_play",
+          "app_store"
+        ],
+        "genre": [
+          "casual"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "screenshots"
+        ]
+      },
+      "tags": [
+        "orientation",
+        "audience",
+        "screenshots"
+      ],
+      "support": [
+        {
+          "sourceId": "hr-s010",
+          "excerpt": "SplitMetrics/Rovio: portrait won 'with 99.7% confidence'; conclusion was that a casual audience holding the phone in portrait benefits from portrait screenshots.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [
+        {
+          "sourceId": "hr-s009",
+          "excerpt": "SplitMetrics 2018 blog reports ZiMAD 'landscape variations' improved conversion 18.4% (details not given).",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "validFor": "as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "Rogue Legend is an idle/roguelike with portrait play; a portrait-vs-landscape test is worthwhile.",
+      "researcherNote": "Single case; the same vendor reports a landscape win for another game.",
+      "retired": false
+    },
+    {
+      "id": "hr-013",
+      "kind": "heuristic",
+      "claim": "A banner-like landscape first screenshot is a pattern to test for games; Social Point reports 15.4% conversion for Monster Legends against 4.7% for a competitor.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [
+        {
+          "value": 15.4,
+          "unit": "% conversion",
+          "of": "Monster Legends banner-like landscape first screenshot",
+          "context": "GameAnalytics, origin unstated"
+        },
+        {
+          "value": 4.7,
+          "unit": "% conversion",
+          "of": "competitor",
+          "context": "not a controlled test"
+        }
+      ],
+      "appliesWhen": "Uncontrolled comparison (own asset vs competitor) reported by GameAnalytics without origin.",
+      "scope": {
+        "store": [
+          "google_play",
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "1"
+        ],
+        "asset": [
+          "screenshots"
+        ]
+      },
+      "tags": [
+        "first_images",
+        "orientation",
+        "composition"
+      ],
+      "support": [
+        {
+          "sourceId": "hr-s057",
+          "excerpt": "GameAnalytics: Social Point's banner-like landscape first screenshot converted at 15.4% versus 4.7% for its closest competitor.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "Idea for a test variant only.",
+      "researcherNote": "Not an A/B test; store/date/market unknown; origin unknown.",
+      "retired": false
+    },
+    {
+      "id": "hr-014",
+      "kind": "heuristic",
+      "claim": "Screenshots for a game should show the real core loop rather than polished illustrations or menus.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Games; advice from several vendors, backed by Google's requirement that screenshots show the actual in-game experience.",
+      "scope": {
+        "store": [
+          "google_play",
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "screenshots"
+        ]
+      },
+      "tags": [
+        "gameplay_real",
+        "art_vs_gameplay",
+        "screenshots"
+      ],
+      "support": [
+        {
+          "sourceId": "hr-s020",
+          "excerpt": "Phiture: showcase actual gameplay in screenshots rather than illustrations.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        },
+        {
+          "sourceId": "hr-s030",
+          "excerpt": "AppFollow audit: 'Go through your own tutorial and use the core loop as the storyboard.'",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        },
+        {
+          "sourceId": "hr-s029",
+          "excerpt": "AppAgent: lead with visual gameplay rather than interface elements (Pocket Paws example).",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        },
+        {
+          "sourceId": "hr-s001",
+          "excerpt": "Google: screenshots must show 'the actual in-app or in-game experience'; not a conversion finding.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [
+        {
+          "sourceId": "hr-s059",
+          "excerpt": "Udonis: Playrix uses 'artistic interpretations' of gameplay instead of actual screenshots for Homescapes, Gardenscapes and Fishdom.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        },
+        {
+          "sourceId": "hr-s011",
+          "excerpt": "ZiMAD's +32% redesign replaced plain screenshots with a mix of art overlays and gameplay.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "validFor": "as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "Base Rogue Legend screenshots on real combat/build frames, dressed with overlays.",
+      "researcherNote": "No controlled test isolates real gameplay vs art. Google's rule makes pure art non-compliant on Play.",
+      "retired": false
+    },
+    {
+      "id": "hr-015",
+      "kind": "heuristic",
+      "claim": "Screenshots that overlay the main character and art on gameplay with action captions beat plain gameplay screenshots in one game test (+32%).",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [
+        {
+          "value": 32,
+          "unit": "% more install clicks",
+          "of": "redesigned vs plain screenshots",
+          "context": "ZiMAD Bubble Birds 4 via SplitMetrics"
+        }
+      ],
+      "appliesWhen": "ZiMAD Bubble Birds 4, iOS implied, duration and sample undisclosed; changes were bundled.",
+      "scope": {
+        "store": [
+          "google_play",
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "screenshots"
+        ]
+      },
+      "tags": [
+        "composition",
+        "characters",
+        "captions",
+        "art_vs_gameplay"
+      ],
+      "support": [
+        {
+          "sourceId": "hr-s011",
+          "excerpt": "SplitMetrics: main character overlaid, captions rewritten, plain screenshots replaced with art overlays; '32% more users clicked the install button'.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "Template for a Rogue Legend variant: hero in front, real fight behind, one action caption.",
+      "researcherNote": "Vendor case study, bundled changes (character, captions, art), no sample/duration. Also see the ab_case entry.",
+      "retired": false
+    },
+    {
+      "id": "hr-016",
+      "kind": "heuristic",
+      "claim": "The core mechanic and key text in screenshots must remain legible at thumbnail size.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Listings viewed on phones and in search lists.",
+      "scope": {
+        "store": [
+          "google_play",
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "screenshots"
+        ]
+      },
+      "tags": [
+        "legibility",
+        "screenshots",
+        "composition"
+      ],
+      "support": [
+        {
+          "sourceId": "hr-s030",
+          "excerpt": "AppFollow audit: 'Screenshots have to work at thumbnail size'; A Maze Go's maze visuals disappear when reduced.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        },
+        {
+          "sourceId": "hr-s003",
+          "excerpt": "To ensure your store listing looks great on multiple screen sizes, design for scale and keep important elements toward the center of graphics.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        },
+        {
+          "sourceId": "hr-s004",
+          "excerpt": "Apple: keep the icon simple and avoid unnecessary detail so it is legible at all sizes.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "Run a thumbnail (squint) check on every Rogue Legend screenshot.",
+      "researcherNote": "Advice from two audited games plus official guidance; no measured conversion effect.",
+      "retired": false
+    },
+    {
+      "id": "hr-017",
+      "kind": "heuristic",
+      "claim": "An AppFollow expert advises zooming in on the mechanic even if the frame no longer looks like the real HUD.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Single expert opinion from a live audit; may conflict with Google's 'actual experience' rule if taken too far.",
+      "scope": {
+        "store": [
+          "google_play",
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "screenshots"
+        ]
+      },
+      "tags": [
+        "gameplay_real",
+        "art_vs_gameplay",
+        "composition"
+      ],
+      "support": [
+        {
+          "sourceId": "hr-s030",
+          "excerpt": "AppFollow audit: 'Zoom in on the mechanic even if it stops looking like the real game HUD.'",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "Permission to crop and enlarge the fight/build moment, not to fake it.",
+      "researcherNote": "One opinion; keep within Google's rule that screenshots reflect the actual in-game experience.",
+      "retired": false
+    },
+    {
+      "id": "hr-018",
+      "kind": "heuristic",
+      "claim": "Do not open a game gallery with a menu or inventory screen; open with the experience.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "RPG / midcore listings; vendor advice only.",
+      "scope": {
+        "store": [
+          "google_play",
+          "app_store"
+        ],
+        "genre": [
+          "rpg"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "1-3"
+        ],
+        "asset": [
+          "screenshots"
+        ]
+      },
+      "tags": [
+        "first_images",
+        "composition",
+        "rpg"
+      ],
+      "support": [
+        {
+          "sourceId": "hr-s060",
+          "excerpt": "ASOMobile: screenshots that open with UI rather than experience are a common mistake; 'the first screenshot isn't the place for an inventory screen'.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        },
+        {
+          "sourceId": "hr-s029",
+          "excerpt": "AppAgent: lead with a hook, then gameplay, then a reward moment.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        },
+        {
+          "sourceId": "hr-s033",
+          "excerpt": "AppFollow: lead with gameplay moments, not menus ('Show the dragon battle... Show the reward moment').",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "Rogue Legend screenshot 1: combat or boss, not the equipment screen.",
+      "researcherNote": "Three vendors, no test. Origin count is honest but all are advice.",
+      "retired": false
+    },
+    {
+      "id": "hr-019",
+      "kind": "heuristic",
+      "claim": "Each screenshot in the sequence should answer a different question (promise, use case, proof) instead of repeating the same view.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Advice; no test.",
+      "scope": {
+        "store": [
+          "google_play",
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "1-3"
+        ],
+        "asset": [
+          "screenshots"
+        ]
+      },
+      "tags": [
+        "composition",
+        "screenshots",
+        "order"
+      ],
+      "support": [
+        {
+          "sourceId": "hr-s031",
+          "excerpt": "AppFollow: frame 1 promise, frames 2-3 use cases or outcomes, later frames add proof.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        },
+        {
+          "sourceId": "hr-s060",
+          "excerpt": "ASOMobile: each screenshot should answer a different player question.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "Structure the 8-slot Play deck as a story: fight, build, progression, reward.",
+      "researcherNote": "Vendor advice only.",
+      "retired": false
+    },
+    {
+      "id": "hr-020",
+      "kind": "heuristic",
+      "claim": "In Homa Games' three-variant screenshot test for Investment Run, the sequence highlighting choices tied to character progression won.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Publisher's account; no figures, sample or duration; store not stated.",
+      "scope": {
+        "store": [
+          "google_play",
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "screenshots"
+        ]
+      },
+      "tags": [
+        "composition",
+        "screenshots",
+        "experiments"
+      ],
+      "support": [
+        {
+          "sourceId": "hr-s058",
+          "excerpt": "GameAnalytics/Homa: the third variation 'was the winning bet', showing choices appeal when 'associated with character progression'.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "Supports testing a progression-focused sequence for Rogue Legend.",
+      "researcherNote": "Qualitative only.",
+      "retired": false
+    },
+    {
+      "id": "hr-021",
+      "kind": "heuristic",
+      "claim": "Adding the game's familiar characters to screenshots raised conversion in a game test.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Rovio Angry Birds 2 (App Store); ZiMAD Bubble Birds 4 bundled a character overlay; Survivor.io shows one foreground character per screenshot (observation).",
+      "scope": {
+        "store": [
+          "google_play",
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "screenshots"
+        ]
+      },
+      "tags": [
+        "characters",
+        "screenshots",
+        "composition"
+      ],
+      "support": [
+        {
+          "sourceId": "hr-s010",
+          "excerpt": "SplitMetrics/Rovio: 'familiar characters of the game increased the conversion rate' (no separate confidence figure).",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        },
+        {
+          "sourceId": "hr-s046",
+          "excerpt": "Apptamin (observational): Survivor.io screenshots each show one character in front with colour-coded CTAs.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "Test a hero-forward first screenshot for Rogue Legend versus a gameplay-only one.",
+      "researcherNote": "The SplitMetrics evidence is one origin; the Survivor.io point is a description, not a test. Familiar IP characters may not transfer to a new IP like Rogue Legend.",
+      "retired": false
+    },
+    {
+      "id": "hr-022",
+      "kind": "heuristic",
+      "claim": "Character-led icons beat the original icon in several game icon tests.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "MyTona Seekers Notes (App Store), Homa Investment Run, Frenzoo (Google Play, 2016); one Apple test had a robot character lose.",
+      "scope": {
+        "store": [
+          "google_play",
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "icon"
+        ],
+        "asset": [
+          "icon"
+        ]
+      },
+      "tags": [
+        "icon",
+        "characters",
+        "experiments"
+      ],
+      "support": [
+        {
+          "sourceId": "hr-s013",
+          "excerpt": "SplitMetrics/MyTona: pumpkin-head and smiling-witch icons beat the closed-mouth man control by about 9%.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        },
+        {
+          "sourceId": "hr-s058",
+          "excerpt": "Homa: for Investment Run 'all the variations featured characters and all of them performed better than the initial listing'.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        },
+        {
+          "sourceId": "hr-s062",
+          "excerpt": "Frenzoo: an icon with a single avatar over a gameplay background outperformed the original 'with a high degree of confidence' on Google Play.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [
+        {
+          "sourceId": "hr-s006",
+          "excerpt": "Apple PPO talk: in the Peak Brain Training icon test the robot-character icon performed worse than the control; a brain icon won.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "validFor": "as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "Include a hero-character icon variant in the first Rogue Legend icon test.",
+      "researcherNote": "Three origins are game cases, but none discloses samples; Apple's example shows character icons can lose.",
+      "retired": false
+    },
+    {
+      "id": "hr-023",
+      "kind": "heuristic",
+      "claim": "In one icon test, characters with an open or smiling mouth beat a closed-mouth character control.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [
+        {
+          "value": 9.3,
+          "unit": "% conversion vs control",
+          "of": "pumpkin head with smile",
+          "context": "MyTona via SplitMetrics"
+        },
+        {
+          "value": 9.1,
+          "unit": "% conversion vs control",
+          "of": "smiling witch",
+          "context": "second round"
+        }
+      ],
+      "appliesWhen": "MyTona Seekers Notes, App Store, undisclosed sample; the 'action mouth' explanation is the vendor's.",
+      "scope": {
+        "store": [
+          "google_play",
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "icon"
+        ],
+        "asset": [
+          "icon"
+        ]
+      },
+      "tags": [
+        "faces",
+        "icon",
+        "characters"
+      ],
+      "support": [
+        {
+          "sourceId": "hr-s013",
+          "excerpt": "SplitMetrics: 'pumpkin head did 9,3% better than the control'; the witch showed 9.1% growth; all 'action mouth' variants beat the closed-mouth control.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "Weak hint for expressive faces; test rather than assume.",
+      "researcherNote": "One case; a Halloween theme and a change of character were confounded with the face.",
+      "retired": false
+    },
+    {
+      "id": "hr-024",
+      "kind": "heuristic",
+      "claim": "Game icons should be simple, recognisable and distinct from competitors' icons in the same search results.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Icon design for a store where the icon appears in lists; advice.",
+      "scope": {
+        "store": [
+          "google_play",
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "icon"
+        ],
+        "asset": [
+          "icon"
+        ]
+      },
+      "tags": [
+        "icon",
+        "legibility",
+        "branding"
+      ],
+      "support": [
+        {
+          "sourceId": "hr-s020",
+          "excerpt": "Phiture: 'Your icon needs to be simple, recognizable, and distinct from what competitors are using.'",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        },
+        {
+          "sourceId": "hr-s004",
+          "excerpt": "Apple: create an icon that is simple and recognizable; avoid unnecessary visual details.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        },
+        {
+          "sourceId": "hr-s030",
+          "excerpt": "AppFollow audit: an icon must differentiate from other icons in the same results set.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "Check Rogue Legend's icon against the five competitors' icons side by side.",
+      "researcherNote": "Convergent advice; the survivor-like and idle-RPG categories share many similar hero icons, so distinctiveness matters.",
+      "retired": false
+    },
+    {
+      "id": "hr-025",
+      "kind": "heuristic",
+      "claim": "Icons with simple, uncluttered backgrounds increased conversion by more than 26% across categories in SplitMetrics 2024 data.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [
+        {
+          "value": 26,
+          "unit": "% conversion increase (above)",
+          "of": "simple uncluttered icon backgrounds",
+          "context": "SplitMetrics 2024 via AppFollow"
+        }
+      ],
+      "appliesWhen": "SplitMetrics 2024 sample of about 200 apps / 3,500+ tests; its published landing page names finance, shopping and utilities, so games are not confirmed.",
+      "scope": {
+        "store": [
+          "google_play",
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "icon"
+        ],
+        "asset": [
+          "icon"
+        ]
+      },
+      "tags": [
+        "icon",
+        "brightness_contrast",
+        "composition"
+      ],
+      "support": [
+        {
+          "sourceId": "hr-s007",
+          "excerpt": "AppFollow, quoting SplitMetrics 2024: uncluttered icon backgrounds produced 'conversion increases above 26%'.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        },
+        {
+          "sourceId": "hr-s019",
+          "excerpt": "SplitMetrics landing page: report data come from 3,500+ tests and cover Finance, Shopping and Utilities (games not named).",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "Do not assume the 26% for games.",
+      "researcherNote": "Second-hand, gated report, category mix probably non-game.",
+      "retired": false
+    },
+    {
+      "id": "hr-026",
+      "kind": "heuristic",
+      "claim": "A dark icon can read as a dark smudge on real devices and in dark mode.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "AppFollow audit of an idle/simulation game icon.",
+      "scope": {
+        "store": [
+          "google_play",
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "icon"
+        ],
+        "asset": [
+          "icon"
+        ]
+      },
+      "tags": [
+        "icon",
+        "brightness_contrast",
+        "legibility"
+      ],
+      "support": [
+        {
+          "sourceId": "hr-s030",
+          "excerpt": "AppFollow audit: on a couple of real devices the dark icon 'reads as a dark smudge'; in dark mode it 'dissolves into the interface'.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "Check Rogue Legend's icon on light and dark home screens.",
+      "researcherNote": "One audited game; opinion.",
+      "retired": false
+    },
+    {
+      "id": "hr-027",
+      "kind": "heuristic",
+      "claim": "Icon tests are among the highest-impact tests for games: Kongregate's icon change gained 92% more installs against 14% for screenshots.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [
+        {
+          "value": 92,
+          "unit": "% more installs",
+          "of": "new icon (Kongregate Global Assault)",
+          "context": "Google Play 2015"
+        },
+        {
+          "value": 14,
+          "unit": "% improvement",
+          "of": "variant screenshots (same game)",
+          "context": "Google Play 2015"
+        }
+      ],
+      "appliesWhen": "Google Play (Kongregate Global Assault 2015), Lion Studios 2024 (icons drove the win), SplitMetrics 2024 (icon up to 25% more users, mixed categories).",
+      "scope": {
+        "store": [
+          "google_play",
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "icon"
+        ],
+        "asset": [
+          "icon"
+        ]
+      },
+      "tags": [
+        "icon",
+        "experiments",
+        "test_win_rate"
+      ],
+      "support": [
+        {
+          "sourceId": "hr-s051",
+          "excerpt": "Google blog: Kongregate 'found a new icon that drove 92 percent more installs'; variant screenshots gave 14 percent; lesson: start with the icon.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        },
+        {
+          "sourceId": "hr-s025",
+          "excerpt": "Phiture/Lion Studios: icon tests (+12% then +8%) drove the 20% global install lift for Found It! on Google Play.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        },
+        {
+          "sourceId": "hr-s007",
+          "excerpt": "SplitMetrics 2024 via AppFollow: icon optimisation can deliver 'up to 25% more users'.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "Put an icon test before a screenshot test in the Rogue Legend roadmap.",
+      "researcherNote": "Selected successes from vendors; three origins but all vendor-type (no independent data).",
+      "retired": false
+    },
+    {
+      "id": "hr-028",
+      "kind": "heuristic",
+      "claim": "A video can raise or lower conversion, so it must be tested against a screenshots-only listing.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Both stores; evidence mixes iOS and unspecified stores, and apps and games.",
+      "scope": {
+        "store": [
+          "google_play",
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "video"
+        ],
+        "asset": [
+          "video"
+        ]
+      },
+      "tags": [
+        "video",
+        "experiments",
+        "first_images"
+      ],
+      "support": [
+        {
+          "sourceId": "hr-s006",
+          "excerpt": "Apple PPO talk: Simply Piano's screenshot treatment beat its app preview by 3.3% at 100% confidence over 12 days.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        },
+        {
+          "sourceId": "hr-s048",
+          "excerpt": "Storemaven: 'Video can either increase or decrease your conversion rates by 25% and up'.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        },
+        {
+          "sourceId": "hr-s039",
+          "excerpt": "AppTweak: Expedia and Headway (Jan/Feb 2020) removed their video after A/B tests (no numbers).",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        },
+        {
+          "sourceId": "hr-s049",
+          "excerpt": "Missbeez removed an under-performing video as part of a redesign (+36% page-view-to-install; bundled).",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "Rogue Legend should A/B its Play video against no-video or against a different opening.",
+      "researcherNote": "Non-game examples except where noted; the sole game-type signal is Incipia's correlation.",
+      "retired": false
+    },
+    {
+      "id": "hr-029",
+      "kind": "heuristic",
+      "claim": "Among the top 100 free App Store apps, games with a preview video ranked better on average than games without (47 vs 57).",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [
+        {
+          "value": "47 vs 57",
+          "unit": "average rank",
+          "of": "games with vs without video",
+          "context": "Incipia, top 100 free US App Store apps"
+        }
+      ],
+      "appliesWhen": "Incipia Nov 2023, App Store top 100, correlation only, small subsamples; non-games showed the reverse (62 with vs 46 without).",
+      "scope": {
+        "store": [
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "video"
+        ],
+        "asset": [
+          "video"
+        ]
+      },
+      "tags": [
+        "video",
+        "genre_convention"
+      ],
+      "support": [
+        {
+          "sourceId": "hr-s040",
+          "excerpt": "Incipia: games with videos averaged rank 47, without 57; non-games with videos 62, without 46.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "Weak support for producing a video at all.",
+      "researcherNote": "Correlation; popular games may simply afford videos.",
+      "retired": false
+    },
+    {
+      "id": "hr-030",
+      "kind": "heuristic",
+      "claim": "A game video should show real gameplay early: within the first 2-10 seconds.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Play (first 10 seconds, at least 80% representative footage), App Store (first few seconds), vendors (2-3 seconds).",
+      "scope": {
+        "store": [
+          "google_play",
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "video"
+        ],
+        "asset": [
+          "video"
+        ]
+      },
+      "tags": [
+        "video",
+        "video_first_seconds",
+        "gameplay_real"
+      ],
+      "support": [
+        {
+          "sourceId": "hr-s001",
+          "excerpt": "Show the actual in-app or in-game experience, focusing on the core features and content as early as possible within the first 10 seconds of the video.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        },
+        {
+          "sourceId": "hr-s005",
+          "excerpt": "Apple: autoplay is muted, so 'make sure the first few seconds of your video are visually compelling'; show more gameplay than cutscenes.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        },
+        {
+          "sourceId": "hr-s029",
+          "excerpt": "AppAgent: open with gameplay in the first two or three seconds.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        },
+        {
+          "sourceId": "hr-s032",
+          "excerpt": "AppFollow 2026: the first three seconds carry disproportionate weight.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "Rogue Legend trailer: first frame is a fight, no logo sting.",
+      "researcherNote": "Google's statement is guidance; vendor timings are assertions.",
+      "retired": false
+    },
+    {
+      "id": "hr-031",
+      "kind": "heuristic",
+      "claim": "Videos should be readable with the sound off.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "App Store previews play muted by default; Play inline autoplay is muted.",
+      "scope": {
+        "store": [
+          "google_play",
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "video"
+        ],
+        "asset": [
+          "video"
+        ]
+      },
+      "tags": [
+        "video",
+        "autoplay",
+        "legibility"
+      ],
+      "support": [
+        {
+          "sourceId": "hr-s005",
+          "excerpt": "Apple: 'By default, app previews play with the sound muted'; text should be legible and stay on screen long enough.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        },
+        {
+          "sourceId": "hr-s029",
+          "excerpt": "AppAgent: assume the sound is off; the story has to be readable on mute.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "Add on-screen text to the Rogue Legend trailer.",
+      "researcherNote": "Design guidance.",
+      "retired": false
+    },
+    {
+      "id": "hr-032",
+      "kind": "heuristic",
+      "claim": "Google Play documents that the first 30 seconds of a promo video autoplay, so do not assume Play visitors must tap play.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Play product page as documented by Google (muted inline autoplay); AppFollow 2026 says Play autoplay occurs on the product page but not in search.",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "video"
+        ],
+        "asset": [
+          "video"
+        ]
+      },
+      "tags": [
+        "video",
+        "autoplay"
+      ],
+      "support": [
+        {
+          "sourceId": "hr-s001",
+          "excerpt": "only the first 30 seconds autoplays",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        },
+        {
+          "sourceId": "hr-s032",
+          "excerpt": "AppFollow 2026: Google Play 'product page autoplay behavior only' (not search); iOS partial autoplay on search and product page.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [
+        "hr-033"
+      ],
+      "counterSupport": [
+        {
+          "sourceId": "hr-s043",
+          "excerpt": "Apptamin (undated): on the Play Store videos require the user to tap play, unlike iOS autoplay.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "validFor": "as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "Treat the first seconds of the Play video as seen by many visitors; verify in Play Console acquisition data.",
+      "researcherNote": "Older vendor material says the opposite; Google's own page is the newest authority. Behaviour may differ by device and user setting.",
+      "retired": false
+    },
+    {
+      "id": "hr-033",
+      "kind": "heuristic",
+      "claim": "Only about 6% of Google Play visitors play the promo video (Storemaven, older data).",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [
+        {
+          "value": 6,
+          "unit": "% of Google Play visitors",
+          "of": "play the video",
+          "context": "Storemaven, undated"
+        }
+      ],
+      "appliesWhen": "Storemaven claim from before Google's documented autoplay; only known from search-result summaries, not a fetched page.",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "video"
+        ],
+        "asset": [
+          "video"
+        ]
+      },
+      "tags": [
+        "video",
+        "autoplay"
+      ],
+      "support": [
+        {
+          "sourceId": "hr-s090",
+          "excerpt": "Search-result summary of Storemaven: on Google Play videos are not autoplay, so only about 6% of visitors play the video.",
+          "excerptType": "paraphrase",
+          "fetched": false,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [
+        "hr-032"
+      ],
+      "counterSupport": [
+        {
+          "sourceId": "hr-s001",
+          "excerpt": "only the first 30 seconds autoplays",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "validFor": "as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "Do not use.",
+      "researcherNote": "Unfetchable source; probably outdated.",
+      "retired": false
+    },
+    {
+      "id": "hr-034",
+      "kind": "heuristic",
+      "claim": "About 10% of viewers stop watching every 5 seconds of a store video.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [
+        {
+          "value": 10,
+          "unit": "% of viewers lost per 5 s",
+          "of": "store video",
+          "context": "Storemaven estimate"
+        }
+      ],
+      "appliesWhen": "Storemaven estimate relayed by Apptamin; unspecified store and date.",
+      "scope": {
+        "store": [
+          "google_play",
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "video"
+        ],
+        "asset": [
+          "video"
+        ]
+      },
+      "tags": [
+        "video",
+        "video_first_seconds",
+        "metrics"
+      ],
+      "support": [
+        {
+          "sourceId": "hr-s044",
+          "excerpt": "Apptamin: 'Storemaven estimates that an average of 10% of viewers discontinue watching every 5 seconds'.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        },
+        {
+          "sourceId": "hr-s045",
+          "excerpt": "Apptamin 2018: '10% of them drop every 5 seconds'.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "Front-load the trailer.",
+      "researcherNote": "Both pages repeat one Storemaven figure (one origin).",
+      "retired": false
+    },
+    {
+      "id": "hr-035",
+      "kind": "heuristic",
+      "claim": "The video poster frame or thumbnail is a high-leverage image that should be chosen deliberately.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Apple poster frames show when autoplay is off; on Play the YouTube thumbnail is picked at random unless set; Kabam +66% relayed second-hand.",
+      "scope": {
+        "store": [
+          "google_play",
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "video"
+        ],
+        "asset": [
+          "video"
+        ]
+      },
+      "tags": [
+        "video",
+        "first_images",
+        "feature_graphic"
+      ],
+      "support": [
+        {
+          "sourceId": "hr-s005",
+          "excerpt": "Apple: 'Select a visually compelling poster frame from your footage that conveys the essence of your app'.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        },
+        {
+          "sourceId": "hr-s030",
+          "excerpt": "AppFollow: with a portrait video, YouTube picks a random frame for the thumbnail unless you choose one.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        },
+        {
+          "sourceId": "hr-s041",
+          "excerpt": "Incipia relaying Storemaven: testing the Marvel Contest of Champions poster frame gave a 66% conversion increase.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "Set the YouTube thumbnail manually and test it.",
+      "researcherNote": "Kabam figure is a vendor anecdote (no sample), App Store.",
+      "retired": false
+    },
+    {
+      "id": "hr-036",
+      "kind": "heuristic",
+      "claim": "Google's portrait video format showed 7% more watch time and 5% better conversion in early tests, as reported by AppTweak.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [
+        {
+          "value": 7,
+          "unit": "% more watch time",
+          "of": "portrait video (early test)",
+          "context": "AppTweak via Phiture"
+        },
+        {
+          "value": 5,
+          "unit": "% better conversion",
+          "of": "portrait video (early test)",
+          "context": "AppTweak via Phiture"
+        }
+      ],
+      "appliesWhen": "Google I/O 2025 coverage by AppTweak, relayed by Phiture; Google primary not seen.",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "video"
+        ],
+        "asset": [
+          "video"
+        ]
+      },
+      "tags": [
+        "video",
+        "orientation"
+      ],
+      "support": [
+        {
+          "sourceId": "hr-s021",
+          "excerpt": "Phiture: portrait video showed '7% more watch time, 5% better conversion' (source: AppTweak's Google I/O 2025 coverage).",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [
+        {
+          "sourceId": "hr-s030",
+          "excerpt": "AppFollow: a portrait video upload removes the feature graphic on Google Play.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "validFor": "as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "Consider a portrait trailer test for Rogue Legend on Play.",
+      "researcherNote": "Second-hand; scope of the test unknown; uploading portrait video has a side-effect on the feature graphic.",
+      "retired": false
+    },
+    {
+      "id": "hr-037",
+      "kind": "heuristic",
+      "claim": "On Google Play the feature graphic is the cover for the promo video and is shown large for games, and it appeared on the listing only when a promo video existed (as of 2023).",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Play listing layout, subject to Google changes; Apptamin observation Jan 2023.",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "feature_graphic"
+        ],
+        "asset": [
+          "feature_graphic"
+        ]
+      },
+      "tags": [
+        "feature_graphic",
+        "video",
+        "store_page_layout"
+      ],
+      "support": [
+        {
+          "sourceId": "hr-s001",
+          "excerpt": "Google: the feature graphic is a 'cover image for your preview video, if present' and, for games, is shown in a large format alongside preview videos and screenshots.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        },
+        {
+          "sourceId": "hr-s047",
+          "excerpt": "Apptamin (Jan 2023): 'If you do not have a promo video, the feature graphic will not be displayed on your listing.'",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "Plan the feature graphic and the video together.",
+      "researcherNote": "Layout may have changed since 2023; verify on a current device.",
+      "retired": false
+    },
+    {
+      "id": "hr-038",
+      "kind": "heuristic",
+      "claim": "Feature graphics should use vibrant colours, avoid pure white or dark grey, keep the focal point central and keep copy short and large.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Google Play feature graphic (1024x500); guidance, no conversion data.",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "feature_graphic"
+        ],
+        "asset": [
+          "feature_graphic"
+        ]
+      },
+      "tags": [
+        "feature_graphic",
+        "colour",
+        "composition"
+      ],
+      "support": [
+        {
+          "sourceId": "hr-s001",
+          "excerpt": "Google: use more vibrant colours, avoid pure white or dark grey (they blend into the Play background), keep the focal point toward the centre.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        },
+        {
+          "sourceId": "hr-s047",
+          "excerpt": "Apptamin: keep copy short and large; avoid important text near the edges; position visuals around the play-button overlay.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "Use as a checklist for the Rogue Legend feature graphic.",
+      "researcherNote": "No published conversion test for feature graphics in games was found.",
+      "retired": false
+    },
+    {
+      "id": "hr-039",
+      "kind": "heuristic",
+      "claim": "Screenshot captions should be very short (roughly 3-5 words) and large.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [
+        {
+          "value": 20,
+          "unit": "% of image",
+          "of": "maximum tagline area",
+          "context": "Google Play guidance (should not exceed)"
+        }
+      ],
+      "appliesWhen": "Advice and one before/after redesign; Google caps tagline area at 20% of the image.",
+      "scope": {
+        "store": [
+          "google_play",
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "screenshots",
+          "text"
+        ]
+      },
+      "tags": [
+        "captions",
+        "text_density",
+        "typography"
+      ],
+      "support": [
+        {
+          "sourceId": "hr-s031",
+          "excerpt": "AppFollow: keep text under five words; design for roughly 60pt or larger on export.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        },
+        {
+          "sourceId": "hr-s049",
+          "excerpt": "Missbeez redesign used large minimal text of 3-4 words per image (part of a +36% before/after change).",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        },
+        {
+          "sourceId": "hr-s034",
+          "excerpt": "AppTweak: add short, benefit-driven captions.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "One short line per Rogue Legend screenshot.",
+      "researcherNote": "No isolated test on length; the Missbeez result is bundled and the app is not a game.",
+      "retired": false
+    },
+    {
+      "id": "hr-040",
+      "kind": "heuristic",
+      "claim": "Benefit, action or use-case captions are recommended over feature labels, but no isolated test of caption wording was found.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "ZiMAD bundled action captions with other changes; Incipia is a rank correlation on the App Store.",
+      "scope": {
+        "store": [
+          "google_play",
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "screenshots",
+          "text"
+        ]
+      },
+      "tags": [
+        "captions",
+        "experiments"
+      ],
+      "support": [
+        {
+          "sourceId": "hr-s011",
+          "excerpt": "ZiMAD's winning redesign also rewrote captions ('Birds challenge you!' instead of 'Challenging and rewarding gameplay').",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        },
+        {
+          "sourceId": "hr-s040",
+          "excerpt": "Incipia: use-case captions averaged rank 11.8, feature descriptions 48, step-by-step 57, sales/branding 61.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        },
+        {
+          "sourceId": "hr-s034",
+          "excerpt": "AppTweak recommends benefit-driven captions (no data).",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "Write Rogue Legend captions as player outcomes; test two wordings.",
+      "researcherNote": "Bundled and correlational evidence; the build may label this as multi-origin, but no source isolates wording.",
+      "retired": false
+    },
+    {
+      "id": "hr-041",
+      "kind": "heuristic",
+      "claim": "A calmer gradient screenshot background beat an eye-catching background template by 31% in one App Store test.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [
+        {
+          "value": 31,
+          "unit": "% more installs",
+          "of": "calm gradient vs eye-catching background",
+          "context": "SplitMetrics case, 98.6% confidence"
+        }
+      ],
+      "appliesWhen": "Empire City Casino (social casino), 98.6% confidence, duration and sample not stated.",
+      "scope": {
+        "store": [
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "screenshots"
+        ]
+      },
+      "tags": [
+        "composition",
+        "colour",
+        "screenshots"
+      ],
+      "support": [
+        {
+          "sourceId": "hr-s014",
+          "excerpt": "SplitMetrics: the calmer gradient variant produced '+31% more installs' at 98.6% confidence.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [
+        {
+          "sourceId": "hr-s012",
+          "excerpt": "ZiMAD's Japan test favoured a dense, effect-heavy Japanese-style set (+36%).",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "validFor": "as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "Test a low-clutter variant against Rogue Legend's busy baseline, especially outside Japan.",
+      "researcherNote": "Single case; conflicts with the Japan-style dense set, suggesting market dependence.",
+      "retired": false
+    },
+    {
+      "id": "hr-042",
+      "kind": "heuristic",
+      "claim": "Vibrant, high-contrast colour is recommended for store graphics, but its effect size for games is not measured in the sources found.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Feature-graphic guidance (Google) and vendor assertions.",
+      "scope": {
+        "store": [
+          "google_play",
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "screenshots",
+          "feature_graphic"
+        ]
+      },
+      "tags": [
+        "colour",
+        "brightness_contrast"
+      ],
+      "support": [
+        {
+          "sourceId": "hr-s001",
+          "excerpt": "Google: use more vibrant colours in the feature graphic and avoid pure white or dark grey.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        },
+        {
+          "sourceId": "hr-s034",
+          "excerpt": "AppTweak asserts that bright, high-contrast designs convert better (no data cited).",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "Do not cite a number.",
+      "researcherNote": "No experiment found.",
+      "retired": false
+    },
+    {
+      "id": "hr-043",
+      "kind": "heuristic",
+      "claim": "Text overlays and taglines should be localised for each market, while the in-game UI itself does not need to be.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Google Play listings with text on screenshots or in videos.",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "screenshots",
+          "text"
+        ]
+      },
+      "tags": [
+        "localisation",
+        "captions",
+        "script"
+      ],
+      "support": [
+        {
+          "sourceId": "hr-s001",
+          "excerpt": "In-game UI does not need to be localized per market, but any additional taglines or text overlays should be localized.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        },
+        {
+          "sourceId": "hr-s003",
+          "excerpt": "For screenshots that contain text, provide separate screenshots and promotional videos for each language that you support.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        },
+        {
+          "sourceId": "hr-s061",
+          "excerpt": "App Radar (PocketGamer.biz): localise screenshots for target audiences, including cultural adaptation.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "Build separate Rogue Legend caption layers for JP, KR, TW/HK (traditional Chinese), TH, VN, ID, PH.",
+      "researcherNote": "Google guidance, not a conversion finding.",
+      "retired": false
+    },
+    {
+      "id": "hr-044",
+      "kind": "heuristic",
+      "claim": "Adapting screenshot style to a market (not only translating captions) can beat one global set: ZiMAD's Japanese-style set gained 36%.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [
+        {
+          "value": 36,
+          "unit": "% conversion uplift",
+          "of": "Japanese-style vs original European-style screenshots",
+          "context": "ZiMAD via SplitMetrics, App Store"
+        }
+      ],
+      "appliesWhen": "One App Store test in Japan (game unnamed on the page); advisors recommend cultural adaptation.",
+      "scope": {
+        "store": [
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "JP"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "screenshots"
+        ]
+      },
+      "tags": [
+        "cultural_adaptation",
+        "localisation",
+        "screenshots"
+      ],
+      "support": [
+        {
+          "sourceId": "hr-s012",
+          "excerpt": "SplitMetrics: optimising screenshots for Japan 'resulted in 36% conversion rate increase'; the winner had lots of small elements and special effects.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        },
+        {
+          "sourceId": "hr-s035",
+          "excerpt": "AppTweak: Japanese store screenshots are more crowded with more text than Western ones.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "Build a Japan-specific Rogue Legend set and test it against the global set.",
+      "researcherNote": "Single test; no duration or sample; not Google Play.",
+      "retired": false
+    },
+    {
+      "id": "hr-045",
+      "kind": "heuristic",
+      "claim": "Screenshots in Japan tend to carry more text and be more crowded than Western ones.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Observation of live Japanese product pages (AppTweak advice; SplitMetrics analysis of listings); App Store centred.",
+      "scope": {
+        "store": [
+          "google_play",
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "JP"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "screenshots"
+        ]
+      },
+      "tags": [
+        "text_density",
+        "cultural_adaptation",
+        "localisation"
+      ],
+      "support": [
+        {
+          "sourceId": "hr-s035",
+          "excerpt": "AppTweak: 'Screenshots in the Japanese app stores tend to have more text and to be more crowded than in the West'.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        },
+        {
+          "sourceId": "hr-s017",
+          "excerpt": "SplitMetrics (2024): apps in Japan 'aren't shy about using space more efficiently', showing offers, reviews and other details.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "Do not copy Western minimalism to Japan without a test.",
+      "researcherNote": "Observational and advisory; no controlled test other than ZiMAD (single).",
+      "retired": false
+    },
+    {
+      "id": "hr-046",
+      "kind": "heuristic",
+      "claim": "Japanese game listings put anime or manga characters and mascots in the foreground.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Observational advice for games in Japan.",
+      "scope": {
+        "store": [
+          "google_play",
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "JP"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "screenshots"
+        ]
+      },
+      "tags": [
+        "characters",
+        "cultural_adaptation",
+        "localisation"
+      ],
+      "support": [
+        {
+          "sourceId": "hr-s035",
+          "excerpt": "AppTweak: 'For games, add anime or manga characters in the foreground to highlight them'.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        },
+        {
+          "sourceId": "hr-s017",
+          "excerpt": "SplitMetrics: mascots are used extensively on Japanese product pages (bunnies, puppies, pillows).",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "Test a character-forward Japan variant.",
+      "researcherNote": "No measured effect.",
+      "retired": false
+    },
+    {
+      "id": "hr-047",
+      "kind": "heuristic",
+      "claim": "Japanese App Store listings commonly show 'No. 1' ranking badges on the first screenshot, which Google Play does not allow in images.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "SplitMetrics observation of the Japanese App Store; Google metadata policy bars ranking images on Play.",
+      "scope": {
+        "store": [
+          "app_store",
+          "google_play"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "JP"
+        ],
+        "position": [
+          "1"
+        ],
+        "asset": [
+          "screenshots"
+        ]
+      },
+      "tags": [
+        "ranking_claims",
+        "social_proof",
+        "cultural_adaptation"
+      ],
+      "support": [
+        {
+          "sourceId": "hr-s017",
+          "excerpt": "SplitMetrics: 'No. 1' badges are prominently displayed on first screenshots across categories in Japan (observational).",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        },
+        {
+          "sourceId": "hr-s002",
+          "excerpt": "Images or text that indicate store performance or ranking, such as 'App of the year,' '#1,' 'Best of Play 20XX,'",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "Do not copy the badge onto Play creatives; use it only for App Store JP.",
+      "researcherNote": "Observation only; the Google line is an excerpt of the policy list.",
+      "retired": false
+    },
+    {
+      "id": "hr-048",
+      "kind": "heuristic",
+      "claim": "AppTweak says Koreans prefer complex, anime-style creatives over minimalist Western design, but another ASO author disputes this.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Korea; opinion only.",
+      "scope": {
+        "store": [
+          "google_play",
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "KR"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "screenshots"
+        ]
+      },
+      "tags": [
+        "cultural_adaptation",
+        "text_density",
+        "localisation"
+      ],
+      "support": [
+        {
+          "sourceId": "hr-s066",
+          "excerpt": "seoasoorm quoting AppTweak: Koreans prefer 'complex and anime creatives rather than the minimalist and realistic design found in the West'.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [
+        {
+          "sourceId": "hr-s065",
+          "excerpt": "seoasoorm's author disagrees: popular Korean apps use simple, clean, minimalist designs with one-colour palettes.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "validFor": "as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "Test both a dense and a clean set for KR rather than assuming.",
+      "researcherNote": "Contested opinion with no test data on either side.",
+      "retired": false
+    },
+    {
+      "id": "hr-049",
+      "kind": "heuristic",
+      "claim": "Seasonal or festive store creative can beat the standard version: MyTona's Halloween icons won by about 9%, and SplitMetrics is quoted as finding a 47% festive-icon uplift.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [
+        {
+          "value": 9.3,
+          "unit": "% vs control",
+          "of": "Halloween pumpkin icon",
+          "context": "MyTona via SplitMetrics"
+        },
+        {
+          "value": 47,
+          "unit": "% conversion uplift (claimed)",
+          "of": "festive icon",
+          "context": "SplitMetrics via Phiture, no details"
+        }
+      ],
+      "appliesWhen": "App Store icon tests; the 47% figure is second-hand without test details.",
+      "scope": {
+        "store": [
+          "google_play",
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "icon"
+        ],
+        "asset": [
+          "icon"
+        ]
+      },
+      "tags": [
+        "seasonal",
+        "events",
+        "icon"
+      ],
+      "support": [
+        {
+          "sourceId": "hr-s013",
+          "excerpt": "SplitMetrics/MyTona Halloween icon variants each beat the control (pumpkin +9.3%, witch +9.1%).",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        },
+        {
+          "sourceId": "hr-s026",
+          "excerpt": "Phiture quoting SplitMetrics: incorporating festive elements into an app icon delivered a 47% conversion uplift.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [
+        "hr-050"
+      ],
+      "counterSupport": [
+        {
+          "sourceId": "hr-s006",
+          "excerpt": "Apple PPO talk: Angry Birds 2's evergreen creative beat holiday-themed creative by 1.5% over 20 days.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "validFor": "as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "Test seasonal variants; keep the evergreen control.",
+      "researcherNote": "Both SplitMetrics: one origin. Apple's Angry Birds test points the other way.",
+      "retired": false
+    },
+    {
+      "id": "hr-050",
+      "kind": "heuristic",
+      "claim": "For Angry Birds 2 in December, evergreen creative beat holiday-themed creative by 1.5%.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [
+        {
+          "value": 1.5,
+          "unit": "% higher conversion",
+          "of": "evergreen vs seasonal creative",
+          "context": "20 days, ~2M impressions per treatment, 100% confidence"
+        }
+      ],
+      "appliesWhen": "Apple PPO example: 20 days, about 2 million impressions per treatment, App Store.",
+      "scope": {
+        "store": [
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "screenshots"
+        ]
+      },
+      "tags": [
+        "seasonal",
+        "events",
+        "experiments"
+      ],
+      "support": [
+        {
+          "sourceId": "hr-s006",
+          "excerpt": "Apple PPO talk: the evergreen control outperformed the holiday-themed content by 1.5% with 100% confidence.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [
+        "hr-049"
+      ],
+      "counterSupport": [],
+      "validFor": "as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "Do not assume seasonal wins; small effect, large sample.",
+      "researcherNote": "Apple example; result is specific to this game and creative.",
+      "retired": false
+    },
+    {
+      "id": "hr-051",
+      "kind": "heuristic",
+      "claim": "Avoid time-sensitive taglines and seasonal references in screenshots and videos.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Google screenshot/tagline guidance and Apple app-preview guidance; not an enforced rule in the extracts read.",
+      "scope": {
+        "store": [
+          "google_play",
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "screenshots",
+          "video"
+        ]
+      },
+      "tags": [
+        "seasonal",
+        "events",
+        "refresh_cadence"
+      ],
+      "support": [
+        {
+          "sourceId": "hr-s001",
+          "excerpt": "Avoid time-sensitive tagline or content that can become outdated quickly to reduce the need to update.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        },
+        {
+          "sourceId": "hr-s005",
+          "excerpt": "Avoid any seasonal or timely references that will age your video, such as 'new for spring' or dates",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "Keep evergreen main sets; run seasonal tests as time-boxed variants or custom listings.",
+      "researcherNote": "Guidance to limit update work, in tension with seasonal test wins above.",
+      "retired": false
+    },
+    {
+      "id": "hr-052",
+      "kind": "heuristic",
+      "claim": "Screenshots that showcase live events or tournaments converting better than regular gameplay is an untested hypothesis.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Udonis guide; no data.",
+      "scope": {
+        "store": [
+          "google_play",
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "screenshots"
+        ]
+      },
+      "tags": [
+        "events",
+        "screenshots"
+      ],
+      "support": [
+        {
+          "sourceId": "hr-s059",
+          "excerpt": "Udonis suggests testing the hypothesis that screenshots showing live events and tournaments convert better than regular gameplay; no supporting data given.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "Candidate A/B test theme for event-driven roguelike/idle games.",
+      "researcherNote": "Hypothesis only.",
+      "retired": false
+    },
+    {
+      "id": "hr-053",
+      "kind": "heuristic",
+      "claim": "The widely quoted 30% conversion lift for panoramic screenshots has no linked test, and no isolated panoramic test was found.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Panoramic (continuous) screenshot sets on either store.",
+      "scope": {
+        "store": [
+          "google_play",
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "screenshots"
+        ]
+      },
+      "tags": [
+        "panoramic",
+        "composition",
+        "first_images"
+      ],
+      "support": [
+        {
+          "sourceId": "hr-s064",
+          "excerpt": "AppScreenshotStudio: tool pages claim a 30% lift from SplitMetrics/Storemaven data but 'link to no specific test, case study, or published number'.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        },
+        {
+          "sourceId": "hr-s049",
+          "excerpt": "Missbeez (non-game): +36% page-view-to-install after a bundled redesign incl. panoramic images and a removed video.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "Treat panoramic as a style choice to test; keep frame 1 self-sufficient.",
+      "researcherNote": "Absence of evidence; the vendor debunking it sells screenshot tooling.",
+      "retired": false
+    },
+    {
+      "id": "hr-054",
+      "kind": "heuristic",
+      "claim": "Reordering existing screenshots is a cheap test that has produced lifts between about 6% and 26% in game cases.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [
+        {
+          "value": "6.4-25.6",
+          "unit": "% conversion/installs",
+          "of": "reordered screenshots",
+          "context": "SEGA, ŠKODA cases"
+        }
+      ],
+      "appliesWhen": "App Store: SEGA +25.6% and ZiMAD (SplitMetrics 2018), ŠKODA LittleDriver +15% (SplitMetrics) or +6.4% (Sensor Tower post); details and dates largely missing.",
+      "scope": {
+        "store": [
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "screenshots"
+        ]
+      },
+      "tags": [
+        "order",
+        "screenshots",
+        "experiments"
+      ],
+      "support": [
+        {
+          "sourceId": "hr-s015",
+          "excerpt": "SplitMetrics/ŠKODA LittleDriver: reordered existing screenshots improved conversion by 15% and took five minutes to set up.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        },
+        {
+          "sourceId": "hr-s009",
+          "excerpt": "SplitMetrics 2018 blog: SEGA achieved a 25.6% conversion increase through reordering (details not given).",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        },
+        {
+          "sourceId": "hr-s056",
+          "excerpt": "Sensor Tower post (July 2015): reordered ŠKODA screenshots gave a 6.4% increase in installs over 30 days with 1,200+ visitors.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "Cheap first test: reorder the current Rogue Legend set.",
+      "researcherNote": "The two ŠKODA reports disagree (+15% vs +6.4%); cases are cherry-picked vendor stories from 2015-2018.",
+      "retired": false
+    },
+    {
+      "id": "hr-055",
+      "kind": "heuristic",
+      "claim": "In the top 100 free App Store apps, sets of three screenshots or fewer ranked much worse on average than five-screenshot sets.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [
+        {
+          "value": "47 / 58 / 80 / 60",
+          "unit": "average rank",
+          "of": "5 / 4 / 3 / 2 screenshots",
+          "context": "Incipia, top 100 free apps"
+        }
+      ],
+      "appliesWhen": "Incipia Nov 2023 correlation; 78 of 100 apps used five screenshots; Google requires at least three screenshots for games and allows up to eight.",
+      "scope": {
+        "store": [
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "screenshots"
+        ]
+      },
+      "tags": [
+        "deck_length",
+        "screenshots"
+      ],
+      "support": [
+        {
+          "sourceId": "hr-s040",
+          "excerpt": "Incipia: 78 apps used five screenshots (avg rank 47), 13 used four (58), 6 used three (80), 3 used two (60).",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "Do not ship fewer than the full Play deck; do not read as causal.",
+      "researcherNote": "Correlation, small groups, App Store, apps and games mixed.",
+      "retired": false
+    },
+    {
+      "id": "hr-056",
+      "kind": "heuristic",
+      "claim": "Run store listing tests for at least 7 days in whole-week blocks.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Google Play experiments and Apple PPO.",
+      "scope": {
+        "store": [
+          "google_play",
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "store_page"
+        ],
+        "asset": [
+          "experiment"
+        ]
+      },
+      "tags": [
+        "test_duration",
+        "experiments",
+        "ppo"
+      ],
+      "support": [
+        {
+          "sourceId": "hr-s006",
+          "excerpt": "Apple: run tests at least one week, in seven-day increments, to cover weekly traffic patterns.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        },
+        {
+          "sourceId": "hr-s022",
+          "excerpt": "Phiture: run tests long enough, at least 7 days.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        },
+        {
+          "sourceId": "hr-s079",
+          "excerpt": "MobileAction: Google recommends at least seven days, capturing weekdays and weekends.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        },
+        {
+          "sourceId": "hr-s042",
+          "excerpt": "Apptamin: make the experiment last at least a full week.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        },
+        {
+          "sourceId": "hr-s008",
+          "excerpt": "AppFollow: 14 days is the working window for most games; 7 days minimum.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "Default minimum duration for Rogue Legend tests; more for small lifts.",
+      "researcherNote": "Common baseline across Apple and several vendors.",
+      "retired": false
+    },
+    {
+      "id": "hr-057",
+      "kind": "heuristic",
+      "claim": "Small expected lifts need many more visitors and more days than large ones.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [
+        {
+          "value": "154,000 / 430,000 / 2,000,000",
+          "unit": "impressions per treatment",
+          "of": "Apple PPO examples (44, 12, 20 days)",
+          "context": "Peak, Simply Piano, Angry Birds 2"
+        },
+        {
+          "value": 19907,
+          "unit": "visitors per variant",
+          "of": "sample-size example from a calculator",
+          "context": "Apptamin"
+        }
+      ],
+      "appliesWhen": "Google Play experiments; illustrated with Apple examples of 154k to 2M impressions per treatment.",
+      "scope": {
+        "store": [
+          "google_play",
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "store_page"
+        ],
+        "asset": [
+          "experiment"
+        ]
+      },
+      "tags": [
+        "test_power",
+        "test_duration",
+        "experiments"
+      ],
+      "support": [
+        {
+          "sourceId": "hr-s022",
+          "excerpt": "Phiture: a test with more than two variants and a small MDE extends the duration even more.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        },
+        {
+          "sourceId": "hr-s042",
+          "excerpt": "Apptamin: 'thousands of installs for each version' needed; example calculator result of 19,907 visitors per variant.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        },
+        {
+          "sourceId": "hr-s006",
+          "excerpt": "Apple examples ran 12-44 days with 154k-2M impressions per treatment.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "Check expected traffic before choosing a variant count.",
+      "researcherNote": "Illustrative numbers, not benchmarks.",
+      "retired": false
+    },
+    {
+      "id": "hr-058",
+      "kind": "heuristic",
+      "claim": "Google Play A/B/B tests (two identical variants) give more control over false positives than plain A/B tests.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Google Play experiments.",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "store_page"
+        ],
+        "asset": [
+          "experiment"
+        ]
+      },
+      "tags": [
+        "test_power",
+        "experiments"
+      ],
+      "support": [
+        {
+          "sourceId": "hr-s022",
+          "excerpt": "Phiture: 'A/B/B tests provide more control over the false positive and false negative results'.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "Use A/B/B for high-stakes Play tests.",
+      "researcherNote": "Single vendor.",
+      "retired": false
+    },
+    {
+      "id": "hr-059",
+      "kind": "heuristic",
+      "claim": "A variant that wins by only about 1-2% should not be shipped on that basis.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "SplitMetrics/ZiMAD lesson; vendor advice.",
+      "scope": {
+        "store": [
+          "google_play",
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "store_page"
+        ],
+        "asset": [
+          "experiment"
+        ]
+      },
+      "tags": [
+        "test_power",
+        "test_win_rate",
+        "experiments"
+      ],
+      "support": [
+        {
+          "sourceId": "hr-s012",
+          "excerpt": "SplitMetrics/ZiMAD: if a variation wins by 1% or less, don't upload it; 'only the advantage of at least 2%' results in conversion changes in the stores.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "Set a minimum effect threshold before launch.",
+      "researcherNote": "Single vendor rule of thumb.",
+      "retired": false
+    },
+    {
+      "id": "hr-060",
+      "kind": "heuristic",
+      "claim": "Most store experiments should be expected to produce no significant winner; one automated programme found 7 significant wins in 168 experiments.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [
+        {
+          "value": 7,
+          "unit": "significant wins",
+          "of": "168 experiments / 322 variants",
+          "context": "Wildlife Studios; ratio computed here about 4% of experiments"
+        }
+      ],
+      "appliesWhen": "Wildlife Studios via PressPlay (322 variants, under two months); SplitMetrics explains no-winner outcomes without giving a rate.",
+      "scope": {
+        "store": [
+          "google_play",
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "store_page"
+        ],
+        "asset": [
+          "experiment"
+        ]
+      },
+      "tags": [
+        "test_win_rate",
+        "experiments"
+      ],
+      "support": [
+        {
+          "sourceId": "hr-s023",
+          "excerpt": "Phiture: 168 experiments, 322 variants, 7 significant wins, max +24.1% conversion, under two months.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        },
+        {
+          "sourceId": "hr-s018",
+          "excerpt": "SplitMetrics: tests can end with no winner if significance is not reached before the time limit; no frequency is given.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "Budget for many tests; do not promise a win per test.",
+      "researcherNote": "No published aggregate win rate for game store tests was found; general A/B win rates come from unrelated fields. Wildlife's tests were GenAI-generated assets.",
+      "retired": false
+    },
+    {
+      "id": "hr-061",
+      "kind": "heuristic",
+      "claim": "AppFollow's planning defaults for detectable lifts in game tests are 5-10% for first-screenshot hook, icon character and feature graphic, 8-15% for video and 4-8% for screenshot order.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [
+        {
+          "value": "5-10",
+          "unit": "% MDE",
+          "of": "first-screenshot hook / icon character / feature graphic",
+          "context": "AppFollow planning range"
+        },
+        {
+          "value": "8-15",
+          "unit": "% MDE",
+          "of": "app preview video",
+          "context": "AppFollow"
+        },
+        {
+          "value": "4-8",
+          "unit": "% MDE",
+          "of": "screenshot order",
+          "context": "AppFollow"
+        }
+      ],
+      "appliesWhen": "AppFollow's own table; not measured data.",
+      "scope": {
+        "store": [
+          "google_play",
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "store_page"
+        ],
+        "asset": [
+          "experiment"
+        ]
+      },
+      "tags": [
+        "test_power",
+        "experiments",
+        "test_win_rate"
+      ],
+      "support": [
+        {
+          "sourceId": "hr-s008",
+          "excerpt": "AppFollow MDE table: icon character 5-10%, first-screenshot hook 5-10%, video 8-15%, feature graphic 5-10%, screenshot order 4-8%.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "Use as inputs to sample-size planning only.",
+      "researcherNote": "Planning defaults, not evidence of effects.",
+      "retired": false
+    },
+    {
+      "id": "hr-062",
+      "kind": "heuristic",
+      "claim": "About half of top Google Play games ran two or more screenshot A/B tests in a year (51% in 2025; 57% reported for 2024).",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [
+        {
+          "value": 51,
+          "unit": "% of top games",
+          "of": "ran 2+ screenshot tests on Google Play",
+          "context": "AppTweak, full-year 2025"
+        },
+        {
+          "value": 57,
+          "unit": "% of top games",
+          "of": "tested screenshots at least twice",
+          "context": "AppTweak 2024 data via Phiture"
+        }
+      ],
+      "appliesWhen": "AppTweak data on the top 1,000 US apps/games; the 57% is AppTweak's earlier-year figure as relayed by Phiture.",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "US"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "screenshots"
+        ]
+      },
+      "tags": [
+        "refresh_cadence",
+        "experiments",
+        "screenshots"
+      ],
+      "support": [
+        {
+          "sourceId": "hr-s037",
+          "excerpt": "AppTweak 2026 report: '42% of top apps and 51% of top games ran two or more screenshot tests' on Google Play in 2025.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        },
+        {
+          "sourceId": "hr-s021",
+          "excerpt": "Phiture (citing AppTweak 2025 benchmark data): 57% of top games on Google Play A/B tested screenshots at least twice that year.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "Benchmark: competitors likely refresh creatives a few times a year.",
+      "researcherNote": "Same origin (AppTweak) for both years; Phiture's year label is ambiguous. Correlates activity, not effect.",
+      "retired": false
+    },
+    {
+      "id": "hr-063",
+      "kind": "heuristic",
+      "claim": "Average 2025 US conversion rate was 16.15% on Google Play against 8.56% on the App Store, and Games-Strategy had the lowest Google Play category rate at 6.6%.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [
+        {
+          "value": 16.15,
+          "unit": "% average CVR",
+          "of": "Google Play, all categories, US 2025",
+          "context": "AppTweak"
+        },
+        {
+          "value": 8.56,
+          "unit": "% average CVR",
+          "of": "App Store, all categories, US 2025",
+          "context": "AppTweak"
+        },
+        {
+          "value": 6.6,
+          "unit": "% average CVR",
+          "of": "Games-Strategy on Google Play",
+          "context": "lowest category"
+        }
+      ],
+      "appliesWhen": "AppTweak US data; methodology and sample not described; RPG/idle categories not reported.",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "strategy"
+        ],
+        "countries": [
+          "US"
+        ],
+        "position": [
+          "store_page"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "conversion_benchmark",
+        "metrics"
+      ],
+      "support": [
+        {
+          "sourceId": "hr-s038",
+          "excerpt": "AppTweak: in 2025 the US average conversion rate was 8.56% on the App Store and 16.15% on Google Play; Games-Strategy the lowest Google Play category at 6.6%.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "Sanity check for Rogue Legend's Play conversion; not an Asian-market benchmark.",
+      "researcherNote": "No sample description; roguelike/RPG/idle rates not given; US only.",
+      "retired": false
+    },
+    {
+      "id": "hr-064",
+      "kind": "heuristic",
+      "claim": "Custom store listings can lift conversion for targeted traffic: a median 10% in Google Ads campaigns (AppTweak via Phiture) and 15% more installs in Koo's case.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [
+        {
+          "value": 10,
+          "unit": "% median conversion lift",
+          "of": "custom store listings in Google Ads campaigns",
+          "context": "AppTweak Google I/O 2025 reporting via Phiture"
+        },
+        {
+          "value": 15,
+          "unit": "% more installs",
+          "of": "Koo language-based custom listings",
+          "context": "Google Play case study index"
+        }
+      ],
+      "appliesWhen": "Google Play custom store listings; the Koo case is India-based and not a game.",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "store_page"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "custom_listing",
+        "localisation",
+        "metrics"
+      ],
+      "support": [
+        {
+          "sourceId": "hr-s021",
+          "excerpt": "Phiture: custom store listings show a 'median 10% conversion lift when used in Google Ad campaigns' (source: AppTweak).",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        },
+        {
+          "sourceId": "hr-s054",
+          "excerpt": "Google Play case study index: 'Koo: Custom store listings increase installs 15%'.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "Use per-country custom listings for the JP/KR/TW/SEA creative sets.",
+      "researcherNote": "Second-hand median; Koo page itself not fetched; not a game.",
+      "retired": false
+    }
+  ]
+}

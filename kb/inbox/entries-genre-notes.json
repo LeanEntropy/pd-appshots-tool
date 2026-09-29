@@ -1,0 +1,1143 @@
+{
+  "file": "entries-genre-notes",
+  "entries": [
+    {
+      "id": "hr-201",
+      "kind": "genre_note",
+      "claim": "Survivor.io's 2022-23 store screenshots each put one character in front with colour-coded CTAs and red accents on grey for action.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Store teardown of Survivor.io in January 2023; observation, not a test.",
+      "scope": {
+        "store": [
+          "google_play",
+          "app_store"
+        ],
+        "genre": [
+          "survivor_like",
+          "roguelike"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "screenshots"
+        ]
+      },
+      "tags": [
+        "survivor_like",
+        "characters",
+        "colour",
+        "genre_convention"
+      ],
+      "support": [
+        {
+          "sourceId": "hr-s046",
+          "excerpt": "Apptamin: each screenshot underlines a feature with one character in front and colour-coded CTAs; red stands out against grey backgrounds for action.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "Reference pattern for the closest survivor-like competitor; check the live page.",
+      "researcherNote": "Layout may have changed since 2023; no performance attribution.",
+      "retired": false
+    },
+    {
+      "id": "hr-202",
+      "kind": "genre_note",
+      "claim": "Survivor.io's App Store first screenshot emphasised the challenge, the second showed build personalisation with weapon/skill combinations, and the third showed boss defeat.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Teardown, January 2023 (App Store, five screenshots).",
+      "scope": {
+        "store": [
+          "google_play",
+          "app_store"
+        ],
+        "genre": [
+          "survivor_like",
+          "roguelike"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "1-3"
+        ],
+        "asset": [
+          "screenshots"
+        ]
+      },
+      "tags": [
+        "survivor_like",
+        "first_images",
+        "order"
+      ],
+      "support": [
+        {
+          "sourceId": "hr-s046",
+          "excerpt": "Apptamin: first screenshot emphasises the challenge, second highlights personalisation via weapon/skill combinations, third shows boss defeat mechanics.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "Sequencing benchmark: challenge, build, boss.",
+      "researcherNote": "Observation of one listing, one date.",
+      "retired": false
+    },
+    {
+      "id": "hr-203",
+      "kind": "genre_note",
+      "claim": "Survivor.io used eight screenshots on Google Play against five on the App Store, with a landscape action-trailer video on Play and a portrait video on the App Store.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Teardown January 2023.",
+      "scope": {
+        "store": [
+          "google_play",
+          "app_store"
+        ],
+        "genre": [
+          "survivor_like"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "screenshots",
+          "video"
+        ]
+      },
+      "tags": [
+        "survivor_like",
+        "orientation",
+        "video",
+        "deck_length"
+      ],
+      "support": [
+        {
+          "sourceId": "hr-s046",
+          "excerpt": "Apptamin: App Store 5 screenshots, Play 8 (3 extra simple gameplay captures); Play video landscape, action-movie trailer style; App Store video portrait.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "Example of store-specific decks.",
+      "researcherNote": "One date; listings change.",
+      "retired": false
+    },
+    {
+      "id": "hr-204",
+      "kind": "genre_note",
+      "claim": "An analyst noted that Archero 2's store images focus almost only on core gameplay, which does not capture the 'Roguelike/Combat/Stage Experience 2.0' claims in the text.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Pre-launch teardown, 11 Nov 2024; one blogger's opinion.",
+      "scope": {
+        "store": [
+          "google_play",
+          "app_store"
+        ],
+        "genre": [
+          "roguelike"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "screenshots"
+        ]
+      },
+      "tags": [
+        "roguelike",
+        "art_vs_gameplay",
+        "gameplay_real"
+      ],
+      "support": [
+        {
+          "sourceId": "hr-s067",
+          "excerpt": "'Habby has decided to focus more or less only on the core gameplay in the store images - which does not fully capture the strong statements in the text'.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "Habby's approach is gameplay-first imagery; differentiate with clearer promise text.",
+      "researcherNote": "Opinion, no conversion data.",
+      "retired": false
+    },
+    {
+      "id": "hr-205",
+      "kind": "genre_note",
+      "claim": "Archero 2 is a one-stick auto-attack roguelike with power-up choices, 50 main chapters, Sky Tower floors and a countdown survival mode.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Launch description; game facts not store imagery.",
+      "scope": {
+        "store": [
+          "google_play",
+          "app_store"
+        ],
+        "genre": [
+          "roguelike",
+          "survivor_like"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "store_page"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "roguelike",
+        "survivor_like",
+        "genre_convention"
+      ],
+      "support": [
+        {
+          "sourceId": "hr-s067",
+          "excerpt": "Analyst: players stand still to auto-attack, defeat enemies, pick power-ups, beat bosses and survive timed objectives.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        },
+        {
+          "sourceId": "hr-s073",
+          "excerpt": "PocketGamer.biz: faster-paced combat, more skill control, a new countdown survival mode, 50 main chapters and 1,250 Sky Tower floors.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "Feature vocabulary for screenshot captions.",
+      "researcherNote": "Two press sources, different origins.",
+      "retired": false
+    },
+    {
+      "id": "hr-206",
+      "kind": "genre_note",
+      "claim": "Habby's Archero 2 was estimated at about $27M per month and Capybara Go at about $19M per month in mid-2025.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [
+        {
+          "value": 27,
+          "unit": "$M per month",
+          "of": "Archero 2 revenue estimate",
+          "context": "DoF, Aug 2025"
+        },
+        {
+          "value": 19,
+          "unit": "$M per month",
+          "of": "Capybara Go revenue estimate",
+          "context": "DoF, Aug 2025"
+        }
+      ],
+      "appliesWhen": "Estimates reported August 2025; source of estimates not stated in the extract.",
+      "scope": {
+        "store": [
+          "google_play",
+          "app_store"
+        ],
+        "genre": [
+          "roguelike",
+          "idle"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "store_page"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "roguelike",
+        "idle",
+        "monetisation_messaging",
+        "audience"
+      ],
+      "support": [
+        {
+          "sourceId": "hr-s068",
+          "excerpt": "Deconstructor of Fun: Archero 2 $27M/month (lifetime revenue per download over $11); Capybara Go $19M/month.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "Scale reference for competitor importance.",
+      "researcherNote": "Outside-in estimates; two of the five named competitors.",
+      "retired": false
+    },
+    {
+      "id": "hr-207",
+      "kind": "genre_note",
+      "claim": "The original Archero earned about 31% of its revenue in the US, with South Korea and Japan the second and third most lucrative markets.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [
+        {
+          "value": 31,
+          "unit": "% of Archero revenue",
+          "of": "US",
+          "context": "PocketGamer.biz Oct 2024"
+        }
+      ],
+      "appliesWhen": "PocketGamer.biz, Oct 2024; original Archero lifetime spend over $350M.",
+      "scope": {
+        "store": [
+          "google_play",
+          "app_store"
+        ],
+        "genre": [
+          "roguelike"
+        ],
+        "countries": [
+          "US",
+          "KR",
+          "JP"
+        ],
+        "position": [
+          "store_page"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "roguelike",
+        "audience",
+        "store_share"
+      ],
+      "support": [
+        {
+          "sourceId": "hr-s073",
+          "excerpt": "PocketGamer.biz: Archero generated over $350 million; the US accounts for 31%; South Korea and Japan are the second and third most-lucrative markets.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "Prioritise US, KR and JP creative for roguelike auto-shooters.",
+      "researcherNote": "Original Archero, not Archero 2.",
+      "retired": false
+    },
+    {
+      "id": "hr-208",
+      "kind": "genre_note",
+      "claim": "Capybara Go is a text-based roguelike adventure RPG with idle/auto-play combat, skill cards and animal companions.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Game description as reported at soft launch, September 2024.",
+      "scope": {
+        "store": [
+          "google_play",
+          "app_store"
+        ],
+        "genre": [
+          "idle",
+          "roguelike",
+          "rpg"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "store_page"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "idle",
+        "roguelike",
+        "rpg",
+        "genre_convention"
+      ],
+      "support": [
+        {
+          "sourceId": "hr-s072",
+          "excerpt": "PocketGamer.biz: a 'text-based roguelike adventure RPG' where players outfit a capybara with skills, recruit animal companions and fight through randomised events.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        },
+        {
+          "sourceId": "hr-s074",
+          "excerpt": "Lancaric: text-based roguelike RPG with auto-play mechanics, resembling social casino games.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "Capybara Go blends the idle and roguelike genres Rogue Legend also straddles.",
+      "researcherNote": "Two press origins.",
+      "retired": false
+    },
+    {
+      "id": "hr-209",
+      "kind": "genre_note",
+      "claim": "Capybara Go's UA creatives blend mass battles, survivor-style gameplay, UGC hooks and AI voiceover, with far more concepts in Asia than at the US launch.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Outside-in UA analysis, December 2024; concerns ads, not store images.",
+      "scope": {
+        "store": [
+          "google_play",
+          "app_store"
+        ],
+        "genre": [
+          "idle",
+          "roguelike",
+          "survivor_like"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "store_page"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "idle",
+        "survivor_like",
+        "genre_convention",
+        "characters"
+      ],
+      "support": [
+        {
+          "sourceId": "hr-s074",
+          "excerpt": "Lancaric: creatives are 'the blend of every trend out there that works for mid-core'; only about 20% of Asian creative concepts were running in the US at launch.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "Hints that store visuals should echo the ad hooks that convert in Asia.",
+      "researcherNote": "Ad creatives, not store listings; author's estimates.",
+      "retired": false
+    },
+    {
+      "id": "hr-210",
+      "kind": "genre_note",
+      "claim": "Capybara Go's top markets by revenue after global launch were South Korea, Taiwan and Japan, with the US fifth.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Outside-in estimate, December 2024.",
+      "scope": {
+        "store": [
+          "google_play",
+          "app_store"
+        ],
+        "genre": [
+          "idle",
+          "roguelike"
+        ],
+        "countries": [
+          "KR",
+          "TW",
+          "JP",
+          "US"
+        ],
+        "position": [
+          "store_page"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "idle",
+        "audience",
+        "store_share"
+      ],
+      "support": [
+        {
+          "sourceId": "hr-s074",
+          "excerpt": "Lancaric: primary markets by revenue were South Korea, Taiwan, Japan, then (one unspecified), then the United States.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "Confirms KR, TW and JP as the priority creative markets for this genre.",
+      "researcherNote": "Estimate by a UA consultant; one market unspecified.",
+      "retired": false
+    },
+    {
+      "id": "hr-211",
+      "kind": "genre_note",
+      "claim": "Legend of Mushroom earned about 69% of its first-months revenue in South Korea and Japan (39.4% and 30%), and both DoF and Sensor Tower report the two markets as its core.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [
+        {
+          "value": 39.4,
+          "unit": "% of global IAP",
+          "of": "South Korea",
+          "context": "Sensor Tower, to end April 2024"
+        },
+        {
+          "value": 30,
+          "unit": "% of global IAP",
+          "of": "Japan",
+          "context": "Sensor Tower"
+        }
+      ],
+      "appliesWhen": "To end of April 2024 ($270M global IAP per Sensor Tower); March 2024 split per DoF.",
+      "scope": {
+        "store": [
+          "google_play",
+          "app_store"
+        ],
+        "genre": [
+          "idle",
+          "rpg"
+        ],
+        "countries": [
+          "KR",
+          "JP"
+        ],
+        "position": [
+          "store_page"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "idle",
+        "rpg",
+        "audience",
+        "store_share"
+      ],
+      "support": [
+        {
+          "sourceId": "hr-s070",
+          "excerpt": "Sensor Tower: $270M global IAP by end of April 2024; South Korea 39.4% ($106.2M), Japan 30% ($81M).",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        },
+        {
+          "sourceId": "hr-s069",
+          "excerpt": "Deconstructor of Fun: in March Japan and South Korea were 'more than 2/3rds of total revenue' despite 'less than 20%' of installs.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "For an idle RPG, Japan and Korea drive revenue: weight creative testing toward them.",
+      "researcherNote": "Two independent market-data origins (Sensor Tower estimates, DoF).",
+      "retired": false
+    },
+    {
+      "id": "hr-212",
+      "kind": "genre_note",
+      "claim": "Legend of Mushroom's user base in South Korea and Japan was over 80% male.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [
+        {
+          "value": 80,
+          "unit": "% male (over)",
+          "of": "Legend of Mushroom users in KR and JP",
+          "context": "Sensor Tower 2024"
+        }
+      ],
+      "appliesWhen": "Sensor Tower, July 2024 APAC report.",
+      "scope": {
+        "store": [
+          "google_play",
+          "app_store"
+        ],
+        "genre": [
+          "idle",
+          "rpg"
+        ],
+        "countries": [
+          "KR",
+          "JP"
+        ],
+        "position": [
+          "store_page"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "idle",
+        "audience"
+      ],
+      "support": [
+        {
+          "sourceId": "hr-s070",
+          "excerpt": "Sensor Tower: the user base is predominantly male, over 80% in South Korea and Japan.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "Audience assumption for competitor-pattern analysis.",
+      "researcherNote": "Single origin.",
+      "retired": false
+    },
+    {
+      "id": "hr-213",
+      "kind": "genre_note",
+      "claim": "Legend of Mushroom is an idle/slot hybrid: an ultra-simple idle gear-collection loop with gacha pulls up front.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Design analyses April 2024.",
+      "scope": {
+        "store": [
+          "google_play",
+          "app_store"
+        ],
+        "genre": [
+          "idle",
+          "rpg"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "store_page"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "idle",
+        "gacha",
+        "genre_convention"
+      ],
+      "support": [
+        {
+          "sourceId": "hr-s069",
+          "excerpt": "DoF: an 'ultra-simplistic idle gear collection and enhancement loop' that resembles an 'RPG-themed slot machine'.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        },
+        {
+          "sourceId": "hr-s076",
+          "excerpt": "Naavik: 'a type of idle/slot hybrid' with gacha pulls front and center.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "Explains why gear-drop and power-jump visuals appear in the genre's creatives.",
+      "researcherNote": "Two press origins agree.",
+      "retired": false
+    },
+    {
+      "id": "hr-214",
+      "kind": "genre_note",
+      "claim": "Legend of Mushroom is a fast-follow to Legend of Slime in theme and visuals, with casual visual styles and one-button gameplay.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Naavik digest.",
+      "scope": {
+        "store": [
+          "google_play",
+          "app_store"
+        ],
+        "genre": [
+          "idle",
+          "rpg"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "store_page"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "idle",
+        "genre_convention",
+        "characters"
+      ],
+      "support": [
+        {
+          "sourceId": "hr-s076",
+          "excerpt": "Naavik: 'an obvious fast-follow to Legend of Slime in terms of theme and visuals'; casual visual styles and one-button gameplay with deep monetisation.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "Competitor icons/screens in this niche look alike; distinctiveness is a risk.",
+      "researcherNote": "One outlet.",
+      "retired": false
+    },
+    {
+      "id": "hr-215",
+      "kind": "genre_note",
+      "claim": "Survivor.io reskinned Vampire Survivors' movement-only loop in a casual art style with meta-progression and peaked at about 25M MAU, earning over $120M a year.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [
+        {
+          "value": 25,
+          "unit": "M MAU peak",
+          "of": "Survivor.io",
+          "context": "Sensor Tower via Robin Guo"
+        },
+        {
+          "value": 120,
+          "unit": "$M+ per year",
+          "of": "Survivor.io revenue",
+          "context": ""
+        }
+      ],
+      "appliesWhen": "Robin Guo essay, April 2024, quoting Sensor Tower.",
+      "scope": {
+        "store": [
+          "google_play",
+          "app_store"
+        ],
+        "genre": [
+          "survivor_like"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "store_page"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "survivor_like",
+        "roguelike",
+        "monetisation_messaging"
+      ],
+      "support": [
+        {
+          "sourceId": "hr-s075",
+          "excerpt": "Peaked at ~25M MAU after launch and still generates $120M+ in revenue annually; casual art style plus battlepasses, piggy banks, crafting and lootboxes.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "Genre context for survivor-like positioning.",
+      "researcherNote": "Substack essay relaying Sensor Tower.",
+      "retired": false
+    },
+    {
+      "id": "hr-216",
+      "kind": "genre_note",
+      "claim": "RPGs made up over 40% of mobile gaming in Japan and South Korea, with Japan preferring puzzle RPG and Korea action RPG/MMORPG (2020 data).",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [
+        {
+          "value": 40,
+          "unit": "% of mobile gaming (over)",
+          "of": "RPG share in JP and KR",
+          "context": "GameRefinery 2020"
+        }
+      ],
+      "appliesWhen": "GameRefinery genre report, September 2020; may be outdated.",
+      "scope": {
+        "store": [
+          "google_play",
+          "app_store"
+        ],
+        "genre": [
+          "rpg"
+        ],
+        "countries": [
+          "JP",
+          "KR"
+        ],
+        "position": [
+          "store_page"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "rpg",
+        "audience",
+        "genre_convention"
+      ],
+      "support": [
+        {
+          "sourceId": "hr-s077",
+          "excerpt": "GameRefinery: RPGs account for over 40% of mobile gaming in Japan and South Korea; Japanese players prefer Puzzle RPG, Koreans Action RPG/MMORPG.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "Why RPG creative matters in JP/KR; verify with current data.",
+      "researcherNote": "2020 data; treat as background.",
+      "retired": false
+    },
+    {
+      "id": "hr-217",
+      "kind": "genre_note",
+      "claim": "Advisers recommend RPG and midcore creative built on character progression, boss encounters, world-building and character reveals, not feature lists.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Advice from AppFollow and ASOMobile; no conversion tests.",
+      "scope": {
+        "store": [
+          "google_play",
+          "app_store"
+        ],
+        "genre": [
+          "rpg"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "1-3"
+        ],
+        "asset": [
+          "screenshots"
+        ]
+      },
+      "tags": [
+        "rpg",
+        "first_images",
+        "characters",
+        "genre_convention"
+      ],
+      "support": [
+        {
+          "sourceId": "hr-s033",
+          "excerpt": "AppFollow: screenshots showing character progression, boss encounters and social gameplay tend to outperform feature explanations.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        },
+        {
+          "sourceId": "hr-s031",
+          "excerpt": "AppFollow: RPGs should lean into world-building, character reveals and progression.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        },
+        {
+          "sourceId": "hr-s060",
+          "excerpt": "ASOMobile: RPG pages such as Genshin use cinematic stills and character art with a cinematic opener and character reveals.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "Rogue Legend RPG framing: character build and boss moments in frames 1-3.",
+      "researcherNote": "Two origins, advice only.",
+      "retired": false
+    },
+    {
+      "id": "hr-218",
+      "kind": "genre_note",
+      "claim": "In AppFollow's live audits, idle games were criticised for gameplay shown without captions, busy stylised frames, and portrait gameplay set in landscape frames with blurred backgrounds.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Expert opinion on CyberStrike Manager Idle and Idle Pirate Tycoon; not tests.",
+      "scope": {
+        "store": [
+          "google_play",
+          "app_store"
+        ],
+        "genre": [
+          "idle"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "screenshots"
+        ]
+      },
+      "tags": [
+        "idle",
+        "captions",
+        "composition",
+        "orientation"
+      ],
+      "support": [
+        {
+          "sourceId": "hr-s030",
+          "excerpt": "AppFollow: 'Gameplay alone asks the player to work out what the game is'; Idle Pirate Tycoon's iOS gallery is portrait gameplay set inside landscape frames with blurred backgrounds.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "Add captions that explain the idle loop; consider the portrait-in-landscape frame pattern.",
+      "researcherNote": "Subjective audit remarks.",
+      "retired": false
+    },
+    {
+      "id": "hr-219",
+      "kind": "genre_note",
+      "claim": "For casual and puzzle games, advisers say the first frame should show interaction fast, and Playrix uses artistic interpretations rather than raw gameplay.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Advice plus a Udonis observation of Playrix listings.",
+      "scope": {
+        "store": [
+          "google_play",
+          "app_store"
+        ],
+        "genre": [
+          "casual",
+          "puzzle"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "1"
+        ],
+        "asset": [
+          "screenshots"
+        ]
+      },
+      "tags": [
+        "genre_convention",
+        "first_images",
+        "art_vs_gameplay"
+      ],
+      "support": [
+        {
+          "sourceId": "hr-s031",
+          "excerpt": "AppFollow: puzzle/casual games should show the gameplay loop immediately and reveal interaction fast.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        },
+        {
+          "sourceId": "hr-s059",
+          "excerpt": "Udonis: Playrix uses artistic interpretations of gameplay across Homescapes, Gardenscapes and Fishdom.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "Do not copy the artistic-interpretation approach on Play.",
+      "researcherNote": "Observation and advice; conflicts with Google's requirement that screenshots show the actual experience.",
+      "retired": false
+    },
+    {
+      "id": "hr-220",
+      "kind": "genre_note",
+      "claim": "GameRefinery reports Vampire Survivors-style survivor minigames being embedded in other mobile games such as State of Survival and Diablo Immortal.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "GameRefinery trend article, 2024.",
+      "scope": {
+        "store": [
+          "google_play",
+          "app_store"
+        ],
+        "genre": [
+          "survivor_like"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "store_page"
+        ],
+        "asset": [
+          "screenshots"
+        ]
+      },
+      "tags": [
+        "survivor_like",
+        "genre_convention"
+      ],
+      "support": [
+        {
+          "sourceId": "hr-s078",
+          "excerpt": "GameRefinery: games like State of Survival and Diablo: Immortal incorporate 'Vampire Survivors-like minigames' where the character fires automatically.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "Shows the survivor-like mechanic is now common across genres.",
+      "researcherNote": "Trend note, not store imagery.",
+      "retired": false
+    }
+  ]
+}

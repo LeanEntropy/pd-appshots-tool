@@ -1,0 +1,3847 @@
+{
+  "file": "entries-app-store",
+  "entries": [
+    {
+      "id": "ap-001",
+      "kind": "store_fact",
+      "claim": "Guideline 2.3 requires that app metadata, including description, screenshots and previews, accurately reflects the app's core experience and is kept up to date with new versions.",
+      "ruleClass": "enforced_rule",
+      "enforcement": {
+        "consequence": "listing rejected or removed",
+        "exactWording": "make sure all your app metadata, including privacy information, your app description, screenshots, and previews accurately reflect the app's core experience and remember to keep them up-to-date with new versions.",
+        "policyUrl": "https://developer.apple.com/app-store/review/guidelines/"
+      },
+      "facts": [],
+      "appliesWhen": "Every App Store submission and update.",
+      "scope": {
+        "store": [
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "policy_metadata",
+        "regulation",
+        "screenshots"
+      ],
+      "support": [
+        {
+          "sourceId": "ap-s005",
+          "excerpt": "Customers should know what they're getting when they download or buy your app, so make sure all your app metadata ... screenshots, and previews accurately reflect the app's core experience",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "App Store Connect / Apple Developer pages as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2027-03-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "Every recommended screenshot must depict features that exist in the shipped build; never advise showing content the game does not have.",
+      "researcherNote": "Rejection consequence is stated in the Guidelines introduction: \"We will reject apps for any content or behavior that we believe is over the line.\"",
+      "retired": false
+    },
+    {
+      "id": "ap-002",
+      "kind": "store_fact",
+      "claim": "Guideline 2.3.3 requires screenshots to show the app in use, not merely title art, a login page or a splash screen.",
+      "ruleClass": "enforced_rule",
+      "enforcement": {
+        "consequence": "listing rejected or removed",
+        "exactWording": "Screenshots should show the app in use, and not merely the title art, login page, or splash screen.",
+        "policyUrl": "https://developer.apple.com/app-store/review/guidelines/"
+      },
+      "facts": [],
+      "appliesWhen": "All App Store screenshots.",
+      "scope": {
+        "store": [
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "screenshots"
+        ]
+      },
+      "tags": [
+        "policy_metadata",
+        "gameplay_real",
+        "screenshots"
+      ],
+      "support": [
+        {
+          "sourceId": "ap-s005",
+          "excerpt": "Screenshots should show the app in use, and not merely the title art, login page, or splash screen.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "App Store Connect / Apple Developer pages as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2027-03-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "Do not recommend a logo-only or splash-style screenshot; every screenshot must show the game in use.",
+      "researcherNote": "Wording is 'should' but the guideline sits under the rejection language of the introduction.",
+      "retired": false
+    },
+    {
+      "id": "ap-003",
+      "kind": "store_fact",
+      "claim": "Guideline 2.3.3 permits text and image overlays on screenshots, for example to demonstrate input mechanisms such as an animated touch point.",
+      "ruleClass": "official_guidance",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "All App Store screenshots.",
+      "scope": {
+        "store": [
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "screenshots"
+        ]
+      },
+      "tags": [
+        "captions",
+        "policy_metadata",
+        "composition"
+      ],
+      "support": [
+        {
+          "sourceId": "ap-s005",
+          "excerpt": "They may also include text and image overlays (e.g. to demonstrate input mechanisms, such as an animated touch point or Apple Pencil)",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "App Store Connect / Apple Developer pages as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2027-03-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "Captions and callouts on gameplay screenshots are allowed on the App Store.",
+      "researcherNote": "A permission, not a restriction, so not classed as an enforced rule.",
+      "retired": false
+    },
+    {
+      "id": "ap-004",
+      "kind": "store_fact",
+      "claim": "Guideline 2.3.4 allows app previews to use only video screen captures of the app itself, while narration and video or textual overlays are allowed to explain.",
+      "ruleClass": "enforced_rule",
+      "enforcement": {
+        "consequence": "listing rejected or removed",
+        "exactWording": "previews may only use video screen captures of the app itself. Stickers and iMessage extensions may show the user experience in the Messages app. You can add narration and video or textual overlays to help explain anything that isn't clear from the video alone.",
+        "policyUrl": "https://developer.apple.com/app-store/review/guidelines/"
+      },
+      "facts": [],
+      "appliesWhen": "All App Store app previews.",
+      "scope": {
+        "store": [
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "video"
+        ]
+      },
+      "tags": [
+        "video",
+        "policy_metadata",
+        "gameplay_real"
+      ],
+      "support": [
+        {
+          "sourceId": "ap-s005",
+          "excerpt": "previews may only use video screen captures of the app itself ... You can add narration and video or textual overlays to help explain anything that isn't clear from the video alone.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "App Store Connect / Apple Developer pages as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2027-03-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "A store video for iOS must be captured in-game; a CGI trailer cannot be recommended as an app preview.",
+      "researcherNote": "Rejection consequence per the Guidelines introduction: \"We will reject apps for any content or behavior that we believe is over the line.\"",
+      "retired": false
+    },
+    {
+      "id": "ap-005",
+      "kind": "store_fact",
+      "claim": "Guideline 2.3.1(a) says marketing an app in a misleading way, such as promoting content or services it does not offer or a false price, is grounds for removal from the App Store.",
+      "ruleClass": "enforced_rule",
+      "enforcement": {
+        "consequence": "listing rejected or removed",
+        "exactWording": "marketing your app in a misleading way, such as by promoting content or services that it does not actually offer ... or promoting a false price, whether within or outside of the App Store, is grounds for removal of your app from the App Store",
+        "policyUrl": "https://developer.apple.com/app-store/review/guidelines/"
+      },
+      "facts": [],
+      "appliesWhen": "Any marketing, in or out of the App Store.",
+      "scope": {
+        "store": [
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "policy_metadata",
+        "regulation",
+        "advertising_law"
+      ],
+      "support": [
+        {
+          "sourceId": "ap-s005",
+          "excerpt": "marketing your app in a misleading way, such as by promoting content or services that it does not actually offer ... or promoting a false price ... is grounds for removal of your app from the App Store",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "App Store Connect / Apple Developer pages as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2027-03-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "Flag competitor screenshots that show content unavailable in-game as risky to imitate.",
+      "researcherNote": "2.3.1(b) adds that egregious or repeated behaviour is grounds for removal from the Developer Program.",
+      "retired": false
+    },
+    {
+      "id": "ap-006",
+      "kind": "store_fact",
+      "claim": "Guideline 2.3.2 requires that, for apps with in-app purchases, the description, screenshots and previews clearly indicate whether featured items, levels or subscriptions require additional purchases.",
+      "ruleClass": "enforced_rule",
+      "enforcement": {
+        "consequence": "listing rejected or removed",
+        "exactWording": "make sure your app description, screenshots, and previews clearly indicate whether any featured items, levels, subscriptions, etc. require additional purchases.",
+        "policyUrl": "https://developer.apple.com/app-store/review/guidelines/"
+      },
+      "facts": [],
+      "appliesWhen": "App has in-app purchases and screenshots/previews feature purchasable items.",
+      "scope": {
+        "store": [
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "screenshots"
+        ]
+      },
+      "tags": [
+        "policy_metadata",
+        "monetisation_messaging",
+        "regulation"
+      ],
+      "support": [
+        {
+          "sourceId": "ap-s005",
+          "excerpt": "If your app includes in-app purchases, make sure your app description, screenshots, and previews clearly indicate whether any featured items, levels, subscriptions, etc. require additional purchases.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "App Store Connect / Apple Developer pages as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2027-03-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "Screenshots of premium heroes, gear or packs need a clear indication they are purchases.",
+      "researcherNote": "Rejection consequence per the Guidelines introduction: \"We will reject apps for any content or behavior that we believe is over the line.\"",
+      "retired": false
+    },
+    {
+      "id": "ap-007",
+      "kind": "store_fact",
+      "claim": "Guideline 2.3.7 says metadata such as app names, subtitles, screenshots and previews should not include prices, terms or descriptions that are not specific to that metadata type.",
+      "ruleClass": "enforced_rule",
+      "enforcement": {
+        "consequence": "listing rejected or removed",
+        "exactWording": "Metadata such as app names, subtitles, screenshots, and previews should not include prices, terms, or descriptions that are not specific to the metadata type.",
+        "policyUrl": "https://developer.apple.com/app-store/review/guidelines/"
+      },
+      "facts": [],
+      "appliesWhen": "App name, subtitle, screenshots, previews.",
+      "scope": {
+        "store": [
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "screenshots"
+        ]
+      },
+      "tags": [
+        "policy_metadata",
+        "price_text",
+        "offers"
+      ],
+      "support": [
+        {
+          "sourceId": "ap-s005",
+          "excerpt": "Metadata such as app names, subtitles, screenshots, and previews should not include prices, terms, or descriptions that are not specific to the metadata type.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "App Store Connect / Apple Developer pages as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2027-03-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "Do not put prices or discount claims in screenshot captions on the App Store.",
+      "researcherNote": "Rejection consequence per the Guidelines introduction: \"We will reject apps for any content or behavior that we believe is over the line.\"",
+      "retired": false
+    },
+    {
+      "id": "ap-008",
+      "kind": "store_fact",
+      "claim": "Guideline 2.3.7 forbids packing metadata with trademarked terms, popular app names, pricing information or other irrelevant phrases to game the system, and Apple may modify inappropriate keywords at any time.",
+      "ruleClass": "enforced_rule",
+      "enforcement": {
+        "consequence": "listing rejected or removed",
+        "exactWording": "don't try to pack any of your metadata with trademarked terms, popular app names, pricing information, or other irrelevant phrases just to game the system.",
+        "policyUrl": "https://developer.apple.com/app-store/review/guidelines/"
+      },
+      "facts": [],
+      "appliesWhen": "Name, subtitle, keywords.",
+      "scope": {
+        "store": [
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "policy_metadata",
+        "regulation"
+      ],
+      "support": [
+        {
+          "sourceId": "ap-s005",
+          "excerpt": "don't try to pack any of your metadata with trademarked terms, popular app names, pricing information, or other irrelevant phrases just to game the system. ... Apple may modify inappropriate keywords at any time",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "App Store Connect / Apple Developer pages as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2027-03-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "Never recommend competitor names as keywords or in captions.",
+      "researcherNote": "Rejection consequence per the Guidelines introduction: \"We will reject apps for any content or behavior that we believe is over the line.\"",
+      "retired": false
+    },
+    {
+      "id": "ap-009",
+      "kind": "store_fact",
+      "claim": "Guideline 2.3.7 says app subtitles must not reference other apps or make unverifiable product claims.",
+      "ruleClass": "enforced_rule",
+      "enforcement": {
+        "consequence": "listing rejected or removed",
+        "exactWording": "App subtitles ... must follow our standard metadata rules and should not include inappropriate content, reference other apps, or make unverifiable product claims.",
+        "policyUrl": "https://developer.apple.com/app-store/review/guidelines/"
+      },
+      "facts": [],
+      "appliesWhen": "App subtitle.",
+      "scope": {
+        "store": [
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "text"
+        ]
+      },
+      "tags": [
+        "policy_metadata",
+        "ranking_claims"
+      ],
+      "support": [
+        {
+          "sourceId": "ap-s005",
+          "excerpt": "should not include inappropriate content, reference other apps, or make unverifiable product claims.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "App Store Connect / Apple Developer pages as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2027-03-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "Avoid '#1' or comparative claims in the subtitle.",
+      "researcherNote": "Explicit for subtitles only; the rule text does not extend the same wording to screenshot captions.",
+      "retired": false
+    },
+    {
+      "id": "ap-010",
+      "kind": "store_fact",
+      "claim": "Guideline 2.3.7 limits App Store app names to 30 characters.",
+      "ruleClass": "enforced_rule",
+      "enforcement": {
+        "consequence": "upload refused",
+        "exactWording": "App names must be limited to 30 characters.",
+        "policyUrl": "https://developer.apple.com/app-store/review/guidelines/"
+      },
+      "facts": [
+        {
+          "value": 30,
+          "unit": "characters",
+          "of": "app name",
+          "context": "Guideline 2.3.7"
+        }
+      ],
+      "appliesWhen": "App name field.",
+      "scope": {
+        "store": [
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "text"
+        ]
+      },
+      "tags": [
+        "policy_metadata",
+        "localisation"
+      ],
+      "support": [
+        {
+          "sourceId": "ap-s005",
+          "excerpt": "App names must be limited to 30 characters.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        },
+        {
+          "sourceId": "ap-s002",
+          "excerpt": "An app name can be up to 30 characters long.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "App Store Connect / Apple Developer pages as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2027-03-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "Localised names for JP/KR/TW must fit 30 characters.",
+      "researcherNote": "Consequence 'upload refused' inferred from a hard field limit. How CJK characters are counted is not verified.",
+      "retired": false
+    },
+    {
+      "id": "ap-011",
+      "kind": "store_fact",
+      "claim": "Guideline 2.3.8 requires icons, screenshots and previews to adhere to a 4+ age rating even if the app is rated higher, for example avoiding a gruesome death or a gun pointed at a specific character.",
+      "ruleClass": "enforced_rule",
+      "enforcement": {
+        "consequence": "listing rejected or removed",
+        "exactWording": "make sure your app and in-app purchase icons, screenshots, and previews adhere to a 4+ age rating even if your app is rated higher.",
+        "policyUrl": "https://developer.apple.com/app-store/review/guidelines/"
+      },
+      "facts": [],
+      "appliesWhen": "All icons, screenshots and previews.",
+      "scope": {
+        "store": [
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "screenshots"
+        ]
+      },
+      "tags": [
+        "age_rating",
+        "policy_metadata",
+        "policy_graphics"
+      ],
+      "support": [
+        {
+          "sourceId": "ap-s005",
+          "excerpt": "make sure your app and in-app purchase icons, screenshots, and previews adhere to a 4+ age rating even if your app is rated higher. ... select images that don't depict a gruesome death or a gun pointed at a specific character.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "App Store Connect / Apple Developer pages as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2027-03-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "Roguelike combat art with gore or blood must be toned down in App Store screenshots.",
+      "researcherNote": "Rejection consequence per the Guidelines introduction: \"We will reject apps for any content or behavior that we believe is over the line.\"",
+      "retired": false
+    },
+    {
+      "id": "ap-012",
+      "kind": "store_fact",
+      "claim": "Guideline 2.3.9 makes the developer responsible for securing the rights to all materials in icons, screenshots and previews.",
+      "ruleClass": "enforced_rule",
+      "enforcement": {
+        "consequence": "listing rejected or removed",
+        "exactWording": "You are responsible for securing the rights to use all materials in your app icons, screenshots, and previews",
+        "policyUrl": "https://developer.apple.com/app-store/review/guidelines/"
+      },
+      "facts": [],
+      "appliesWhen": "Any third-party IP, music or likeness in assets.",
+      "scope": {
+        "store": [
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "policy_metadata",
+        "collaboration_ip",
+        "celebrity"
+      ],
+      "support": [
+        {
+          "sourceId": "ap-s005",
+          "excerpt": "You are responsible for securing the rights to use all materials in your app icons, screenshots, and previews, and you should display fictional account information instead of data from a real person.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "App Store Connect / Apple Developer pages as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2027-03-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "Collaboration IP and celebrity visuals need licences before appearing in creatives.",
+      "researcherNote": "Rejection consequence per the Guidelines introduction: \"We will reject apps for any content or behavior that we believe is over the line.\"",
+      "retired": false
+    },
+    {
+      "id": "ap-013",
+      "kind": "store_fact",
+      "claim": "Guideline 2.3.10 forbids names, icons or imagery of other mobile platforms or alternative app marketplaces in the app or its metadata, unless there is specific approved interactive functionality.",
+      "ruleClass": "enforced_rule",
+      "enforcement": {
+        "consequence": "listing rejected or removed",
+        "exactWording": "don't include names, icons, or imagery of other mobile platforms or alternative app marketplaces in your app or metadata, unless there is specific, approved interactive functionality.",
+        "policyUrl": "https://developer.apple.com/app-store/review/guidelines/"
+      },
+      "facts": [],
+      "appliesWhen": "Screenshots, previews, description.",
+      "scope": {
+        "store": [
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "screenshots"
+        ]
+      },
+      "tags": [
+        "policy_metadata",
+        "policy_graphics"
+      ],
+      "support": [
+        {
+          "sourceId": "ap-s005",
+          "excerpt": "don't include names, icons, or imagery of other mobile platforms or alternative app marketplaces in your app or metadata",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "App Store Connect / Apple Developer pages as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2027-03-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "Reusing Google Play badges or Android UI in iOS creatives is a rejection risk.",
+      "researcherNote": "Rejection consequence per the Guidelines introduction: \"We will reject apps for any content or behavior that we believe is over the line.\"",
+      "retired": false
+    },
+    {
+      "id": "ap-014",
+      "kind": "store_fact",
+      "claim": "Guideline 4.1(c) forbids using another developer's icon, brand or product name in an app's icon or name without approval.",
+      "ruleClass": "enforced_rule",
+      "enforcement": {
+        "consequence": "listing rejected or removed",
+        "exactWording": "You cannot use another developer's icon, brand, or product name in your app's icon or name, without approval from the developer.",
+        "policyUrl": "https://developer.apple.com/app-store/review/guidelines/"
+      },
+      "facts": [],
+      "appliesWhen": "App icon and name.",
+      "scope": {
+        "store": [
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "icon"
+        ]
+      },
+      "tags": [
+        "policy_metadata",
+        "icon",
+        "branding"
+      ],
+      "support": [
+        {
+          "sourceId": "ap-s005",
+          "excerpt": "You cannot use another developer's icon, brand, or product name in your app's icon or name, without approval from the developer.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "App Store Connect / Apple Developer pages as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2027-03-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "Look-alike competitor icons are not a permissible reference.",
+      "researcherNote": "Section 4.1(b) adds that impersonating apps may lead to removal from the Developer Program.",
+      "retired": false
+    },
+    {
+      "id": "ap-015",
+      "kind": "store_fact",
+      "claim": "Guideline 3.1.1 requires apps offering loot boxes or other randomised virtual items for purchase to disclose the odds of receiving each type of item before purchase.",
+      "ruleClass": "enforced_rule",
+      "enforcement": {
+        "consequence": "listing rejected or removed",
+        "exactWording": "Apps offering \"loot boxes\" or other mechanisms that provide randomized virtual items for purchase must disclose the odds of receiving each type of item to customers prior to purchase.",
+        "policyUrl": "https://developer.apple.com/app-store/review/guidelines/"
+      },
+      "facts": [],
+      "appliesWhen": "App sells randomised items (gacha).",
+      "scope": {
+        "store": [
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "gacha",
+        "loot_box_disclosure",
+        "monetisation_messaging",
+        "regulation"
+      ],
+      "support": [
+        {
+          "sourceId": "ap-s005",
+          "excerpt": "Apps offering \"loot boxes\" or other mechanisms that provide randomized virtual items for purchase must disclose the odds of receiving each type of item to customers prior to purchase.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "App Store Connect / Apple Developer pages as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2027-03-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "Gacha-style shop imagery implies the odds must be shown in-app before purchase.",
+      "researcherNote": "Rejection consequence per the Guidelines introduction: \"We will reject apps for any content or behavior that we believe is over the line.\"",
+      "retired": false
+    },
+    {
+      "id": "ap-016",
+      "kind": "store_fact",
+      "claim": "Guideline 2.3.13 requires in-app event metadata to be accurate and to pertain to the event itself rather than the app generally, and events must happen at the selected times.",
+      "ruleClass": "enforced_rule",
+      "enforcement": {
+        "consequence": "ineligible for a surface",
+        "exactWording": "All event metadata must be accurate and pertain to the event itself, rather than the app more generally. Events must happen at the times and dates you select in App Store Connect, including across multiple storefronts.",
+        "policyUrl": "https://developer.apple.com/app-store/review/guidelines/"
+      },
+      "facts": [],
+      "appliesWhen": "In-app events on the App Store.",
+      "scope": {
+        "store": [
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "events",
+        "policy_metadata"
+      ],
+      "support": [
+        {
+          "sourceId": "ap-s005",
+          "excerpt": "All event metadata must be accurate and pertain to the event itself, rather than the app more generally.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "App Store Connect / Apple Developer pages as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2027-03-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "Event cards must describe the actual event, not generic app promotion.",
+      "researcherNote": "The guideline does not spell out the consequence; 'ineligible' is a researcher inference from 'To feature your event on the App Store, it must fall within an event type'.",
+      "retired": false
+    },
+    {
+      "id": "ap-017",
+      "kind": "store_fact",
+      "claim": "App Store screenshots must be 1 to 10 images in .jpeg, .jpg or .png format and cannot contain alpha channels or transparency.",
+      "ruleClass": "enforced_rule",
+      "enforcement": {
+        "consequence": "upload refused",
+        "exactWording": "Images can't include alpha channels or transparencies.",
+        "policyUrl": "https://developer.apple.com/help/app-store-connect/reference/app-information/screenshot-specifications"
+      },
+      "facts": [
+        {
+          "value": "1-10",
+          "unit": "screenshots",
+          "of": "per device size and localisation",
+          "context": "App Store Connect"
+        }
+      ],
+      "appliesWhen": "Screenshot upload.",
+      "scope": {
+        "store": [
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "screenshots"
+        ]
+      },
+      "tags": [
+        "screenshots",
+        "deck_length"
+      ],
+      "support": [
+        {
+          "sourceId": "ap-s001",
+          "excerpt": "You can upload one to 10 screenshots ... Images can't include alpha channels or transparencies.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        },
+        {
+          "sourceId": "ap-s013",
+          "excerpt": "Screenshots: Minimum 1, maximum 10 per device size and localization (.jpeg, .jpg, .png formats)",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "App Store Connect / Apple Developer pages as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2027-03-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "Deck length cap is 10; export flat PNG/JPEG without transparency.",
+      "researcherNote": "Consequence 'upload refused' is inferred; the spec page states requirements without consequences.",
+      "retired": false
+    },
+    {
+      "id": "ap-018",
+      "kind": "store_fact",
+      "claim": "iPhone 6.9-inch screenshots are required for apps that run on iPhone (6.5-inch accepted when 6.9-inch are not provided), and 13-inch iPad screenshots are required for apps that run on iPad.",
+      "ruleClass": "enforced_rule",
+      "enforcement": {
+        "consequence": "upload refused",
+        "exactWording": "Required if app runs on iPhone and screenshots for 6.9\" display aren't provided",
+        "policyUrl": "https://developer.apple.com/help/app-store-connect/reference/app-information/screenshot-specifications"
+      },
+      "facts": [
+        {
+          "value": "1290x2796 / 1260x2736 / 1320x2868",
+          "unit": "px portrait",
+          "of": "iPhone 6.9-inch",
+          "context": "accepted sizes"
+        },
+        {
+          "value": "1284x2778 / 1242x2688",
+          "unit": "px portrait",
+          "of": "iPhone 6.5-inch",
+          "context": "accepted sizes"
+        },
+        {
+          "value": "2064x2752 / 2048x2732",
+          "unit": "px portrait",
+          "of": "iPad 13-inch",
+          "context": "required if app runs on iPad"
+        }
+      ],
+      "appliesWhen": "Submitting a version with iPhone/iPad support.",
+      "scope": {
+        "store": [
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "screenshots"
+        ]
+      },
+      "tags": [
+        "screenshots",
+        "orientation"
+      ],
+      "support": [
+        {
+          "sourceId": "ap-s001",
+          "excerpt": "iPhone 6.5\" Display ... Required if app runs on iPhone and screenshots for 6.9\" display aren't provided; iPad 13\" Display ... Required if app runs on iPad",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        },
+        {
+          "sourceId": "ap-s029",
+          "excerpt": "The mandatory base submissions are 6.9-inch iPhone (1290 x 2796 pixels portrait) and 13-inch iPad (2064 x 2752 pixels portrait); Apple scales them to smaller devices.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "App Store Connect / Apple Developer pages as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2027-03-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "Produce one 6.9-inch master set; a 13-inch set only if the game supports iPad.",
+      "researcherNote": "Landscape variants of each size are also accepted. Consequence inferred as for ap-017.",
+      "retired": false
+    },
+    {
+      "id": "ap-019",
+      "kind": "store_fact",
+      "claim": "App preview files must be 15 to 30 seconds long, at most 30 fps and at most 500 MB, with up to 3 previews per device size and language.",
+      "ruleClass": "enforced_rule",
+      "enforcement": {
+        "consequence": "upload refused",
+        "exactWording": "Minimum length: 15 seconds; Maximum length: 30 seconds ... Maximum: 500MB",
+        "policyUrl": "https://developer.apple.com/help/app-store-connect/reference/app-information/app-preview-specifications"
+      },
+      "facts": [
+        {
+          "value": "15-30",
+          "unit": "seconds",
+          "of": "app preview length",
+          "context": "spec page"
+        },
+        {
+          "value": 30,
+          "unit": "fps max",
+          "of": "app preview",
+          "context": "spec page"
+        },
+        {
+          "value": 500,
+          "unit": "MB max",
+          "of": "app preview file",
+          "context": "spec page"
+        },
+        {
+          "value": "886x1920 / 1920x886",
+          "unit": "px",
+          "of": "iPhone preview",
+          "context": "portrait / landscape"
+        }
+      ],
+      "appliesWhen": "Preview upload.",
+      "scope": {
+        "store": [
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "video"
+        ]
+      },
+      "tags": [
+        "video",
+        "autoplay"
+      ],
+      "support": [
+        {
+          "sourceId": "ap-s004",
+          "excerpt": "Minimum length: 15 seconds; Maximum length: 30 seconds ... Up to 3 app previews ... Maximum: 30 frames per second ... File Size Maximum: 500MB",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "App Store Connect / Apple Developer pages as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2027-03-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "Cut iOS videos between 15 and 30 s.",
+      "researcherNote": "Consequence inferred. The product page copy says only 'up to 30 seconds' without the 15 s floor.",
+      "retired": false
+    },
+    {
+      "id": "ap-020",
+      "kind": "store_fact",
+      "claim": "Apple advises using images captured from the app's UI to communicate the user experience.",
+      "ruleClass": "official_guidance",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Screenshots.",
+      "scope": {
+        "store": [
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "screenshots"
+        ]
+      },
+      "tags": [
+        "screenshots",
+        "gameplay_real"
+      ],
+      "support": [
+        {
+          "sourceId": "ap-s002",
+          "excerpt": "Use images captured from your app's UI to visually communicate your app's user experience.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "App Store Connect / Apple Developer pages as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2027-03-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "Supports gameplay-based screenshots over pure key art.",
+      "researcherNote": "",
+      "retired": false
+    },
+    {
+      "id": "ap-021",
+      "kind": "store_fact",
+      "claim": "Apple advises that the first one to three screenshots highlight the essence of the app, because they appear in search results when no app preview is available.",
+      "ruleClass": "official_guidance",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Screenshot ordering.",
+      "scope": {
+        "store": [
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "1-3"
+        ],
+        "asset": [
+          "screenshots"
+        ]
+      },
+      "tags": [
+        "first_images",
+        "search_result",
+        "order"
+      ],
+      "support": [
+        {
+          "sourceId": "ap-s002",
+          "excerpt": "the first one to three images will appear in search results when no app preview is available, so make sure these highlight the essence of your app.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "App Store Connect / Apple Developer pages as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2027-03-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "Put the core loop and strongest selling point in screenshots 1-3.",
+      "researcherNote": "",
+      "retired": false
+    },
+    {
+      "id": "ap-022",
+      "kind": "store_fact",
+      "claim": "Apple advises focusing each subsequent screenshot after the first ones on a main benefit or feature.",
+      "ruleClass": "official_guidance",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Screenshots beyond the first three.",
+      "scope": {
+        "store": [
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "screenshots"
+        ]
+      },
+      "tags": [
+        "composition",
+        "order",
+        "captions"
+      ],
+      "support": [
+        {
+          "sourceId": "ap-s002",
+          "excerpt": "Focus each subsequent screenshot on a main benefit or feature so that you fully convey your app's value.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "App Store Connect / Apple Developer pages as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2027-03-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "One message per screenshot.",
+      "researcherNote": "",
+      "retired": false
+    },
+    {
+      "id": "ap-023",
+      "kind": "store_fact",
+      "claim": "Apple advises apps that support Dark Mode to consider at least one screenshot showing the Dark Mode experience.",
+      "ruleClass": "official_guidance",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "App supports Dark Mode.",
+      "scope": {
+        "store": [
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "screenshots"
+        ]
+      },
+      "tags": [
+        "screenshots",
+        "colour"
+      ],
+      "support": [
+        {
+          "sourceId": "ap-s002",
+          "excerpt": "If your app supports Dark Mode, consider including at least one screenshot that showcases what the experience looks like for users.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "App Store Connect / Apple Developer pages as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2027-03-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "Rarely relevant to a game listing.",
+      "researcherNote": "Low relevance for games.",
+      "retired": false
+    },
+    {
+      "id": "ap-024",
+      "kind": "store_fact",
+      "claim": "Apple advises making the first few seconds of an app preview visually compelling because previews autoplay muted.",
+      "ruleClass": "official_guidance",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "App preview production.",
+      "scope": {
+        "store": [
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "video"
+        ],
+        "asset": [
+          "video"
+        ]
+      },
+      "tags": [
+        "video",
+        "video_first_seconds",
+        "autoplay"
+      ],
+      "support": [
+        {
+          "sourceId": "ap-s002",
+          "excerpt": "App previews autoplay with muted audio when users view your product page, so make sure the first few seconds of your video are visually compelling.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "App Store Connect / Apple Developer pages as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2027-03-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "Front-load the hook; design video to work without sound.",
+      "researcherNote": "",
+      "retired": false
+    },
+    {
+      "id": "ap-025",
+      "kind": "store_fact",
+      "claim": "Apple advises showing more gameplay than cutscenes in an app preview so as not to give a false impression of gameplay.",
+      "ruleClass": "official_guidance",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Game app previews.",
+      "scope": {
+        "store": [
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "video"
+        ]
+      },
+      "tags": [
+        "video",
+        "gameplay_real",
+        "art_vs_gameplay"
+      ],
+      "support": [
+        {
+          "sourceId": "ap-s003",
+          "excerpt": "Show more gameplay than cutscenes so you don't mislead your audience by giving a false impression of gameplay.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "App Store Connect / Apple Developer pages as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2027-03-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "Preview should be mostly real gameplay.",
+      "researcherNote": "Phrased as advice; related enforced rule is 2.3.1 on misleading marketing.",
+      "retired": false
+    },
+    {
+      "id": "ap-026",
+      "kind": "store_fact",
+      "claim": "Apple states app previews must not film people interacting with a device, such as over-the-shoulder shots or fingers tapping the screen, and must be appropriate for all ages.",
+      "ruleClass": "official_guidance",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "App previews.",
+      "scope": {
+        "store": [
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "video"
+        ]
+      },
+      "tags": [
+        "video",
+        "policy_metadata",
+        "age_rating"
+      ],
+      "support": [
+        {
+          "sourceId": "ap-s003",
+          "excerpt": "App previews must show only content within the app itself. Don't film people interacting with a device, such as an over-the-shoulder angle or fingers tapping the screen.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        },
+        {
+          "sourceId": "ap-s003",
+          "excerpt": "App previews must be appropriate for all ages, so they shouldn't include objectionable content that includes violence, adult themes, or profanity.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "App Store Connect / Apple Developer pages as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2027-03-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "No hand-held capture; keep violence mild.",
+      "researcherNote": "'Must' wording on the marketing page but no consequence stated there; the enforced counterpart is Guideline 2.3.4 (ap-004).",
+      "retired": false
+    },
+    {
+      "id": "ap-027",
+      "kind": "store_fact",
+      "claim": "Apple advises an app icon that is simple and recognisable, avoids unnecessary visual detail, and is tested with different options.",
+      "ruleClass": "official_guidance",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Icon design.",
+      "scope": {
+        "store": [
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "icon"
+        ]
+      },
+      "tags": [
+        "icon",
+        "legibility",
+        "experiments"
+      ],
+      "support": [
+        {
+          "sourceId": "ap-s002",
+          "excerpt": "Work with a graphic designer to create an icon that is simple and recognizable. Try testing different options ... To ensure the icon is legible in all sizes, avoid adding unnecessary visual details.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "App Store Connect / Apple Developer pages as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2027-03-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "Icon changes can be tested via PPO (ap-043).",
+      "researcherNote": "",
+      "retired": false
+    },
+    {
+      "id": "ap-028",
+      "kind": "store_fact",
+      "claim": "Apple advises localising the description, keywords, app previews and screenshots for each market in which the app is offered.",
+      "ruleClass": "official_guidance",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "App available in several languages.",
+      "scope": {
+        "store": [
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "localisation",
+        "cultural_adaptation"
+      ],
+      "support": [
+        {
+          "sourceId": "ap-s002",
+          "excerpt": "If your app is available in multiple languages, make sure to localize your app description, keywords, app previews, and screenshots, for each of the markets in which you offer your app.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "App Store Connect / Apple Developer pages as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2027-03-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "Per-country deck: localise captions, not only the description.",
+      "researcherNote": "",
+      "retired": false
+    },
+    {
+      "id": "ap-029",
+      "kind": "store_fact",
+      "claim": "Apple advises that the subtitle highlight features or typical uses rather than generic descriptions such as 'world's best app'.",
+      "ruleClass": "official_guidance",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Subtitle writing.",
+      "scope": {
+        "store": [
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "text"
+        ]
+      },
+      "tags": [
+        "policy_metadata",
+        "captions"
+      ],
+      "support": [
+        {
+          "sourceId": "ap-s002",
+          "excerpt": "Avoid generic descriptions such as \"world's best app.\" Instead, highlight features or typical uses of your app that resonate with your audience.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "App Store Connect / Apple Developer pages as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2027-03-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "Subtitle should name a genre feature.",
+      "researcherNote": "",
+      "retired": false
+    },
+    {
+      "id": "ap-030",
+      "kind": "store_fact",
+      "claim": "Apple advises that in-app event media avoid text and logos (especially the event or app name), unverifiable claims such as 'the best' or '#1', and specific prices.",
+      "ruleClass": "official_guidance",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "In-app event cards.",
+      "scope": {
+        "store": [
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "events",
+        "text_density",
+        "ranking_claims",
+        "price_text"
+      ],
+      "support": [
+        {
+          "sourceId": "ap-s010",
+          "excerpt": "Avoid using text or logos in your media, especially if they include your event name or app name ... Avoid unverifiable claims like \"the best\" or \"#1\" ... Don't include specific prices",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "App Store Connect / Apple Developer pages as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2027-03-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "Event art should be textless artwork; guideline differs from screenshot practice.",
+      "researcherNote": "",
+      "retired": false
+    },
+    {
+      "id": "ap-031",
+      "kind": "store_fact",
+      "claim": "Apple advises testing different product page elements in separate tests and applying a treatment once it is marked Performing Better.",
+      "ruleClass": "official_guidance",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "PPO test planning.",
+      "scope": {
+        "store": [
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "experiment"
+        ]
+      },
+      "tags": [
+        "ppo",
+        "experiments",
+        "test_power"
+      ],
+      "support": [
+        {
+          "sourceId": "ap-s012",
+          "excerpt": "Test different elements in separate tests (avoid overlapping elements); apply treatments immediately once marked as Performing Better.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "App Store Connect / Apple Developer pages as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2027-03-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "A/B test recommendations: one variable per test.",
+      "researcherNote": "Fetch model summarised the best-practice list.",
+      "retired": false
+    },
+    {
+      "id": "ap-032",
+      "kind": "store_fact",
+      "claim": "Apple suggests custom product pages for seasonal content, specific features (its example includes RPG-focused content), different audiences, and Apple Ads variations.",
+      "ruleClass": "official_guidance",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Planning CPPs.",
+      "scope": {
+        "store": [
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "custom_listing",
+        "cpp",
+        "seasonal",
+        "audience"
+      ],
+      "support": [
+        {
+          "sourceId": "ap-s015",
+          "excerpt": "Use cases: highlight seasonal content; showcase specific features (e.g., RPG-focused content); target different audiences; create ad variations for Apple Ads campaigns.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "App Store Connect / Apple Developer pages as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2027-03-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "CPP per acquisition angle (idle vs roguelike vs survivor).",
+      "researcherNote": "",
+      "retired": false
+    },
+    {
+      "id": "ap-033",
+      "kind": "store_fact",
+      "claim": "Depending on screenshot orientation, the first one to three screenshots appear in App Store search results when no app preview is available.",
+      "ruleClass": "store_behaviour",
+      "enforcement": null,
+      "facts": [
+        {
+          "value": "1-3",
+          "unit": "screenshots",
+          "of": "shown in search results",
+          "context": "when no app preview"
+        }
+      ],
+      "appliesWhen": "Search result cards.",
+      "scope": {
+        "store": [
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "search_result"
+        ],
+        "asset": [
+          "screenshots"
+        ]
+      },
+      "tags": [
+        "search_result",
+        "first_images",
+        "orientation"
+      ],
+      "support": [
+        {
+          "sourceId": "ap-s002",
+          "excerpt": "Depending on the orientation of your screenshots, the first one to three images will appear in search results when no app preview is available",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "App Store Connect / Apple Developer pages as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2027-03-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "Screenshots 1-3 must work as a standalone strip in search.",
+      "researcherNote": "Which orientation shows how many is not specified on the page.",
+      "retired": false
+    },
+    {
+      "id": "ap-034",
+      "kind": "store_fact",
+      "claim": "App previews autoplay muted by default on the product page and within search results.",
+      "ruleClass": "store_behaviour",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Autoplay setting on.",
+      "scope": {
+        "store": [
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "video",
+          "search_result"
+        ],
+        "asset": [
+          "video"
+        ]
+      },
+      "tags": [
+        "autoplay",
+        "video",
+        "search_result"
+      ],
+      "support": [
+        {
+          "sourceId": "ap-s003",
+          "excerpt": "App previews display and autoplay on your product page and within search results",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        },
+        {
+          "sourceId": "ap-s003",
+          "excerpt": "By default, app previews play with the sound muted",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "App Store Connect / Apple Developer pages as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2027-03-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "Video is the first impression in search; design for silent viewing.",
+      "researcherNote": "",
+      "retired": false
+    },
+    {
+      "id": "ap-035",
+      "kind": "store_fact",
+      "claim": "If a user has turned off video autoplay in App Store settings, the app preview poster frame is shown instead, and the default poster frame is at 5 seconds.",
+      "ruleClass": "store_behaviour",
+      "enforcement": null,
+      "facts": [
+        {
+          "value": 5,
+          "unit": "seconds",
+          "of": "default poster frame position",
+          "context": "spec page"
+        }
+      ],
+      "appliesWhen": "Autoplay disabled.",
+      "scope": {
+        "store": [
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "video"
+        ],
+        "asset": [
+          "video"
+        ]
+      },
+      "tags": [
+        "video",
+        "autoplay",
+        "first_images"
+      ],
+      "support": [
+        {
+          "sourceId": "ap-s003",
+          "excerpt": "If someone has turned off video autoplay in their App Store settings, a poster frame will display.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        },
+        {
+          "sourceId": "ap-s004",
+          "excerpt": "Default poster frame setting: 5 seconds",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "App Store Connect / Apple Developer pages as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2027-03-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "Choose a poster frame that stands alone as a first impression.",
+      "researcherNote": "",
+      "retired": false
+    },
+    {
+      "id": "ap-036",
+      "kind": "store_fact",
+      "claim": "Apple allows up to three app previews per supported language and device size, each up to 30 seconds, and they can be localised for all App Store languages.",
+      "ruleClass": "store_behaviour",
+      "enforcement": null,
+      "facts": [
+        {
+          "value": 3,
+          "unit": "previews",
+          "of": "per language and device size",
+          "context": "Apple"
+        },
+        {
+          "value": 30,
+          "unit": "seconds",
+          "of": "max preview length",
+          "context": "Apple marketing page"
+        }
+      ],
+      "appliesWhen": "Preview upload.",
+      "scope": {
+        "store": [
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "video"
+        ]
+      },
+      "tags": [
+        "video",
+        "localisation",
+        "deck_length"
+      ],
+      "support": [
+        {
+          "sourceId": "ap-s002",
+          "excerpt": "Previews can be up to 30 seconds long ... You can feature up to three app previews ... and localize them for all available App Store languages.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        },
+        {
+          "sourceId": "ap-s003",
+          "excerpt": "You can have up to three app previews for each language your app supports",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "App Store Connect / Apple Developer pages as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2027-03-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "Use up to three previews; localise for JP/KR/TW.",
+      "researcherNote": "",
+      "retired": false
+    },
+    {
+      "id": "ap-037",
+      "kind": "store_fact",
+      "claim": "App previews always precede screenshots on the App Store product page, even if rearranged in the app record.",
+      "ruleClass": "store_behaviour",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Product page with a preview.",
+      "scope": {
+        "store": [
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "store_page"
+        ],
+        "asset": [
+          "video"
+        ]
+      },
+      "tags": [
+        "store_page_layout",
+        "order",
+        "video"
+      ],
+      "support": [
+        {
+          "sourceId": "ap-s013",
+          "excerpt": "App previews always precede screenshots on iPhone, iPad, Mac, and Apple TV, even if you rearrange them when editing the app record.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "App Store Connect / Apple Developer pages as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2027-03-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "With a preview, the video is slot one and screenshots follow.",
+      "researcherNote": "",
+      "retired": false
+    },
+    {
+      "id": "ap-038",
+      "kind": "store_fact",
+      "claim": "If no app preview is provided for a storefront's localisation, the preview from the next best available language is displayed.",
+      "ruleClass": "store_behaviour",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Localised previews.",
+      "scope": {
+        "store": [
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "video"
+        ]
+      },
+      "tags": [
+        "localisation",
+        "video"
+      ],
+      "support": [
+        {
+          "sourceId": "ap-s013",
+          "excerpt": "If an app preview isn't provided for a storefront's localization, the app preview from the next best available language is displayed on that product page instead.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "App Store Connect / Apple Developer pages as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2027-03-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "A missing local preview shows another language's video.",
+      "researcherNote": "Same page says screenshots scale down automatically from the highest required resolution.",
+      "retired": false
+    },
+    {
+      "id": "ap-039",
+      "kind": "store_fact",
+      "claim": "Screenshots are uploaded per localisation, and provided highest-resolution screenshots scale down automatically to smaller device sizes.",
+      "ruleClass": "store_behaviour",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Upload.",
+      "scope": {
+        "store": [
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "screenshots"
+        ]
+      },
+      "tags": [
+        "localisation",
+        "screenshots"
+      ],
+      "support": [
+        {
+          "sourceId": "ap-s013",
+          "excerpt": "If your app's user interface is the same across multiple device sizes and localizations, provide only the highest resolution screenshots required. They automatically scale down to smaller device sizes.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "App Store Connect / Apple Developer pages as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2027-03-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "One master set can serve all iPhone sizes.",
+      "researcherNote": "",
+      "retired": false
+    },
+    {
+      "id": "ap-040",
+      "kind": "store_fact",
+      "claim": "Apple states the subtitle is up to 30 characters and promotional text up to 170 characters, and promotional text can be updated at any time without submitting a new version.",
+      "ruleClass": "store_behaviour",
+      "enforcement": null,
+      "facts": [
+        {
+          "value": 30,
+          "unit": "characters",
+          "of": "subtitle",
+          "context": "Apple"
+        },
+        {
+          "value": 170,
+          "unit": "characters",
+          "of": "promotional text",
+          "context": "Apple"
+        }
+      ],
+      "appliesWhen": "Text fields.",
+      "scope": {
+        "store": [
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "text"
+        ]
+      },
+      "tags": [
+        "policy_metadata",
+        "seasonal",
+        "offers"
+      ],
+      "support": [
+        {
+          "sourceId": "ap-s002",
+          "excerpt": "A subtitle can be up to 30 characters long ... promotional text ... is up to 170 characters long. You can update promotional text at any time without having to submit a new version",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "App Store Connect / Apple Developer pages as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2027-03-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "Promotional text suits seasonal or event messaging.",
+      "researcherNote": "",
+      "retired": false
+    },
+    {
+      "id": "ap-041",
+      "kind": "store_fact",
+      "claim": "A product page optimization test can have up to 3 treatments and runs for up to 90 days or until stopped.",
+      "ruleClass": "store_behaviour",
+      "enforcement": null,
+      "facts": [
+        {
+          "value": 3,
+          "unit": "treatments",
+          "of": "per test",
+          "context": "Apple"
+        },
+        {
+          "value": 90,
+          "unit": "days",
+          "of": "max test duration",
+          "context": "Apple"
+        }
+      ],
+      "appliesWhen": "PPO on the default product page.",
+      "scope": {
+        "store": [
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "experiment"
+        ]
+      },
+      "tags": [
+        "ppo",
+        "experiments",
+        "test_duration"
+      ],
+      "support": [
+        {
+          "sourceId": "ap-s006",
+          "excerpt": "You can create up to 3 treatments per test ... Maximum duration: 90 days",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        },
+        {
+          "sourceId": "ap-s007",
+          "excerpt": "A test can include up to three treatments ... Tests run for up to 90 days or until you manually stop them",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        },
+        {
+          "sourceId": "ap-s022",
+          "excerpt": "You can create up to 3 treatments (A, B, C) in a single test. Tests can run for up to 90 days or until you stop them.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "App Store Connect / Apple Developer pages as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2027-03-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "Plan at most three variants against control.",
+      "researcherNote": "Apple notes more treatments lengthen time to a conclusive result.",
+      "retired": false
+    },
+    {
+      "id": "ap-042",
+      "kind": "store_fact",
+      "claim": "Only one product page optimization test can run at a time.",
+      "ruleClass": "store_behaviour",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Default product page.",
+      "scope": {
+        "store": [
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "experiment"
+        ]
+      },
+      "tags": [
+        "ppo",
+        "experiments"
+      ],
+      "support": [
+        {
+          "sourceId": "ap-s007",
+          "excerpt": "You can create one test at a time which will run for up to 90 days.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        },
+        {
+          "sourceId": "ap-s022",
+          "excerpt": "You can only have one active test for the default product page at a time.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "App Store Connect / Apple Developer pages as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2027-03-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "Queue A/B tests sequentially.",
+      "researcherNote": "Both Apple and MobileAction statements; sequence tests, not parallel.",
+      "retired": false
+    },
+    {
+      "id": "ap-043",
+      "kind": "store_fact",
+      "claim": "Product page optimization tests can vary app icons, screenshots and app previews, but not text metadata such as name, subtitle, description or keywords.",
+      "ruleClass": "store_behaviour",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "PPO.",
+      "scope": {
+        "store": [
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "experiment"
+        ]
+      },
+      "tags": [
+        "ppo",
+        "experiments",
+        "icon",
+        "screenshots",
+        "video"
+      ],
+      "support": [
+        {
+          "sourceId": "ap-s007",
+          "excerpt": "You can test different elements of your App Store product page: App icons, Screenshots, App preview videos",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        },
+        {
+          "sourceId": "ap-s022",
+          "excerpt": "Text-based metadata like app name, subtitle, description, and keywords are not part of product page optimization",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "App Store Connect / Apple Developer pages as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2027-03-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "Captions inside screenshots can be tested; the subtitle cannot.",
+      "researcherNote": "The exclusion of text metadata is stated by MobileAction (origin apple as restating); Apple's page lists the three testable elements.",
+      "retired": false
+    },
+    {
+      "id": "ap-044",
+      "kind": "store_fact",
+      "claim": "PPO tests with alternate app icons need all icon variants included in the binary of the published app, and new test metadata must be approved by App Review.",
+      "ruleClass": "store_behaviour",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Testing icons.",
+      "scope": {
+        "store": [
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "experiment"
+        ]
+      },
+      "tags": [
+        "ppo",
+        "icon",
+        "experiments"
+      ],
+      "support": [
+        {
+          "sourceId": "ap-s007",
+          "excerpt": "Tests with alternate app icons require all icon variants to be included in the binary of your published app; tests without alternate app icons can be submitted for review independent of a new app version",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "App Store Connect / Apple Developer pages as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2027-03-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "Icon tests need engineering; screenshot tests do not.",
+      "researcherNote": "",
+      "retired": false
+    },
+    {
+      "id": "ap-045",
+      "kind": "store_fact",
+      "claim": "PPO includes all supported localisations by default, users in excluded localisations are not in the results, and choosing many localisations can lengthen the time to reach meaningful results.",
+      "ruleClass": "store_behaviour",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "PPO setup.",
+      "scope": {
+        "store": [
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "experiment"
+        ]
+      },
+      "tags": [
+        "ppo",
+        "localisation",
+        "test_duration"
+      ],
+      "support": [
+        {
+          "sourceId": "ap-s006",
+          "excerpt": "By default, all localizations your app supports are selected ... If a user's localization is excluded from the test, that user won't be included in the test results",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        },
+        {
+          "sourceId": "ap-s007",
+          "excerpt": "selecting multiple localizations may extend the test duration to reach meaningful results",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "App Store Connect / Apple Developer pages as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2027-03-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "Run country-specific tests one storefront at a time.",
+      "researcherNote": "",
+      "retired": false
+    },
+    {
+      "id": "ap-046",
+      "kind": "store_fact",
+      "claim": "In PPO, the traffic proportion is the share of users randomly shown a treatment instead of the original page, split equally between treatments.",
+      "ruleClass": "store_behaviour",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "PPO setup.",
+      "scope": {
+        "store": [
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "experiment"
+        ]
+      },
+      "tags": [
+        "ppo",
+        "experiments",
+        "test_power"
+      ],
+      "support": [
+        {
+          "sourceId": "ap-s006",
+          "excerpt": "If a test has 3 treatments and you choose 30% traffic proportion, each treatment will be shown to 10% of total traffic.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "App Store Connect / Apple Developer pages as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2027-03-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "Low traffic proportion lengthens tests.",
+      "researcherNote": "",
+      "retired": false
+    },
+    {
+      "id": "ap-047",
+      "kind": "store_fact",
+      "claim": "PPO results use Bayesian statistics, need at least 90% confidence to label a treatment Performing Better or Worse, and appear only after at least five first-time downloads are attributed to the test.",
+      "ruleClass": "store_behaviour",
+      "enforcement": null,
+      "facts": [
+        {
+          "value": 90,
+          "unit": "% confidence",
+          "of": "threshold for Performing Better/Worse",
+          "context": "Apple analytics"
+        },
+        {
+          "value": 5,
+          "unit": "first-time downloads",
+          "of": "minimum before test appears",
+          "context": "Apple analytics"
+        }
+      ],
+      "appliesWhen": "Reading PPO analytics.",
+      "scope": {
+        "store": [
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "experiment"
+        ]
+      },
+      "tags": [
+        "ppo",
+        "test_power",
+        "metrics"
+      ],
+      "support": [
+        {
+          "sourceId": "ap-s012",
+          "excerpt": "Results require at least 90% confidence to be labeled as Performing Better or Performing Worse ... at least five first-time downloads attributed to the test",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "App Store Connect / Apple Developer pages as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2027-03-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "State Apple's 90% threshold when recommending tests.",
+      "researcherNote": "",
+      "retired": false
+    },
+    {
+      "id": "ap-048",
+      "kind": "store_fact",
+      "claim": "PPO analytics show a 90% credible interval, meaning a 90% probability that the conversion rate or lift falls within the range, and lift is the relative increase versus the selected baseline.",
+      "ruleClass": "store_behaviour",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Reading PPO analytics.",
+      "scope": {
+        "store": [
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "experiment"
+        ]
+      },
+      "tags": [
+        "ppo",
+        "metrics",
+        "test_power"
+      ],
+      "support": [
+        {
+          "sourceId": "ap-s012",
+          "excerpt": "Credible Interval: a 90% interval, meaning there's a 90% probability that the conversion rate or lift falls within this range; Improvement: the estimated relative increase in conversion rate ... compared to the selected baseline",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "App Store Connect / Apple Developer pages as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2027-03-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "Report lift with its interval.",
+      "researcherNote": "",
+      "retired": false
+    },
+    {
+      "id": "ap-049",
+      "kind": "store_fact",
+      "claim": "Applying a winning PPO treatment to the default page ends the test immediately and shows the treatment to everyone.",
+      "ruleClass": "store_behaviour",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "After conclusive results.",
+      "scope": {
+        "store": [
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "experiment"
+        ]
+      },
+      "tags": [
+        "ppo",
+        "experiments"
+      ],
+      "support": [
+        {
+          "sourceId": "ap-s007",
+          "excerpt": "Apply the best-performing treatment to your original product page ... This causes your test to end immediately. The treatment will display to everyone on the App Store.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "App Store Connect / Apple Developer pages as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2027-03-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "Roll-out is one click.",
+      "researcherNote": "",
+      "retired": false
+    },
+    {
+      "id": "ap-050",
+      "kind": "store_fact",
+      "claim": "Apple raised the custom product page limit from 35 to 70 per app, announced on 2025-10-29.",
+      "ruleClass": "store_behaviour",
+      "enforcement": null,
+      "facts": [
+        {
+          "value": 70,
+          "unit": "custom product pages",
+          "of": "per app at a given time",
+          "context": "Apple news 2025-10-29"
+        },
+        {
+          "value": 35,
+          "unit": "custom product pages",
+          "of": "previous limit",
+          "context": "per MobileAction"
+        }
+      ],
+      "appliesWhen": "CPP creation as of Oct 2025.",
+      "scope": {
+        "store": [
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "custom_listing",
+        "cpp"
+      ],
+      "support": [
+        {
+          "sourceId": "ap-s009",
+          "excerpt": "you can now create and publish up to 70 custom pages at a given time.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        },
+        {
+          "sourceId": "ap-s008",
+          "excerpt": "You can create up to 70 custom product pages per app on the App Store.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        },
+        {
+          "sourceId": "ap-s015",
+          "excerpt": "Developers can publish up to 70 additional versions of their product page on the App Store for iPhone and iPad.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        },
+        {
+          "sourceId": "ap-s023",
+          "excerpt": "The maximum number of custom product pages has been increased from 35 to 70.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Apple news 2025-10-29; App Store Connect Help as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2027-03-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "Up to 70 CPPs: enough for one per country x angle.",
+      "researcherNote": "Resolves 35 vs 70: 35 was the old limit; current documented limit is 70. Apple's news post does not itself state '35'; the old figure comes from MobileAction (and Phiture citing MacRumors).",
+      "retired": false
+    },
+    {
+      "id": "ap-051",
+      "kind": "store_fact",
+      "claim": "Keywords can be assigned to a custom product page so that it appears in App Store search results for those keywords instead of the default product page.",
+      "ruleClass": "store_behaviour",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "CPP with assigned keywords, approved and visible.",
+      "scope": {
+        "store": [
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "search_result"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "custom_listing",
+        "cpp",
+        "search_result"
+      ],
+      "support": [
+        {
+          "sourceId": "ap-s009",
+          "excerpt": "Custom product pages with keywords assigned to them can appear in search results for those selected keywords instead of your default product page.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        },
+        {
+          "sourceId": "ap-s016",
+          "excerpt": "Whenever your app shows up in search results for the keywords you've assigned, your custom product page shows in place of your default product page.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        },
+        {
+          "sourceId": "ap-s008",
+          "excerpt": "This directs customers to your custom product page when they search those keywords, rather than your default product page",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "WWDC25 (2025-06) announced; Apple news 2025-10-29 says 'you can now assign'",
+      "abDetail": null,
+      "reviewBy": "2027-03-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "CPPs can show different creatives to different search queries.",
+      "researcherNote": "Date conflict: Phiture (ap-s021) places the keyword-linking update in July 2025; Apple sources give WWDC June 2025 announcement and 2025-10-29 news. Not reconciled.",
+      "retired": false
+    },
+    {
+      "id": "ap-052",
+      "kind": "store_fact",
+      "claim": "Assigning keywords to a custom product page can be made live without submitting it for review, provided only keywords are being assigned.",
+      "ruleClass": "store_behaviour",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Keyword-only change on an approved CPP.",
+      "scope": {
+        "store": [
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "custom_listing",
+        "cpp"
+      ],
+      "support": [
+        {
+          "sourceId": "ap-s016",
+          "excerpt": "as long as you're just assigning keywords, you can make this live without needing to submit for review.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "App Store Connect / Apple Developer pages as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2027-03-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "Keyword swaps on live CPPs are fast.",
+      "researcherNote": "The CPP help page separately says a CPP must be approved before it is visible.",
+      "retired": false
+    },
+    {
+      "id": "ap-053",
+      "kind": "store_fact",
+      "claim": "A custom product page must be approved before it is visible to users, and it is searchable by keyword only after approval and being set visible.",
+      "ruleClass": "store_behaviour",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Publishing CPPs.",
+      "scope": {
+        "store": [
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "custom_listing",
+        "cpp"
+      ],
+      "support": [
+        {
+          "sourceId": "ap-s008",
+          "excerpt": "Custom product pages must be approved before they are visible to users ... The custom product page is searchable only after it's approved and set to visible",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "App Store Connect / Apple Developer pages as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2027-03-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "Allow for review time before campaigns.",
+      "researcherNote": "",
+      "retired": false
+    },
+    {
+      "id": "ap-054",
+      "kind": "store_fact",
+      "claim": "Each custom product page can vary screenshots, app previews and promotional text, and can be localised, and has its own automatically generated unique URL.",
+      "ruleClass": "store_behaviour",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "CPP setup.",
+      "scope": {
+        "store": [
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "custom_listing",
+        "cpp",
+        "localisation"
+      ],
+      "support": [
+        {
+          "sourceId": "ap-s008",
+          "excerpt": "Each custom product page can include different: Screenshots, App previews, Promotional text, Keywords, Localizations ... unique URL that is automatically generated",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        },
+        {
+          "sourceId": "ap-s015",
+          "excerpt": "Each custom product page can vary: Screenshots, Promotional text, App previews, Localizations",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "App Store Connect / Apple Developer pages as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2027-03-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "CPP cannot change icon or name; only screenshots, previews, promo text.",
+      "researcherNote": "The marketing page omits keywords in its list; the help page includes them.",
+      "retired": false
+    },
+    {
+      "id": "ap-055",
+      "kind": "store_fact",
+      "claim": "Custom product pages can carry app deep links on iOS 18 and iPadOS 18 or later, which must be approved before they function.",
+      "ruleClass": "store_behaviour",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "iOS 18+.",
+      "scope": {
+        "store": [
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "custom_listing",
+        "cpp"
+      ],
+      "support": [
+        {
+          "sourceId": "ap-s008",
+          "excerpt": "App deep links: optional for iOS 18 and iPadOS 18 or later ... must be approved before they'll function for users",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "App Store Connect / Apple Developer pages as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2027-03-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "Deep links can send CPP visitors into a specific mode.",
+      "researcherNote": "",
+      "retired": false
+    },
+    {
+      "id": "ap-056",
+      "kind": "market_note",
+      "claim": "Phiture reports, citing an AppTweak 2025 report, that apps using custom product pages see an average conversion-rate boost of 5.9%, with generic campaigns reaching 8.6%.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [
+        {
+          "value": 5.9,
+          "unit": "% average CVR boost",
+          "of": "apps using CPPs",
+          "context": "AppTweak 2025 ASO Trends & Benchmarks, per Phiture"
+        }
+      ],
+      "appliesWhen": "Second-hand vendor figure.",
+      "scope": {
+        "store": [
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "custom_listing",
+        "cpp",
+        "conversion_benchmark"
+      ],
+      "support": [
+        {
+          "sourceId": "ap-s021",
+          "excerpt": "Apps using Custom Product Pages see an average CVR boost of 5.9%, with generic campaigns reaching +8.6%.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "AppTweak 2025 report, cited March 2026",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "Indicative only, do not quote as a guarantee.",
+      "researcherNote": "Second-hand; AppTweak report itself not read; methodology unknown.",
+      "retired": false
+    },
+    {
+      "id": "ap-057",
+      "kind": "store_fact",
+      "claim": "In-app events appear on the product page, in search results and in editorially curated selections such as Today, Games and Apps.",
+      "ruleClass": "store_behaviour",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Published events.",
+      "scope": {
+        "store": [
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "search_result",
+          "store_page"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "events",
+        "search_result",
+        "store_page_layout"
+      ],
+      "support": [
+        {
+          "sourceId": "ap-s010",
+          "excerpt": "In-App Events display in three main locations on the App Store: on your product page, in search results, in editorially curated selections (Today, Games, Apps)",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "App Store Connect / Apple Developer pages as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2027-03-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "Events are an extra surface beyond screenshots.",
+      "researcherNote": "",
+      "retired": false
+    },
+    {
+      "id": "ap-058",
+      "kind": "store_fact",
+      "claim": "Up to 15 approved in-app events can exist in App Store Connect and up to 10 can be published at once, with events lasting up to 31 days and pre-promotion up to 14 days.",
+      "ruleClass": "store_behaviour",
+      "enforcement": null,
+      "facts": [
+        {
+          "value": 15,
+          "unit": "events",
+          "of": "approved at a time",
+          "context": "Apple"
+        },
+        {
+          "value": 10,
+          "unit": "events",
+          "of": "published simultaneously",
+          "context": "Apple"
+        },
+        {
+          "value": 31,
+          "unit": "days",
+          "of": "max event duration",
+          "context": "Apple"
+        },
+        {
+          "value": 14,
+          "unit": "days",
+          "of": "pre-promotion",
+          "context": "Apple"
+        }
+      ],
+      "appliesWhen": "Event scheduling.",
+      "scope": {
+        "store": [
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "events",
+        "refresh_cadence",
+        "seasonal"
+      ],
+      "support": [
+        {
+          "sourceId": "ap-s010",
+          "excerpt": "Up to 15 approved events ... Up to 10 events can be published ... Event duration: Up to 31 days ... Pre-promotion period: Up to 14 days",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "App Store Connect / Apple Developer pages as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2027-03-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "Plan events as recurring monthly surfaces.",
+      "researcherNote": "",
+      "retired": false
+    },
+    {
+      "id": "ap-059",
+      "kind": "store_fact",
+      "claim": "In-app event cards use 16:9 imagery or video (1920x1080 to 3840x2160) and event detail pages use 9:16 (1080x1920 to 2160x3840).",
+      "ruleClass": "store_behaviour",
+      "enforcement": null,
+      "facts": [
+        {
+          "value": "16:9",
+          "unit": "aspect ratio",
+          "of": "event card image/video",
+          "context": "Apple"
+        },
+        {
+          "value": "9:16",
+          "unit": "aspect ratio",
+          "of": "event detail page image/video",
+          "context": "Apple"
+        }
+      ],
+      "appliesWhen": "Event assets.",
+      "scope": {
+        "store": [
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "events",
+        "orientation"
+      ],
+      "support": [
+        {
+          "sourceId": "ap-s010",
+          "excerpt": "Event card image: 16:9, 1920x1080 to 3840x2160 px; Event detail page image: 9:16, 1080x1920 to 2160x3840 px",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "App Store Connect / Apple Developer pages as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2027-03-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "Event art needs a landscape card and a portrait detail asset.",
+      "researcherNote": "",
+      "retired": false
+    },
+    {
+      "id": "ap-060",
+      "kind": "store_fact",
+      "claim": "Event badges available on the App Store include Challenge, Competition, Live Event, Major Update, New Season, Premiere and Special Event.",
+      "ruleClass": "store_behaviour",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Choosing an event type.",
+      "scope": {
+        "store": [
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "events"
+      ],
+      "support": [
+        {
+          "sourceId": "ap-s010",
+          "excerpt": "Event Badges: Challenge, Competition, Live Event, Major Update, New Season, Premiere, Special Event",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "App Store Connect / Apple Developer pages as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2027-03-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "New Season and Live Event match roguelike season content.",
+      "researcherNote": "",
+      "retired": false
+    },
+    {
+      "id": "ap-061",
+      "kind": "store_fact",
+      "claim": "Apple defines an impression as an app viewed on the Today, Games, Apps or Search tabs for more than one second, including product page views.",
+      "ruleClass": "store_behaviour",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "App Store Connect analytics.",
+      "scope": {
+        "store": [
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "metrics",
+        "search_result"
+      ],
+      "support": [
+        {
+          "sourceId": "ap-s011",
+          "excerpt": "The number of times your app was viewed on the Today, Games, Apps, and Search tabs of the App Store for more than one second. Includes product page views.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "App Store Connect / Apple Developer pages as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2027-03-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "Impression counts require a one-second view.",
+      "researcherNote": "",
+      "retired": false
+    },
+    {
+      "id": "ap-062",
+      "kind": "store_fact",
+      "claim": "Apple defines conversion rate as total downloads and pre-orders divided by unique device impressions.",
+      "ruleClass": "store_behaviour",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "App Store Connect analytics.",
+      "scope": {
+        "store": [
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "metrics",
+        "conversion_benchmark"
+      ],
+      "support": [
+        {
+          "sourceId": "ap-s011",
+          "excerpt": "Total downloads and pre-orders divided by unique device impressions.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        },
+        {
+          "sourceId": "ap-s014",
+          "excerpt": "Conversion Rate: Total downloads and pre-orders divided by unique device impressions",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "App Store Connect / Apple Developer pages as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2027-03-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "Do not compare Apple and Play conversion rates directly.",
+      "researcherNote": "Impression-based, not page-view-based, which differs from Play's listing conversion.",
+      "retired": false
+    },
+    {
+      "id": "ap-063",
+      "kind": "store_fact",
+      "claim": "Apple defines product page views as the total number of times the App Store product page was viewed, including when apps use StoreKit to load it.",
+      "ruleClass": "store_behaviour",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "App Store Connect analytics.",
+      "scope": {
+        "store": [
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "metrics"
+      ],
+      "support": [
+        {
+          "sourceId": "ap-s011",
+          "excerpt": "The total number of times your App Store product page was viewed. Includes when apps use StoreKit to load your product page.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "App Store Connect / Apple Developer pages as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2027-03-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "Basis for a page view to install rate.",
+      "researcherNote": "",
+      "retired": false
+    },
+    {
+      "id": "ap-064",
+      "kind": "store_fact",
+      "claim": "Apple defines total downloads as first-time downloads plus redownloads, where redownloads exclude auto-updates and device restores.",
+      "ruleClass": "store_behaviour",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "App Store Connect analytics.",
+      "scope": {
+        "store": [
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "metrics"
+      ],
+      "support": [
+        {
+          "sourceId": "ap-s011",
+          "excerpt": "Total Downloads: The sum of First Time Downloads and Redownloads. Redownloads ... Does not include auto-updates or device restores.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "App Store Connect / Apple Developer pages as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2027-03-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "Use first-time downloads for acquisition.",
+      "researcherNote": "",
+      "retired": false
+    },
+    {
+      "id": "ap-065",
+      "kind": "store_fact",
+      "claim": "App Store Connect peer group benchmarks show 25th, 50th and 75th percentile values for metrics including conversion rate, grouped by category and business model by default.",
+      "ruleClass": "store_behaviour",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Benchmarks view.",
+      "scope": {
+        "store": [
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "metrics",
+        "conversion_benchmark"
+      ],
+      "support": [
+        {
+          "sourceId": "ap-s014",
+          "excerpt": "25th, 50th, and 75th percentile values; Primary App Store category and business model (default); Download volume tiers (in detailed trend view)",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "App Store Connect / Apple Developer pages as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2027-03-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "Ask the client to check own peer percentile.",
+      "researcherNote": "Benchmark values themselves are visible only inside App Store Connect.",
+      "retired": false
+    },
+    {
+      "id": "ap-066",
+      "kind": "store_fact",
+      "claim": "App Store Connect offers Japanese, Korean, Chinese (Simplified), Chinese (Traditional), Thai, Vietnamese, Indonesian and Malay localisations, with Chinese (Traditional) the default for Hong Kong, Macau and Taiwan.",
+      "ruleClass": "store_behaviour",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Localisation setup for the target markets.",
+      "scope": {
+        "store": [
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "JP",
+          "KR",
+          "TW",
+          "HK",
+          "TH",
+          "VN",
+          "ID"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "localisation",
+        "script",
+        "lingo"
+      ],
+      "support": [
+        {
+          "sourceId": "ap-s024",
+          "excerpt": "Japanese, Korean, Chinese (Simplified), Chinese (Traditional), Thai, Vietnamese, Indonesian, Malay ... Chinese (Traditional) - default for Hong Kong, Macau, and Taiwan",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "App Store Connect / Apple Developer pages as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2027-03-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "HK and TW share the Traditional Chinese localisation by default.",
+      "researcherNote": "Read through the fetch model's summary of the list, not the raw table. No Apple page on Asia-specific localisation tactics was found.",
+      "retired": false
+    },
+    {
+      "id": "ap-067",
+      "kind": "store_fact",
+      "claim": "Filipino/Tagalog is not among the localisations listed in App Store Connect.",
+      "ruleClass": "store_behaviour",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Philippines storefront.",
+      "scope": {
+        "store": [
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "PH"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "localisation",
+        "lingo"
+      ],
+      "support": [
+        {
+          "sourceId": "ap-s024",
+          "excerpt": "Filipino/Tagalog is not listed as a supported localization in App Store Connect.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "App Store Connect / Apple Developer pages as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2027-03-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "Do not recommend a Tagalog-localised App Store deck without checking.",
+      "researcherNote": "Absence claim from a summarised list; re-check on the raw page. English localisations are listed, so PH listings presumably use English.",
+      "retired": false
+    },
+    {
+      "id": "ap-068",
+      "kind": "store_fact",
+      "claim": "The language shown to a customer depends on the App Store language for their location, device language settings, the languages added and the developer's primary language.",
+      "ruleClass": "store_behaviour",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Localised listings.",
+      "scope": {
+        "store": [
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "localisation"
+      ],
+      "support": [
+        {
+          "sourceId": "ap-s024",
+          "excerpt": "the language shown to each customer could be impacted by factors like the App Store language for their location, their device's language settings, languages you've added, and your primary language in App Store Connect",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "App Store Connect / Apple Developer pages as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2027-03-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "Provide listings in each language a market's users may use.",
+      "researcherNote": "",
+      "retired": false
+    },
+    {
+      "id": "ap-069",
+      "kind": "store_fact",
+      "claim": "Apple says App Store Tags are generated by large language models using data sources including the app's metadata, description, category and screenshots, and are human reviewed.",
+      "ruleClass": "store_behaviour",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Tags feature (announced WWDC25).",
+      "scope": {
+        "store": [
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "screenshots",
+          "text"
+        ]
+      },
+      "tags": [
+        "policy_metadata",
+        "search_result",
+        "screenshots"
+      ],
+      "support": [
+        {
+          "sourceId": "ap-s016",
+          "excerpt": "These App Store Tags are generated by our large language models using a range of data sources, including your app's metadata ... Your app's metadata, its description, category, even screenshots hold very useful information about your app",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        },
+        {
+          "sourceId": "ap-s017",
+          "excerpt": "AI techniques to extract information that would otherwise be buried in an app's description, its category information, its screenshots, or other metadata.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "App Store Connect / Apple Developer pages as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2027-03-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "Screenshots are a data source for tags, not confirmed ranking input.",
+      "researcherNote": "TechCrunch (2025-06-14) said tags were in the iOS 26 developer beta and not yet informing public App Store search. Apple does not say tags use screenshot caption text for ranking.",
+      "retired": false
+    },
+    {
+      "id": "ap-070",
+      "kind": "market_note",
+      "claim": "After ranking anomalies on 5-9 June 2025, analysts reported that Apple may have begun using text from screenshot captions, extracted by OCR, as a keyword ranking factor.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Per Appfigures/AppTweak/Phiture reporting on June 2025 and later.",
+      "scope": {
+        "store": [
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "screenshots",
+          "text"
+        ]
+      },
+      "tags": [
+        "captions",
+        "search_result",
+        "screenshots"
+      ],
+      "support": [
+        {
+          "sourceId": "ap-s018",
+          "excerpt": "Apple may have introduced a new ranking factor into its algorithm — text from app screenshots, extracted using OCR (optical character recognition) technology",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        },
+        {
+          "sourceId": "ap-s021",
+          "excerpt": "Screenshot text now affects rankings: Apple's June 2025 algorithm update began indexing caption text.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        },
+        {
+          "sourceId": "ap-s019",
+          "excerpt": "Appfigures analysis of June 2025 (page returned HTTP 403; content known only via ap-s018)",
+          "excerptType": "paraphrase",
+          "fetched": false,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        },
+        {
+          "sourceId": "ap-s020",
+          "excerpt": "Title asks whether Apple is now indexing screenshot titles (article text not retrieved)",
+          "excerptType": "paraphrase",
+          "fetched": false,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [
+        {
+          "sourceId": "ap-s018",
+          "excerpt": "Personally, I haven't yet seen a direct impact of screenshot text on keyword rankings. I doubt Apple would take this route ... could be a temporary bug on Apple's side.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        },
+        {
+          "sourceId": "ap-s017",
+          "excerpt": "Article says tags are AI extraction, and that Appfigures' OCR theory of extracting text from screenshot captions was not what Apple described",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "validFor": "Reports June 2025 to March 2026; no Apple confirmation found",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "Treat as an unproven hypothesis: keep captions readable for humans; do not present as fact.",
+      "researcherNote": "FOR: Appfigures via Arpu (hedged 'may have'), Phiture 2026 (asserts as fact, no data shown). AGAINST/CAUTION: Appfigures author's own doubt; TechCrunch; Apple's only statement (WWDC25) concerns tags. Appfigures and Arpu share one origin; ConsultMyApp not read. No conclusion drawn.",
+      "retired": false
+    }
+  ]
+}

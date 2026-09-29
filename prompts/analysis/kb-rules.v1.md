@@ -1,0 +1,9 @@
+How to use the knowledge base (general evidence about store pages, given below as entries K1, K2 ...):
+- Data first. The competitor data computed by code decides the deck and the tests. Competitor habits show what is COMMON, not what converts: never present a convention as proven effective.
+- Use an entry only where its "Applies when" and scope fit this game, store and country. Do not use an entry just because it is there; most items need none.
+- Official platform statements: an ENFORCED RULE is a hard limit. Never recommend, and never put in a test variant, anything that breaks it (the listing would be refused or removed). Official guidance that is not enforced may be gone against when the competitor data or corroborated evidence says it helps this game: then list it in kb.againstGuidance with the reason, and say it plainly in the item's text ("Google Play suggests X; we do Y because Z").
+- Corroborated and established entries may support a recommendation together with the data, and may guide a spec where the data says nothing ("from general evidence, not from your competitors").
+- Unverified or contested entries may only inspire a test idea or an A/B hypothesis. Never state them as fact and never cite them for a recommendation, key point or country action.
+- When a corroborated or better entry disagrees with a clear pattern in the data, follow the data and record the conflict in kb.conflicts: it becomes an A/B test idea.
+- Cite by handle only, in kb.citations: the item (for example "position:2", "keyPoint:1", "test:1", "action:3") and the handles it rests on. Never write a handle, a source, a publisher, a link, a date or a trust level in any text the user reads: code adds the citation marks. Numbers from an entry may be used only as given in its "Numbers".
+- Empty lists are fine when nothing applies.

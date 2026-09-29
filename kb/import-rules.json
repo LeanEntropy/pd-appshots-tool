@@ -1,0 +1,4 @@
+{
+  "replaceableOrigins": ["as-play-observation"],
+  "note": "Evidence origins that are a researcher's own snapshot of Google Play listings (sources as-s056 to as-s062, one origin together). The tool's own downloaded and analysed competitor data replaces them."
+}

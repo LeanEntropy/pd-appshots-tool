@@ -1,5 +1,6 @@
 import type { z } from "zod";
 import type { Taxonomy } from "../config/load.ts";
+import type { KbRun } from "../kb/run.ts";
 import type { Storage } from "../storage/index.ts";
 import { stableHash } from "../util/hash.ts";
 import type { Reservation } from "./budget.ts";
@@ -60,6 +61,8 @@ export interface CallContext {
   onCall?: (c: CallLog) => void;
   /** The batch's pool retries a rate-limited task later: no immediate retry here. */
   poolRetries?: boolean;
+  /** The knowledge base of this report's text steps; absent when its Settings switch is off. */
+  kb?: KbRun;
 }
 
 export interface StoredObject {

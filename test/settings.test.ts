@@ -23,6 +23,7 @@ const NUMBERS: Record<string, number> = {
   "options.speed.parallelCalls": 2,
   "options.pixelCheck.sameMaxOutside": 0.004,
   "options.pixelCheck.differentMinOutside": 0.06,
+  "options.knowledge.maxUsdPerReport": 0.75,
 };
 function another(f: FieldView): unknown {
   if (f.kind === "switch") return !f.value;

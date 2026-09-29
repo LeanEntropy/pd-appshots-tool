@@ -1,0 +1,34 @@
+{
+  "version": 1,
+  "scale": "1 = poor, 3 = acceptable, 5 = excellent; ties allowed",
+  "criteria": [
+    { "id": "meaningful", "question": "Does it say something that matters for installs from this store page?" },
+    { "id": "to_the_point", "question": "Is it short and free of padding, repetition and generic advice?" },
+    { "id": "actionable", "question": "Could the team act on it tomorrow (which screen, which text, which order)?" },
+    { "id": "insightful", "question": "Does it explain why, beyond what the counts already show?" },
+    { "id": "tied_to_evidence", "question": "Does every claim rest on the data given (counts, games, positions) or on clearly marked general evidence?" },
+    { "id": "correct_about_stores", "question": "Is everything it says about Google Play (specs, rules, what shows where, experiments) correct? A wrong store rule stated as fact is a critical error." },
+    { "id": "right_for_market", "question": "Is it right for this country and script (language, text length, local habits, regulation)?" },
+    { "id": "ab_tests_sound", "question": "Are the A/B tests sound: one variable, a clear hypothesis tied to evidence, the right metric, no rule-breaking variant?" }
+  ],
+  "overall": "Which answer would you rather ship: A, B, or tie?",
+  "gates": {
+    "preferOrTieEveryStep": true,
+    "preferAtLeastHalf": true,
+    "noLowerOn": ["correct_about_stores", "tied_to_evidence"],
+    "claimSample": 20,
+    "maxUnsupported": 1,
+    "maxCritical": 0,
+    "maxUnverifiedAsFact": 0,
+    "recallGate": 0.8,
+    "maxLongerShare": 0.2,
+    "costWithinEstimate": true
+  },
+  "procedure": [
+    "Both arms are generated from the same frozen inputs; the arm without the knowledge base reuses the saved answers when the inputs are unchanged.",
+    "Citation marks, notes and the knowledge part of each answer are stripped from both arms; the order of A and B is random per step and kept in a separate key.",
+    "You and gpt-5.6-sol judge blind with the same data packet and no knowledge-base material. Agreement is reported.",
+    "You (or a person you name) check a sample of 20 knowledge-backed claims against their sources; this also measures the reviewer's miss rate.",
+    "If it fails, revise once and re-run on the held-out comparison only."
+  ]
+}

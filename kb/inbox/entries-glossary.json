@@ -1,0 +1,797 @@
+{
+  "file": "entries-glossary",
+  "entries": [
+    {
+      "id": "ap-201",
+      "kind": "glossary",
+      "claim": "Impression (App Store): an app viewed on the Today, Games, Apps or Search tabs for more than one second.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Definition as used in this KB.",
+      "scope": {
+        "store": [
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "metrics"
+      ],
+      "support": [
+        {
+          "sourceId": "ap-s011",
+          "excerpt": "The number of times your app was viewed on the Today, Games, Apps, and Search tabs of the App Store for more than one second.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Definitions as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2028-09-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "Use consistently in reports.",
+      "researcherNote": "",
+      "retired": false
+    },
+    {
+      "id": "ap-202",
+      "kind": "glossary",
+      "claim": "Product page view (App Store): each time the app's product page is viewed, including StoreKit-loaded views.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Definition as used in this KB.",
+      "scope": {
+        "store": [
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "metrics"
+      ],
+      "support": [
+        {
+          "sourceId": "ap-s011",
+          "excerpt": "The total number of times your App Store product page was viewed.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Definitions as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2028-09-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "Use consistently in reports.",
+      "researcherNote": "",
+      "retired": false
+    },
+    {
+      "id": "ap-203",
+      "kind": "glossary",
+      "claim": "Conversion rate (App Store Connect): total downloads and pre-orders divided by unique device impressions.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Definition as used in this KB.",
+      "scope": {
+        "store": [
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "metrics",
+        "conversion_benchmark"
+      ],
+      "support": [
+        {
+          "sourceId": "ap-s011",
+          "excerpt": "Total downloads and pre-orders divided by unique device impressions.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Definitions as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2028-09-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "Use consistently in reports.",
+      "researcherNote": "",
+      "retired": false
+    },
+    {
+      "id": "ap-204",
+      "kind": "glossary",
+      "claim": "Page view to install conversion is installs divided by product page views; Apple's own conversion rate uses impressions in the denominator instead.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Definition as used in this KB.",
+      "scope": {
+        "store": [
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "metrics",
+        "conversion_benchmark"
+      ],
+      "support": [
+        {
+          "sourceId": "ap-s011",
+          "excerpt": "Apple defines Product Page Views and Conversion Rate (downloads+pre-orders / unique device impressions) separately",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Definitions as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2028-09-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "Always state which denominator a CVR figure uses.",
+      "researcherNote": "The page-view-based ratio is a common industry usage, not an Apple-named metric.",
+      "retired": false
+    },
+    {
+      "id": "ap-205",
+      "kind": "glossary",
+      "claim": "CVR (conversion rate) has no single meaning across stores: on Apple it is downloads plus pre-orders per unique device impression.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Definition as used in this KB.",
+      "scope": {
+        "store": [
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "metrics",
+        "conversion_benchmark"
+      ],
+      "support": [
+        {
+          "sourceId": "ap-s011",
+          "excerpt": "Total downloads and pre-orders divided by unique device impressions.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Definitions as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2028-09-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "Never compare CVR across stores without normalising.",
+      "researcherNote": "Play's definition is covered by the Google Play glossary entries.",
+      "retired": false
+    },
+    {
+      "id": "ap-206",
+      "kind": "glossary",
+      "claim": "Tap-through rate (TTR) is the share of impressions that lead to a product page view; Apple reports both counts but does not name the ratio.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Definition as used in this KB.",
+      "scope": {
+        "store": [
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "metrics",
+        "search_result"
+      ],
+      "support": [
+        {
+          "sourceId": "ap-s011",
+          "excerpt": "Impressions and Product Page Views are separate metrics; page contains no tap-through-rate definition",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Definitions as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2028-09-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "Compute TTR = product page views / impressions and label it as derived.",
+      "researcherNote": "Ratio derived by the KB from two Apple metrics; Apple's definitions page has no TTR entry.",
+      "retired": false
+    },
+    {
+      "id": "ap-207",
+      "kind": "glossary",
+      "claim": "On the App Store, impressions are counted across browse surfaces (Today, Games, Apps tabs) and the Search tab.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Definition as used in this KB.",
+      "scope": {
+        "store": [
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "metrics",
+        "search_result"
+      ],
+      "support": [
+        {
+          "sourceId": "ap-s011",
+          "excerpt": "viewed on the Today, Games, Apps, and Search tabs of the App Store",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Definitions as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2028-09-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "Screenshots 1-3 matter most on Search; Browse cards use different assets.",
+      "researcherNote": "Apple's Sources breakdown (Browse/Search) page was not fetched; only the surfaces in the impression definition are cited.",
+      "retired": false
+    },
+    {
+      "id": "ap-208",
+      "kind": "glossary",
+      "claim": "PPO (product page optimization) is Apple's native A/B test of icon, screenshots and previews with up to 3 treatments for up to 90 days.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Definition as used in this KB.",
+      "scope": {
+        "store": [
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "ppo",
+        "experiments"
+      ],
+      "support": [
+        {
+          "sourceId": "ap-s007",
+          "excerpt": "A test can include up to three treatments with alternate app icons, screenshots, and app previews ... up to 90 days",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Definitions as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2028-09-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "Use consistently in reports.",
+      "researcherNote": "",
+      "retired": false
+    },
+    {
+      "id": "ap-209",
+      "kind": "glossary",
+      "claim": "CPP (custom product page) is an alternate App Store product page, up to 70 per app, with its own URL and optional search keywords.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Definition as used in this KB.",
+      "scope": {
+        "store": [
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "cpp",
+        "custom_listing"
+      ],
+      "support": [
+        {
+          "sourceId": "ap-s009",
+          "excerpt": "you can now create and publish up to 70 custom pages at a given time",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        },
+        {
+          "sourceId": "ap-s008",
+          "excerpt": "unique URL ... keywords",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Definitions as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2028-09-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "Use consistently in reports.",
+      "researcherNote": "",
+      "retired": false
+    },
+    {
+      "id": "ap-210",
+      "kind": "glossary",
+      "claim": "Treatment: a variant product page in a PPO test, compared with the original (baseline).",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Definition as used in this KB.",
+      "scope": {
+        "store": [
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "ppo"
+      ],
+      "support": [
+        {
+          "sourceId": "ap-s012",
+          "excerpt": "Baseline: The variant that other pages are compared against (typically your original product page)",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Definitions as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2028-09-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "Use consistently in reports.",
+      "researcherNote": "",
+      "retired": false
+    },
+    {
+      "id": "ap-211",
+      "kind": "glossary",
+      "claim": "Credible interval (PPO): a 90% probability range for a treatment's conversion rate or lift.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Definition as used in this KB.",
+      "scope": {
+        "store": [
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "ppo",
+        "test_power"
+      ],
+      "support": [
+        {
+          "sourceId": "ap-s012",
+          "excerpt": "a 90% interval, meaning there's a 90% probability that the conversion rate or lift falls within this range",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Definitions as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2028-09-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "Use consistently in reports.",
+      "researcherNote": "",
+      "retired": false
+    },
+    {
+      "id": "ap-212",
+      "kind": "glossary",
+      "claim": "In-app event: a timely event within the app that can be featured on the product page, in search and in editorial, using a badge type such as Live Event or New Season.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Definition as used in this KB.",
+      "scope": {
+        "store": [
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "events"
+      ],
+      "support": [
+        {
+          "sourceId": "ap-s010",
+          "excerpt": "In-app events display on your product page, in search results and in editorially curated selections",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        },
+        {
+          "sourceId": "ap-s005",
+          "excerpt": "In-app events are timely events that happen within your app.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Definitions as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2028-09-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "Use consistently in reports.",
+      "researcherNote": "",
+      "retired": false
+    },
+    {
+      "id": "ap-213",
+      "kind": "glossary",
+      "claim": "App preview: a 15-30 second video of in-app captured footage on the product page, autoplaying muted, up to 3 per language and device.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Definition as used in this KB.",
+      "scope": {
+        "store": [
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "video",
+        "autoplay"
+      ],
+      "support": [
+        {
+          "sourceId": "ap-s003",
+          "excerpt": "You can have up to three app previews for each language your app supports ... autoplay ... muted",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        },
+        {
+          "sourceId": "ap-s004",
+          "excerpt": "Minimum length: 15 seconds; Maximum length: 30 seconds",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Definitions as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2028-09-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "Use consistently in reports.",
+      "researcherNote": "",
+      "retired": false
+    },
+    {
+      "id": "ap-214",
+      "kind": "glossary",
+      "claim": "Poster frame: the still image of an app preview shown when autoplay is off, default at the 5-second mark.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Definition as used in this KB.",
+      "scope": {
+        "store": [
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "video",
+        "first_images"
+      ],
+      "support": [
+        {
+          "sourceId": "ap-s003",
+          "excerpt": "If someone has turned off video autoplay in their App Store settings, a poster frame will display.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Definitions as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2028-09-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "Use consistently in reports.",
+      "researcherNote": "",
+      "retired": false
+    },
+    {
+      "id": "ap-215",
+      "kind": "glossary",
+      "claim": "First impression (App Store): the assets seen in search results without interaction, the app preview if present, otherwise the first one to three screenshots.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Definition as used in this KB.",
+      "scope": {
+        "store": [
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "first_images",
+        "search_result"
+      ],
+      "support": [
+        {
+          "sourceId": "ap-s002",
+          "excerpt": "the first one to three images will appear in search results when no app preview is available",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        },
+        {
+          "sourceId": "ap-s003",
+          "excerpt": "App previews display and autoplay on your product page and within search results",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Definitions as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2028-09-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "Use consistently in reports.",
+      "researcherNote": "",
+      "retired": false
+    },
+    {
+      "id": "ap-216",
+      "kind": "glossary",
+      "claim": "Peer group benchmarks: App Store Connect comparison of an app's metrics with similar apps' 25th, 50th and 75th percentiles.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Definition as used in this KB.",
+      "scope": {
+        "store": [
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "global"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "metrics",
+        "conversion_benchmark"
+      ],
+      "support": [
+        {
+          "sourceId": "ap-s014",
+          "excerpt": "25th, 50th, and 75th percentile values",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Definitions as of 2026-09",
+      "abDetail": null,
+      "reviewBy": "2028-09-29",
+      "addedBy": "agent:sonnet-5.5 kb-research-v2",
+      "useFor": "Use consistently in reports.",
+      "researcherNote": "",
+      "retired": false
+    }
+  ]
+}

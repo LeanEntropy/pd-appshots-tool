@@ -1,0 +1,1654 @@
+{
+  "file": "entries-market-jp",
+  "entries": [
+    {
+      "id": "jk-jp-001",
+      "kind": "market_note",
+      "claim": "Japan's mobile OS share in August 2026 was about 65% iOS and 35% Android.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [
+        {
+          "value": 64.74,
+          "unit": "% of mobile OS share",
+          "of": "iOS in Japan",
+          "context": "Statcounter Aug 2026"
+        }
+      ],
+      "appliesWhen": "Device/web-traffic share in Japan, not app store revenue.",
+      "scope": {
+        "store": [
+          "google_play",
+          "app_store"
+        ],
+        "genre": [
+          "apps_general"
+        ],
+        "countries": [
+          "JP"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "store_share",
+        "platform_share"
+      ],
+      "support": [
+        {
+          "sourceId": "jk-s002",
+          "excerpt": "Statcounter Aug 2026: iOS 64.74%, Android 35.25% (mobile OS share in Japan).",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        },
+        {
+          "sourceId": "jk-s052",
+          "excerpt": "The ASO Project lists Android 29.91% in Japan, attributed on the page to Statcounter (same origin).",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Statcounter Aug 2026",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "Do not treat Google Play as a minor store for Japan reach, but check spend split before prioritising it.",
+      "researcherNote": "Device share is not spend share; see jk-jp-002.",
+      "retired": false
+    },
+    {
+      "id": "jk-jp-002",
+      "kind": "market_note",
+      "claim": "iOS drives the majority of Japanese mobile game spend, while Google Play adds steady growth.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [
+        {
+          "value": 11,
+          "unit": "USD billion",
+          "of": "Japan mobile game IAP revenue 2025",
+          "context": "Sensor Tower"
+        }
+      ],
+      "appliesWhen": "Japan mobile game in-app purchase revenue, 2025.",
+      "scope": {
+        "store": [
+          "google_play",
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "JP"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "store_share",
+        "platform_share",
+        "monetisation_messaging"
+      ],
+      "support": [
+        {
+          "sourceId": "jk-s001",
+          "excerpt": "iOS drives the majority of spend through its high-value users, while Google Play contributes steady growth.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Sensor Tower, published 2025-09",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "Google Play is the smaller spend store in Japan, so App Store store-page work should not be skipped.",
+      "researcherNote": "Single origin; the fetched page states no exact percentage split.",
+      "retired": false
+    },
+    {
+      "id": "jk-jp-003",
+      "kind": "market_note",
+      "claim": "In Q1 2026, iOS and Android installs in Japan were broadly even, but iOS accounted for 66% of sessions.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [
+        {
+          "value": 66,
+          "unit": "% of sessions",
+          "of": "iOS in Japan",
+          "context": "Adjust, Q1 2026"
+        }
+      ],
+      "appliesWhen": "Adjust data for Japan mobile apps (games report), Q1 2026.",
+      "scope": {
+        "store": [
+          "google_play",
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "JP"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "platform_share",
+        "audience"
+      ],
+      "support": [
+        {
+          "sourceId": "jk-s005",
+          "excerpt": "On installs, iOS and Android are broadly even, but iOS accounts for 66% of sessions.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Q1 2026",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "Install volume on Google Play in Japan is comparable to iOS even though spend is lower.",
+      "researcherNote": "Secondary summary (GameDev Reports); sample described as top 5,000 apps, not games only.",
+      "retired": false
+    },
+    {
+      "id": "jk-jp-004",
+      "kind": "market_note",
+      "claim": "Role-playing games take over one-third of Japanese mobile game revenue, with strategy at nearly 22%.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Japan mobile game IAP revenue, 2025.",
+      "scope": {
+        "store": [
+          "google_play",
+          "app_store"
+        ],
+        "genre": [
+          "rpg",
+          "strategy"
+        ],
+        "countries": [
+          "JP"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "rpg",
+        "genre_convention"
+      ],
+      "support": [
+        {
+          "sourceId": "jk-s001",
+          "excerpt": "RPGs dominate with over one-third share, supported by Strategy titles at nearly 22%.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Sensor Tower 2025",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "An RPG-flavoured roguelike is in the dominant revenue genre in Japan; the store page should read as an RPG.",
+      "researcherNote": "",
+      "retired": false
+    },
+    {
+      "id": "jk-jp-005",
+      "kind": "market_note",
+      "claim": "Manga was the art style of 54% of the top 200 grossing mobile games in Japan in GameRefinery's 2021 data.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [
+        {
+          "value": 54,
+          "unit": "% of top 200 grossing",
+          "of": "games with Manga art style, Japan",
+          "context": "GameRefinery March 2021"
+        }
+      ],
+      "appliesWhen": "Top 200 grossing Japan, data as of March 2021.",
+      "scope": {
+        "store": [
+          "google_play",
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "JP"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "screenshots",
+          "icon"
+        ]
+      },
+      "tags": [
+        "characters",
+        "genre_convention",
+        "art_vs_gameplay"
+      ],
+      "support": [
+        {
+          "sourceId": "jk-s010",
+          "excerpt": "Still, Manga is the art style of choice in 54% of the top 200 games.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "March 2021 data",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "Anime-styled character art is the norm in Japan, so a chibi or Western-styled hero will look unusual; use with age caveat.",
+      "researcherNote": "Single origin, five years old; no Korea figure exists on the page.",
+      "retired": false
+    },
+    {
+      "id": "jk-jp-006",
+      "kind": "heuristic",
+      "claim": "Vendors advise placing anime or manga characters in the foreground of Japanese game screenshots, but no test data supports it.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Japanese game store screenshots.",
+      "scope": {
+        "store": [
+          "google_play",
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "JP"
+        ],
+        "position": [
+          "1-3"
+        ],
+        "asset": [
+          "screenshots"
+        ]
+      },
+      "tags": [
+        "characters",
+        "cultural_adaptation"
+      ],
+      "support": [
+        {
+          "sourceId": "jk-s007",
+          "excerpt": "For games, add anime or manga characters in the foreground to highlight them.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        },
+        {
+          "sourceId": "jk-s006",
+          "excerpt": "AIX two-app comparison: the Japanese Genshin listing had two character illustrations and two in-game shots, the Korean listing one and one.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "Test a character-forward variant in JP; do not present it as proven.",
+      "researcherNote": "Two vendor origins, both anecdotal or 2-app; no A/B result.",
+      "retired": false
+    },
+    {
+      "id": "jk-jp-007",
+      "kind": "market_note",
+      "claim": "Japanese app store screenshots are described as carrying more text and looking more crowded than Western ones.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Japanese App Store and Play screenshots, qualitative.",
+      "scope": {
+        "store": [
+          "google_play",
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "JP"
+        ],
+        "position": [
+          "1-3"
+        ],
+        "asset": [
+          "screenshots"
+        ]
+      },
+      "tags": [
+        "text_density",
+        "captions",
+        "cultural_adaptation",
+        "composition"
+      ],
+      "support": [
+        {
+          "sourceId": "jk-s007",
+          "excerpt": "Screenshots in the Japanese app stores tend to have more text and to be more crowded than in the West.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        },
+        {
+          "sourceId": "jk-s008",
+          "excerpt": "Pokemon GO example: the US screenshots are concise and consistent; the Japanese ones are more intricate, with text boxes and multi-coloured text.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        },
+        {
+          "sourceId": "jk-s009",
+          "excerpt": "East Asian viewers are said to process more information holistically (theory, not a measurement).",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "Do not read Japan as licence for dense text without a test; use as a reason to test a denser variant, not to default to one.",
+      "researcherNote": "AppTweak and SplitMetrics are two vendor origins giving commentary; no large-sample measurement of text density in top JP game listings was found.",
+      "retired": false
+    },
+    {
+      "id": "jk-jp-008",
+      "kind": "market_note",
+      "claim": "In a 2022 two-app comparison, Japanese App Store screenshots carried more letters than Korean ones (Genshin second screenshot 37 vs 17).",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [
+        {
+          "value": 37,
+          "unit": "letters",
+          "of": "Genshin JP second screenshot",
+          "context": "AIX 2022, App Store"
+        },
+        {
+          "value": 17,
+          "unit": "letters",
+          "of": "Genshin KR second screenshot",
+          "context": "AIX 2022, App Store"
+        }
+      ],
+      "appliesWhen": "App Store, two apps only (Between, Genshin), 2022.",
+      "scope": {
+        "store": [
+          "app_store"
+        ],
+        "genre": [
+          "rpg"
+        ],
+        "countries": [
+          "JP",
+          "KR"
+        ],
+        "position": [
+          "1-3"
+        ],
+        "asset": [
+          "screenshots"
+        ]
+      },
+      "tags": [
+        "text_density",
+        "captions",
+        "cultural_adaptation"
+      ],
+      "support": [
+        {
+          "sourceId": "jk-s006",
+          "excerpt": "Between: Korea about 10 letters on the first two screenshots vs Japan more than 50 on the first. Genshin: Korea 17 letters vs Japan 37 on the second screenshot.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "AIX post 2022-06-21",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "Treat as an anecdote that JP copy runs longer than KR copy; never as a norm.",
+      "researcherNote": "N=2 apps, one of them not a game; not generalisable.",
+      "retired": false
+    },
+    {
+      "id": "jk-jp-009",
+      "kind": "ab_case",
+      "claim": "In a one-month Google Play experiment for a Japanese news app (2018), vertical and horizontal screenshots gave install rates within 0.1% of each other.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Google Play listing experiment, non-game news app, Japan.",
+      "scope": {
+        "store": [
+          "google_play"
+        ],
+        "genre": [
+          "apps_general"
+        ],
+        "countries": [
+          "JP"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "screenshots",
+          "experiment"
+        ]
+      },
+      "tags": [
+        "orientation",
+        "experiments",
+        "test_duration"
+      ],
+      "support": [
+        {
+          "sourceId": "jk-s011",
+          "excerpt": "JX Press test on News Digest, one month: result a tie (error within 0.1%); the team adopted horizontal for readability and layout efficiency.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "2018 Play experiments, non-game",
+      "abDetail": null,
+      "reviewBy": "",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "Orientation alone does not guarantee an uplift; orientation tests are worth running but may show nothing.",
+      "researcherNote": "Publisher self-report, no sample size or confidence given.",
+      "retired": false
+    },
+    {
+      "id": "jk-jp-010",
+      "kind": "heuristic",
+      "claim": "A Japanese ASO vendor says vertical screenshots suit function-led apps and horizontal ones suit visually led apps, and an orientation test can move results by about 20%.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Japanese ASO practitioner commentary, 2022.",
+      "scope": {
+        "store": [
+          "google_play",
+          "app_store"
+        ],
+        "genre": [
+          "apps_general"
+        ],
+        "countries": [
+          "JP"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "screenshots"
+        ]
+      },
+      "tags": [
+        "orientation",
+        "experiments",
+        "landscape_composite"
+      ],
+      "support": [
+        {
+          "sourceId": "jk-s012",
+          "excerpt": "縦か横かはカテゴリなどでも相性が変わります。傾向としては、縦型が強いのは機能系アプリで、横型が強いのはビジュアル訴求系のアプリです。",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [
+        {
+          "sourceId": "jk-s011",
+          "excerpt": "Contrary case: a one-month Play test found no difference between vertical and horizontal.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "validFor": "",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "Visual-led games may favour landscape composites; still verify by experiment.",
+      "researcherNote": "Assertion without data; JX Press test is a contrary datapoint.",
+      "retired": false
+    },
+    {
+      "id": "jk-jp-011",
+      "kind": "market_note",
+      "claim": "The W3C Japanese layout requirements (JLREQ) treat both horizontal and vertical setting as valid: newspapers and magazines are mostly vertical, official documents are recommended horizontal.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Japanese typography norms, not game-store research.",
+      "scope": {
+        "store": [
+          "google_play",
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "JP"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "screenshots",
+          "text"
+        ]
+      },
+      "tags": [
+        "typography",
+        "script",
+        "legibility"
+      ],
+      "support": [
+        {
+          "sourceId": "jk-s013",
+          "excerpt": "For official (e.g. governmental) documentation, horizontal writing mode is recommended.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "Horizontal captions are the safe default; vertical text is a stylistic accent reading as 'traditional or literary'.",
+      "researcherNote": "No source shows vertical text on game store images.",
+      "retired": false
+    },
+    {
+      "id": "jk-jp-012",
+      "kind": "market_note",
+      "claim": "JLREQ defines line-breaking prohibitions (kinsoku): certain characters may not start a line and others may not end one.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Any Japanese caption or headline that wraps to two or more lines.",
+      "scope": {
+        "store": [
+          "google_play",
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "JP"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "screenshots",
+          "text"
+        ]
+      },
+      "tags": [
+        "typography",
+        "script",
+        "legibility"
+      ],
+      "support": [
+        {
+          "sourceId": "jk-s013",
+          "excerpt": "JLREQ sections 3.1.7 Characters Not Starting a Line and 3.1.8 Characters Not Ending a Line; closing brackets, full stops, commas and middle dots have special line-end positioning rules.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "When wrapping Japanese headlines, do not start a line with a comma, full stop or closing bracket; have a native reviewer check breaks.",
+      "researcherNote": "The specific character lists were not read; check JLREQ before writing rules.",
+      "retired": false
+    },
+    {
+      "id": "jk-jp-013",
+      "kind": "heuristic",
+      "claim": "AppTweak recommends gothic type for standard Japanese text, mincho to convey emotion, and handwritten type only for short exclamations.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Choosing fonts for Japanese store image text.",
+      "scope": {
+        "store": [
+          "google_play",
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "JP"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "screenshots",
+          "text"
+        ]
+      },
+      "tags": [
+        "typography",
+        "legibility"
+      ],
+      "support": [
+        {
+          "sourceId": "jk-s007",
+          "excerpt": "Gothic font for normal expressions (thicker for emphasis); Mincho-style font to reflect emotion; handwritten or textured fonts for short, sharp sentences or exclamations.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "Default to a heavy gothic for headlines; use mincho or brush type only sparingly.",
+      "researcherNote": "Vendor advice only; no test.",
+      "retired": false
+    },
+    {
+      "id": "jk-jp-014",
+      "kind": "market_note",
+      "claim": "Vendors report that Japanese observers prefer light, bright colours in visual design.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Japanese store imagery colour choices.",
+      "scope": {
+        "store": [
+          "google_play",
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "JP"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "screenshots",
+          "icon"
+        ]
+      },
+      "tags": [
+        "colour",
+        "brightness_contrast",
+        "cultural_adaptation"
+      ],
+      "support": [
+        {
+          "sourceId": "jk-s009",
+          "excerpt": "Japanese observers had a greater relative preference for light colors.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        },
+        {
+          "sourceId": "jk-s007",
+          "excerpt": "AppTweak advises bright colours; pink for female-oriented, red for motivation, purple for mystery.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "Do not darken a Japanese key art palette by default; test a brighter variant.",
+      "researcherNote": "Two vendors, cited research not named, no store test data.",
+      "retired": false
+    },
+    {
+      "id": "jk-jp-015",
+      "kind": "market_note",
+      "claim": "SplitMetrics reports 'No. 1' ranking badges on the first screenshot of Japanese listings across categories.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Japanese App Store listings, vendor observation.",
+      "scope": {
+        "store": [
+          "google_play",
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "JP"
+        ],
+        "position": [
+          "1"
+        ],
+        "asset": [
+          "screenshots"
+        ]
+      },
+      "tags": [
+        "ranking_claims",
+        "social_proof",
+        "first_images"
+      ],
+      "support": [
+        {
+          "sourceId": "jk-s009",
+          "excerpt": "Notice the prominence of 'No. 1' badges on the first and most crucial screenshot on an app's product page.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [
+        {
+          "sourceId": "jk-s025",
+          "excerpt": "Google Play metadata policy prohibits images or text indicating store performance or ranking such as '#1', award icons or 'Popular' in store metadata including screenshots and promotional images.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "validFor": "",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "Do not copy No.1 badges to a Play listing; on the App Store they need a documented basis (jk-jp-021).",
+      "researcherNote": "Prevalence not measured; App Store observation. Google Play policy contradicts usage on Play.",
+      "retired": false
+    },
+    {
+      "id": "jk-jp-016",
+      "kind": "market_note",
+      "claim": "Japanese seasonal store-refresh windows named by vendors are cherry-blossom season, Golden Week (29 Apr-5 May), Tanabata (7 Jul), Hinamatsuri, Valentine and White Day.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Timing of Japan store-image refreshes.",
+      "scope": {
+        "store": [
+          "google_play",
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "JP"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "screenshots",
+          "icon"
+        ]
+      },
+      "tags": [
+        "seasonal",
+        "events",
+        "refresh_cadence"
+      ],
+      "support": [
+        {
+          "sourceId": "jk-s009",
+          "excerpt": "Lists Cherry Blossom (late Mar-May), Golden Week (Apr 29-May 5), Tanabata (Jul 7), Valentine's (Feb 14), Hinamatsuri (Mar 3), Halloween, Black Friday.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        },
+        {
+          "sourceId": "jk-s007",
+          "excerpt": "Advises localising the icon for Cherry Blossoms, Golden Week and White Day.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "Plan a Golden Week/spring refresh only if it is cheap; treat as a hypothesis.",
+      "researcherNote": "No conversion effect measured for any of them.",
+      "retired": false
+    },
+    {
+      "id": "jk-jp-017",
+      "kind": "market_note",
+      "claim": "Japanese mobile games run Golden Week campaigns built around free gacha pulls, for example a daily free 10-pull or up to 1000 free pulls.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Golden Week (late April to early May) in Japan.",
+      "scope": {
+        "store": [
+          "google_play",
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "JP"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "text"
+        ]
+      },
+      "tags": [
+        "seasonal",
+        "events",
+        "offers",
+        "gacha"
+      ],
+      "support": [
+        {
+          "sourceId": "jk-s024",
+          "excerpt": "ONE PIECE サウザンドストーム: 最大1000連を無料で引くことができる (5th anniversary, 2021).",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        },
+        {
+          "sourceId": "jk-s055",
+          "excerpt": "2026 snippet: Uma Musume Golden Week runs a free daily 10-pull, up to 80 pulls (not fetched).",
+          "excerptType": "paraphrase",
+          "fetched": false,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "2021 article, 2026 snippet unfetched",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "Golden Week free-pull offers are an in-game and ad message; do not put them in Play store graphics.",
+      "researcherNote": "In-game and marketing campaigns, not store images. Play policy bans price/limited-offer text in store graphics.",
+      "retired": false
+    },
+    {
+      "id": "jk-jp-018",
+      "kind": "market_note",
+      "claim": "Japanese pre-registration campaigns escalate rewards at registrant-count milestones such as 1 million.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Pre-registration campaigns for Japanese launches.",
+      "scope": {
+        "store": [
+          "google_play",
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "JP"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "text"
+        ]
+      },
+      "tags": [
+        "pre_registration",
+        "social_proof",
+        "offers"
+      ],
+      "support": [
+        {
+          "sourceId": "jk-s020",
+          "excerpt": "Solo Leveling: ARISE passed 1 million registrations in 2 days; milestone unlocked a skin, legendary armour set, gold and crystals.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        },
+        {
+          "sourceId": "jk-s021",
+          "excerpt": "Yusha Renmei: at 1 million registrants a pet summon ticket x5 is distributed.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        },
+        {
+          "sourceId": "jk-s022",
+          "excerpt": "SEGA soccer title: after 1 million, +1 ticket per further 50,000 registrations (snippet, not fetched).",
+          "excerptType": "paraphrase",
+          "fetched": false,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "2024-2026 campaigns",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "Pre-registration count milestones are a normal social-proof device in JP; plan milestone rewards for a Rogue Legend JP launch.",
+      "researcherNote": "",
+      "retired": false
+    },
+    {
+      "id": "jk-jp-019",
+      "kind": "market_note",
+      "claim": "Japanese pre-registration headline rewards often include gacha tickets, from 10 pulls up to 1000 pulls.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Japanese pre-registration offers, 2026.",
+      "scope": {
+        "store": [
+          "google_play",
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "JP"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "text"
+        ]
+      },
+      "tags": [
+        "pre_registration",
+        "offers",
+        "gacha",
+        "monetisation_messaging"
+      ],
+      "support": [
+        {
+          "sourceId": "jk-s023",
+          "excerpt": "Dragon Quest Smash Grow (Square Enix / KLab): pre-registration gives 10 premium-equipment gacha pulls.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        },
+        {
+          "sourceId": "jk-s021",
+          "excerpt": "Yusha Renmei: pre-registration gives a 1000-pull gacha ticket, a pet and 10,000 gold.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [
+        {
+          "sourceId": "jk-s026",
+          "excerpt": "Play pre-registration rewards must be valid one-time items; subscriptions are not allowed.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "validFor": "",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "Pull-count rewards are the JP norm; keep them in pre-reg reward setup and ads, not in Play graphics.",
+      "researcherNote": "Play rule is about what rewards can be, not gacha; text 'free' in graphics is restricted by the metadata policy.",
+      "retired": false
+    },
+    {
+      "id": "jk-jp-020",
+      "kind": "market_note",
+      "claim": "Japanese launches use voice actors in promotional videos; Dragon Quest Smash Grow's pre-registration video was narrated by a well-known voice actor.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Pre-registration promotion in Japan.",
+      "scope": {
+        "store": [
+          "google_play",
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "JP"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "video"
+        ]
+      },
+      "tags": [
+        "voice_actor",
+        "pre_registration",
+        "video"
+      ],
+      "support": [
+        {
+          "sourceId": "jk-s023",
+          "excerpt": "Promo video with real gameplay narrated by Toshio Furukawa, who voices the in-game navigator Maru.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "Voice-cast reveal is a JP promo device; do not assume it belongs in screenshots.",
+      "researcherNote": "One example; no evidence on whether store images show the cast.",
+      "retired": false
+    },
+    {
+      "id": "jk-jp-021",
+      "kind": "market_note",
+      "claim": "Japan's Consumer Affairs Agency says a 'No.1' claim based on subjective ratings needs a reasonable basis: suitable comparison set, suitable respondents, a fair method and a claim that matches the result.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Advertising claims such as satisfaction No.1 in Japan (report of 2024-09-26).",
+      "scope": {
+        "store": [
+          "google_play",
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "JP"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "text",
+          "screenshots"
+        ]
+      },
+      "tags": [
+        "ranking_claims",
+        "regulation",
+        "advertising_law",
+        "social_proof"
+      ],
+      "support": [
+        {
+          "sourceId": "jk-s015",
+          "excerpt": "少なくとも次の①から④までを満たしている必要がある… ①比較する商品等が適切に選定されていること ②調査対象者が適切に選定されていること ③調査が公平な方法で実施されていること ④表示内容と調査結果が適切に対応していること",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "CAA report 2024-09-26",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "Any JP 'No.1' badge needs a documented basis; avoid unsourced satisfaction or popularity No.1.",
+      "researcherNote": "Law/regulation (Premiums and Representations Act, 景品表示法). The report addresses subjective-evaluation No.1 such as customer satisfaction; sales-based claims are described as measurable by objective numbers, but the full test for sales ranking claims was not read.",
+      "retired": false
+    },
+    {
+      "id": "jk-jp-022",
+      "kind": "market_note",
+      "claim": "The CAA says a footnote for a No.1 claim that is unclear in position, size or colour does not cure a misleading claim.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Small-print notes under No.1 badges in Japan.",
+      "scope": {
+        "store": [
+          "google_play",
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "JP"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "screenshots",
+          "text"
+        ]
+      },
+      "tags": [
+        "ranking_claims",
+        "regulation",
+        "advertising_law",
+        "legibility"
+      ],
+      "support": [
+        {
+          "sourceId": "jk-s015",
+          "excerpt": "記載位置、文字の大きさ、文字の色等を踏まえ、一般消費者にとって明瞭でない方法により注記がされている場合は、表示内容と調査結果が適切に対応しているとはいえず、景品表示法上問題となるおそれがある。",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "If a JP store image carries a ranking or 'No.1' claim, the basis note must be legible, not micro-print.",
+      "researcherNote": "The example in the report concerns the comparison-set note; extended to store-image footnotes by analogy.",
+      "retired": false
+    },
+    {
+      "id": "jk-jp-023",
+      "kind": "market_note",
+      "claim": "Japan banned complete gacha (kompu gacha) in 2012 under the Premiums and Representations Act's card-matching prohibition.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Mobile games with gacha sold for money in Japan.",
+      "scope": {
+        "store": [
+          "google_play",
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "JP"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "gacha",
+        "regulation",
+        "advertising_law"
+      ],
+      "support": [
+        {
+          "sourceId": "jk-s017",
+          "excerpt": "CAA ruled complete gacha violates the Prize Display Act's picture-matching prohibition in May 2012.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        },
+        {
+          "sourceId": "jk-s018",
+          "excerpt": "CAA official view on 2012-05-18; enforceable from 1 July; later 2015 and 2021 cases led to administrative guidance.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        },
+        {
+          "sourceId": "jk-s019",
+          "excerpt": "CAA guidance document (2012-05-18, revised 2016) - not readable, title only.",
+          "excerptType": "paraphrase",
+          "fetched": false,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "A collect-all-to-win mechanic must not be promoted in JP copy.",
+      "researcherNote": "Primary CAA PDF not readable; two secondary origins.",
+      "retired": false
+    },
+    {
+      "id": "jk-jp-024",
+      "kind": "market_note",
+      "claim": "In Japan, displaying a gacha rate that differs from the actual rate is treated as a misleading representation and penalised with surcharges.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [
+        {
+          "value": 3,
+          "unit": "% surcharge of sales",
+          "of": "misleading representation penalty",
+          "context": "Abe Legal summary"
+        }
+      ],
+      "appliesWhen": "Gacha probability text shown in game or advertising in Japan.",
+      "scope": {
+        "store": [
+          "google_play",
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "JP"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "text"
+        ]
+      },
+      "tags": [
+        "gacha",
+        "loot_box_disclosure",
+        "regulation",
+        "advertising_law"
+      ],
+      "support": [
+        {
+          "sourceId": "jk-s018",
+          "excerpt": "Case discussed at CEDEC 2024: 3% displayed, actual 0.333%, surcharge of JPY 6.09 million for misleading superior-quality claim.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        },
+        {
+          "sourceId": "jk-s017",
+          "excerpt": "JOGA guidelines: drop rates must be published by rarity; mismatch is a misleading representation, with remedial orders and a 3%-of-sales surcharge.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "Any pull-rate text in JP creatives must match the real rate.",
+      "researcherNote": "Both are law-office/lawyer sources; the CAA decision itself was not read.",
+      "retired": false
+    },
+    {
+      "id": "jk-jp-025",
+      "kind": "market_note",
+      "claim": "Since 1 October 2023 Japan regulates stealth marketing, and the regulated party is the advertiser, not the influencer.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Influencer or paid promotion of games in Japan.",
+      "scope": {
+        "store": [
+          "google_play",
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "JP"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "video",
+          "listing"
+        ]
+      },
+      "tags": [
+        "regulation",
+        "advertising_law",
+        "community"
+      ],
+      "support": [
+        {
+          "sourceId": "jk-s016",
+          "excerpt": "CAA: hiding that something is an advertisement is stealth marketing; the regulated party is the business providing the product or service, not hired influencers.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        },
+        {
+          "sourceId": "jk-s017",
+          "excerpt": "October 2023 amendment banned undisclosed advertising; influencer videos must disclose paid promotion.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "In force since 2023-10-01",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "If Rogue Legend uses influencers in Japan, sponsored posts must be labelled as ads.",
+      "researcherNote": "",
+      "retired": false
+    },
+    {
+      "id": "jk-jp-026",
+      "kind": "market_note",
+      "claim": "Boom Beach's 2014 Japanese localisation was followed by multi-fold gains in downloads and revenue.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [
+        {
+          "value": 17,
+          "unit": "x downloads",
+          "of": "Boom Beach after Japanese translation",
+          "context": "Distimo via OneSky, 2014"
+        }
+      ],
+      "appliesWhen": "Whole-game translation of a Western mid-core game for Japan, April 2014.",
+      "scope": {
+        "store": [
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "JP"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "localisation",
+        "metrics"
+      ],
+      "support": [
+        {
+          "sourceId": "jk-s027",
+          "excerpt": "OneSky, citing Distimo May 2014: Japanese translation raised Boom Beach downloads 17x and quadrupled revenue.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        },
+        {
+          "sourceId": "jk-s029",
+          "excerpt": "Sensor Tower: Boom Beach jumped 185 places to #41 on the Free iPhone Games chart one day after the update; estimated 4-5x revenue.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "2014, iOS",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "Evidence that Japanese-language localisation matters; do not quote the multiples for image work.",
+      "researcherNote": "Stale and about translating the game plus listing, not store images.",
+      "retired": false
+    },
+    {
+      "id": "jk-jp-027",
+      "kind": "ab_case",
+      "claim": "ZiMAD reported a 36% App Store conversion increase after redesigning screenshots for Japan with more small elements, effects and emotion.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "iOS screenshots, unnamed game, 2018, SplitMetrics Optimize test.",
+      "scope": {
+        "store": [
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "JP"
+        ],
+        "position": [
+          "1-3"
+        ],
+        "asset": [
+          "screenshots",
+          "experiment"
+        ]
+      },
+      "tags": [
+        "text_density",
+        "cultural_adaptation",
+        "experiments",
+        "screenshots"
+      ],
+      "support": [
+        {
+          "sourceId": "jk-s053",
+          "excerpt": "Localised screenshots with lots of small elements, special effects and emotional imagery gave +36% conversion in pre-launch A/B testing; a 2% margin is needed to show in the store.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "",
+      "abDetail": null,
+      "reviewBy": "",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "One case that a denser, more emotional JP redesign won in a panel test; not proof of a store uplift.",
+      "researcherNote": "Vendor case study of its customer; pre-store panel test, game unnamed, 2018.",
+      "retired": false
+    },
+    {
+      "id": "jk-jp-028",
+      "kind": "market_note",
+      "claim": "SplitMetrics' 2023 benchmark for Apple Ads search results shows Japan tap-through 8.75% and conversion 58.29% versus 9.98% and 65.85% in the US.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [
+        {
+          "value": 58.29,
+          "unit": "%",
+          "of": "Apple Ads conversion (Japan)",
+          "context": "SplitMetrics 2023"
+        }
+      ],
+      "appliesWhen": "Paid Apple Ads search-result placements, 2023, definitions not given.",
+      "scope": {
+        "store": [
+          "app_store"
+        ],
+        "genre": [
+          "apps_general"
+        ],
+        "countries": [
+          "JP",
+          "US"
+        ],
+        "position": [
+          "search_result"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "conversion_benchmark",
+        "metrics"
+      ],
+      "support": [
+        {
+          "sourceId": "jk-s009",
+          "excerpt": "TTR of 8.75%, CVR of 58.29%, CPT at $0.70 and CPA at $1.20 (Japan) versus TTR of 9.98%, CVR of 65.85%, CPT at $1.97 and CPA at $3.00 (USA).",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "Do not use as a store-page conversion benchmark.",
+      "researcherNote": "Paid search-ad metrics, not organic product-page conversion.",
+      "retired": false
+    },
+    {
+      "id": "jk-jp-029",
+      "kind": "market_note",
+      "claim": "Over 95% of Japanese app store reviews were written in Japanese in a 2015 OneSky article.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Japan App Store review language, approx. 2014-2015.",
+      "scope": {
+        "store": [
+          "google_play",
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "JP"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "localisation",
+        "lingo"
+      ],
+      "support": [
+        {
+          "sourceId": "jk-s028",
+          "excerpt": "Over 95% of reviews in Japanese app stores are written in Japanese, while fewer than 4% are in English.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "2015",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "Directional only: a Japanese listing needs Japanese copy.",
+      "researcherNote": "Old and no method stated.",
+      "retired": false
+    }
+  ]
+}

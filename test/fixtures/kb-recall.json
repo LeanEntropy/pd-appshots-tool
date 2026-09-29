@@ -1,0 +1,45 @@
+{
+  "gate": 0.8,
+  "cases": [
+    {
+      "id": "rec-us-first-images",
+      "step": "recommend",
+      "country": "US",
+      "genres": ["roguelike"],
+      "facts": ["position-1", "position-1-logo"],
+      "mustHave": ["gp-enf-1", "gp-count", "h-est"]
+    },
+    {
+      "id": "rec-us-layer",
+      "step": "recommend",
+      "country": "US",
+      "genres": ["roguelike"],
+      "facts": ["layer"],
+      "mustHave": ["gp-enf-1", "gn-rogue"]
+    },
+    {
+      "id": "ab-us-order",
+      "step": "abTests",
+      "country": "US",
+      "genres": [],
+      "facts": ["variable:order", "position-2"],
+      "mustHave": ["exp-fact", "ab-1", "gp-enf-1"]
+    },
+    {
+      "id": "advice-jp",
+      "step": "countryAdvice",
+      "country": "JP",
+      "genres": [],
+      "facts": ["advice:words"],
+      "mustHave": ["jp-note", "jp-reg"]
+    },
+    {
+      "id": "patterns-us",
+      "step": "patterns",
+      "country": "US",
+      "genres": ["roguelike"],
+      "facts": ["position-1", "variable:order"],
+      "mustHave": ["gn-rogue", "h-est"]
+    }
+  ]
+}

@@ -1,0 +1,1471 @@
+{
+  "file": "entries-market-kr",
+  "entries": [
+    {
+      "id": "jk-kr-001",
+      "kind": "market_note",
+      "claim": "Google Play generated about 75% of Korean mobile game revenue across the App Store and Google Play in January-October 2024.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [
+        {
+          "value": 75,
+          "unit": "% of revenue",
+          "of": "Google Play, Korea, Jan-Oct 2024",
+          "context": "Sensor Tower, App Store + Google Play only"
+        },
+        {
+          "value": 3.7,
+          "unit": "USD billion",
+          "of": "Korea mobile game revenue Jan-Oct 2024",
+          "context": "Sensor Tower"
+        }
+      ],
+      "appliesWhen": "Korea game IAP revenue in official stores only; third-party Android stores excluded.",
+      "scope": {
+        "store": [
+          "google_play",
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "KR"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "store_share",
+        "platform_share"
+      ],
+      "support": [
+        {
+          "sourceId": "jk-s004",
+          "excerpt": "Total revenue for the first three quarters reached $3.7 billion, with Google Play generating 75% of the total. (Methodology: third-party Android market data are not included.)",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [
+        {
+          "sourceId": "jk-s032",
+          "excerpt": "ONE Store press kit citing IGAWorks: ONE Store 12.6% and Apple App Store 12.3% of game transaction value over H2 2020-H1 2025; implies Apple far below 25% of a three-store total.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "validFor": "Sensor Tower Jan-Oct 2024",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "Google Play is the primary Korean store for a game; Play listing quality matters most there.",
+      "researcherNote": "Contradiction in denominators: Sensor Tower's ~25% App Store share excludes ONE Store; IGAWorks (via ONE Store PR) puts Apple at 12.3% of a three-store total over a five-year window. Not directly comparable.",
+      "retired": false
+    },
+    {
+      "id": "jk-kr-002",
+      "kind": "market_note",
+      "claim": "Android held 64.5% of Korea's mobile OS share in August 2026.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [
+        {
+          "value": 64.49,
+          "unit": "% of mobile OS share",
+          "of": "Android in Korea",
+          "context": "Statcounter Aug 2026"
+        }
+      ],
+      "appliesWhen": "Device/web-traffic share, not spend.",
+      "scope": {
+        "store": [
+          "google_play",
+          "app_store"
+        ],
+        "genre": [
+          "apps_general"
+        ],
+        "countries": [
+          "KR"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "store_share",
+        "platform_share"
+      ],
+      "support": [
+        {
+          "sourceId": "jk-s003",
+          "excerpt": "Statcounter Aug 2026: Android 64.49%, iOS 35.5%.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        },
+        {
+          "sourceId": "jk-s052",
+          "excerpt": "The ASO Project lists Android 73.38% (older figure, attributed on the page to Statcounter; same origin).",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Statcounter Aug 2026",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "iOS is a large minority in Korea; do not neglect App Store work.",
+      "researcherNote": "Android share fell from about 73% (older figure) to 64% in this data; Sensor Tower still reports Google Play at about 75% of game revenue.",
+      "retired": false
+    },
+    {
+      "id": "jk-kr-003",
+      "kind": "market_note",
+      "claim": "ONE Store, per its own citation of IGAWorks data, held 12.6% of Korean game transaction value between H2 2020 and H1 2025, ahead of Apple's 12.3%.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Korea game transaction value across Google Play, Apple and ONE Store, five-year window.",
+      "scope": {
+        "store": [
+          "google_play",
+          "app_store",
+          "one_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "KR"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "store_share",
+        "platform_share"
+      ],
+      "support": [
+        {
+          "sourceId": "jk-s032",
+          "excerpt": "ONE Store: 12.6% game transaction share vs Apple App Store 12.3% (IGAWorks Mobile Index, 2020 H2-2025 H1); Google Play share not stated in the article.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [
+        {
+          "sourceId": "jk-s004",
+          "excerpt": "Sensor Tower's official-store data puts the App Store at roughly a quarter of Korean game revenue in 2024 (excludes ONE Store).",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "validFor": "Press kit 2025-08-14",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "ONE Store is a real but secondary store; only relevant if the game ships there.",
+      "researcherNote": "Vendor self-report; IGAWorks report itself unread; period is five years so not comparable to a single year.",
+      "retired": false
+    },
+    {
+      "id": "jk-kr-004",
+      "kind": "market_note",
+      "claim": "Among the top 50 grossing games listed on both Google Play and ONE Store, ONE Store's transaction share was 49.2% in H1 2025.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [
+        {
+          "value": 49.2,
+          "unit": "% transaction share",
+          "of": "ONE Store among top-50 dual-listed games",
+          "context": "IGAWorks via ONE Store, H1 2025"
+        }
+      ],
+      "appliesWhen": "Games simultaneously listed on both stores, H1 2025.",
+      "scope": {
+        "store": [
+          "google_play",
+          "one_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "KR"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "store_share",
+        "platform_share"
+      ],
+      "support": [
+        {
+          "sourceId": "jk-s032",
+          "excerpt": "2025년 상반기 구글 플레이와 원스토어에 동시 입점된 상위 매출 50개 게임 기준으로, 원스토어의 거래액 점유율은 49.2%를 기록했다.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "Do not cite as ONE Store's market share.",
+      "researcherNote": "Selection-biased (only games on both stores) and vendor-reported; do not read as the market share.",
+      "retired": false
+    },
+    {
+      "id": "jk-kr-005",
+      "kind": "market_note",
+      "claim": "RPGs generated USD 2.1 billion, 52% of Korean mobile game revenue, in January-October 2024.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [
+        {
+          "value": 52,
+          "unit": "% of revenue",
+          "of": "RPG, Korea, Jan-Oct 2024",
+          "context": "Sensor Tower"
+        }
+      ],
+      "appliesWhen": "Korea App Store + Google Play game revenue, Jan-Oct 2024.",
+      "scope": {
+        "store": [
+          "google_play",
+          "app_store"
+        ],
+        "genre": [
+          "rpg"
+        ],
+        "countries": [
+          "KR"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "rpg",
+        "genre_convention"
+      ],
+      "support": [
+        {
+          "sourceId": "jk-s004",
+          "excerpt": "RPGs generated a staggering $2.1 billion in revenue, accounting for 52% of the total South Korean mobile game market.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Sensor Tower Jan-Oct 2024",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "Korea is RPG-led; an RPG framing of a roguelike listing fits the market.",
+      "researcherNote": "",
+      "retired": false
+    },
+    {
+      "id": "jk-kr-006",
+      "kind": "market_note",
+      "claim": "Legend of Mushroom, an idle RPG, earned USD 140 million in Korea, about 31% of its global revenue.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [
+        {
+          "value": 140,
+          "unit": "USD million",
+          "of": "Legend of Mushroom revenue in Korea",
+          "context": "Sensor Tower Jan-Oct 2024"
+        }
+      ],
+      "appliesWhen": "Competitor benchmark, Sensor Tower data to Oct 2024.",
+      "scope": {
+        "store": [
+          "google_play",
+          "app_store"
+        ],
+        "genre": [
+          "idle",
+          "rpg"
+        ],
+        "countries": [
+          "KR"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "idle",
+        "rpg",
+        "genre_convention"
+      ],
+      "support": [
+        {
+          "sourceId": "jk-s004",
+          "excerpt": "Joy Net Games' idle RPG Legend of Mushroom generated $140 million in Korea, 31% of its global revenue (Sensor Tower).",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "Korea is a key market for competitor Legend of Mushroom; study its Korean listing.",
+      "researcherNote": "The 31% figure came from the page's summary output; check exact sentence before quoting.",
+      "retired": false
+    },
+    {
+      "id": "jk-kr-007",
+      "kind": "market_note",
+      "claim": "Archero 2 earned USD 14.7 million in Korea, 23% of its lifetime spend, more than any other country as of February 2025.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [
+        {
+          "value": 14.7,
+          "unit": "USD million",
+          "of": "Archero 2 lifetime spend in Korea",
+          "context": "PocketGamer.biz Feb 2025"
+        }
+      ],
+      "appliesWhen": "Habby competitor, soft-launched in Korea first (lifetime to early 2025).",
+      "scope": {
+        "store": [
+          "google_play",
+          "app_store"
+        ],
+        "genre": [
+          "roguelike"
+        ],
+        "countries": [
+          "KR",
+          "TW",
+          "US"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "roguelike",
+        "metrics"
+      ],
+      "support": [
+        {
+          "sourceId": "jk-s031",
+          "excerpt": "PocketGamer.biz: Korea USD 14.7M (23%), Taiwan USD 10.3M (16%), US USD 9.9M (15%); Korea got soft launch access first, of which USD 11.6M came in soft launch.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Feb 2025",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "A Habby roguelike earns most in Korea, so Korea listing is a prime competitor reference.",
+      "researcherNote": "Provider of the revenue estimate not seen; Korea's lead is partly a soft-launch head start. Japan not mentioned.",
+      "retired": false
+    },
+    {
+      "id": "jk-kr-008",
+      "kind": "market_note",
+      "claim": "Sensor Tower data cited by a UA blog puts Korea, Taiwan and Japan as Capybara Go's strongest markets.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Habby competitor, November 2024 snapshot.",
+      "scope": {
+        "store": [
+          "google_play",
+          "app_store"
+        ],
+        "genre": [
+          "idle",
+          "roguelike"
+        ],
+        "countries": [
+          "KR",
+          "TW",
+          "JP"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "idle",
+        "roguelike",
+        "metrics"
+      ],
+      "support": [
+        {
+          "sourceId": "jk-s030",
+          "excerpt": "The strongest countries are South Korea, Taiwan, and Japan.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "Capybara Go's Asian listings (KR, TW, JP) are the relevant competitor references.",
+      "researcherNote": "Secondary blog; underlying Sensor Tower data not seen; snapshot from launch month.",
+      "retired": false
+    },
+    {
+      "id": "jk-kr-009",
+      "kind": "market_note",
+      "claim": "Since 22 March 2024 Korean law requires game publishers to show loot-box item types and probabilities in the game, on the website and in advertising and promotional materials.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Games offering probabilistic items in Korea, including foreign publishers.",
+      "scope": {
+        "store": [
+          "google_play",
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "KR"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "listing",
+          "text"
+        ]
+      },
+      "tags": [
+        "gacha",
+        "loot_box_disclosure",
+        "regulation",
+        "advertising_law"
+      ],
+      "support": [
+        {
+          "sourceId": "jk-s036",
+          "excerpt": "게임물을 유통시키거나 이용에 제공할 목적으로 게임물을 제작, 배급 또는 제공하는 자는 해당 게임물과 그 인터넷 홈페이지 및 광고·선전물마다 해당 게임물 내에서 사용되는 확률형 아이템의 종류와 종류별 공급 확률정보 … 표시하여야 한다.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        },
+        {
+          "sourceId": "jk-s037",
+          "excerpt": "게임물과 인터넷 홈페이지, 광고·선전물마다 확률형 아이템 정보 등을 표시해야 합니다.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        },
+        {
+          "sourceId": "jk-s033",
+          "excerpt": "Kim & Chang: obligation effective 2024-03-22, applies to domestic and overseas providers.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        },
+        {
+          "sourceId": "jk-s034",
+          "excerpt": "Law Firm Lin: Game Industry Act Article 33(2) requires display on the game, website and advertising materials.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "In force 2024-03-22; Game Industry Promotion Act Art. 33(2)",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "Any Korea-facing ad or promotional material for a game with gacha must carry the disclosure.",
+      "researcherNote": "Law (kr-mcst origin for statute mirror and official news), plus two independent law firms. Store-page coverage is a separate question (jk-kr-011).",
+      "retired": false
+    },
+    {
+      "id": "jk-kr-010",
+      "kind": "market_note",
+      "claim": "In advertising, Korean rules require the phrase '확률형 아이템 포함' rather than the individual probabilities.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Game advertising and promotional materials aimed at Korea.",
+      "scope": {
+        "store": [
+          "google_play",
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "KR"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "text",
+          "video"
+        ]
+      },
+      "tags": [
+        "gacha",
+        "loot_box_disclosure",
+        "regulation",
+        "advertising_law"
+      ],
+      "support": [
+        {
+          "sourceId": "jk-s038",
+          "excerpt": "게임 광고·선전물에서도 '확률형 아이템 포함'이라는 문구를 표시하도록 하여 게임이용자들에게 미리 안내할 수 있도록 했다.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        },
+        {
+          "sourceId": "jk-s041",
+          "excerpt": "'확률형 아이템 포함'이라는 사실을 알리는 문구가 제시되면 됩니다.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        },
+        {
+          "sourceId": "jk-s039",
+          "excerpt": "Gamemeca: outdoor, SNS/video, online, broadcast ads and game trailers must show the phrase.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "Add the phrase to Korean ad creatives and trailers; agency advice is a bottom caption fixed for the whole video.",
+      "researcherNote": "Origins: ministry guideline as reported by three outlets (one origin) plus an ad agency's reading. Official guideline PDF text unreadable in this session.",
+      "retired": false
+    },
+    {
+      "id": "jk-kr-011",
+      "kind": "market_note",
+      "claim": "Korean sources say a game's app store detail page is not an advertisement for the phrase rule, though in-store search or recommendation ads may be.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Store detail pages and download pages versus in-store ad placements.",
+      "scope": {
+        "store": [
+          "google_play",
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "KR"
+        ],
+        "position": [
+          "store_page"
+        ],
+        "asset": [
+          "listing",
+          "screenshots"
+        ]
+      },
+      "tags": [
+        "loot_box_disclosure",
+        "regulation",
+        "advertising_law",
+        "store_page_layout"
+      ],
+      "support": [
+        {
+          "sourceId": "jk-s041",
+          "excerpt": "앱 스토어 상세페이지는 광고 대상이 아닙니다. 다만 스토어 안에서 집행하는 검색광고와 추천 지면 광고는 광고물로 판단될 여지가 있습니다.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        },
+        {
+          "sourceId": "jk-s039",
+          "excerpt": "Gamemeca: exempt are the official homepage needed to use the game and the download page from which the game client is obtained.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "Do not tell the client screenshots are exempt without verification; low-risk step is still adding the phrase on paid in-store ads.",
+      "researcherNote": "Two origins but only an agency and a press explanation; the official MCST guideline (해설서) was not readable. Verify with the MCST guideline before advising that store screenshots need no phrase.",
+      "retired": false
+    },
+    {
+      "id": "jk-kr-012",
+      "kind": "market_note",
+      "claim": "Very small ad formats, such as smartphone notification ads and app-search-result ads, are exempt from the '확률형 아이템 포함' phrase.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Ad formats too small to hold text, as listed in Korean guideline coverage.",
+      "scope": {
+        "store": [
+          "google_play",
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "KR"
+        ],
+        "position": [
+          "search_result"
+        ],
+        "asset": [
+          "text"
+        ]
+      },
+      "tags": [
+        "loot_box_disclosure",
+        "regulation",
+        "advertising_law",
+        "search_result"
+      ],
+      "support": [
+        {
+          "sourceId": "jk-s039",
+          "excerpt": "Gamemeca: very small banner ads such as smartphone notification ads and app-search-result ads are exempt; the standard is unclear.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        },
+        {
+          "sourceId": "jk-s040",
+          "excerpt": "Sisaweek: banners or ads where adding text is physically difficult due to size are exempt.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        },
+        {
+          "sourceId": "jk-s041",
+          "excerpt": "Wepick: notification-level small banners are given as an example where inserting the phrase is difficult.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "Search-result placements may be exempt, but the size threshold is unclear.",
+      "researcherNote": "Ministry origin plus agency reading.",
+      "retired": false
+    },
+    {
+      "id": "jk-kr-013",
+      "kind": "market_note",
+      "claim": "Korea's game rating body reported 266 games in breach of loot-box disclosure among 1,255 examined by July 2024, 60% of them foreign.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [
+        {
+          "value": 266,
+          "unit": "games",
+          "of": "violating loot-box rules of 1,255 examined",
+          "context": "GRAC, by July 2024"
+        }
+      ],
+      "appliesWhen": "GRAC monitoring since 22 March 2024.",
+      "scope": {
+        "store": [
+          "google_play",
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "KR"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "loot_box_disclosure",
+        "regulation"
+      ],
+      "support": [
+        {
+          "sourceId": "jk-s042",
+          "excerpt": "GRAC examined 1,255 cases since 2024-03-22, found 266 games breaking the rules, 60% foreign; 185 developers had corrected; five foreign games risk distribution bans.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "As of 2024-07",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "Enforcement is active and reaches foreign publishers.",
+      "researcherNote": "",
+      "retired": false
+    },
+    {
+      "id": "jk-kr-014",
+      "kind": "market_note",
+      "claim": "Breaching the Korean loot-box disclosure duty can lead to up to two years in prison or a KRW 20 million fine after a correction order.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Loot-box disclosure obligations under the Game Industry Promotion Act.",
+      "scope": {
+        "store": [
+          "google_play",
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "KR"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "loot_box_disclosure",
+        "regulation"
+      ],
+      "support": [
+        {
+          "sourceId": "jk-s037",
+          "excerpt": "시정명령 불이행 시 2년 이하의 징역 또는 2천만 원 이하의 벌금.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        },
+        {
+          "sourceId": "jk-s033",
+          "excerpt": "Kim & Chang: correction order, then up to two years' imprisonment or KRW 20 million fine.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "2024-03-22 onward",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "Compliance is a hard constraint for Korean creatives.",
+      "researcherNote": "",
+      "retired": false
+    },
+    {
+      "id": "jk-kr-015",
+      "kind": "market_note",
+      "claim": "A 2025 amendment to the Korean Game Industry Promotion Act took effect on 1 August 2025 and applies to loot-box disclosure violations after that date.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Loot-box disclosure violations, Korea.",
+      "scope": {
+        "store": [
+          "google_play",
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "KR"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "loot_box_disclosure",
+        "regulation"
+      ],
+      "support": [
+        {
+          "sourceId": "jk-s035",
+          "excerpt": "2025년 8월 1일부터 시행될 예정이며 … 시행일 이후에 발생하는 확률형 아이템 표시의무 위반행위",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Proclaimed 2025-01-31, effective 2025-08-01",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "Treat the stricter regime as current.",
+      "researcherNote": "Newsletter detail is in an unread attachment.",
+      "retired": false
+    },
+    {
+      "id": "jk-kr-016",
+      "kind": "market_note",
+      "claim": "One Korean law firm states that the loot-box regime carries civil punitive damages of up to three times the loss.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Loot-box disclosure violations, Korea.",
+      "scope": {
+        "store": [
+          "google_play",
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "KR"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "loot_box_disclosure",
+        "regulation"
+      ],
+      "support": [
+        {
+          "sourceId": "jk-s034",
+          "excerpt": "Sanctions: corrective order, criminal penalty (up to 2 years or KRW 20M), civil punitive damages (within three times the damage), plus possible Fair Trade Act action.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "Mention as a risk only after checking the statute.",
+      "researcherNote": "Single law-firm newsletter; not verified against the statute text.",
+      "retired": false
+    },
+    {
+      "id": "jk-kr-017",
+      "kind": "market_note",
+      "claim": "Foreign games in breach of Korean disclosure rules can be removed from Korean app markets.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Foreign publishers with a designated Korean domestic agent.",
+      "scope": {
+        "store": [
+          "google_play",
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "KR"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "loot_box_disclosure",
+        "regulation"
+      ],
+      "support": [
+        {
+          "sourceId": "jk-s034",
+          "excerpt": "Under the current procedure, removal from the market is possible about two months after detection.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        },
+        {
+          "sourceId": "jk-s042",
+          "excerpt": "Five foreign games risk distribution bans if makers do not comply.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "Compliance failure can cost the Korean listing itself.",
+      "researcherNote": "Two origins (law firm, GRAC via press).",
+      "retired": false
+    },
+    {
+      "id": "jk-kr-018",
+      "kind": "market_note",
+      "claim": "Korean law requires each game to display the producer's name, its rating and content information.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Games distributed in Korea (Game Industry Promotion Act Art. 33(1)).",
+      "scope": {
+        "store": [
+          "google_play",
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "KR"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "age_rating",
+        "regulation"
+      ],
+      "support": [
+        {
+          "sourceId": "jk-s036",
+          "excerpt": "게임물을 유통시키거나 이용에 제공할 목적으로 게임물을 제작 또는 배급하는 자는 해당 게임물마다 … 등급 및 게임물내용정보를 표시하여야 한다.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "Rating display is in-game; do not add a rating mark to store screenshots without checking.",
+      "researcherNote": "The article ties the duty to the game itself; no source read on rating-mark placement inside store images.",
+      "retired": false
+    },
+    {
+      "id": "jk-kr-019",
+      "kind": "market_note",
+      "claim": "A Korean game can get its rating from GRAC or from store self-rating (IARC), but 19+ content needs a GRAC review.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Rating a game for Korea.",
+      "scope": {
+        "store": [
+          "google_play",
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "KR"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "age_rating",
+        "regulation"
+      ],
+      "support": [
+        {
+          "sourceId": "jk-s044",
+          "excerpt": "Two routes: GRAC certificate (10-15 days) or store IARC self-rating on App Store, Google Play, ONE store; 19+ content requires GRAC review regardless.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "Check the rating route in the store account setup; not an image matter.",
+      "researcherNote": "Single platform-blog source (Apps in Toss); official GRAC page not fetched.",
+      "retired": false
+    },
+    {
+      "id": "jk-kr-020",
+      "kind": "market_note",
+      "claim": "Habby used the actor An Jae-hong as promotional model for Capybara Go in Korea, ahead of the 23 October 2024 launch.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Korean brand and UA marketing, not store images.",
+      "scope": {
+        "store": [
+          "google_play",
+          "app_store"
+        ],
+        "genre": [
+          "idle",
+          "roguelike"
+        ],
+        "countries": [
+          "KR"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "video"
+        ]
+      },
+      "tags": [
+        "celebrity",
+        "collaboration_ip",
+        "pre_registration"
+      ],
+      "support": [
+        {
+          "sourceId": "jk-s046",
+          "excerpt": "HABBY named actor An Jae-hong (Reply 1988) promotional model; launch 2024-10-23; pre-registration on App Store and Google Play.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        },
+        {
+          "sourceId": "jk-s045",
+          "excerpt": "AppGrowing: Korea creatives invited An Jae-hong to endorse the game and explain gameplay and 'high welfare' content, unlike JP/TW/HK creatives.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "Korean launch marketing uses a known face; a lighter equivalent is a named voice or spokesperson, not a screenshot element.",
+      "researcherNote": "Origins: publisher announcement and AppGrowing's ad-library view; both about ads, not store images.",
+      "retired": false
+    },
+    {
+      "id": "jk-kr-021",
+      "kind": "market_note",
+      "claim": "Capybara Go's Korean pre-registration included a prize draw for members of the official Naver lounge, with devices such as a Galaxy S24 Ultra and iPhone 16 Pro.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Korean pre-registration, October 2024.",
+      "scope": {
+        "store": [
+          "google_play",
+          "app_store"
+        ],
+        "genre": [
+          "idle",
+          "roguelike"
+        ],
+        "countries": [
+          "KR"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "pre_registration",
+        "community",
+        "offers"
+      ],
+      "support": [
+        {
+          "sourceId": "jk-s046",
+          "excerpt": "Pre-registration via App Store and Google Play gave various rewards; official Naver lounge members received prizes including Samsung Galaxy S24 Ultra, iPhone 16 Pro and Galaxy Watch 7.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "Korean pre-registration commonly ties into a Naver community sign-up.",
+      "researcherNote": "Single publisher announcement.",
+      "retired": false
+    },
+    {
+      "id": "jk-kr-022",
+      "kind": "market_note",
+      "claim": "A Korean gaming-insight vendor says structured pre-registration with milestone rewards and community building measurably affects Day 1 install intent, but shows no data.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Korean pre-registration strategy.",
+      "scope": {
+        "store": [
+          "google_play",
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "KR"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "listing"
+        ]
+      },
+      "tags": [
+        "pre_registration",
+        "social_proof",
+        "community"
+      ],
+      "support": [
+        {
+          "sourceId": "jk-s047",
+          "excerpt": "A structured pre-registration campaign with milestone rewards and community-building elements has a measurable impact on Day 1 install intent and first-session depth.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "Not evidence of effect size.",
+      "researcherNote": "Vendor assertion, no numbers. A claim that over 90% of top-20 Korean games ran pre-registration was not traceable and is not recorded.",
+      "retired": false
+    },
+    {
+      "id": "jk-kr-023",
+      "kind": "market_note",
+      "claim": "Korean publishers run Chuseok events with login rewards, summon tickets, hanbok costumes and limited items.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Chuseok holiday, 2026 (24-27 Sept core).",
+      "scope": {
+        "store": [
+          "google_play",
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "KR"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "text"
+        ]
+      },
+      "tags": [
+        "seasonal",
+        "events",
+        "offers"
+      ],
+      "support": [
+        {
+          "sourceId": "jk-s048",
+          "excerpt": "Nexon, Netmarble, NCSoft, Smilegate and others run login streaks, summon tickets, costumes and item events for Chuseok 2026.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        },
+        {
+          "sourceId": "jk-s049",
+          "excerpt": "NCSoft, Devsisters, Kakao Games, Smilegate, Pearl Abyss: login rewards of summon tickets, enhancement stones, gold; hanbok costumes; limited items; core holiday Sept 24-27, events mainly to Oct 7.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Chuseok 2026",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "A seasonal Chuseok event is normal in Korea; treat a store-image refresh as optional.",
+      "researcherNote": "In-game events; no effect on store-image performance measured.",
+      "retired": false
+    },
+    {
+      "id": "jk-kr-024",
+      "kind": "market_note",
+      "claim": "Netmarble ran Seollal (Lunar New Year) events across 13 games in February 2026 with login bonuses, summon tickets and holiday costumes.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Seollal 2026, one publisher.",
+      "scope": {
+        "store": [
+          "google_play",
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "KR"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "text"
+        ]
+      },
+      "tags": [
+        "seasonal",
+        "events",
+        "offers"
+      ],
+      "support": [
+        {
+          "sourceId": "jk-s050",
+          "excerpt": "Netmarble: Seollal events in 13 games, Feb 12-26 primary window, rewards include hero summoning tickets, SSR+ tickets, costumes.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "Seollal 2026",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "Seollal is an event window like Chuseok; free-summon rewards are the standard hook.",
+      "researcherNote": "Publisher self-notice, one origin.",
+      "retired": false
+    },
+    {
+      "id": "jk-kr-025",
+      "kind": "market_note",
+      "claim": "A Korean ASO guide asserts that the first three screenshots determine 80% of conversion but cites no source.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Korean ASO commentary, 2026.",
+      "scope": {
+        "store": [
+          "google_play",
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "KR"
+        ],
+        "position": [
+          "1-3"
+        ],
+        "asset": [
+          "screenshots"
+        ]
+      },
+      "tags": [
+        "first_images",
+        "screenshots",
+        "conversion_benchmark"
+      ],
+      "support": [
+        {
+          "sourceId": "jk-s051",
+          "excerpt": "검색 결과에서 노출되는 첫 3장이 전환율의 80%를 결정합니다.",
+          "excerptType": "quote",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "Do not cite as data.",
+      "researcherNote": "Unsourced assertion; a Chinese blog claimed 70% (seen only as a snippet, not recorded). Do not repeat as fact.",
+      "retired": false
+    },
+    {
+      "id": "jk-kr-026",
+      "kind": "market_note",
+      "claim": "The W3C Korean layout requirements (KLREQ) say Hangul is set horizontally left to right, words are separated by spaces, and line breaks may fall on character or word basis.",
+      "ruleClass": "none",
+      "enforcement": null,
+      "facts": [],
+      "appliesWhen": "Hangul text in store image captions.",
+      "scope": {
+        "store": [
+          "google_play",
+          "app_store"
+        ],
+        "genre": [
+          "all_games"
+        ],
+        "countries": [
+          "KR"
+        ],
+        "position": [
+          "all"
+        ],
+        "asset": [
+          "screenshots",
+          "text"
+        ]
+      },
+      "tags": [
+        "typography",
+        "script",
+        "legibility"
+      ],
+      "support": [
+        {
+          "sourceId": "jk-s014",
+          "excerpt": "Characters progress left to right, lines top to bottom; in principle words are separated by spaces; if a line ends in Hangul, breaking is done on character or word basis and the user decides.",
+          "excerptType": "paraphrase",
+          "fetched": true,
+          "checkedBy": "agent:claude-sonnet-5.5 kb-research-v2"
+        }
+      ],
+      "contradicts": [],
+      "counterSupport": [],
+      "validFor": "",
+      "abDetail": null,
+      "reviewBy": "2027-09-29",
+      "addedBy": "agent:claude-sonnet-5.5 kb-research-v2",
+      "useFor": "Break Korean headlines at word boundaries where possible; a native reviewer should check.",
+      "researcherNote": "General typography standard; no game-store study of Hangul fonts was found.",
+      "retired": false
+    }
+  ]
+}

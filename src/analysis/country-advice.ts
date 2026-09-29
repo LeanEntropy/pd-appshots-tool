@@ -1,3 +1,6 @@
+import { ctxForCountry } from "../kb/run.ts";
+import { adviceKb } from "../kb/step-io.ts";
+import { type KbOpts, kbPart, marksOf, withMarks } from "../kb/synthesis-kb.ts";
 import type { MarketRef } from "../reports/types.ts";
 import { type CallContext, validatedCall } from "./call.ts";
 import {
@@ -90,28 +93,65 @@ export async function writeCountryAdvice(
   const out: AdviceResult = { advice: null, draft: null, review: null, problems: [] };
   const task = adviceTask(x);
   const check = (v: CountryAdvice) => adviceProblems(v, x.rules);
+  // The knowledge base for this country (Settings switch): off = everything exactly as before.
+  const run = ctxForCountry(ctx, x.country.gl).kb;
+  const facts = x.facts.map((f) => `advice:${f.kind}`);
+  const kbFor = (t: string) =>
+    kbPart({
+      ...adviceKb(facts),
+      run,
+      system: d.prompt,
+      task: { now: t, before: t },
+      schema: countryAdviceSchema,
+      check,
+      model: d.writer.model,
+    });
+  const finish = (
+    k: Exclude<ReturnType<typeof kbFor>, { blocked: string }>,
+    v: CountryAdvice | null,
+  ) => {
+    const f = k.finish(v);
+    return withMarks(f.value, run ? marksOf(run, f.record) : null);
+  };
+  const k = kbFor(task);
+  if ("blocked" in k) {
+    out.problems.push(`country advice for ${x.country.label}: ${k.blocked}`);
+    return out;
+  }
   const first = await validatedCall(
     "country-advice",
     d.writer,
-    d.prompt,
-    task,
+    k.system,
+    k.task.now,
     [],
-    countryAdviceSchema,
-    check,
+    k.schema,
+    k.check,
     ctx,
   );
   if (!first.value) {
     out.problems.push(`country advice for ${x.country.label}: ${first.problems.join("; ")}`);
     return out;
   }
-  out.advice = first.value;
+  out.advice = finish(k, first.value);
+  const firstPlain = k.finish(first.value).value;
   if (!d.reviewer) return out;
   d.phase?.("review");
+  const reviewTask = `Review these country recommendations for ${x.country.label}.\n\n${task}\n\nThe advice (JSON):\n${JSON.stringify(firstPlain)}`;
+  const rk = kbPart({
+    ...(adviceKb(facts, false) as unknown as KbOpts<Review>),
+    run,
+    system: d.reviewPrompt,
+    task: { now: reviewTask, before: reviewTask },
+    schema: reviewSchema,
+    check: () => [],
+    model: d.reviewer.model,
+  });
+  if ("blocked" in rk) return out;
   const rev = await validatedCall(
     "country-advice-review",
     d.reviewer,
-    d.reviewPrompt,
-    `Review these country recommendations for ${x.country.label}.\n\n${task}\n\nThe advice (JSON):\n${JSON.stringify(first.value)}`,
+    rk.system,
+    rk.task.now,
     [],
     reviewSchema,
     () => [],
@@ -128,19 +168,23 @@ export async function writeCountryAdvice(
     .map((f) => `- position ${f.position || "all"}: ${f.issue} Suggestion: ${f.suggestion}`)
     .join("\n");
   d.phase?.("revise");
+  const vk = kbFor(
+    `Write the country advice again. A reviewer found these major problems; fix them where they are right, keep the rest.\n${findings}\n\nYour first version (JSON):\n${JSON.stringify(firstPlain)}\n\n${task}`,
+  );
+  if ("blocked" in vk) return out;
   const revised = await validatedCall(
     "country-advice-revise",
     d.writer,
-    d.prompt,
-    `Write the country advice again. A reviewer found these major problems; fix them where they are right, keep the rest.\n${findings}\n\nYour first version (JSON):\n${JSON.stringify(first.value)}\n\n${task}`,
+    vk.system,
+    vk.task.now,
     [],
-    countryAdviceSchema,
-    check,
+    vk.schema,
+    vk.check,
     ctx,
   );
   if (revised.value) {
-    out.draft = first.value;
-    out.advice = revised.value;
+    out.draft = out.advice;
+    out.advice = finish(vk, revised.value);
   } else out.problems.push(`revision for ${x.country.label}: ${revised.problems.join("; ")}`);
   return out;
 }

@@ -113,6 +113,28 @@ export const OptionsSchema = z
         message: "the 'same picture' limit must be below the 'different picture' limit",
         path: ["sameMaxOutside"],
       }),
+    /**
+     * The knowledge base in the text steps (docs/plan-knowledge-base.md): OFF until its blind
+     * evaluation passes. Cost cap per report: decision D6. Genres pick the genre notes (D7).
+     */
+    knowledge: z
+      .object({
+        enabled: z.boolean().default(false),
+        preset: z.enum(["small", "normal", "large"]).default("normal"),
+        maxUsdPerReport: z.number().min(0.05).max(10).default(0.5),
+        genres: z
+          .object({
+            roguelike: z.boolean().default(false),
+            rpg: z.boolean().default(false),
+            idle: z.boolean().default(false),
+            survivor_like: z.boolean().default(false),
+            casual: z.boolean().default(false),
+            strategy: z.boolean().default(false),
+            puzzle: z.boolean().default(false),
+          })
+          .prefault({}),
+      })
+      .prefault({}),
     pdf: z
       .object({
         paper: z.enum(["A4", "Letter"]).default("A4"),
@@ -147,6 +169,7 @@ export type GroupId =
   | "suggestions"
   | "abTests"
   | "speed"
+  | "knowledge"
   | "pdf";
 
 export const GROUPS: { id: GroupId; title: string; help: string }[] = [
@@ -185,6 +208,11 @@ export const GROUPS: { id: GroupId; title: string; help: string }[] = [
     id: "speed",
     title: "Analysis speed",
     help: "How screenshots are sent to the AI and how near-identical pictures across countries are handled.",
+  },
+  {
+    id: "knowledge",
+    title: "Knowledge base",
+    help: "General evidence about store pages (official store rules, corroborated findings, market notes) given to the text steps. Off until its blind comparison with and without it passes.",
   },
   {
     id: "pdf",

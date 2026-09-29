@@ -1,3 +1,6 @@
+import type { KbRecord } from "../kb/step.ts";
+import { abKb } from "../kb/step-io.ts";
+import { kbPart, marksOf, withMarks } from "../kb/synthesis-kb.ts";
 import type { Evidence } from "../reports/ab-candidates.ts";
 import {
   type AbTestsOutput,
@@ -86,32 +89,80 @@ export async function writeAbTests(
   prompt: RenderedPrompt,
   x: AbTestsInput,
   ctx: CallContext,
-): Promise<{ value: AbTestsOutput | null; problems: string[] }> {
-  if (!x.evidence.length) return { value: null, problems: [] };
-  const task = abTestsTask(x);
+): Promise<{ value: AbTestsOutput | null; problems: string[]; record: KbRecord | null }> {
+  if (!x.evidence.length) return { value: null, problems: [], record: null };
+  const plain = abTestsTask(x);
+  // The knowledge base (Settings switch): off = the prompt, schema and check exactly as before.
+  const k = kbPart({
+    ...abKb(x.evidence),
+    run: ctx.kb,
+    system: prompt,
+    task: { now: plain, before: plain },
+    schema: abTestsSchema,
+    check: () => [],
+    model: provider.model,
+  });
+  if ("blocked" in k) return { value: null, problems: [k.blocked], record: null };
+  const task = k.task.now;
   const first = await validatedCall(
     "ab-tests",
     provider,
-    prompt,
+    k.system,
     task,
     [],
-    abTestsSchema,
-    () => [],
+    k.schema,
+    k.check,
     ctx,
   );
-  if (!first.value) return { value: null, problems: first.problems };
-  const problems = problemList(first.value, x.rules);
-  if (!problems.length) return { value: first.value, problems: [] };
-  const retry = await validatedCall(
-    "ab-tests-repair",
-    provider,
-    prompt,
-    `${task}\n\nYour previous answer (JSON):\n${JSON.stringify(first.value)}\n\nIt had these problems; fix them and answer again with every test:\n- ${problems.join("\n- ")}`,
-    [],
-    abTestsSchema,
-    () => [],
-    ctx,
-  );
-  const value = retry.value ?? first.value;
-  return { value, problems: problemList(value, x.rules) };
+  if (!first.value) return { value: null, problems: first.problems, record: null };
+  const problems = [...problemList(first.value, x.rules), ...k.enforced(first.value)];
+  const retry = problems.length
+    ? await validatedCall(
+        "ab-tests-repair",
+        provider,
+        k.system,
+        `${task}\n\nYour previous answer (JSON):\n${JSON.stringify(first.value)}\n\nIt had these problems; fix them and answer again with every test:\n- ${problems.join("\n- ")}`,
+        [],
+        k.schema,
+        k.check,
+        ctx,
+      )
+    : null;
+  const f = k.finish(retry?.value ?? first.value);
+  const kept = keepAllowed(f.value, f.record, k.enforced);
+  const marks = ctx.kb ? marksOf(ctx.kb, kept.record) : null;
+  return {
+    value: withMarks(kept.value, marks),
+    problems: kept.value ? problemList(kept.value, x.rules) : [],
+    record: kept.record,
+  };
+}
+
+/** A test that breaks an enforced store rule is dropped by code (its citations renumbered). */
+function keepAllowed(
+  v: AbTestsOutput | null,
+  record: KbRecord | null,
+  enforced: (v: AbTestsOutput) => string[],
+): { value: AbTestsOutput | null; record: KbRecord | null } {
+  if (!v) return { value: null, record };
+  const keep = v.tests.map((t) => enforced({ tests: [t] }).length === 0);
+  if (keep.every(Boolean)) return { value: v, record };
+  const newIndex = new Map<string, string>();
+  let n = 0;
+  keep.forEach((ok, i) => {
+    if (ok) newIndex.set(`test:${i + 1}`, `test:${++n}`);
+  });
+  const move = <T extends { item: string }>(list: T[]) =>
+    list.flatMap((c) =>
+      newIndex.has(c.item) ? [{ ...c, item: newIndex.get(c.item) as string }] : [],
+    );
+  return {
+    value: { ...v, tests: v.tests.filter((_, i) => keep[i]) },
+    record: record && {
+      ...record,
+      citations: move(record.citations),
+      againstGuidance: move(record.againstGuidance),
+      conflicts: move(record.conflicts),
+    },
+  };
 }
