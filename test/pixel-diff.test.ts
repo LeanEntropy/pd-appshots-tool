@@ -59,8 +59,10 @@ const png = (raw: Buffer, w = W, h = H) =>
 
 /** Reads "files" from memory, exactly as the real reader does from disk. */
 function memory(files: Record<string, Buffer>): GreyReader {
-  return (file, w, h) =>
-    sharp(files[file]).resize(w, h, { fit: "fill" }).greyscale().raw().toBuffer();
+  return (file, w, h, colour) => {
+    const s = sharp(files[file]).resize(w, h, { fit: "fill" });
+    return (colour ? s.removeAlpha() : s.greyscale()).raw().toBuffer();
+  };
 }
 
 async function check(image: Buffer, anchor: Buffer, regions = REGIONS) {
@@ -113,6 +115,14 @@ test("pixel check: a badge added on the band counts inside (as band change), not
   assert.equal(r.outside, 0);
   assert.ok(r.bandOnly > 0.0002, String(r.bandOnly));
   assert.equal(pixelVerdict(r, T), "same-new-text");
+});
+
+test("pixel check: a band recoloured at the same brightness is still a band change", async () => {
+  // Grey 0.299 R + 0.587 G + 0.114 B: (240, 200, 20) and (93, 255, 0) are about as bright.
+  const recoloured = paint(scene(), { x: 0, y: 0, w: 100, h: 15 }, [93, 255, 0]);
+  const r = await check(recoloured, scene());
+  assert.equal(r.outside, 0);
+  assert.ok(r.bandOnly > 0.05, String(r.bandOnly));
 });
 
 test("pixel check: a tiny change outside stays under the same-picture line", async () => {
@@ -171,14 +181,14 @@ test("pixel check: cached per pair and per anchor boxes, versioned", async () =>
   assert.notEqual(key, pixelKey(paths, "i", "a", { ...REGIONS, texts: [] }));
   let reads = 0;
   const files = memory({ a: await png(scene()), b: await png(scene()) });
-  const read: GreyReader = (f, w, h) => {
+  const read: GreyReader = (f, w, h, colour) => {
     reads++;
-    return files(f, w, h);
+    return files(f, w, h, colour);
   };
   const pair = { imageId: "i", anchorId: "a", imageFile: "a", anchorFile: "b" };
   const r1 = await pixelCheck(storage, key, pair, { width: W, height: H }, REGIONS, read);
   const r2 = await pixelCheck(storage, key, pair, { width: W, height: H }, REGIONS, read);
-  assert.equal(reads, 2, "the second check is read from the cache");
+  assert.equal(reads, 4, "the second check is read from the cache");
   assert.deepEqual(r1, r2);
   assert.equal(r1.version, "pixel-check.v1");
 });

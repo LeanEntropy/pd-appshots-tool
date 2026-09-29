@@ -3,6 +3,7 @@ import type { ProjectPaths } from "../config/load.ts";
 import { libraryKey, projectKey, type Storage } from "../storage/index.ts";
 import { stableHash } from "../util/hash.ts";
 import { hamming } from "./identity.ts";
+import { areasOf } from "./pixel-areas.ts";
 
 /**
  * The pixel check of near-identical pictures across countries (plan-analysis-speed item 8), code
@@ -19,10 +20,6 @@ export const PIXEL_ASK_BITS = 10;
 const EDGE = 320;
 const LEVEL = 40;
 const MARGIN = 3;
-/** Grid cell (px at 320) for the changed areas; a cell counts with at least this many pixels. */
-const CELL = 8;
-const CELL_MIN = 3;
-const MAX_AREAS = 16;
 
 /** A box in percent of the image (x, y, width, height). */
 export interface Box {
@@ -49,7 +46,7 @@ export interface PixelResult {
   changed: number;
   inside: number;
   outside: number;
-  /** Changed inside the band boxes but outside the text boxes (a recoloured band, a badge). */
+  /** Changed (in grey or colour) inside the band boxes but outside the text boxes (a recoloured band, a badge). */
   bandOnly: number;
   /** Changed inside the element boxes (characters or items on the layer). */
   elements: number;
@@ -111,20 +108,22 @@ export function readPixelCheck(storage: Storage, key: string): PixelResult | und
   return r?.version === PIXEL_VERSION ? r : undefined;
 }
 
-/** Grey pixels of an image file at exactly w × h (scaled to fill). */
-export type GreyReader = (file: string, w: number, h: number) => Promise<Buffer>;
+/** Pixels of an image file at exactly w × h (scaled to fill): grey, or RGB with `colour`. */
+export type GreyReader = (file: string, w: number, h: number, colour?: boolean) => Promise<Buffer>;
 
-export const greyPixels: GreyReader = (file, w, h) =>
-  sharp(file).resize(w, h, { fit: "fill" }).greyscale().raw().toBuffer();
+export const greyPixels: GreyReader = (file, w, h, colour = false) => {
+  const s = sharp(file).resize(w, h, { fit: "fill" });
+  return (colour ? s.removeAlpha().toColourspace("srgb") : s.greyscale()).raw().toBuffer();
+};
 
 /** A reader that keeps each decoded image for the rest of one pass over many pairs. */
 export function cachedGrey(read: GreyReader = greyPixels): GreyReader {
   const seen = new Map<string, Promise<Buffer>>();
-  return (file, w, h) => {
-    const k = `${file}|${w}x${h}`;
+  return (file, w, h, colour = false) => {
+    const k = `${file}|${w}x${h}|${colour}`;
     let p = seen.get(k);
     if (!p) {
-      p = read(file, w, h);
+      p = read(file, w, h, colour);
       seen.set(k, p);
     }
     return p;
@@ -152,75 +151,19 @@ function maskOf(boxes: Box[], w: number, h: number, margin: number): Uint8Array 
   return m;
 }
 
-/** Changed areas: hot grid cells joined when touching (8 neighbours), as percent boxes. */
-function areasOf(diff: Uint8Array, w: number, h: number): Box[] {
-  const cw = Math.ceil(w / CELL);
-  const ch = Math.ceil(h / CELL);
-  const count = new Uint16Array(cw * ch);
-  for (let y = 0; y < h; y++)
-    for (let x = 0; x < w; x++)
-      if (diff[y * w + x]) {
-        const c = Math.floor(y / CELL) * cw + Math.floor(x / CELL);
-        count[c] = (count[c] ?? 0) + 1;
-      }
-  const seen = new Uint8Array(cw * ch);
-  const out: (Box & { n: number })[] = [];
-  for (let i = 0; i < count.length; i++) {
-    if (seen[i] || (count[i] ?? 0) < CELL_MIN) continue;
-    let x0 = cw;
-    let y0 = ch;
-    let x1 = -1;
-    let y1 = -1;
-    let n = 0;
-    const stack = [i];
-    seen[i] = 1;
-    while (stack.length) {
-      const c = stack.pop() as number;
-      const cx = c % cw;
-      const cy = Math.floor(c / cw);
-      x0 = Math.min(x0, cx);
-      y0 = Math.min(y0, cy);
-      x1 = Math.max(x1, cx);
-      y1 = Math.max(y1, cy);
-      n += count[c] ?? 0;
-      for (let dy = -1; dy <= 1; dy++)
-        for (let dx = -1; dx <= 1; dx++) {
-          const nx = cx + dx;
-          const ny = cy + dy;
-          if (nx < 0 || ny < 0 || nx >= cw || ny >= ch) continue;
-          const k = ny * cw + nx;
-          if (!seen[k] && (count[k] ?? 0) >= CELL_MIN) {
-            seen[k] = 1;
-            stack.push(k);
-          }
-        }
-    }
-    const px = (v: number, total: number) => Math.round((1000 * v) / total) / 10;
-    const bx = px(x0 * CELL, w);
-    const by = px(y0 * CELL, h);
-    out.push({
-      x: bx,
-      y: by,
-      w: Math.min(100 - bx, px((x1 - x0 + 1) * CELL, w)),
-      h: Math.min(100 - by, px((y1 - y0 + 1) * CELL, h)),
-      n,
-    });
-  }
-  return out
-    .sort((a, b) => b.n - a.n)
-    .slice(0, MAX_AREAS)
-    .map(({ n: _n, ...b }) => b);
-}
-
 const share = (n: number, total: number) => Math.round((1e5 * n) / total) / 1e5;
 
-/** Compares two grey pictures of the same size (pure; the tests use it directly). */
+/**
+ * Compares two grey pictures of the same size (pure). With their RGB copies, a band recoloured
+ * at the same brightness (invisible in grey) still counts as a band change.
+ */
 export function comparePixels(
   image: Buffer,
   anchor: Buffer,
   w: number,
   h: number,
   regions: PixelRegions,
+  colour?: { image: Buffer; anchor: Buffer },
 ): Omit<PixelResult, "version" | "imageId" | "anchorId" | "regions"> {
   const layer = maskOf([...regions.texts, ...regions.masks], w, h, MARGIN);
   // Without the margin: a badge right next to a text still counts as a band change.
@@ -232,8 +175,18 @@ export function comparePixels(
   let inside = 0;
   let bandOnly = 0;
   let inElements = 0;
+  const recoloured = (i: number) => {
+    if (!colour) return false;
+    for (let c = 0; c < 3; c++)
+      if (Math.abs((colour.image[i * 3 + c] ?? 0) - (colour.anchor[i * 3 + c] ?? 0)) > LEVEL)
+        return true;
+    return false;
+  };
   for (let i = 0; i < w * h; i++) {
-    if (Math.abs((image[i] ?? 0) - (anchor[i] ?? 0)) <= LEVEL) continue;
+    if (Math.abs((image[i] ?? 0) - (anchor[i] ?? 0)) <= LEVEL) {
+      if (band[i] && !text[i] && recoloured(i)) bandOnly++;
+      continue;
+    }
     diff[i] = 1;
     changed++;
     if (layer[i]) inside++;
@@ -259,13 +212,18 @@ export async function pixelCheckFiles(
   read: GreyReader = greyPixels,
 ): Promise<PixelResult> {
   const { w, h } = gridOf(size.width, size.height);
-  const [a, b] = await Promise.all([read(pair.imageFile, w, h), read(pair.anchorFile, w, h)]);
+  const [a, b, ca, cb] = await Promise.all([
+    read(pair.imageFile, w, h),
+    read(pair.anchorFile, w, h),
+    read(pair.imageFile, w, h, true),
+    read(pair.anchorFile, w, h, true),
+  ]);
   return {
     version: PIXEL_VERSION,
     imageId: pair.imageId,
     anchorId: pair.anchorId,
     regions: regionsHash(regions),
-    ...comparePixels(a, b, w, h, regions),
+    ...comparePixels(a, b, w, h, regions, { image: ca, anchor: cb }),
   };
 }
 
