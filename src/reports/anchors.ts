@@ -1,5 +1,6 @@
 import type { CostTier } from "../analysis/tiers.ts";
 import { hamming, NEAR_IDENTICAL_BITS } from "../store/identity.ts";
+import { PIXEL_MAX_BITS, type PixelVerdict } from "../store/pixel-diff.ts";
 import { theCountry } from "./names.ts";
 
 /** One store image a report needs: a game's phone screenshot at one position in one country. */
@@ -42,6 +43,24 @@ export interface ScopeItem extends ScopeInput {
   anchorAdded?: boolean;
   /** The game has no main-country version of this picture. */
   noMainVersion?: boolean;
+  /**
+   * Suggest mode: a full analysis the pixel check would turn into a text comparison against
+   * this anchor (same picture, new text); it moves only once the user confirms the pair.
+   */
+  pixelSuggested?: string;
+}
+
+/**
+ * The pixel check as one more input of the planner (plan-analysis-speed item 8). In suggest mode
+ * only pairs the user confirmed change anything; in automatic mode the verdict decides. The
+ * user's saved answer wins in both modes. Without it (check off): fingerprint only.
+ */
+export interface PixelInput {
+  mode: "suggest" | "automatic";
+  /** The verdict of a pair whose anchor is analysed; undefined: not checked (fingerprint rule). */
+  verdict: (imageId: string, anchorId: string) => PixelVerdict | undefined;
+  /** Pairs the user answered "same screen". */
+  same: ReadonlySet<string>;
 }
 
 /** Same picture: same shape (within 3%) and a perceptual hash within the near-identical bits. */
@@ -70,6 +89,8 @@ export { pairKey };
  *    not analysed yet); only without a main-country version, the first other country's copy is;
  * 3. full: everything else ("no main-country version" when that is the case).
  * `different` holds image pairs the user marked as different screens: they never match.
+ * `pixel` (item 8) widens "same picture" to 14 bits for pairs the user confirmed, and in
+ * automatic mode for pairs the pixel check calls the same picture.
  */
 export function tierScope(
   inputs: readonly ScopeInput[],
@@ -78,15 +99,33 @@ export function tierScope(
   analysedIds: ReadonlySet<string>,
   mainCountry: string,
   different: ReadonlySet<string> = new Set(),
+  pixel?: PixelInput,
 ): ScopeItem[] {
   const planned = new Set<string>();
   const out: ScopeItem[] = [];
   const abroad = new Map<string, AnchorCandidate[]>();
   for (const [app, list] of abroadAnalysed) abroad.set(app, [...list]);
+  const sameAs = (c: AnchorCandidate, it: ScopeInput): boolean => {
+    if (!pixel) return samePicture(c, it);
+    if (!samePicture(c, it, PIXEL_MAX_BITS)) return false;
+    if (pixel.same.has(pairKey(c.imageId, it.imageId))) return true;
+    const v = pixel.mode === "automatic" ? pixel.verdict(it.imageId, c.imageId) : undefined;
+    return v ? v !== "different" : samePicture(c, it);
+  };
+  const open = (it: ScopeInput, list: readonly AnchorCandidate[] | undefined) =>
+    (list ?? []).filter(
+      (c) => c.imageId !== it.imageId && !different.has(pairKey(c.imageId, it.imageId)),
+    );
+  const suggested = (it: ScopeInput): string | undefined => {
+    if (pixel?.mode !== "suggest" || it.main) return undefined;
+    return [...open(it, mainCandidates.get(it.appId)), ...open(it, abroad.get(it.appId))]
+      .filter((c) => samePicture(c, it, PIXEL_MAX_BITS))
+      .filter((c) => pixel.verdict(it.imageId, c.imageId) === "same-new-text")
+      .sort((a, b) => hamming(a.phash, it.phash) - hamming(b.phash, it.phash))[0]?.imageId;
+  };
   const match = (it: ScopeInput, list: readonly AnchorCandidate[] | undefined) =>
-    (list ?? [])
-      .filter((c) => c.imageId !== it.imageId && !different.has(pairKey(c.imageId, it.imageId)))
-      .filter((c) => samePicture(c, it))
+    open(it, list)
+      .filter((c) => sameAs(c, it))
       .sort(
         (a, b) =>
           Number(b.analysed || planned.has(b.imageId)) -
@@ -144,11 +183,13 @@ export function tierScope(
     }
     planned.add(it.imageId);
     const noMain = !it.main;
+    const pixelSuggested = suggested(it);
     out.push({
       ...it,
       tier: "full",
       basedOn: null,
       ...(noMain ? { noMainVersion: true } : {}),
+      ...(pixelSuggested ? { pixelSuggested } : {}),
       reason: noMain ? "no main-country version: full analysis" : "not analysed before",
     });
     if (noMain) abroad.set(it.appId, [...(abroad.get(it.appId) ?? []), { ...it, analysed: false }]);

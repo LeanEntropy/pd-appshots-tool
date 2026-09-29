@@ -10,7 +10,7 @@ import type { ImageAnalysis } from "./schema.ts";
 export const LAYER_DIFF_SCHEMA = "layer-diff-schema.v1";
 
 /** How the crops sent to the model are made; part of every comparison key. */
-export const CROP_VERSION = "layer-crop.v1";
+export const CROP_VERSION = "layer-crop.v2";
 
 const LayerText = z.strictObject({
   role: z.enum(["headline", "subheadline", "label", "badge", "legal", "other"]),
@@ -62,12 +62,47 @@ export function layerDiffSchema(): z.ZodType<LayerDiff> {
   return Diff;
 }
 
+/**
+ * What one comparison is asked (plan-analysis-speed item 7). The pixel check decides: the band,
+ * the elements and the screen description only when it found changed pixels there, the whole
+ * image only when it did not show the same screen. Without a pixel check everything is asked.
+ */
+export interface LayerParts {
+  band: boolean;
+  elements: boolean;
+  screen: boolean;
+  whole: boolean;
+}
+
+export const ALL_PARTS: LayerParts = { band: true, elements: true, screen: true, whole: true };
+
+/** The model's answer: band and elements are left out when code already knows they are "none". */
+export type LayerAnswer = Omit<LayerDiff, "band" | "elements"> &
+  Partial<Pick<LayerDiff, "band" | "elements">>;
+
+export function layerAnswerSchema(parts: LayerParts): z.ZodType<LayerAnswer> {
+  if (parts.band && parts.elements) return Diff;
+  if (!parts.band && !parts.elements) return Diff.omit({ band: true, elements: true });
+  return parts.band ? Diff.omit({ elements: true }) : Diff.omit({ band: true });
+}
+
+const NO_CHANGE = "no pixel changed there (checked by code, not asked)";
+
+/** The full comparison: what the model was not asked is filled by code as "none". */
+export function fillAnswer(a: LayerAnswer): LayerDiff {
+  return {
+    ...a,
+    band: a.band ?? { change: "none", colourName: "", colourHex: "unknown", notes: NO_CHANGE },
+    elements: a.elements ?? { change: "none", notes: NO_CHANGE },
+  };
+}
+
 const HEX = /^#[0-9a-fA-F]{6}$/;
 
 /** Checks an answer against the anchor it was compared with. Plain-language problems. */
-export function layerDiffProblems(d: LayerDiff, anchor: ImageAnalysis): string[] {
+export function layerDiffProblems(d: LayerAnswer, anchor: ImageAnalysis): string[] {
   const out: string[] = [];
-  if (d.band.colourHex !== "unknown" && !HEX.test(d.band.colourHex))
+  if (d.band && d.band.colourHex !== "unknown" && !HEX.test(d.band.colourHex))
     out.push('the band colour must be hex like #1f6fd0 or "unknown"');
   if (!d.sameScreen) return out;
   const given = d.texts.map((t) => t.anchorText).filter((t) => t !== "");
@@ -179,10 +214,16 @@ export function combinedReading(anchor: ImageAnalysis, diff: LayerDiff): ImageAn
   };
 }
 
-/** The task: the anchor's marketing layer as JSON, the country and what each image is. */
+/**
+ * The task: what the comparison needs of the anchor as JSON (each text's role, text, language
+ * and position, and the headline), the country and what each image is. Masks, elements and the
+ * screen description only when the parts say so; otherwise code fills "band: none" and
+ * "elements: none" and the model is told they are not asked.
+ */
 export function layerDiffTask(
   anchor: ImageAnalysis,
   market: { label: string; hl: string },
+  parts: LayerParts = ALL_PARTS,
 ): string {
   const m = anchor.marketingLayer;
   const layer = {
@@ -194,17 +235,35 @@ export function layerDiffTask(
       language: t.language,
       position: t.position,
     })),
-    masks: m.backgroundMasks.map((b) => ({
-      shape: b.shape,
-      colour: `${b.colourName} ${b.colourHex}`,
-      location: b.location,
-    })),
-    elements: m.elements.map((e) => ({ kind: e.kind, what: e.what, position: e.position })),
-    screen: anchor.screenshot.description,
+    ...(parts.band
+      ? {
+          masks: m.backgroundMasks.map((b) => ({
+            shape: b.shape,
+            colour: `${b.colourName} ${b.colourHex}`,
+            location: b.location,
+          })),
+        }
+      : { band: "none" }),
+    ...(parts.elements
+      ? { elements: m.elements.map((e) => ({ kind: e.kind, what: e.what, position: e.position })) }
+      : { elements: "none" }),
+    ...(parts.screen ? { screen: anchor.screenshot.description } : {}),
   };
+  const images = parts.whole
+    ? "The images, in order: every image but the last is the marketing-layer area of the country image; the last is the whole country image, small."
+    : "The images are cut-outs of the country image: where the anchor has its texts and where code found changed pixels. The whole image is not sent: code compared the pixels and found the same screen under the layer, so sameScreen is true unless a cut-out clearly shows otherwise.";
+  const skipped = [
+    ...(parts.band ? [] : ["the band"]),
+    ...(parts.elements ? [] : ["the elements"]),
+  ];
   return [
     `Compare the marketing layer of this store image from ${market.label} (store language ${market.hl}) with the anchor: the same picture in another country, analysed in full.`,
-    "The images, in order: every image but the last is the marketing-layer area of the country image; the last is the whole country image, small.",
-    `The anchor's marketing layer and screen (JSON):\n${JSON.stringify(layer)}`,
+    images,
+    `The anchor's marketing layer${parts.screen ? " and screen" : ""} (JSON):\n${JSON.stringify(layer)}`,
+    ...(skipped.length
+      ? [
+          `Not asked: ${skipped.join(" and ")} (code found no changed pixel there; they are recorded as "none").`,
+        ]
+      : []),
   ].join("\n\n");
 }

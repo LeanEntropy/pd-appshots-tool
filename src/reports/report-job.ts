@@ -3,7 +3,7 @@ import { type LoadedConfig, projectPaths } from "../config/load.ts";
 import { type EnqueueResult, type RunnerOptions, running, startJob } from "../jobs/runner.ts";
 import { projectKey, workspaceStorage } from "../storage/index.ts";
 import { eligibility, eligibilityProblem, scopeIncomplete } from "./eligibility.ts";
-import { doubtfulInPlan, type MatchPair } from "./match-check.ts";
+import { blocking, doubtfulInPlan, type MatchPair } from "./match-check.ts";
 import { runReport } from "./report-run.ts";
 import { buildScopePlan, type ScopePlan } from "./scope-plan.ts";
 import { readDef } from "./store.ts";
@@ -24,7 +24,10 @@ interface Saved {
 
 export interface ReportApproval {
   plan: ScopePlan;
-  /** Doubtful picture matches of this plan not answered yet (shown first; they block the run). */
+  /**
+   * Doubtful picture matches of this plan not answered yet (shown first). They block the run,
+   * except the pixel check's "moved" suggestions and its "decided" list (see MatchPair.group).
+   */
   doubtful: MatchPair[];
 }
 
@@ -59,7 +62,7 @@ export function reportApprovalProblem(
     return "The approval was for an older version of this report.";
   if (current.planHash !== shownHash)
     return "The numbers changed since the approval screen was shown. Review the new numbers.";
-  if (doubtfulInPlan(loaded, current.items).length)
+  if (blocking(doubtfulInPlan(loaded, current.items)).length)
     return "Some picture matches are doubtful: answer Same screen or Different screens for each one first.";
   if (current.overLimit)
     return `This report would cost up to $${current.usd[1].toFixed(2)}, over its spending limit of $${current.limitUsd.toFixed(2)}. Leave some games or countries out first.`;

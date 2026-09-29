@@ -1,8 +1,10 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
 import type { LoadedConfig } from "../config/load.ts";
+import { ensurePixelChecks } from "../reports/pixel-pairs.ts";
 import { setDismissed, suggestionsView } from "../reports/suggest.ts";
 import type { AppContext } from "./app-context.ts";
 import { send, writeRequest } from "./http-util.ts";
+import { postPairVerdicts } from "./pixel-api.ts";
 import {
   getBuilder,
   getMatchCheck,
@@ -40,8 +42,10 @@ async function suggestionsRoute(
 /**
  * The builder's paths (milestone R3): GET reports/builder, POST reports (draft), POST
  * reports/plan, GET reports/<id>/plan, POST reports/<id>/build, GET and POST
- * reports/match-check, and the suggestions. False when the path is none of them. Writes need
- * the page's token. Nothing here calls an AI model.
+ * reports/match-check, POST reports/match-check/pairs (several answers at once, e.g. the pixel
+ * check's "Confirm all"), and the suggestions. False when the path is none of them. Writes need
+ * the page's token. Nothing here calls an AI model. The pixel check (free, cached per pair) is
+ * brought up to date before any plan or match list is read.
  */
 export async function builderRoute(
   app: AppContext,
@@ -55,6 +59,15 @@ export async function builderRoute(
     return true;
   }
   const write = async () => (await writeRequest(req, res, app.token))?.body;
+  // A failed check never blocks the page: those pairs keep the fingerprint rule.
+  if (rest.startsWith("/api/reports/")) await ensurePixelChecks(loaded).catch(() => 0);
+  if (rest === "/api/reports/match-check/pairs" && req.method === "POST") {
+    const body = await write();
+    if (body === undefined) return true;
+    const r = postPairVerdicts(loaded, body);
+    send(res, r.status, r.body);
+    return true;
+  }
   if (rest === "/api/reports/builder" && req.method === "GET") {
     const r = getBuilder(loaded);
     send(res, r.status, r.body);

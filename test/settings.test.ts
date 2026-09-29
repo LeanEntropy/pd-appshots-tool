@@ -20,6 +20,9 @@ const NUMBERS: Record<string, number> = {
   "options.suggestions.splitHigh": 0.65,
   "options.suggestions.weakN": 5,
   "options.suggestions.staleDays": 45,
+  "options.speed.parallelCalls": 2,
+  "options.pixelCheck.sameMaxOutside": 0.01,
+  "options.pixelCheck.differentMinOutside": 0.1,
 };
 function another(f: FieldView): unknown {
   if (f.kind === "switch") return !f.value;

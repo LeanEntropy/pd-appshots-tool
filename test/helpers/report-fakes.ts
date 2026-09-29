@@ -118,7 +118,14 @@ export function reportFake(
       if (p.startsWith("Compare the marketing layer")) {
         kinds.push("layer");
         base.calls.push(c);
-        return ok(layerAnswer(p, o));
+        // Like a model, it answers only what the schema asks (band and elements may be left out).
+        const asked = (c.schema as { properties?: Record<string, unknown> }).properties ?? {};
+        const { band, elements, ...rest } = layerAnswer(p, o);
+        return ok({
+          ...rest,
+          ...("band" in asked ? { band } : {}),
+          ...("elements" in asked ? { elements } : {}),
+        });
       }
       if (p.startsWith("Group the words")) {
         kinds.push("concept");
