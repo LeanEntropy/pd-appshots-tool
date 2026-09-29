@@ -64,7 +64,11 @@ export async function addLayout(
   source: LayoutFile["source"],
 ): Promise<{ outcome: LayoutOutcome; problems: string[] }> {
   if (!isUsable(r)) return { outcome: "skipped", problems: [] };
-  const had = layoutStatus(d.paths, r).file;
+  const s = layoutStatus(d.paths, r);
+  // A saved layout that no longer fits is kept (write-once): nothing is paid to replace it.
+  if (s.status === "stale")
+    return { outcome: "failed", problems: ["the saved layout no longer fits"] };
+  const had = s.file;
   if (had) {
     await measureSaved(d.paths, d.db, r, had);
     return { outcome: "had", problems: [] };

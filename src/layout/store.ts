@@ -28,7 +28,8 @@ export interface LayoutFile {
   layout: Layout;
 }
 
-export type LayoutStatus = "current" | "missing" | "outdated";
+/** stale: saved for this analysis, but its reading changed since and it no longer fits. */
+export type LayoutStatus = "current" | "missing" | "outdated" | "stale";
 
 /** The analysis key a record is (or will be) stored under. */
 export const recordKeyOf = (paths: ProjectPaths, r: AnalysisRecord): string =>
@@ -105,7 +106,7 @@ export function layoutStatus(
   r: AnalysisRecord,
 ): { status: LayoutStatus; file: LayoutFile | null } {
   const file = readLayoutFile(paths, r);
-  if (file) return fits(file, r) ? { status: "current", file } : { status: "missing", file: null };
+  if (file) return fits(file, r) ? { status: "current", file } : { status: "stale", file: null };
   const storage = workspaceStorage(paths.workspace);
   const rk = recordKeyOf(paths, r);
   for (const k of storage.list(dirOf(paths, r.imageId))) {

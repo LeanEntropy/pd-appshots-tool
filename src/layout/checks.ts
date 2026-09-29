@@ -92,6 +92,20 @@ export function layoutProblems(l: Layout, core: ImageAnalysis): string[] {
         `the analysis lists a marketing ${el.kind} ("${el.what.slice(0, 40)}") at ${Math.round(cx)}%, ${Math.round(cy)}%: add a marketing "${role}" element for it`,
       );
   }
+  // Nothing the reading lists may be left out: every capture has an in-game element (when they
+  // fit the cap), and every headline is referenced or lies inside a text-carrying element.
+  if (caps <= 8)
+    for (let i = 0; i < caps; i++)
+      if (!l.inGame.some((e) => e.capture === i)) p(`capture ${i} has no in-game element`);
+  core.marketingLayer.texts.forEach((t, i) => {
+    if (t.role !== "headline") return;
+    const cx = t.region.x + t.region.w / 2;
+    const cy = t.region.y + t.region.h / 2;
+    const held = l.marketing.some(
+      (e) => e.textRef === i || (TEXT_ROLES.has(e.role) && at(e.box, cx, cy)),
+    );
+    if (!held) p(`headline text ${i} ("${t.text.slice(0, 40)}") has no element; point at it`);
+  });
   const present = core.marketingLayer.present;
   if (!present && l.marketing.length)
     p("the marketing layer is absent, so the marketing list must be empty");

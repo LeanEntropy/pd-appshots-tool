@@ -110,7 +110,7 @@ test("a settled reading the layout no longer fits leaves it missing; older versi
   };
   // A layout saved before the reading changed no longer counts.
   assert.equal(layoutStatus(paths, r).status, "current");
-  assert.equal(layoutStatus(paths, settled).status, "missing");
+  assert.equal(layoutStatus(paths, settled).status, "stale", "kept, never paid for again");
   const storage = workspaceStorage(paths.workspace);
   const file = readLayoutFile(paths, r);
   assert.ok(file);

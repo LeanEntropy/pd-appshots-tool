@@ -42,7 +42,7 @@ function layoutApproval() {
   const games = {};
   for (const it of s.items) games[it.game] = (games[it.game] || 0) + 1;
   document.getElementById("approval").innerHTML = '<h3 id="approvalTitle">Add layouts to ' + s.items.length + " earlier images?</h3>"
-    + '<p class="big"><strong>' + s.items.length + " images will be sent to AI</strong>, one layout call each (3 at a time). Estimated cost: <strong>" + money(s.usd[0]) + " to " + money(s.usd[1]) + "</strong>; it stops at " + money(s.usd[1]) + ".</p>"
+    + '<p class="big"><strong>' + s.items.length + " images will be sent to AI</strong>, one layout call each (3 at a time). Estimated cost: <strong>" + money(s.usd[0]) + " to " + money(s.usd[1]) + "</strong>; it stops at " + money(s.limitUsd) + ".</p>"
     + "<ul>" + Object.entries(games).map(([g, n]) => "<li>" + esc(g) + ": " + n + "</li>").join("") + "</ul>"
     + '<details><summary>Every image</summary><ul class="meta">' + s.items.map((it) => "<li>" + esc(it.game) + " " + esc(it.where.join(", ")) + "</li>").join("") + "</ul></details>"
     + '<div class="actions"><button id="layoutApprove" class="primary">Approve and add layouts</button><button id="cancelApproval">Cancel</button></div>';

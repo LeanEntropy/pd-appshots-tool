@@ -1,5 +1,5 @@
 import { join } from "node:path";
-import { ledger } from "../analysis/budget.ts";
+import { ledger, STEP_CEILING_USD } from "../analysis/budget.ts";
 import type { CallContext } from "../analysis/call.ts";
 import { runPool, sleepUnlessStopped } from "../analysis/pool.ts";
 import { type Provider, providerFor } from "../analysis/providers.ts";
@@ -11,6 +11,7 @@ import { workspaceStorage } from "../storage/index.ts";
 import { acquireAll, LOCKS } from "../storage/leases.ts";
 import { openImageDb } from "../store/imagedb.ts";
 import { stableHash } from "../util/hash.ts";
+import { LAYOUT_STEP } from "./call.ts";
 import { addLayout } from "./capture.ts";
 import { layoutStatus } from "./store.ts";
 import { LAYOUT_USD_PER_IMAGE } from "./vocab.ts";
@@ -27,6 +28,8 @@ export interface BackfillScope {
   ours: number;
   competitors: number;
   usd: [number, number];
+  /** The spending limit: the run stops there. */
+  limitUsd: number;
   /** Fingerprint of exactly this list: the approval refers to it. */
   scopeHash: string;
 }
@@ -40,7 +43,9 @@ export function backfillScope(loaded: LoadedConfig): BackfillScope {
   const ours = loaded.config.ourApp.id;
   const items: BackfillItem[] = [];
   for (const r of readRecords(paths).values()) {
-    if (!isUsable(r) || layoutStatus(paths, r).status === "current") continue;
+    if (!isUsable(r)) continue;
+    const st = layoutStatus(paths, r).status;
+    if (st === "current" || st === "stale") continue;
     const apps = r.identity?.appearances ?? [
       { appId: r.appId, gl: r.gl, hl: r.hl, position: r.position, game: r.appId },
     ];
@@ -56,13 +61,15 @@ export function backfillScope(loaded: LoadedConfig): BackfillScope {
   items.sort((a, b) => Number(b.ours) - Number(a.ours) || a.game.localeCompare(b.game));
   const n = items.length;
   const usd = LAYOUT_USD_PER_IMAGE.map((u) => Math.round(n * u * 100) / 100) as [number, number];
-  const ids = items.map((i) => i.imageId);
+  // It stops at the top of the range, and never below one call's reserved ceiling.
+  const limitUsd = n ? Math.max(usd[1], STEP_CEILING_USD[LAYOUT_STEP] ?? 0.25) : 0;
   return {
     items,
     ours: items.filter((i) => i.ours).length,
     competitors: items.filter((i) => !i.ours).length,
     usd,
-    scopeHash: stableHash({ ids, usd }),
+    limitUsd,
+    scopeHash: stableHash({ items, usd, limitUsd }),
   };
 }
 
@@ -114,6 +121,11 @@ export function startBackfill(
     return { ok: false, status: 409, problem: "Every image has its layout." };
   const paths = projectPaths(loaded);
   const storage = workspaceStorage(paths.workspace);
+  // Everything that can fail is set up before the AI lock is taken (it is released only at the end).
+  const { taxonomy, hash } = loadTaxonomy(loaded);
+  const db = openImageDb(paths);
+  const provider = make(loaded.config.models.fullAnalysis);
+  const records = readRecords(paths);
   const held = acquireAll(storage, [LOCKS.ai], {
     projectId: paths.projectId,
     kind: "layout-backfill",
@@ -124,9 +136,9 @@ export function startBackfill(
       status: 409,
       problem: "Another job is using the AI now. Start this when it finishes.",
     };
-  const { taxonomy, hash } = loadTaxonomy(loaded);
   let spent = 0;
-  const book = ledger(scope.usd[1], () => spent);
+  const book = ledger(scope.limitUsd, () => spent);
+  const ceiling = STEP_CEILING_USD[LAYOUT_STEP] ?? 0.25;
   const ctx: CallContext = {
     storage,
     answerKey: (step, key) => answerKey(paths, step, key),
@@ -155,12 +167,9 @@ export function startBackfill(
   };
   running.set(loaded.config.project, job);
   const p = job.progress;
-  const db = openImageDb(paths);
-  const provider = make(loaded.config.models.fullAnalysis);
-  const records = readRecords(paths);
   const done = runPool(scope.items, {
     concurrency: Math.max(1, loaded.config.options.speed.parallelCalls),
-    gate: () => !job.stop && book.remaining() > 0.25,
+    gate: () => !job.stop && book.remaining() >= ceiling,
     shouldStop: () => job.stop,
     sleep: sleepUnlessStopped,
     slowDown: () => {},

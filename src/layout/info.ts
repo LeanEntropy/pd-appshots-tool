@@ -1,12 +1,12 @@
 import type { AnalysisRecord } from "../analysis/records.ts";
 import type { ProjectPaths } from "../config/load.ts";
 import { applyMeasure } from "./measure/index.ts";
-import { layoutStatus, readLayoutMeasure } from "./store.ts";
+import { type LayoutStatus, layoutStatus, readLayoutMeasure } from "./store.ts";
 import { wireframeSvg } from "./wireframe-svg.ts";
 
 /** What the (i) popover shows about an image's layout. */
 export interface LayoutView {
-  status: "current" | "missing" | "outdated";
+  status: LayoutStatus;
   /** The combined wireframe (both layers), drawn by code; null without a layout. */
   svg: string | null;
   summary: string;

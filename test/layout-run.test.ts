@@ -89,3 +89,19 @@ test("the layout call's cost is part of the image's paid attempt (resume and the
     assert.equal(layoutStatus(paths, r).status, "current");
   }
 });
+
+test("nothing the reading lists may be left out: its captures and its headlines", () => {
+  const core = reading("img1", "gameplay", "EPIC");
+  const l = fakeLayout(core);
+  assert.deepEqual(readLayout(l, core).problems, []);
+  const two = {
+    ...core,
+    screenshot: {
+      ...core.screenshot,
+      captures: [...core.screenshot.captures, ...core.screenshot.captures],
+    },
+  };
+  assert.match(readLayout(l, two).problems.join(), /capture 1 has no in-game element/);
+  const noHeadline = { ...l, marketing: l.marketing.filter((e) => e.role !== "headline") };
+  assert.match(readLayout(noHeadline, core).problems.join(), /headline text 0/);
+});
