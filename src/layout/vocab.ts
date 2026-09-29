@@ -14,12 +14,11 @@ export const LAYOUT_CONTRACT = "layout.v3";
 export const LAYOUT_SCHEMA_VERSION = "layout-schema.v2";
 
 /**
- * Cost of one layout call per newly analysed image, low and high (benchmark 2026-09-29 for
- * layout.v2: $0.09 to $0.14 with a warm prompt cache; the first call of a batch also writes the
- * prompt, about $0.07). layout.v3 may ask for more boxes and longer notes: about 100 output
- * tokens (~$0.005) per extra box, so the high end is raised; not benchmarked yet.
+ * One image's layout, typical and high, retries and failed images included: used only until a
+ * project has recorded enough layout calls for the current contract (layout/cost.ts). The
+ * 2026-09-29 layout.v3 redo cost $16.36 for 52 images tried ($0.31 each, $0.36 per saved one).
  */
-export const LAYOUT_USD_PER_IMAGE: readonly [number, number] = [0.09, 0.2];
+export const LAYOUT_USD_PER_IMAGE: readonly [number, number] = [0.31, 0.36];
 
 /**
  * At most this many boxes per layer (D4 was 8 per layer; raised 2026-09-29 so a grid screen can

@@ -22,7 +22,7 @@ export interface RepeatFinding {
   counted: boolean;
 }
 
-const OLD_COUNT =
+export const OLD_COUNT =
   "This version was built before the check and counts every image; build a new version to count each screen once.";
 
 /**

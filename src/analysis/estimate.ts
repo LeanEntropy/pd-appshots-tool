@@ -30,6 +30,8 @@ export function estimate(
   config: Config,
   items: readonly TierResult[],
   synthesis = false,
+  /** One image's layout call, typical and high (from the recorded costs when there are any). */
+  layoutUsd: readonly [number, number] = LAYOUT_USD_PER_IMAGE,
 ): Estimate {
   const e = config.estimates;
   const byApp = new Map<string, TierResult[]>();
@@ -61,9 +63,7 @@ export function estimate(
   // The layout breakdown: its own call after each new full analysis (Settings switch).
   const layout = config.options.speed.layoutCapture ? full : 0;
   const usd: [number, number] = [0, 1].map((k) => {
-    const fa =
-      full * (e.fullAnalysisUsdPerImage[k] as number) +
-      layout * (LAYOUT_USD_PER_IMAGE[k] as number);
+    const fa = full * (e.fullAnalysisUsdPerImage[k] as number) + layout * (layoutUsd[k] as number);
     const ld = diff * (e.layerDiffUsdPerImage[k] as number);
     // Synthesis covers the pattern wording, recommendations, check and revision; the A/B tests
     // are one more call of about a quarter of that (a retry at most doubles it).
@@ -109,7 +109,7 @@ export function estimate(
             model: modelName(config.models.fullAnalysis),
             calls: layout,
             images: layout,
-            note: `its own call after each new analysis, about $${LAYOUT_USD_PER_IMAGE[0].toFixed(2)} to $${LAYOUT_USD_PER_IMAGE[1].toFixed(2)} per image`,
+            note: `its own call after each new analysis, about ${layoutUsd[0].toFixed(2)} to ${layoutUsd[1].toFixed(2)} per image`,
           },
         ]
       : []),

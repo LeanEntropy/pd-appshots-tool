@@ -79,6 +79,8 @@ export function layoutProblems(l: Layout, core: ImageAnalysis): string[] {
   // on the marketing layer is a cut-out here, and its logo a logo, at about the same place.
   const at = (b: { x: number; y: number; w: number; h: number }, x: number, y: number) =>
     x >= b.x - 5 && x <= b.x + b.w + 5 && y >= b.y - 5 && y <= b.y + b.h + 5;
+  // An item (a chest, a coin pile, a weapon) may also be a badge (a sticker or burst): in the
+  // 2026-09-29 backfill every image listing an item needed a second attempt or failed.
   for (const el of core.marketingLayer.elements) {
     const role = ["character", "creature", "item"].includes(el.kind)
       ? "cut-out"
@@ -89,7 +91,8 @@ export function layoutProblems(l: Layout, core: ImageAnalysis): string[] {
     if (!role || !(r.w > 0 && r.h > 0)) continue;
     const cx = r.x + r.w / 2;
     const cy = r.y + r.h / 2;
-    if (!l.marketing.some((e) => e.role === role && at(e.box, cx, cy)))
+    const fits = (x: string) => x === role || (el.kind === "item" && x === "badge");
+    if (!l.marketing.some((e) => fits(e.role) && at(e.box, cx, cy)))
       p(
         `the analysis lists a marketing ${el.kind} ("${el.what.slice(0, 40)}") at ${Math.round(cx)}%, ${Math.round(cy)}%: add a marketing "${role}" element for it`,
       );

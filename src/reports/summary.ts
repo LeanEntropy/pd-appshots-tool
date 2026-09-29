@@ -4,6 +4,7 @@ import type { Labeler } from "../analysis/labels.ts";
 import type { FitSummary } from "../analysis/pattern-fit.ts";
 import type { DeckEntry } from "../analysis/patterns.ts";
 import { type Interpretation, logoOf, type Recommendations } from "../analysis/synthesis-schema.ts";
+import type { BottomPoints } from "./bottom-points.ts";
 
 /**
  * The summary at the top of every report (plan-reports 3C): the short answer, the key
@@ -18,6 +19,8 @@ export interface SummaryPart {
   keyRecommendations: { position: number; text: string }[];
   /** The recommendations came from older data. */
   recommendationsStale: boolean;
+  /** The short answer as points (bottom-points-of.ts), added when the report is shown. */
+  points?: BottomPoints | null;
   country: string;
   dates: {
     generated: string | null;

@@ -2,6 +2,7 @@ import { join } from "node:path";
 import { type LoadedConfig, loadTaxonomy, projectPaths } from "../config/load.ts";
 import { analysedSlots, coreDeck, fitFor } from "../core/selection.ts";
 import { mainMarket } from "../core/targets.ts";
+import { layoutCostModel } from "../layout/cost.ts";
 import { openImageDb } from "../store/imagedb.ts";
 import { readJsonIfExists, writeJsonAtomic } from "../util/fsx.ts";
 import { stableHash } from "../util/hash.ts";
@@ -163,7 +164,7 @@ export function buildAnalysisPlan(
     counts.newImages > 0 ||
     !latest?.complete ||
     latest.dataHash !== batchDataHash({ games, items, versions }, records);
-  const est = estimate(config, items, synthesisNeeded);
+  const est = estimate(config, items, synthesisNeeded, layoutCostModel(paths).perImage);
   const body = {
     stage,
     market: { gl: market.gl, hl: market.hl, label: market.label },

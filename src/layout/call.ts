@@ -54,7 +54,8 @@ export async function layoutCall(
     [image],
     layoutAnswerSchema,
     (v) => layoutProblems(v.layout, core),
-    ctx,
+    // Each call is tagged with the contract, so the estimates count today's contract only.
+    { ...ctx, onCall: (c) => ctx.onCall?.({ ...c, contract: LAYOUT_CONTRACT }) },
     { contract: LAYOUT_CONTRACT },
     (v) => ({ layout: tidyLayout(v.layout, core) }),
     LAYOUT_SCHEMA_VERSION,

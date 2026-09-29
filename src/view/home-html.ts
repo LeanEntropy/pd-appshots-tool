@@ -37,7 +37,7 @@ const HOME_CSS = `
 /** The projects home (plan 1.1): one card per project with its status and one button, Open. */
 export function homeHtml(token: string): string {
   const body = `<div id="working" role="status" aria-live="polite" hidden></div>
-${appBar(null, '<a class="btn-new" href="/new">+ New project</a>')}
+${appBar(null, '<a class="btn-new" href="/games">Games library</a> <a class="btn-new" href="/new">+ New project</a>')}
 <main>
 <h1>Your projects</h1>
 ${SHARE_IMPORT_HTML}

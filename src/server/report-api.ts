@@ -3,6 +3,7 @@ import { artWording, artWordingDeep } from "../analysis/art-wording.ts";
 import { buildReportData } from "../analysis/report-data.ts";
 import { listRuns, reportInputs, runFileKey } from "../analysis/report-inputs.ts";
 import { type LoadedConfig, projectPaths } from "../config/load.ts";
+import { withDataPoints } from "../reports/bottom-points-of.ts";
 import { workspaceStorage } from "../storage/index.ts";
 import { markdownToHtml } from "../view/md-html.ts";
 import type { ApiResponse } from "./api.ts";
@@ -13,7 +14,7 @@ const StageParam = z.enum(["pilot", "core"]);
 export function getReportCurrent(loaded: LoadedConfig, stage: string | null): ApiResponse {
   const parsed = StageParam.safeParse(stage);
   if (!parsed.success) return { status: 400, body: { problems: ["Unknown batch."] } };
-  const data = buildReportData(reportInputs(loaded, parsed.data));
+  const data = withDataPoints(buildReportData(reportInputs(loaded, parsed.data)));
   return { status: 200, body: { data, runs: listRuns(loaded, parsed.data) } };
 }
 
@@ -35,7 +36,11 @@ export function getReportRun(
   const file = storage.localPath(mdKey);
   const data = storage.getJson(runFileKey(loaded, run.runId, "report-data.json"));
   // Saved before the art-screen wording rule: reworded for display (no AI, nothing re-analysed).
-  if (data) return { status: 200, body: { runId: run.runId, file, data: artWordingDeep(data) } };
+  if (data)
+    return {
+      status: 200,
+      body: { runId: run.runId, file, data: withDataPoints(artWordingDeep(data)) },
+    };
   const md = storage.getText(mdKey) ?? "";
   // Old runs link images as ../../images/ (from reports/<run>/); the page sits in views/.
   const html = markdownToHtml(artWording(md)).replaceAll('"../../images/', '"../images/');

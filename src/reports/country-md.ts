@@ -1,4 +1,5 @@
 import { noFactIds } from "../analysis/country-advice-schema.ts";
+import { countryPoints, pointsMarkdown } from "./bottom-points-of.ts";
 import { ownPoints, sharedPoints } from "./country-points.ts";
 import type { CountryReport } from "./country-report-types.ts";
 import { countryName } from "./names.ts";
@@ -38,8 +39,7 @@ function overall(r: CountryReport): string[] {
   const out = [
     "## 1. Overall recommendations",
     "",
-    s.shortAnswer,
-    "",
+    ...pointsMarkdown(s.points ?? countryPoints(r)),
     "| Country | Our page | Competitors | Most important gap | Localisation |",
     "|---|---|---|---|---|",
     ...s.verdicts.map(

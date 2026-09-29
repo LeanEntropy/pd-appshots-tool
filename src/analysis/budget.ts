@@ -11,7 +11,7 @@ export const STEP_CEILING_USD: Readonly<Record<string, number>> = {
   review: 0.4,
   adjudicate: 0.2,
   "layer-diff": 0.2,
-  layout: 0.25,
+  layout: 0.4,
 };
 
 /**

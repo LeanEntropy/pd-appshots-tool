@@ -2,7 +2,7 @@ import type { z } from "zod";
 import type { Taxonomy } from "../config/load.ts";
 import type { KbRun } from "../kb/run.ts";
 import type { Storage } from "../storage/index.ts";
-import { stableHash } from "../util/hash.ts";
+import { type AnswerQuery, answerKeyOf } from "./answer-key.ts";
 import type { Reservation } from "./budget.ts";
 import { rateLimitWait } from "./pool.ts";
 import type { RenderedPrompt } from "./prompts.ts";
@@ -34,6 +34,8 @@ export interface CallLog {
   costUsd: number | null;
   usage: CallUsage | null;
   at: string;
+  /** Layout calls: the layout contract asked for (its cost differs between contracts). */
+  contract?: string;
 }
 
 export interface CallContext {
@@ -73,6 +75,7 @@ export interface StoredObject {
   output: unknown;
   costUsd: number | null;
   attempts: number;
+  spentUsd?: number; // every attempt together (costUsd is the last call only)
   createdAt: string;
   /** Tokens and time of the calls that produced this answer (summed over repairs). */
   usage?: CallUsage;
@@ -87,29 +90,6 @@ export interface ChunkResult {
 
 const MAX_REPAIRS = 2;
 const LIMIT_REACHED = "the spending limit for this batch was reached";
-
-export interface AnswerQuery {
-  step: string;
-  model: string;
-  system: RenderedPrompt;
-  images: readonly ChunkImage[];
-  ctx: CallContext;
-  extraKey?: unknown;
-  schemaVersion?: string;
-}
-
-function answerKeyOf(q: AnswerQuery, task: string): string {
-  return stableHash({
-    step: q.step,
-    model: q.model,
-    prompt: q.system.hash,
-    task,
-    schema: q.schemaVersion ?? SCHEMA_VERSION,
-    taxonomy: q.ctx.taxonomyHash,
-    images: q.images.map((i) => i.imageId),
-    extraKey: q.extraKey ?? null,
-  });
-}
 
 /** A saved, still valid answer for exactly this call, or null (never calls a model). */
 export function cachedAnswer<T>(
@@ -156,6 +136,7 @@ export async function validatedCall<T>(
   let problems: string[] = [];
   let repairs: string[] = [];
   let callErrors = 0;
+  let paid = 0;
   let usage: CallUsage | undefined;
   const jsonSchema = toJsonSchema(schema);
   for (let attempt = 0; attempt <= MAX_REPAIRS; attempt++) {
@@ -188,6 +169,7 @@ export async function validatedCall<T>(
     const cost =
       r.costUsd ?? (held && provider.family === "anthropic" && !r.ok ? held.maxUsd : null);
     if (cost) ctx.onCost(cost);
+    paid += cost ?? 0;
     held?.done(cost ?? 0);
     usage = addUsage(usage, r.usage);
     ctx.onCall?.({
@@ -231,6 +213,7 @@ export async function validatedCall<T>(
         output: r.output,
         costUsd: r.costUsd,
         attempts: attempt + 1,
+        spentUsd: paid,
         createdAt: new Date().toISOString(),
         ...(usage ? { usage } : {}),
       };
