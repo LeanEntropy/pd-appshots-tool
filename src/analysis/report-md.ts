@@ -1,3 +1,4 @@
+import { dataPoints, pointsMarkdown } from "../reports/bottom-points-of.ts";
 import type { Labeler } from "./labels.ts";
 import type { PatternFit } from "./pattern-fit.ts";
 import type { OrderRow, ReportData } from "./report-data.ts";
@@ -109,8 +110,10 @@ export function reportMarkdown(d: ReportData, label: Labeler, research?: string[
   out.push(head(0), "");
   if (f) out.push(`**Verdict: our deck is ${f.verdict.toUpperCase()}**${fitsText(f)}.`, "");
   else out.push("**Verdict: not enough competitor data yet.**", "");
-  if (d.summary) out.push(d.summary.shortAnswer, "");
-  else if (o.verdict) out.push(o.verdict, "");
+  if (d.summary) {
+    const p = dataPoints(d);
+    out.push(...(p ? pointsMarkdown(p) : [d.summary.shortAnswer, ""]));
+  } else if (o.verdict) out.push(o.verdict, "");
   out.push("### Key points to optimise, most important first", "");
   if (o.points.length) out.push(...o.points.map((p, i) => `${i + 1}. ${p}`));
   else out.push("None: our deck fits every competitor pattern found.");

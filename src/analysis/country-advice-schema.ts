@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { isEventLine } from "./image-tags.ts";
+import { bottomLineSchema } from "./synthesis-schema.ts";
 
 /**
  * Country advice (plan-reports 3, point 6): per country other than the main one, the deck to
@@ -15,6 +16,7 @@ export const countryAdviceSchema = z.strictObject({
   shortAnswer: z
     .string()
     .describe("2 to 4 sentences: the bottom line for this country, most important change first"),
+  bottomLine: bottomLineSchema,
   actions: z
     .array(
       z.strictObject({

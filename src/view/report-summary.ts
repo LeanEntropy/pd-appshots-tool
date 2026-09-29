@@ -6,6 +6,12 @@
  */
 export const REPORT_SUMMARY_CSS = `
 .short { font-size: 16px; line-height: 1.5; max-width: 70em; }
+.bl { margin: 6px 0 14px; max-width: 70em; }
+.blv { font-size: 16px; margin: 4px 0 10px; } .blv .pill { font-size: 14px; } .blsep { color: var(--muted); }
+.blcols { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr)); gap: 6px 28px; }
+.blcol h4 { margin: 0 0 4px; font-size: 13px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); }
+.blcol ul, .blcol ol { margin: 0; padding-left: 22px; } .blcol li { margin: 6px 0; font-size: 15px; line-height: 1.45; }
+.blcol .meta, .bltr { color: var(--muted); font-size: 12.5px; }
 ol.keyrecs li { margin: 5px 0; }
 .abcards { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 10px; margin: 8px 0 12px; }
 .abcard { background: var(--card); border: 1px solid var(--line); border-left: 6px solid var(--accent-2); border-radius: 10px; padding: 10px 12px; }
@@ -24,7 +30,23 @@ table.rt td .ptxt[title] { text-decoration: underline dotted; text-decoration-co
 
 export const REPORT_SUMMARY_SCRIPT = `
 function shortAnswerHtml(d) {
-  return d.summary ? '<p class="short">' + esc(d.summary.shortAnswer) + "</p>" : "";
+  if (!d.summary) return "";
+  return d.summary.points ? bottomPointsHtml(d.summary.points) : '<p class="short">' + esc(d.summary.shortAnswer) + "</p>";
+}
+
+// The bottom line as points (reports/bottom-points.ts): the verdict line with its chip, "What
+// differs" (the count and key phrase in bold) and "Do first" (a back-translation small and muted).
+function bottomSegsHtml(segs) {
+  return segs.map((s) => (s.b ? "<strong>" + esc(s.t) + "</strong>" : s.tr ? ' <span class="bltr">' + esc(s.t.trim()) + "</span>" : esc(s.t))).join("");
+}
+function bottomPointsHtml(p) {
+  const up = (w) => String(w).charAt(0).toUpperCase() + String(w).slice(1);
+  const v = p.verdict && p.verdict.groups.length ? '<p class="blv">' + p.verdict.groups.map((g) => pill(VERDICT_CLS[g.word] || "none", up(g.word)) + " " + esc(g.text)).join('<span class="blsep"> &middot; </span>')
+    + (p.verdict.meta ? ' <span class="meta">' + esc(p.verdict.meta) + "</span>" : "") + "</p>" : "";
+  const item = (i) => "<li>" + bottomSegsHtml(i.segs) + (i.note ? ' <span class="meta">' + esc(i.note) + "</span>" : "") + "</li>";
+  const cols = (p.differs.length ? '<div class="blcol"><h4>What differs</h4><ul>' + p.differs.map(item).join("") + "</ul></div>" : "")
+    + (p.actions.length ? '<div class="blcol"><h4>Do first</h4><ol>' + p.actions.map(item).join("") + "</ol></div>" : "");
+  return v || cols ? '<div class="bl">' + v + (cols ? '<div class="blcols">' + cols + "</div>" : "") + "</div>" : "";
 }
 
 function keyRecsHtml(d) {
