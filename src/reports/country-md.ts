@@ -11,6 +11,23 @@ import { wordsBlock } from "./words-status.ts";
  */
 const cell = (s: string) => s.replace(/\|/g, "/").replace(/\n/g, " ");
 
+/** A country report made from a comparison: where it comes from, and the same-pages note. */
+export function derivedLines(r: CountryReport): string[] {
+  const d = r.derived;
+  if (!d) return [];
+  const name = countryName(r.countries[0]?.label ?? "");
+  const when = d.from.generatedAt.slice(0, 16).replace("T", " ");
+  return [
+    ...(d.samePagesAs
+      ? [
+          `> ${name} shows the same images as ${countryName(d.samePagesAs.label)} for every game: this report repeats ${countryName(d.samePagesAs.label)}'s findings.`,
+        ]
+      : []),
+    `> Part of the comparison "${d.from.name}" (${when} UTC), made from its saved data with no AI call. Also in it: ${d.others.map((o) => countryName(o.label)).join(", ")}.`,
+    ...d.dropped.map((x) => `> Not kept: ${x}.`),
+  ];
+}
+
 export function countryMarkdown(r: CountryReport, research: string[] = []): string {
   const out: string[] = [`# ${r.name}`, ""];
   const s = r.summary;
@@ -18,6 +35,7 @@ export function countryMarkdown(r: CountryReport, research: string[] = []): stri
     `Generated ${r.generatedAt.slice(0, 16).replace("T", " ")} UTC. Main country (reference): ${r.main.label}.`,
     "",
     ...r.banners.map((b) => `> ${b}`),
+    ...derivedLines(r),
     "",
     "## 1. Summary: the bottom line",
     "",

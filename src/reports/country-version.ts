@@ -8,6 +8,7 @@ import { newRunId } from "../store/manifest.ts";
 import { type BuildResult, scopeDataHash } from "./build.ts";
 import { cachedAi, type ReportAi } from "./country-ai.ts";
 import { countryMarkdown } from "./country-md.ts";
+import { reconcileDerived } from "./derived-relations.ts";
 import { assembleCountryReport } from "./country-report.ts";
 import { eligibility } from "./eligibility.ts";
 import { mainMarketRef } from "./main-market.ts";
@@ -103,5 +104,12 @@ export async function buildCountryVersion(
   };
   writeVersionInputs(s, paths, versionId, v);
   const next = addVersion(s, paths, def.id, { id: versionId, generatedAt: v.generatedAt });
+  if (def.type === "compare" && !partial)
+    try {
+      // A One country report per compared country, from this version (code only, no AI).
+      reconcileDerived(loaded, { reportId: def.id });
+    } catch {
+      // Finished by the next list of the Report tab.
+    }
   return { ok: true, versionId, def: next, problems };
 }
