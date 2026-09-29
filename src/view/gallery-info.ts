@@ -12,11 +12,24 @@ let infoHideTimer = null;
 let infoHover = false;
 const inPop = (el) => !!(el && el.closest && el.closest("#infoPop"));
 
-function infoBtn(id) {
+// ctx (optional): where this thumbnail sits { app, gl, hl, pos }, carried to its image page.
+function infoBtn(id, ctx) {
   const v = id && INFO[id];
   if (!v) return "";
-  if (v.pending) return '<button type="button" class="info pending" data-info="' + esc(id) + '" aria-label="Not analysed yet" title="Not analysed yet" aria-expanded="false" aria-controls="infoPop">&hellip;</button>';
-  return '<button type="button" class="info" data-info="' + esc(id) + '" aria-label="Show analysis" aria-expanded="false" aria-controls="infoPop">i</button>';
+  const c = ctx && ctx.app ? ' data-ctx="' + esc([ctx.app, ctx.gl, ctx.hl, ctx.pos].join("|")) + '"' : "";
+  if (v.pending) return '<button type="button" class="info pending" data-info="' + esc(id) + '"' + c + ' aria-label="Not analysed yet" title="Not analysed yet" aria-expanded="false" aria-controls="infoPop">&hellip;</button>';
+  return '<button type="button" class="info" data-info="' + esc(id) + '"' + c + ' aria-label="Show analysis" aria-expanded="false" aria-controls="infoPop">i</button>';
+}
+
+// The picture's own page (/image/<sha>) with the thumbnail's context, or "" outside the tool.
+let infoLink = "";
+function imagePageHref(id, btn) {
+  const m = /^\\/p\\/([a-z0-9-]{1,60})\\/api$/.exec((typeof APP !== "undefined" && APP.apiBase) || "");
+  if (!m || !/^[0-9a-f]{64}$/.test(id)) return "";
+  const q = new URLSearchParams({ project: m[1] });
+  const c = String((btn && btn.dataset.ctx) || "").split("|");
+  if (c.length === 4 && c[0]) { q.set("app", c[0]); q.set("gl", c[1]); q.set("hl", c[2]); q.set("pos", c[3]); }
+  return "/image/" + id + "?" + q.toString();
 }
 
 function swatches(cs) {
@@ -28,6 +41,7 @@ function words(s) { return esc(String(s).replace(/_/g, " ")); }
 function identityHtml(v) {
   return '<p class="meta"><strong>' + esc(v.game) + " #" + esc(v.position) + "</strong> &middot; " + esc(v.filename) + "<br>"
     + (v.file ? '<a href="../' + esc(v.file) + '" target="_blank" rel="noopener">Open image</a>' : "")
+    + (infoLink ? (v.file ? " &middot; " : "") + '<a class="imgpage" href="' + esc(infoLink) + '" target="_blank" rel="noopener">Open image page</a>' : "")
     + (v.sourceUrl && String(v.sourceUrl).startsWith("https://play-lh.googleusercontent.com/") ? ' &middot; <a href="' + esc(v.sourceUrl) + '" target="_blank" rel="noopener noreferrer">On Google Play</a>' : "") + "</p>"
     + (v.appearances && v.appearances.length > 1 ? '<p class="meta">Appears ' + v.appearances.length + " times: " + esc(v.appearances.join(", ")) + "</p>" : "");
 }
@@ -101,6 +115,7 @@ function placeInfo(btn, pop) {
 
 function showInfo(btn) {
   const id = btn.dataset.info || "";
+  infoLink = id.startsWith("store:") ? "" : imagePageHref(id, btn);
   const html = id.startsWith("store:") ? storeHtml(id.slice(6)) : INFO[id] ? infoHtml(INFO[id]) : "";
   if (!html) return;
   clearTimeout(infoHideTimer);

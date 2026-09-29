@@ -118,48 +118,61 @@ export function infoViews(
   label: Labeler = plainLabel,
 ): Record<string, InfoView> {
   const out: Record<string, InfoView> = {};
-  for (const [id, r] of readRecords(paths)) {
-    const usable = isUsable(r);
-    const idn = r.identity;
-    out[id] = artWordingDeep({
-      status: !usable
-        ? r.status === "failed"
-          ? "failed"
-          : `${r.status} (outdated)`
-        : r.status === "unreviewed"
-          ? "not double-checked (the second opinion failed; first reading kept)"
-          : r.status,
-      screen: usable ? screenLabel(r.final, label) : "",
-      final: usable ? r.final : null,
-      differences: r.differences,
-      problems: r.problems,
-      models: [r.producer?.model, r.reviewer?.model, r.adjudication?.model].filter(
-        (m): m is string => !!m,
-      ),
-      updatedAt: r.updatedAt,
-      game: idn?.game ?? r.appId,
-      position: r.position,
-      filename: idn?.filename ?? id,
-      file: idn?.files.original?.relative ?? null,
-      sourceUrl: idn?.sourceUrl ?? null,
-      appearances: (idn?.appearances ?? []).map(
-        (a) => `${a.game} ${a.gl.toUpperCase()}-${a.hl} #${a.position}`,
-      ),
-      labels: usable
-        ? {
-            type: label(r.final.screenshot.screenType),
-            subtype: r.final.screenshot.subtype ? label(r.final.screenshot.subtype) : "",
-          }
-        : null,
-      mappedFrom: r.mappedFrom ? label(r.mappedFrom.screenType) : null,
-      image: imageLine(idn?.image),
-      imageColours:
-        idn?.image?.dominantColours.map((c) => ({ name: c.family ?? c.hex, hex: c.hex })) ?? [],
-      composition: usable ? (COMPOSITION[r.final.screenshot.composition] ?? null) : null,
-      captures: usable ? captureLines(r.final, idn?.image, label) : [],
-      pending: usable ? null : pendingMessage(r),
-      layout: usable ? layoutView(paths, r) : null,
-    });
-  }
+  for (const [id, r] of readRecords(paths)) out[id] = viewOf(paths, r, label);
   return out;
+}
+
+/** The same view for one picture (the image page), or null when the project has no record. */
+export function infoView(
+  paths: ProjectPaths,
+  imageId: string,
+  label: Labeler = plainLabel,
+): InfoView | null {
+  const r = readRecord(paths, imageId);
+  return r ? viewOf(paths, r, label) : null;
+}
+
+function viewOf(paths: ProjectPaths, r: AnalysisRecord, label: Labeler): InfoView {
+  const usable = isUsable(r);
+  const idn = r.identity;
+  const id = r.imageId;
+  return artWordingDeep({
+    status: !usable
+      ? r.status === "failed"
+        ? "failed"
+        : `${r.status} (outdated)`
+      : r.status === "unreviewed"
+        ? "not double-checked (the second opinion failed; first reading kept)"
+        : r.status,
+    screen: usable ? screenLabel(r.final, label) : "",
+    final: usable ? r.final : null,
+    differences: r.differences,
+    problems: r.problems,
+    models: [r.producer?.model, r.reviewer?.model, r.adjudication?.model].filter(
+      (m): m is string => !!m,
+    ),
+    updatedAt: r.updatedAt,
+    game: idn?.game ?? r.appId,
+    position: r.position,
+    filename: idn?.filename ?? id,
+    file: idn?.files.original?.relative ?? null,
+    sourceUrl: idn?.sourceUrl ?? null,
+    appearances: (idn?.appearances ?? []).map(
+      (a) => `${a.game} ${a.gl.toUpperCase()}-${a.hl} #${a.position}`,
+    ),
+    labels: usable
+      ? {
+          type: label(r.final.screenshot.screenType),
+          subtype: r.final.screenshot.subtype ? label(r.final.screenshot.subtype) : "",
+        }
+      : null,
+    mappedFrom: r.mappedFrom ? label(r.mappedFrom.screenType) : null,
+    image: imageLine(idn?.image),
+    imageColours:
+      idn?.image?.dominantColours.map((c) => ({ name: c.family ?? c.hex, hex: c.hex })) ?? [],
+    composition: usable ? (COMPOSITION[r.final.screenshot.composition] ?? null) : null,
+    captures: usable ? captureLines(r.final, idn?.image, label) : [],
+    pending: usable ? null : pendingMessage(r),
+    layout: usable ? layoutView(paths, r) : null,
+  });
 }

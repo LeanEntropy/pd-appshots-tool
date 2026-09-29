@@ -12,6 +12,7 @@ import { competitorsRoute } from "./routes-competitors.ts";
 import { countriesRoute } from "./routes-countries.ts";
 import { getImport, getJobs, getProjects, postArchive, postImport } from "./routes-home.ts";
 import { kbRoute } from "./routes-kb.ts";
+import { libraryPagesRoute } from "./routes-library-pages.ts";
 import { getCountries, getLookup, getSearch, postProject } from "./routes-play.ts";
 import { projectRoute } from "./routes-project.ts";
 import { settingsRoute } from "./routes-settings.ts";
@@ -57,6 +58,8 @@ async function globalRoute(
   if (await appIconRoute(app, req, res, p)) return true;
   if (await kbRoute(app, req, res, p)) return true;
   if (await shareGlobalRoute(app, req, res, p)) return true;
+  // The image page, the games directory and the game page (plan-games-library).
+  if (await libraryPagesRoute(app, req, res, url)) return true;
   if (p === "/" && get) {
     sendHtml(res, homeHtml(app.token));
     return true;

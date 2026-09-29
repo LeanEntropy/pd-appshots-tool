@@ -19,6 +19,7 @@ import {
   postSelection,
 } from "./api.ts";
 import type { AppContext } from "./app-context.ts";
+import { getEnglish, postEnglish, postEnglishStop } from "./english-api.ts";
 import { exportRoute } from "./export-api.ts";
 import { redirect, send, sendHtml, writeRequest } from "./http-util.ts";
 import { getLayoutBackfill, postLayoutBackfill, postLayoutBackfillStop } from "./layout-api.ts";
@@ -44,6 +45,8 @@ const GETS: Record<string, Get> = {
   "/api/report/run": (l, q) => getReportRun(l, q.get("stage"), q.get("id")),
   "/api/expansion": (l) => getExpansion(l),
   "/api/layout-backfill": (l) => getLayoutBackfill(l),
+  // English for marketing texts (paid, behind approval): the count and cost, and its progress.
+  "/api/english": (l) => getEnglish(l),
   // Starts the same-screen check if it has not run for the current data; the page shows a note
   // while it runs and refreshes the reports after it.
   "/api/same-screens": (l, _q, a) => ({
@@ -63,6 +66,8 @@ const POSTS: Record<string, Post> = {
   "/api/expansion": (l, b) => postExpansion(l, b),
   "/api/layout-backfill": (l, b) => postLayoutBackfill(l, b),
   "/api/layout-backfill/stop": (l) => postLayoutBackfillStop(l),
+  "/api/english": (l, b) => postEnglish(l, b),
+  "/api/english/stop": (l) => postEnglishStop(l),
 };
 
 /** Derived state, with the home card's cached summary refreshed at the same time. */
