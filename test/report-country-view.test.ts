@@ -84,7 +84,7 @@ test("Per country is open, with one tab per country; the first is selected unles
   // The gap both countries have is listed once, across countries.
   assert.match(
     html,
-    /<h3>Across countries<\/h3>[\s\S]*Opens with Title screen \/ full-screen art<\/strong> <span class="meta">All 2 countries/,
+    /<h3>Across countries<\/h3>[\s\S]*Opens with Title screen \/ full-screen art<\/strong> <span class="meta">all 2 countries/,
   );
   const kr = renderCountry(c, true, "kr");
   assert.match(kr, /id="rep-r-japan-1-ctab-kr"[^>]*aria-selected="true"/);

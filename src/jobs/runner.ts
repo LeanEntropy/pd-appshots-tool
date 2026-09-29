@@ -17,6 +17,7 @@ import {
   runAnalysis,
 } from "../analysis/run.ts";
 import { type LoadedConfig, projectPaths } from "../config/load.ts";
+import { originalsProblem } from "../share/originals.ts";
 import { type ProjectContext, projectKey, workspaceStorage } from "../storage/index.ts";
 import { acquireAll, HEARTBEAT_MS, LOCKS, lockHolder } from "../storage/leases.ts";
 import { busyMessage } from "./busy.ts";
@@ -58,9 +59,7 @@ export const running = new Map<string, Handle>();
 const round = (n: number) => Math.round(n * 100) / 100;
 const money = (n: number) => `$${n.toFixed(2)}`;
 
-function refuse(status: number, problem: string): EnqueueResult {
-  return { ok: false, status, problem };
-}
+const refuse = (status: number, problem: string): EnqueueResult => ({ ok: false, status, problem });
 
 /**
  * Starts an approved analysis batch in the background (plan 12B, B3). Idempotent by the plan
@@ -132,6 +131,8 @@ export function startJob(
   const ctx: ProjectContext = { projectId: paths.projectId };
   const { planHash, approvalId } = spec;
   const journal = readJournal(storage, ctx);
+  const previews = originalsProblem(storage, ctx.projectId, spec.items);
+  if (previews) return refuse(409, previews);
   // One approval starts one job: a repeated or replayed request never pays twice.
   if (
     journal.jobs.ai?.approvalId === approvalId ||
