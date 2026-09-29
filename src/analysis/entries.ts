@@ -1,5 +1,7 @@
+import type { ProjectPaths } from "../config/load.ts";
 import type { ImageDb } from "../store/imagedb.ts";
 import { stableHash } from "../util/hash.ts";
+import { type DeckRepeats, repeatsOfItems, sameCheck, theirRepeatNote } from "./deck-repeats.ts";
 import { orientationOf } from "./image-facts.ts";
 import type { DeckEntry } from "./patterns.ts";
 import type { AnalysisPlan } from "./plan.ts";
@@ -8,22 +10,30 @@ import { type AnalysisRecord, isUsable } from "./records.ts";
 export interface BatchEntries {
   ours: DeckEntry[];
   competitors: DeckEntry[];
-  decks: { appId: string; name: string; deckLength: number }[];
+  /** deckLength counts each screen once; images and a note when the deck repeats screens. */
+  decks: { appId: string; name: string; deckLength: number; images?: number; repeats?: string }[];
   ourDeckLength: number;
   /** Plan positions without a usable analysis, e.g. "Archero 2 #3". */
   missing: string[];
 }
 
-/** Every analysed screenshot of the batch's games in store order, ours separated (by code). */
+/**
+ * Every analysed screenshot of the batch's games in store order, ours separated (by code). A
+ * screen a deck shows twice (`repeats`) is counted once: its repeat is left out.
+ */
 export function batchEntries(
   plan: AnalysisPlan,
   records: ReadonlyMap<string, AnalysisRecord>,
   db: Pick<ImageDb, "get">,
   ourAppId: string,
+  repeats: ReadonlyMap<string, DeckRepeats> = new Map(),
 ): BatchEntries {
   const out: BatchEntries = { ours: [], competitors: [], decks: [], ourDeckLength: 0, missing: [] };
   for (const g of plan.games) {
+    const r = repeats.get(g.appId);
+    const copies = new Set(r?.pairs.map((p) => p.position));
     for (const position of g.positions) {
+      if (copies.has(position)) continue;
       const item = plan.items.find((i) => i.appId === g.appId && i.position === position);
       const r = item ? records.get(item.imageId) : undefined;
       if (!item || !isUsable(r)) {
@@ -47,10 +57,27 @@ export function batchEntries(
       };
       (g.appId === ourAppId ? out.ours : out.competitors).push(entry);
     }
-    if (g.appId === ourAppId) out.ourDeckLength = g.positions.length;
-    else out.decks.push({ appId: g.appId, name: g.name, deckLength: g.positions.length });
+    const length = g.positions.filter((p) => !copies.has(p)).length;
+    if (g.appId === ourAppId) out.ourDeckLength = length;
+    else
+      out.decks.push({
+        appId: g.appId,
+        name: g.name,
+        deckLength: length,
+        ...(r ? { images: g.positions.length, repeats: theirRepeatNote(g.name, r) } : {}),
+      });
   }
   return out;
+}
+
+/** The screens each game of a plan (one country) shows twice, from the cached checks (no compute). */
+export function planRepeats(
+  paths: Pick<ProjectPaths, "projectId" | "library" | "workspace">,
+  db: Pick<ImageDb, "get">,
+  plan: Pick<AnalysisPlan, "items">,
+  records: ReadonlyMap<string, AnalysisRecord>,
+): Map<string, DeckRepeats> {
+  return repeatsOfItems(plan.items, (id) => db.get(id), sameCheck(paths, records));
 }
 
 /** Fingerprint of the analyses a batch's patterns and recommendations are built from. */

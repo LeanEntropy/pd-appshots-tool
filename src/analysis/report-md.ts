@@ -179,6 +179,10 @@ export function reportMarkdown(d: ReportData, label: Labeler, research?: string[
     "",
     "One row per Google Play position: our screenshot first, then each competitor's screenshot at the same position.",
     "",
+    ...(d.repeats ?? []).flatMap((r) => [
+      `**Same screen uploaded twice: ${r.ours ? `${r.name} (ours)` : r.name}, ${r.total} images, ${r.unique} unique.** ${r.ours ? r.text : "Counted once in the patterns."}${r.counted ? "" : " This version was built before the check and counts every image."}`,
+      "",
+    ]),
     `| # | ${cols.map((g) => cell(g.ours ? `${g.name} (ours)` : g.name)).join(" | ")} | How ours compares |`,
     `|---|${cols.map(() => "---").join("|")}|---|`,
   );

@@ -18,7 +18,8 @@ function needsHtml(p) {
   const dates = p.decks.map((d) => d.orderDate).filter(Boolean).sort();
   const gone = p.decks.filter((d) => d.state === "not-sold" || d.state === "not-downloaded");
   const left = p.decks.filter((d) => d.state === "left-out");
-  const lines = [row("Already analysed or identical to an analysed image (free)", c.identical), row("Same picture, new text: compare the text layer", c.layerDiff), row("Different picture: full analysis", c.full)];
+  const again = p.items.filter((i) => i.repeatOf && i.basedOn !== i.imageId).length;
+  const lines = [row("Already analysed or identical to an analysed image (free)", c.identical - again), ...(again ? [row("Same screen in another size (free)", again)] : []), row("Same picture, new text: compare the text layer", c.layerDiff), row("Different picture: full analysis", c.full)];
   if (c.newImages) lines.push(row("Images: estimated cost", usdRange(p.images.usd)));
   for (const t of p.text.parts) lines.push(row(t.label, usdRange(t.usd)));
   return "<h4>What this report needs</h4><table>" + lines.join("") + "</table>"

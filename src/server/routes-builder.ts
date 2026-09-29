@@ -1,6 +1,7 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
 import type { LoadedConfig } from "../config/load.ts";
 import { ensurePixelChecks } from "../reports/pixel-pairs.ts";
+import { ensureSameScreens } from "../reports/same-screen-run.ts";
 import { setDismissed, suggestionsView } from "../reports/suggest.ts";
 import type { AppContext } from "./app-context.ts";
 import { send, writeRequest } from "./http-util.ts";
@@ -61,6 +62,8 @@ export async function builderRoute(
   const write = async () => (await writeRequest(req, res, app.token))?.body;
   // A failed check never blocks the page: those pairs keep the fingerprint rule.
   if (rest.startsWith("/api/reports/")) await ensurePixelChecks(loaded).catch(() => 0);
+  // "Same screen uploaded twice" (free, cached per pair): before any plan or report is read.
+  if (rest.startsWith("/api/reports/")) await ensureSameScreens(loaded).catch(() => 0);
   if (rest === "/api/reports/match-check/pairs" && req.method === "POST") {
     const body = await write();
     if (body === undefined) return true;

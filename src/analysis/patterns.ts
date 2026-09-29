@@ -48,7 +48,8 @@ export interface TypeStats {
 }
 
 export interface Patterns {
-  games: { appId: string; name: string; analysed: number; deckLength: number }[];
+  /** deckLength counts each screen once; images: all of them, when the deck repeats screens. */
+  games: { appId: string; name: string; analysed: number; deckLength: number; images?: number }[];
   images: number;
   deckLength: { min: number; median: number; max: number };
   perPosition: PositionStats[];
@@ -74,6 +75,8 @@ export interface Patterns {
   byScreenType: TypeStats[];
   /** The game logo per position and deck, and what full-screen art says (absent before 2026-09-29). */
   tags?: TagStats;
+  /** Competitors whose deck shows the same screen twice (counted once), one note each. */
+  repeats?: string[];
 }
 
 export const PROPORTION = {
@@ -153,7 +156,13 @@ function typeStats(key: string, list: readonly DeckEntry[]): TypeStats {
  */
 export function findPatterns(
   entries: readonly DeckEntry[],
-  decks: readonly { appId: string; name: string; deckLength: number }[],
+  decks: readonly {
+    appId: string;
+    name: string;
+    deckLength: number;
+    images?: number;
+    repeats?: string;
+  }[],
 ): Patterns {
   const maxPos = Math.max(0, ...entries.map((e) => e.position));
   const perPosition: PositionStats[] = [];
@@ -186,7 +195,7 @@ export function findPatterns(
   const texts = layers.flatMap((l) => l.texts);
   const lengths = decks.map((d) => d.deckLength);
   return {
-    games: decks.map((d) => ({
+    games: decks.map(({ repeats: _repeats, ...d }) => ({
       ...d,
       analysed: entries.filter((e) => e.appId === d.appId).length,
     })),
@@ -255,5 +264,8 @@ export function findPatterns(
       ),
     ),
     tags: tagStats(entries),
+    ...(decks.some((d) => d.repeats)
+      ? { repeats: decks.flatMap((d) => (d.repeats ? [d.repeats] : [])) }
+      : {}),
   };
 }
