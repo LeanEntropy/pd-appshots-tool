@@ -39,7 +39,7 @@ function patternsHtml(p) {
     ["Text colours", p.colours.texts], ["Mask shapes", p.maskShapes], ["Mask locations", p.maskLocations], ["Text positions", p.textPositions], ["Extra elements", p.elementKinds],
   ].map(([k, v]) => "<tr><th>" + esc(k) + "</th><td>" + shares(v, 5, (x) => x.replace(/_/g, " ")) + "</td></tr>").join("");
   const logoLines = tg ? "<p>Game logo on the image: " + esc(tg.logoPerGame.map((g) => g.name + " " + g.n + " of " + g.of).join(", ")) + ". In the first 3 images: " + tg.logoPerGame.filter((g) => g.firstThree).length + " of " + tg.logoPerGame.length + " competitors.</p><p>" + esc(L("full_screen_art")) + ": " + tg.art.n + " images, " + tg.art.withLogo + " with the game logo; their line: " + esc(tg.art.messages.map((m) => L(m.key).toLowerCase() + " " + m.n).join(", ") || "none") + ".</p>" : "";
-  return '<p>From <strong>' + p.images + "</strong> competitor screenshots of " + p.games.length + " games (" + esc(p.games.map((g) => g.name).join(", ")) + "). Deck length " + p.deckLength.min + " to " + p.deckLength.max + " (median " + p.deckLength.median + "). Marketing layer on " + nOf(p.marketingLayer.share, p.images) + " images.</p>" + logoLines
+  return '<p>From <strong>' + p.images + "</strong> competitor screenshots of " + p.games.length + " games (" + esc(p.games.map((g) => g.name).join(", ")) + "). Deck length " + p.deckLength.min + " to " + p.deckLength.max + " (median " + p.deckLength.median + "). Marketing layer on " + nOf(p.marketingLayer.share, p.images) + " images.</p>" + (p.repeats && p.repeats.length ? "<p>Same screen uploaded twice (each screen counted once):</p><ul>" + p.repeats.map((r) => "<li>" + esc(r) + "</li>").join("") + "</ul>" : "") + logoLines
     + '<h3>Screen type per image</h3><div class="tablewrap"><table class="rt"><tr><th>Image</th><th>Competitors</th><th>Screen types</th><th>Marketing layer</th><th>Game logo</th><th>Layout</th></tr>' + pos + "</table></div>"
     + '<h3>Screen types used</h3><table class="rt"><tr><th>Screen type</th><th>Games</th><th>Images</th></tr>' + types + "</table>"
     + '<h3>Format, layers and colours</h3><table class="rt">' + fmt + "</table>"
@@ -64,6 +64,11 @@ function fitHtml(d) {
   }).join("");
 }
 
+// Decks that show the same screen twice: counted once (the repeated rows say which one they repeat).
+function repeatsHtml(d) {
+  return (d.repeats || []).map((r) => '<p><strong>Same screen uploaded twice: ' + esc(r.ours ? r.name + " (ours)" : r.name) + ", " + r.total + " images, " + r.unique + " unique.</strong> " + esc(r.ours ? r.text : "Counted once in the patterns.") + (r.counted ? "" : ' <span class="meta">This version was built before the check and counts every image.</span>') + "</p>").join("");
+}
+
 // One row per store position: our screenshot first, then each competitor's, then our fit.
 function positionsHtml(d) {
   const ours = d.games.find((g) => g.ours);
@@ -75,7 +80,7 @@ function positionsHtml(d) {
     if (r.state === "excluded") return '<td class="meta">not analysed (tablet-shaped)</td>';
     return "<td" + (g.ours ? ' class="ourcell"' : "") + ">" + rthumb(null, r.thumb, r.file, g.name + " " + p) + '<div class="lbl">' + esc(r.screen || "not analysed yet") + (r.imageId ? " " + infoBtn(r.imageId) : "") + "</div>" + (r.headline ? '<div class="hl">"' + esc(r.headline) + '"</div>' : "") + "</td>";
   };
-  let h = '<p class="meta">Row N shows every game\\u2019s Nth Google Play screenshot: ours first, then each competitor. The (i) button shows the full analysis.</p><div class="tablewrap"><table class="rt pos"><tr><th>#</th>' + cols.map((g) => "<th>" + esc(g.name) + (g.ours ? " (ours)" : "") + "</th>").join("") + "<th>How ours compares</th></tr>";
+  let h = '<p class="meta">Row N shows every game\\u2019s Nth Google Play screenshot: ours first, then each competitor. The (i) button shows the full analysis.</p>' + repeatsHtml(d) + '<div class="tablewrap"><table class="rt pos"><tr><th>#</th>' + cols.map((g) => "<th>" + esc(g.name) + (g.ours ? " (ours)" : "") + "</th>").join("") + "<th>How ours compares</th></tr>";
   for (let p = 1; p <= max; p++) {
     const v = d.oursVs && d.oursVs.positions.find((x) => x.position === p);
     h += "<tr><th>" + p + "</th>" + cols.map((g) => cellOf(g, p)).join("") + "<td>" + (v ? pill(VERDICT[v.verdict] || "", v.verdict) + '<div class="meta">' + esc(v.reasons.join("; ")) + "</div>" : "") + "</td></tr>";

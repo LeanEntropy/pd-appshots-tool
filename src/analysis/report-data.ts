@@ -17,6 +17,7 @@ import { findPatterns, type Patterns } from "./patterns.ts";
 import type { AnalysisPlan } from "./plan.ts";
 import { PROMPT_VERSIONS } from "./prompts.ts";
 import { type AnalysisRecord, isUsable } from "./records.ts";
+import { type DeckRepeats, type RepeatFinding, withRepeatFindings } from "./repeat-findings.ts";
 import {
   type Example,
   recExamples,
@@ -52,6 +53,7 @@ export interface OrderRow {
   /** analysed | not double-checked | not analysed | excluded */
   state: string;
   note: string;
+  repeatOf?: number;
 }
 
 export interface GameOrder {
@@ -105,6 +107,7 @@ export interface ReportData {
   abTests?: AbTestsPart;
   /** "How we sort images": every category and tag used, defined, with an example. */
   sorting?: SortingPart;
+  repeats?: RepeatFinding[];
 }
 
 export interface ReportInputs {
@@ -128,6 +131,7 @@ export interface ReportInputs {
   /** Where A/B tests run (countries, traffic); without it, the main market only. */
   play?: PlayContext;
   generatedAt?: string;
+  repeats?: ReadonlyMap<string, DeckRepeats>;
 }
 
 function row(
@@ -214,8 +218,8 @@ export function buildReportData(x: ReportInputs): ReportData {
       rows,
     };
   });
-  const entries = batchEntries(plan, x.records, x.db, x.ourAppId);
-  const total = plan.games.reduce((n, g) => n + g.positions.length, 0);
+  const entries = batchEntries(plan, x.records, x.db, x.ourAppId, x.repeats);
+  const total = entries.decks.reduce((n, g) => n + g.deckLength, entries.ourDeckLength);
   const coverage = { used: total - entries.missing.length, total, missing: entries.missing };
   let patterns: Patterns | null = null;
   let oursVs: OursVsPatterns | null = null;
@@ -266,7 +270,7 @@ export function buildReportData(x: ReportInputs): ReportData {
       howTo,
     };
   // Display wording only (user rule): older text never says an art screen is not from the game.
-  return artWordingDeep({
+  const data: ReportData = artWordingDeep({
     stage: plan.stage,
     market: plan.market.label,
     approved: x.approved,
@@ -292,4 +296,5 @@ export function buildReportData(x: ReportInputs): ReportData {
     storeText: x.storeText ?? [],
     ...bottomLine(x, entries, fit, patterns, ai),
   });
+  return withRepeatFindings(data, x.repeats ?? new Map(), true);
 }

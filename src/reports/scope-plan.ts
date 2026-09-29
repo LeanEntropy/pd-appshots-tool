@@ -1,3 +1,4 @@
+import { type SameCheck, sameCheck, withRepeatOf } from "../analysis/deck-repeats.ts";
 import type { LayerDiffRecord } from "../analysis/layer-diff.ts";
 import { latestOrderDate } from "../analysis/orders.ts";
 import { buildAnalysisPlan } from "../analysis/plan.ts";
@@ -83,6 +84,8 @@ export interface PlanContext {
   layer?: (imageId: string, anchorId: string) => LayerDiffRecord | undefined;
   /** The pixel check (item 8); undefined when it is off (fingerprint only). */
   pixel?: ReturnType<typeof pixelInput>;
+  /** The "same screen uploaded twice" check (cached pixel checks and headlines); none: never. */
+  same?: SameCheck;
 }
 
 export function planContext(loaded: LoadedConfig): PlanContext {
@@ -95,6 +98,7 @@ export function planContext(loaded: LoadedConfig): PlanContext {
     names: gameNames(loaded),
     layer: layerLookup(loaded, records),
     pixel: pixelInput(loaded, records, readSamePairs(loaded)),
+    same: sameCheck(paths, records),
   };
 }
 
@@ -254,7 +258,7 @@ export function buildScopePlan(
     if (!list.some((x) => x.imageId === c.imageId)) into.set(r.appId, [...list, c]);
   }
   const tiered = tierScope(
-    inputs,
+    withRepeatOf(inputs, ctx.same ?? (() => 0)),
     mainCands,
     abroad,
     analysedIds,

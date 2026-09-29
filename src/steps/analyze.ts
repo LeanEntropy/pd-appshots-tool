@@ -3,6 +3,7 @@ import { buildAnalysisPlan, readSavedPlan, type Stage } from "../analysis/plan.t
 import { describeAnalysisPlan } from "../analysis/report.ts";
 import type { LoadedConfig } from "../config/load.ts";
 import { enqueue } from "../jobs/index.ts";
+import { ensureSameScreens } from "../reports/same-screen-run.ts";
 import { confirm } from "../util/cli-io.ts";
 
 /**
@@ -21,6 +22,8 @@ export async function runAnalyzeStep(
     log(guard);
     return false;
   }
+  // "Same screen uploaded twice" (free, cached per pair): the plan reuses repeated screens.
+  await ensureSameScreens(loaded);
   const previous = readSavedPlan(loaded, stage);
   if (opts.yes) {
     if (!previous) {

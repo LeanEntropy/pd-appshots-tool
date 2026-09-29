@@ -5,6 +5,7 @@ import { mainMarket } from "../core/targets.ts";
 import { openImageDb } from "../store/imagedb.ts";
 import { readJsonIfExists, writeJsonAtomic } from "../util/fsx.ts";
 import { stableHash } from "../util/hash.ts";
+import { repeatOfItems, sameCheck } from "./deck-repeats.ts";
 import { batchDataHash } from "./entries.ts";
 import { type Estimate, estimate } from "./estimate.ts";
 import { readLatest } from "./final-report.ts";
@@ -121,8 +122,13 @@ export function buildAnalysisPlan(
     }))
     .filter((a) => a.phash);
   const names = new Map(apps.map((a) => [a.appId, a.name]));
+  // One country (the main one), so each game has one deck here.
+  const repeats = repeatOfItems(inputs, (id) => db.get(id), sameCheck(paths, records));
   const tiered = assignTiers(
-    inputs,
+    inputs.map((i) => {
+      const repeatOf = repeats.get(`${i.appId}|${i.position}`);
+      return repeatOf ? { ...i, repeatOf } : i;
+    }),
     analysed,
     (gl, hl) => gl === baseline.gl && hl === baseline.hl,
   );
