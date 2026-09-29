@@ -47,9 +47,15 @@ export function pixelChecked(app: AppContext, loaded: LoadedConfig): Promise<num
 export function sameScreens(app: AppContext, loaded: LoadedConfig): Promise<number> {
   const { ws, id } = where(loaded);
   return app.computed
-    .get(ws, `${id}:same-screens`, () =>
-      // Its many small writes count as one data change, when it ends.
-      ensureSameScreens(loaded).finally(flushDataChanges),
+    .get(
+      ws,
+      `${id}:same-screens`,
+      () =>
+        // Its many small writes count as one data change, when it ends.
+        ensureSameScreens(loaded).finally(flushDataChanges),
+      undefined,
+      // Done stays done after its own results are counted (else it would start again at once).
+      true,
     )
     .catch(() => 0);
 }
