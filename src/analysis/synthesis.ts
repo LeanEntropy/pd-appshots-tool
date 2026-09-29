@@ -1,7 +1,8 @@
+import type { z } from "zod";
 import type { Taxonomy } from "../config/load.ts";
 import { type AbTestsInput, writeAbTests } from "./ab-tests.ts";
 import type { AbTestsOutput } from "./ab-tests-schema.ts";
-import { type CallContext, validatedCall } from "./call.ts";
+import { type CallContext, cachedAnswer, validatedCall } from "./call.ts";
 import {
   CATEGORIES,
   categoryOf,
@@ -148,12 +149,14 @@ async function writeAndReview(
     `Pattern check, computed (JSON): verdict, key points in priority order, and every pattern with whether we fit:\n${JSON.stringify(input.fit, (k, v) => (k === "basis" ? undefined : v))}`,
   ].join("\n\n");
   report("patterns", "Finding patterns…");
-  const interp = await validatedCall(
+  const interp = await textStep(
     "patterns",
     deps.writer,
     deps.prompts.patterns,
-    `Interpret these computed patterns.\n\n${facts}`,
-    [],
+    {
+      now: `${facts}\n\nInterpret these computed patterns.`,
+      before: `Interpret these computed patterns.\n\n${facts}`,
+    },
     interpretationSchema,
     (v) =>
       v.keyPoints.length === input.fit.keyPoints.length
@@ -168,23 +171,28 @@ async function writeAndReview(
 
   const minLen = Math.max(1, Math.min(input.ourDeckLength, input.patterns.deckLength.min || 1));
   const maxLen = Math.max(input.ourDeckLength, input.patterns.deckLength.max, minLen);
-  const context = [
-    facts,
-    `Interpretation:\n${JSON.stringify(out.interpretation)}`,
+  const interpretation = `Interpretation:\n${JSON.stringify(out.interpretation)}`;
+  const lines = [
     `Our current screenshots, in store order:\n${input.ours.map(brief).join("\n")}`,
     `Competitors' screenshots, in store order:\n${input.competitors.map(brief).join("\n")}`,
-    `Recommend between ${minLen} and ${maxLen} positions (our current deck has ${input.ourDeckLength}).`,
-  ].join("\n\n");
+  ];
+  const range = `Recommend between ${minLen} and ${maxLen} positions (our current deck has ${input.ourDeckLength}).`;
+  // Facts and screenshot lines first (shared by the recommendation and its revision, so the
+  // revision reads them from the prompt cache), the step's own material and instruction last.
+  const context = [facts, ...lines, interpretation, range].join("\n\n");
+  const contextBefore = [facts, interpretation, ...lines, range].join("\n\n");
   const schema = recommendationSchema(taxonomy);
   const oursTypes = new Map(input.ours.map((e) => [e.position, e.final.screenshot.screenType]));
   const check = (v: Recommendations) => recommendationProblems(v, minLen, maxLen, oursTypes);
   report("recommend", "Writing recommendations…");
-  const rec = await validatedCall(
+  const rec = await textStep(
     "recommend",
     deps.writer,
     deps.prompts.recommend,
-    `Write the recommendations.\n\n${context}`,
-    [],
+    {
+      now: `${context}\n\nWrite the recommendations.`,
+      before: `Write the recommendations.\n\n${contextBefore}`,
+    },
     schema,
     check,
     ctx,
@@ -197,12 +205,15 @@ async function writeAndReview(
   if (!deps.reviewer) return out;
   report("recommend-review", "Checking recommendations…");
   const facts2 = `${facts}\n\nOur current screenshots:\n${input.ours.map(brief).join("\n")}`;
-  const rev = await validatedCall(
+  const recJson = `Recommendations (JSON):\n${JSON.stringify(rec.value)}`;
+  const rev = await textStep(
     "recommend-review",
     deps.reviewer,
     deps.prompts.review,
-    `Review these recommendations.\n\n${facts2}\n\nRecommendations (JSON):\n${JSON.stringify(rec.value)}`,
-    [],
+    {
+      now: `${facts2}\n\n${recJson}\n\nReview these recommendations.`,
+      before: `Review these recommendations.\n\n${facts2}\n\n${recJson}`,
+    },
     reviewSchema,
     () => [],
     ctx,
@@ -218,12 +229,16 @@ async function writeAndReview(
   const findings = major
     .map((f) => `- position ${f.position || "all"}: ${f.issue} Suggestion: ${f.suggestion}`)
     .join("\n");
-  const revised = await validatedCall(
+  const revise = `Revise your recommendations. A reviewer found these major problems; fix them where they are right, keep the rest.\n${findings}`;
+  const first = `Your first version (JSON):\n${JSON.stringify(rec.value)}`;
+  const revised = await textStep(
     "recommend-revise",
     deps.writer,
     deps.prompts.recommend,
-    `Revise your recommendations. A reviewer found these major problems; fix them where they are right, keep the rest.\n${findings}\n\nYour first version (JSON):\n${JSON.stringify(rec.value)}\n\n${context}`,
-    [],
+    {
+      now: `${context}\n\n${first}\n\n${revise}`,
+      before: `${revise}\n\n${first}\n\n${contextBefore}`,
+    },
     schema,
     check,
     ctx,
@@ -233,4 +248,24 @@ async function writeAndReview(
     out.recommendations = revised.value;
   } else out.problems.push(`revision: ${revised.problems.join("; ")}`);
   return out;
+}
+
+/**
+ * A text step with the shared facts first and its own instruction last (prompt-cache friendly,
+ * plan-analysis-speed item 3). An answer saved under the older order (instruction first) is
+ * still used, so reports built before keep their written parts on a free rebuild.
+ */
+async function textStep<T>(
+  step: string,
+  provider: Provider,
+  system: RenderedPrompt,
+  task: { now: string; before: string },
+  schema: z.ZodType<T>,
+  check: (value: T) => string[],
+  ctx: CallContext,
+): Promise<{ value: T | null; key: string; problems: string[] }> {
+  const q = { step, model: provider.model, system, images: [], ctx };
+  const old = cachedAnswer(q, task.before, schema, check);
+  if (old) return { value: old.value, key: old.key, problems: [] };
+  return validatedCall(step, provider, system, task.now, [], schema, check, ctx);
 }

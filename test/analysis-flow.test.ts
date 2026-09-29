@@ -191,5 +191,9 @@ test("a major finding in the recommendation check leads to one revision", async 
   const out = await runAnalysis(loaded, plan, deps(good(), writer, "major"));
   assert.equal(writer.calls.length, 3);
   assert.ok(out.synthesis?.draft);
-  assert.match(writer.calls[2]?.prompt ?? "", /^Revise/);
+  // Facts first (shared with the first draft, so the prompt cache serves them), instruction last.
+  const [draft, revision] = [writer.calls[1]?.prompt ?? "", writer.calls[2]?.prompt ?? ""];
+  assert.match(revision, /\n\nRevise your recommendations\. [^]*$/);
+  const shared = draft.slice(0, draft.indexOf("\n\nInterpretation:"));
+  assert.ok(shared.length > 1000 && revision.startsWith(shared), "the revision starts like the draft");
 });

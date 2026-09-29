@@ -97,6 +97,46 @@ function addUsage(a: CallUsage | undefined, b: CallUsage | undefined): CallUsage
   };
 }
 
+export interface AnswerQuery {
+  step: string;
+  model: string;
+  system: RenderedPrompt;
+  images: readonly ChunkImage[];
+  ctx: CallContext;
+  extraKey?: unknown;
+  schemaVersion?: string;
+}
+
+function answerKeyOf(q: AnswerQuery, task: string): string {
+  return stableHash({
+    step: q.step,
+    model: q.model,
+    prompt: q.system.hash,
+    task,
+    schema: q.schemaVersion ?? SCHEMA_VERSION,
+    taxonomy: q.ctx.taxonomyHash,
+    images: q.images.map((i) => i.imageId),
+    extraKey: q.extraKey ?? null,
+  });
+}
+
+/** A saved, still valid answer for exactly this call, or null (never calls a model). */
+export function cachedAnswer<T>(
+  q: AnswerQuery,
+  task: string,
+  schema: z.ZodType<T>,
+  check: (value: T, refs: string[]) => string[],
+  tidy: (value: T) => T = (v) => v,
+): { value: T; key: string } | null {
+  const key = answerKeyOf(q, task);
+  const stored = q.ctx.storage.getJson(q.ctx.answerKey(q.step, key)) as StoredObject | undefined;
+  if (!stored) return null;
+  const parsed = schema.safeParse(stored.output);
+  const value = parsed.success ? tidy(parsed.data) : null;
+  const refs = q.images.map((_, i) => `img${i + 1}`);
+  return value && check(value, refs).length === 0 ? { value, key } : null;
+}
+
 /**
  * One validated model call for a set of images, cached by content: the key covers the step,
  * model, prompt text, schema version, taxonomy and the ordered image ids. An answer that fails
@@ -117,23 +157,11 @@ export async function validatedCall<T>(
   schemaVersion: string = SCHEMA_VERSION,
 ): Promise<{ value: T | null; key: string; problems: string[] }> {
   const refs = images.map((_, i) => `img${i + 1}`);
-  const key = stableHash({
-    step,
-    model: provider.model,
-    prompt: system.hash,
-    task: prompt,
-    schema: schemaVersion,
-    taxonomy: ctx.taxonomyHash,
-    images: images.map((i) => i.imageId),
-    extraKey,
-  });
+  const q = { step, model: provider.model, system, images, ctx, extraKey, schemaVersion };
+  const key = answerKeyOf(q, prompt);
   const file = ctx.answerKey(step, key);
-  const stored = ctx.storage.getJson(file) as StoredObject | undefined;
-  if (stored) {
-    const parsed = schema.safeParse(stored.output);
-    const value = parsed.success ? tidy(parsed.data) : null;
-    if (value && check(value, refs).length === 0) return { value, key, problems: [] };
-  }
+  const hit = cachedAnswer(q, prompt, schema, check, tidy);
+  if (hit) return { value: hit.value, key: hit.key, problems: [] };
   let problems: string[] = [];
   let repairs: string[] = [];
   let callErrors = 0;

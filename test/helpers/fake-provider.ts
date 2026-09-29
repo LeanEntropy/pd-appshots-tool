@@ -200,7 +200,9 @@ export function fakeProvider(o: FakeOptions): Provider & { calls: VisionCall[] }
     calls,
     async call(c): Promise<VisionResult> {
       calls.push(c);
-      if (c.prompt.startsWith("Interpret"))
+      // The report text steps put their instruction last (facts first, for the prompt cache).
+      const asks = (s: string) => c.prompt.startsWith(s) || c.prompt.includes(`\n\n${s}`);
+      if (asks("Interpret these"))
         return ok({
           summary: "s",
           keyPatterns: [],
@@ -209,12 +211,12 @@ export function fakeProvider(o: FakeOptions): Provider & { calls: VisionCall[] }
           shortAnswer: "s",
           keyPoints: keyPointsIn(c.prompt).map((_, i) => `point ${i + 1}`),
         });
-      if (c.prompt.startsWith("Write the recommendations") || c.prompt.startsWith("Revise")) {
+      if (asks("Write the recommendations") || asks("Revise")) {
         const m = /between (\d+) and/.exec(c.prompt);
         return ok(recommendations(Number(m?.[1] ?? 3)));
       }
       if (c.prompt.startsWith("Write the A/B tests")) return ok(abAnswer(c.prompt));
-      if (c.prompt.startsWith("Review these")) {
+      if (asks("Review these")) {
         const findings = o.reviewSeverity
           ? [{ position: 1, severity: o.reviewSeverity, issue: "i", suggestion: "s" }]
           : [];
