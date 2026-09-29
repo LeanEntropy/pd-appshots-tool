@@ -4,28 +4,28 @@
       "entryId": "ap-001",
       "contentHash": "c0dd8fbc810c4a12b0d71d5ded5ace42c2ec725a0258ccadc3061a7544b10fe5",
       "decision": "approved",
-      "how": "auto",
-      "by": "auto",
-      "at": "2026-09-29",
-      "note": "approved automatically: official source"
+      "how": "one",
+      "by": "user",
+      "at": "2026-09-29T15:52:50.014Z",
+      "note": ""
     },
     {
       "entryId": "ap-002",
       "contentHash": "456eaf6a3c1e2bb19b46e7113c178518f572b706bde18881aacbd6273d77ff9b",
       "decision": "approved",
-      "how": "auto",
-      "by": "auto",
-      "at": "2026-09-29",
-      "note": "approved automatically: official source"
+      "how": "one",
+      "by": "user",
+      "at": "2026-09-29T15:53:13.879Z",
+      "note": ""
     },
     {
       "entryId": "ap-003",
       "contentHash": "647ff103de64ac7f29c43d436530a5e9c3cf56a4f46633ccea1bf04168e88edb",
       "decision": "approved",
-      "how": "auto",
-      "by": "auto",
-      "at": "2026-09-29",
-      "note": "approved automatically: official source"
+      "how": "one",
+      "by": "user",
+      "at": "2026-09-29T15:53:22.206Z",
+      "note": ""
     },
     {
       "entryId": "ap-004",
@@ -1187,6 +1187,141 @@
       "by": "auto",
       "at": "2026-09-29",
       "note": "approved automatically: official source"
+    },
+    {
+      "entryId": "hr-021",
+      "contentHash": "74aa1345dfa81886ac7ad9afa1a4eed82e3cea53ea9bdb1e3dae4edb94ce0028",
+      "decision": "approved",
+      "how": "one",
+      "by": "user",
+      "at": "2026-09-29T16:01:14.357Z",
+      "note": ""
+    },
+    {
+      "entryId": "hr-022",
+      "contentHash": "188d28342a041adfe287d984c8863f9b8aa6c7bd3989685c7a9315a74cf0b4a3",
+      "decision": "rejected",
+      "how": "one",
+      "by": "user",
+      "at": "2026-09-29T16:01:00.168Z",
+      "note": ""
+    },
+    {
+      "entryId": "hr-027",
+      "contentHash": "be26c1b0bc6e370ebf818357dceabb4fb427cf1974300f071f86642c3e8ae35d",
+      "decision": "approved",
+      "how": "one",
+      "by": "user",
+      "at": "2026-09-29T16:00:42.835Z",
+      "note": ""
+    },
+    {
+      "entryId": "hr-031",
+      "contentHash": "78da6bb7ac7820e61dc1b2f27b19985cfd5b0d59f7f0ac25190e1863c843e2f7",
+      "decision": "approved",
+      "how": "one",
+      "by": "user",
+      "at": "2026-09-29T16:00:18.754Z",
+      "note": ""
+    },
+    {
+      "entryId": "hr-032",
+      "contentHash": "b72145c5ee3e914cd2136254cda5b44dfdd7857dd3c479448d42f8f029009adc",
+      "decision": "approved",
+      "how": "one",
+      "by": "user",
+      "at": "2026-09-29T16:00:14.226Z",
+      "note": ""
+    },
+    {
+      "entryId": "hr-037",
+      "contentHash": "035d18b0fd6dc0bbad627c5ad907fc10e1a4e9664d3fa5600220c0965678dcef",
+      "decision": "rejected",
+      "how": "one",
+      "by": "user",
+      "at": "2026-09-29T15:59:52.031Z",
+      "note": ""
+    },
+    {
+      "entryId": "hr-038",
+      "contentHash": "d954783e103a8bd0ffea8eb9ab6180c9d734f3b5b15a5f64aa789f46be203540",
+      "decision": "approved",
+      "how": "one",
+      "by": "user",
+      "at": "2026-09-29T15:59:36.104Z",
+      "note": ""
+    },
+    {
+      "entryId": "hr-039",
+      "contentHash": "40a631aecfc321483b12ede9bba74ca0af0bead947df6724f952e8a63d5d6865",
+      "decision": "approved",
+      "how": "one",
+      "by": "user",
+      "at": "2026-09-29T15:59:16.942Z",
+      "note": ""
+    },
+    {
+      "entryId": "hr-043",
+      "contentHash": "051d30ded058db6a6111b8e795a00184039a9491e47223592fef4e57cb8d471e",
+      "decision": "approved",
+      "how": "one",
+      "by": "user",
+      "at": "2026-09-29T15:59:03.009Z",
+      "note": ""
+    },
+    {
+      "entryId": "hr-044",
+      "contentHash": "1e907e8b79e6328c85b5a9642cfbd4b2f2dfc28ff125125bb35794c16243fb3e",
+      "decision": "approved",
+      "how": "one",
+      "by": "user",
+      "at": "2026-09-29T15:58:55.701Z",
+      "note": ""
+    },
+    {
+      "entryId": "hr-045",
+      "contentHash": "910112a28321ff30906b7d9cabea7195b90c3c180771b37b3c3813bb872b5aaa",
+      "decision": "approved",
+      "how": "one",
+      "by": "user",
+      "at": "2026-09-29T15:58:47.366Z",
+      "note": ""
+    },
+    {
+      "entryId": "hr-046",
+      "contentHash": "5d8663838baaf05394519499095459969f1c5419f61dcaf2c800f9b5e7bb2dc1",
+      "decision": "approved",
+      "how": "one",
+      "by": "user",
+      "at": "2026-09-29T15:58:39.951Z",
+      "note": ""
+    },
+    {
+      "entryId": "hr-051",
+      "contentHash": "f34616bc878391ebee5b1bf91c20e3f42ae46daeadf3429e924fdd073461792c",
+      "decision": "approved",
+      "how": "one",
+      "by": "user",
+      "at": "2026-09-29T15:58:19.798Z",
+      "note": ""
+    },
+    {
+      "entryId": "hr-053",
+      "contentHash": "fc11fdfc9168ee81b649233080b46642c9fc1fd04b75a03e02ae3da63f379fe6",
+      "decision": "rejected",
+      "how": "one",
+      "by": "user",
+      "at": "2026-09-29T15:58:11.431Z",
+      "note": ""
+    },
+    {
+      "entryId": "hr-054",
+      "contentHash": "41e716537560ee1bbb19b84e9c2ccf9a400e17009741d6c9ea110a6906112e59",
+      "decision": "approved",
+      "how": "one",
+      "by": "user",
+      "at": "2026-09-29T15:57:55.317Z",
+      "note": ""
     }
   ]
 }
