@@ -141,7 +141,7 @@ test("openKbRun: nothing when the switch is off; on, the release is pinned in th
   assert.equal(r.market, "US");
   assert.equal(r.rules, "RULES");
   assert.ok(storage.exists(snapshotKey(r.hash)), "an immutable snapshot of the release");
-  assert.equal(r.capTokens, Math.floor(0.5e6 / 4), "the $0.50 cap at the writer's input price");
+  assert.equal(r.capUsd, 0.5, "the $0.50 cap per report (D6)");
 });
 
 test("citations: only given handles; unverified entries only on test items; enforced rules never gone against", () => {

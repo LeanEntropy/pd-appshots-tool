@@ -129,10 +129,10 @@ export function kbCost(
   };
 }
 
-/** Knowledge tokens a report may add before its cap is reached (priced at the writer's input). */
-export function capTokens(c: Config): number {
-  const price = priceOf(c.models.recommend);
-  return Math.floor((c.options.knowledge.maxUsdPerReport * 1e6) / Math.max(price.input, 0.01));
+/** What one call's knowledge costs: its tokens at that call's model, plus the citation output. */
+export function callUsd(model: string, tokens: number): number {
+  const p = priceOf(model);
+  return (tokens * p.input + OUTPUT_TOKENS_PER_CALL * p.output) / 1e6;
 }
 
 /** One line for the approval screens, or null when the switch is off. */

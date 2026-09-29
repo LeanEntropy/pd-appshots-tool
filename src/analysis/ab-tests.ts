@@ -100,6 +100,7 @@ export async function writeAbTests(
     task: { now: plain, before: plain },
     schema: abTestsSchema,
     check: () => [],
+    model: provider.model,
   });
   if ("blocked" in k) return { value: null, problems: [k.blocked], record: null };
   const task = k.task.now;

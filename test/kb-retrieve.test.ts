@@ -85,6 +85,24 @@ test("budget and balance: within the step budget, unverified at most a third, co
   );
 });
 
+test("a counter-claim for another country never travels into this country's prompt", () => {
+  const list = [
+    entry("h-a", "heuristic", ["v1", "d1"], ["first_images"], { contradicts: ["h-b"] }),
+    entry("h-b", "heuristic", ["v2", "jp1"], ["first_images"], {
+      scope: {
+        store: ["google_play"],
+        genre: ["all_games"],
+        countries: ["JP"],
+        position: ["all"],
+        asset: [],
+      },
+    }),
+  ];
+  const kb = fixtureKb({ entries: list });
+  assert.deepEqual(ids(kb, q()), ["h-a"]);
+  assert.deepEqual(ids(kb, q({ country: "JP" })).sort(), ["h-a", "h-b"]);
+});
+
 test("entries about other questions are left out with a reason; the facet caps hold", () => {
   const kb = fixtureKb();
   const s = select(kb, q({ step: "patterns", facts: [] }));

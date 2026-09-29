@@ -3,7 +3,6 @@ import type { Config } from "../config/schema.ts";
 import type { Storage } from "../storage/index.ts";
 import { kbFiles } from "../storage/kb-files.ts";
 import { citeNumberer } from "./cite.ts";
-import { capTokens } from "./cost.ts";
 import { loadKb, pinRelease } from "./release.ts";
 import type { KbRun } from "./run.ts";
 
@@ -41,8 +40,8 @@ export function openKbRun(
     store: "google_play",
     market: gl ? gl.toUpperCase() : null,
     rules: kbRulesText(root),
-    capTokens: capTokens(config),
-    used: { tokens: 0 },
+    capUsd: k.maxUsdPerReport,
+    used: { tokens: 0, usd: 0 },
     log: [],
     cite: citeNumberer(kb),
   };

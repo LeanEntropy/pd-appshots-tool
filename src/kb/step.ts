@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { extendPrompt, type RenderedPrompt } from "../analysis/prompts.ts";
+import { callUsd } from "./cost.ts";
 import { activeChecks, enforcedProblems, type PlacedText } from "./enforce.ts";
 import { type Selection, select } from "./retrieve.ts";
 import type { KbRun } from "./run.ts";
@@ -74,6 +75,8 @@ export function kbCall(
   run: KbRun | undefined,
   step: KbStep,
   facts: readonly string[],
+  /** The model that receives it (for the cost cap); unknown models are priced high. */
+  model = "",
 ): KbCall | { blocked: string } | null {
   if (!run) return null;
   const sel = select(run.kb, {
@@ -89,7 +92,10 @@ export function kbCall(
     return { blocked: sel.blocked };
   }
   if (!sel.picked.length) return null;
-  if (run.capTokens && run.used.tokens + sel.tokens > run.capTokens) {
+  // The report's knowledge cost cap (D6), priced at this call's model; past it, the step runs
+  // exactly as without the knowledge base.
+  const usd = callUsd(model, sel.tokens);
+  if (run.capUsd && run.used.usd + usd > run.capUsd) {
     run.log.push({
       ...sel,
       picked: [],
@@ -98,6 +104,7 @@ export function kbCall(
     return null;
   }
   run.used.tokens += sel.tokens;
+  run.used.usd += usd;
   run.log.push(sel);
   const byHandle = new Map(sel.picked.map((p) => [p.handle, p]));
   const core = sel.picked.filter((p) => !p.perCall).map((p) => p.text);

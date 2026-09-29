@@ -7,8 +7,9 @@ import type { Preset } from "./steps.ts";
 /**
  * The knowledge base of one report while it is written (only when the Settings switch is on):
  * the pinned release, the project's genres, the budget preset, the store and country, the shared
- * rules block, and the token cap from the report's cost cap (decision D6). Each step's selection
- * is logged, so the report can say what was used and what was left out.
+ * rules block, and the report's knowledge cost cap (decision D6), counted per call at that call's
+ * model price. Each step's selection is logged, so the report can say what was used and what was
+ * left out.
  */
 export interface KbRun {
   kb: Kb;
@@ -20,9 +21,9 @@ export interface KbRun {
   /** The country of the synthesis steps (two letters, upper case); null = global only. */
   market: string | null;
   rules: string;
-  /** Knowledge tokens this report may add in total (from the cost cap); 0 = no cap. */
-  capTokens: number;
-  used: { tokens: number };
+  /** Dollars the knowledge part of this report may cost in total; 0 = no cap. */
+  capUsd: number;
+  used: { tokens: number; usd: number };
   log: Selection[];
   /** Citation numbers shared by the whole report (the same entry keeps its [n]). */
   cite: (entryIds: readonly string[]) => Cite[];

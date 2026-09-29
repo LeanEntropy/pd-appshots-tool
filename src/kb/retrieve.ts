@@ -119,6 +119,13 @@ export function select(kb: Kb, q: KbQuery): Selection {
     cands.push({ e, c, facet, score, match, mandatory });
   }
   const order = (a: Cand, b: Cand) => b.score - a.score || a.e.id.localeCompare(b.e.id);
+  // Counter-claim links go both ways, whichever entry names the other.
+  const counterOf = new Map<string, string[]>();
+  for (const e of kb.entries)
+    for (const c of e.contradicts) {
+      counterOf.set(e.id, [...(counterOf.get(e.id) ?? []), c]);
+      counterOf.set(c, [...(counterOf.get(c) ?? []), e.id]);
+    }
   const chosen = new Map<string, { cand: Cand; mandatory: boolean; tokens: number }>();
   const perFacet = new Map<Facet, number>();
   let total = 0;
@@ -129,10 +136,11 @@ export function select(kb: Kb, q: KbQuery): Selection {
   const unit = (x: Cand) => {
     const list = [
       x,
-      ...x.e.contradicts.flatMap((id) => {
+      ...(counterOf.get(x.e.id) ?? []).flatMap((id) => {
         const e = kb.byId.get(id);
         const c = kb.computed.get(id);
-        return e && c && !e.retired && !chosen.has(id)
+        // Only a counter-claim that applies here travels (never another store's or country's).
+        return e && eligible(e, c, q) && !chosen.has(id)
           ? [{ e, c, facet: facetOf(e), score: 0, match: 0, mandatory: false }]
           : [];
       }),

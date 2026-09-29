@@ -280,7 +280,9 @@ export async function textStep<T>(
   kb?: KbOpts<T>,
 ): Promise<{ value: T | null; key: string; problems: string[]; record?: KbRecord | null }> {
   // The knowledge base (Settings switch): with it off, every argument passes through unchanged.
-  const k = kb ? kbPart({ ...kb, run: ctx.kb, system, task, schema, check }) : null;
+  const k = kb
+    ? kbPart({ ...kb, run: ctx.kb, system, task, schema, check, model: provider.model })
+    : null;
   if (k && "blocked" in k) return { value: null, key: "", problems: [k.blocked] };
   const s = k ?? { system, task, schema, check };
   const q = { step, model: provider.model, system: s.system, images: [], ctx };

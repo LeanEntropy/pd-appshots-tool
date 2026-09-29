@@ -30,16 +30,36 @@ export function promote(files: KbFiles, today: string, dryRun = false): Promotio
       .filter((d) => d.decision === "approved")
       .map((d) => [d.entryId, d.contentHash]),
   );
-  const approved = inbox.entries.filter((e) => ok.get(e.id) === entryHash(e));
-  const ids = new Set(approved.map((e) => e.id));
+  const rejected = new Set(
+    readApprovals(files)
+      .filter((d) => d.decision === "rejected")
+      .map((d) => d.entryId),
+  );
+  const ids = new Set(inbox.entries.filter((e) => ok.get(e.id) === entryHash(e)).map((e) => e.id));
   const held: string[] = [];
-  // A counter-claim that is not approved is left out of the link (it cannot travel along).
-  const entries: Entry[] = approved.map((e) => {
-    const missing = e.contradicts.filter((c) => !ids.has(c));
-    if (missing.length)
-      held.push(`${e.id}: counter-claims not approved yet (${missing.join(", ")}); link left out`);
-    return { ...e, contradicts: e.contradicts.filter((c) => ids.has(c)) };
-  });
+  // A claim linked to a counter-claim that is not decided yet is held back (never released
+  // without its counter-claim, which could make a contested claim look uncontested). A link to
+  // a rejected counter-claim is dropped. Repeated until nothing changes (links go both ways).
+  const links = new Map<string, Set<string>>();
+  const link = (a: string, b: string) => links.set(a, (links.get(a) ?? new Set()).add(b));
+  for (const e of inbox.entries)
+    for (const c of e.contradicts) {
+      link(e.id, c);
+      link(c, e.id);
+    }
+  for (let changed = true; changed; ) {
+    changed = false;
+    for (const id of [...ids]) {
+      const open = [...(links.get(id) ?? [])].filter((c) => !ids.has(c) && !rejected.has(c));
+      if (!open.length) continue;
+      ids.delete(id);
+      held.push(`${id}: held back until its counter-claims are decided (${open.join(", ")})`);
+      changed = true;
+    }
+  }
+  const entries: Entry[] = inbox.entries
+    .filter((e) => ids.has(e.id))
+    .map((e) => ({ ...e, contradicts: e.contradicts.filter((c) => ids.has(c)) }));
   const used = new Set(
     entries.flatMap((e) => [...e.support, ...e.counterSupport].map((s) => s.sourceId)),
   );

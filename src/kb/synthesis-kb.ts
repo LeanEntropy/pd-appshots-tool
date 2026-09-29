@@ -1,5 +1,5 @@
 import type { z } from "zod";
-import type { RenderedPrompt } from "../analysis/prompts.ts";
+import { extendPrompt, type RenderedPrompt } from "../analysis/prompts.ts";
 import type { Cite } from "./cite.ts";
 import type { PlacedText } from "./enforce.ts";
 import type { KbRun } from "./run.ts";
@@ -44,10 +44,12 @@ export interface KbPartInput<T> extends KbOpts<T> {
   task: { now: string; before: string };
   schema: z.ZodType<T>;
   check: (v: T) => string[];
+  /** The model that receives the knowledge (its price counts against the report's cap). */
+  model?: string;
 }
 
 export function kbPart<T>(x: KbPartInput<T>): KbPart<T> | { blocked: string } {
-  const call = kbCall(x.run, x.step, x.facts);
+  const call = kbCall(x.run, x.step, x.facts, x.model);
   if (!call)
     return {
       system: x.system,
@@ -65,8 +67,11 @@ export function kbPart<T>(x: KbPartInput<T>): KbPart<T> | { blocked: string } {
   if (x.cite === false) {
     const left = call.selection.leftOut.length;
     const log = `\n\nSelection log: the writer received the knowledge base entries above${left ? `; ${left} other eligible entries were left out by code (not about this step, or over the budget)` : ""}. Check that each cited entry supports the statement it is attached to, that no given counter-claim or enforced store rule was ignored, and that no convention is presented as proven effective.`;
+    // The shared rules speak to the writer; the checker answers in its own schema, without kb.
+    const checker =
+      "You are checking this work, not writing it: the rules above say how the writer had to use the knowledge base. Your answer has no kb field; report problems in your own findings.";
     return {
-      system: call.system(x.system),
+      system: extendPrompt(call.system(x.system), checker),
       task: { now: call.task(x.task.now) + log, before: call.task(x.task.before) + log },
       schema: x.schema,
       check: (v) => [...x.check(v), ...enforced(v)],

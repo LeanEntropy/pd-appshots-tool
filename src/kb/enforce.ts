@@ -9,7 +9,12 @@ import type { EnforcedCheck, Store } from "./schema.ts";
  */
 export function activeChecks(kb: Kb, store: Store): EnforcedCheck[] {
   const enforced = kb.entries.filter(
-    (e) => !e.retired && e.ruleClass === "enforced_rule" && e.scope.store.includes(store),
+    (e) =>
+      !e.retired &&
+      e.ruleClass === "enforced_rule" &&
+      e.scope.store.includes(store) &&
+      // A rule past its review date is not applied as current (as in retrieval).
+      !kb.computed.get(e.id)?.stale,
   );
   return kb.checks.filter(
     (k) =>

@@ -104,6 +104,7 @@ export async function writeCountryAdvice(
       task: { now: t, before: t },
       schema: countryAdviceSchema,
       check,
+      model: d.writer.model,
     });
   const finish = (
     k: Exclude<ReturnType<typeof kbFor>, { blocked: string }>,
@@ -143,6 +144,7 @@ export async function writeCountryAdvice(
     task: { now: reviewTask, before: reviewTask },
     schema: reviewSchema,
     check: () => [],
+    model: d.reviewer.model,
   });
   if ("blocked" in rk) return out;
   const rev = await validatedCall(

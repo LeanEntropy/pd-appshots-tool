@@ -104,18 +104,23 @@ test("promotion: only approved content becomes a release; version, counts, chang
   decide(files, TODAY, "h-corr", "approved", "user");
   const p = promote(files, TODAY);
   assert.equal(p.version, 1);
-  assert.deepEqual(p.added.sort(), ["gp-enf-1", "h-corr", "h-est"]);
+  assert.deepEqual(p.added.sort(), ["gp-enf-1", "h-est"]);
   assert.ok(
     p.held.some((h) => h.startsWith("h-corr")),
-    "an unapproved counter-claim link is left out",
+    "a claim whose counter-claim is undecided is held back, never released uncontested",
   );
   const kb = loadKb(files, "release", TODAY);
-  assert.equal(kb.entries.length, 3);
+  assert.equal(kb.entries.length, 2);
   assert.equal(kb.problems.length, 0);
   assert.equal(kb.meta.version, 1);
   assert.equal(promote(files, TODAY).unchanged, true);
+  // Once the counter-claim is approved, both go out together, linked (and contested).
+  decide(files, TODAY, "h-counter", "approved", "user");
+  assert.deepEqual(promote(files, TODAY).added.sort(), ["h-corr", "h-counter"]);
+  const kb2 = loadKb(files, "release", TODAY);
+  assert.equal(kb2.computed.get("h-corr")?.contested, true);
   const storage = workspaceStorage(mkdtempSync(join(tmpdir(), "ws-")));
   const hash = pinRelease(storage, kb);
-  assert.equal(loadPinned(storage, hash, TODAY)?.entries.length, 3);
+  assert.equal(loadPinned(storage, hash, TODAY)?.entries.length, 2);
   assert.equal(pinRelease(storage, kb), hash, "write-once snapshot");
 });
