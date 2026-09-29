@@ -97,6 +97,7 @@ const partial: ReportSummary = {
   countries: "Japan, South Korea, Taiwan, Hong Kong (Traditional Chinese), Thailand",
   markets: ["jp", "kr", "tw", "hk", "th"],
   countryNames: ["Japan", "South Korea", "Taiwan", "Hong Kong", "Thailand"],
+  countryLabels: ["Japan", "South Korea", "Taiwan", "Hong Kong (Traditional Chinese)", "Thailand"],
   sameAs: "Japan, South Korea, Taiwan, Hong Kong, Thailand vs 8 competitors",
   competitors: 8,
   competitorNames: [],

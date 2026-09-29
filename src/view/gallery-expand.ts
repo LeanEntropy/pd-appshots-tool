@@ -9,7 +9,7 @@ export const EXPAND_SCRIPT = `
 let whatNext = null;
 let whatNextError = "";
 
-// One option as a slim card: title, cost chip, one short line and one button; the rest behind Details.
+// One option as a slim card: title, cost chip below it, one short line and one button; the rest behind Details.
 function nextOption(cls, title, chip, text, button, details) {
   return '<div class="rtcard rt-act ' + cls + '"><div class="rt-top"><h4>' + title + '</h4><span class="chip">' + chip + '</span></div><p class="why">' + text + "</p>"
     + (details ? '<details class="offer-more"><summary>Details</summary>' + details + "</details>" : "")
@@ -19,13 +19,13 @@ function nextOption(cls, title, chip, text, button, details) {
 function whatNextHtml(o) {
   const main = countryLabel(o.main.gl, theCountryOf(o.main.label));
   const core = !o.coreReady
-    ? nextOption("c-full-check", "Run the Full check", "Recommended", "It strengthens every other report.", '<button type="button" class="primary wnext" data-next="core">Run the Full check</button>',
+    ? nextOption("c-full-check", "Run the Full check", "Recommended", "It strengthens every other report.", '<button type="button" class="primary wnext" data-next="core" aria-label="Set up the Full check">Set up</button>',
       "<p>A full analysis of your picked competitors in the main country. The builder shows the exact images and cost first.</p>")
     : "";
   return core
-    + nextOption("", "Compare countries", "Cost shown first", "Where competitors change their images between countries.", '<button type="button" class="wnext" data-next="compare">Compare countries</button>',
+    + nextOption("", "Compare countries", "Cost shown first", "Where competitors change their images between countries.", '<button type="button" class="wnext" data-next="compare" aria-label="Set up a country comparison">Set up</button>',
       '<p>Missing a country? Add it to the project first (downloading its store pages is free).</p><div class="rt-acts"><button type="button" class="cpOpen" data-act-key="cp-next">Add countries</button></div>')
-    + nextOption("c-charts", "Add more competitors in " + main, "Cost shown first", "More games in the main country.", '<button type="button" class="wnext" data-next="more">Add more competitors</button>',
+    + nextOption("c-charts", "Add more competitors in " + main, "Cost shown first", "More games in the main country.", '<button type="button" class="wnext" data-next="more">Add competitors</button>',
       "<p>A report of more games in " + esc(theCountryOf(o.main.label)) + ", starting from the same pick. The builder opens with the choices filled in; nothing runs until you approve.</p>");
 }
 
