@@ -4,6 +4,34 @@ import { artWording } from "./art-wording.ts";
 import { isEventLine } from "./image-tags.ts";
 import { PROPORTION } from "./patterns.ts";
 
+/**
+ * The short answer as points for the top of a report (user, 2026-09-29). Answers saved before
+ * this field read as empty points (the page then splits their short answer by code); their cache
+ * keys do not change, as a key covers the prompt text and the schema version, not the schema.
+ */
+export const bottomLineSchema = z
+  .preprocess(
+    (v) => v ?? { verdict: "", differences: [], actions: [] },
+    z.strictObject({
+      verdict: z
+        .string()
+        .describe(
+          'one line that starts with the exact computed verdict word, e.g. "slightly different from 8 competitors in Japan"',
+        ),
+      differences: z
+        .array(z.string())
+        .describe(
+          "2 to 4 short facts on how our page differs, each one line with its count; wrap the key phrase in **double asterisks**",
+        ),
+      actions: z
+        .array(z.string())
+        .describe(
+          '1 to 3 short changes, most important first, one line each; a local headline is followed by its English back-translation, e.g. 強敵ボスに挑め！ ("Take on the boss!")',
+        ),
+    }),
+  )
+  .describe("the short answer as points: the same content, no new facts");
+
 /** Pattern interpretation (Opus): words only; every number comes from the computed patterns. */
 export const interpretationSchema = z.strictObject({
   summary: z.string().describe("5-8 sentences: what the competitors' decks have in common"),
@@ -26,6 +54,7 @@ export const interpretationSchema = z.strictObject({
   keyPoints: z
     .array(z.string())
     .describe("one actionable sentence per computed key point, same order and count"),
+  bottomLine: bottomLineSchema,
 });
 export type Interpretation = z.infer<typeof interpretationSchema>;
 
