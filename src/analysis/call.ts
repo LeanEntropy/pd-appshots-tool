@@ -58,6 +58,8 @@ export interface CallContext {
   reserve?: (step: string) => Reservation | null;
   /** Every paid call, with its tokens and time. */
   onCall?: (c: CallLog) => void;
+  /** The batch's pool retries a rate-limited task later: no immediate retry here. */
+  poolRetries?: boolean;
 }
 
 export interface StoredObject {
@@ -199,8 +201,12 @@ export async function validatedCall<T>(
       // A failed call (CLI error, timeout) is retried once; the same error twice ends it.
       const err = `${provider.model}: ${r.error ?? "the model call failed"}`;
       callErrors++;
-      // A rate limit is not retried here: the batch waits and retries it once (pool.ts).
-      if (callErrors >= 2 || problems[0] === err || rateLimitWait(err) !== null)
+      // In a pool, a rate limit is not retried here: the pool waits and retries it (pool.ts).
+      if (
+        callErrors >= 2 ||
+        problems[0] === err ||
+        (ctx.poolRetries && rateLimitWait(err) !== null)
+      )
         return { value: null, key, problems: [err] };
       problems = [err];
       continue;

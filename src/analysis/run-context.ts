@@ -46,6 +46,8 @@ export function withOwnCost(ctx: CallContext, onCost?: (usd: number) => void): C
   if (!onCost) return ctx;
   return {
     ...ctx,
+    // These calls run in the pool, which waits and retries a rate-limited task once.
+    poolRetries: true,
     onCost: (u) => {
       ctx.onCost(u);
       onCost(u);

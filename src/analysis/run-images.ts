@@ -161,7 +161,7 @@ export async function analyseImages(
         if (leases.some((l) => !l.heartbeat())) {
           out.aborted =
             "Stopped: the computer paused during an analysis and another job took over the image. Nothing more was written.";
-          return { ok: false, paid: true };
+          return { ok: false, paid: own !== null };
         }
         for (const raw of recs) {
           const paid =
@@ -201,7 +201,7 @@ export async function analyseImages(
           streak = key === streak.key ? { key, n: streak.n + 1 } : { key, n: 1 };
           if (streak.n >= d.stopAfterSameErrors) {
             out.aborted = `Stopped: ${streak.n} images in a row failed with the same error: ${msg}`;
-            return { ok: false, paid: true };
+            return { ok: false, paid: own !== null };
           }
         }
       } finally {
@@ -209,7 +209,7 @@ export async function analyseImages(
         for (const id of attempt.keys()) close(id, false);
       }
       d.progress("analysis", `${label}: saved`);
-      return { ok: true, paid: true, retryAfterMs: rateWait };
+      return { ok: true, paid: own !== null, retryAfterMs: rateWait };
     } finally {
       clearInterval(beat);
       for (const l of leases) l.release();

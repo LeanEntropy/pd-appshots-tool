@@ -188,7 +188,7 @@ export async function compareLayers(
         }
         if (ok) {
           streak = { key: "", n: 0 };
-          return { ok: true, paid: true };
+          return { ok: true, paid: own > 0 };
         }
         const msg = rec.problems.join("; ") || "the comparison failed";
         d.fail(msg, it.name, it.position);
@@ -197,9 +197,9 @@ export async function compareLayers(
         streak = key === streak.key ? { key, n: streak.n + 1 } : { key, n: 1 };
         if (streak.n >= d.stopAfterSameErrors) {
           out.aborted = `Stopped: ${streak.n} images in a row failed with the same error: ${msg}`;
-          return { ok: false, paid: true };
+          return { ok: false, paid: own > 0 };
         }
-        return { ok: true, paid: true, retryAfterMs: rateWait };
+        return { ok: true, paid: own > 0, retryAfterMs: rateWait };
       } finally {
         endAttempt(d.paths, pseudo, attempt, d.batchId, ok ? "finished" : "failed", own);
       }

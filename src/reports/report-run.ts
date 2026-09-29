@@ -68,8 +68,16 @@ export async function runReport(
   ctx.reserve = book.reserve;
   // Every paid call with its tokens and seconds, kept with the run (plan-analysis-speed S0).
   const calls: CallLog[] = [];
+  const saveCalls = () =>
+    workspaceStorage(paths.workspace).putJson(projectKey(paths, "runs", runId, "calls.json"), {
+      runId,
+      spentUsd: spent,
+      calls,
+      warnings: book.warnings,
+    });
   ctx.onCall = (c) => {
     calls.push(c);
+    saveCalls();
   };
   const full: PlanItem[] = plan.items.filter((i) => i.tier === "full");
   const layers = plan.items.filter((i) => i.tier === "layer-diff" && i.basedOn);
@@ -233,12 +241,6 @@ export async function runReport(
     research: () => researchSnapshot(loaded),
   });
   if (attempt) endAttempt(paths, SYNTHESIS, attempt, batchId, "finished", spent - before);
-  workspaceStorage(paths.workspace).putJson(projectKey(paths, "runs", runId, "calls.json"), {
-    runId,
-    spentUsd: spent,
-    calls,
-    warnings: book.warnings,
-  });
   for (const p of built.problems ?? []) fail(p, null, null);
   if (textLimit()) stoppedForBudget = true;
   const ended = stopped || stoppedForBudget;
