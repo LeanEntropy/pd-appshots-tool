@@ -30,9 +30,13 @@ export interface Ledger {
   warnings: string[];
 }
 
-export function ledger(limit: number, spent: () => number): Ledger {
+export function ledger(
+  limit: number,
+  spent: () => number,
+  start: Readonly<Record<string, number>> = STEP_CEILING_USD,
+): Ledger {
   const open = new Map<number, number>();
-  const ceilings: Record<string, number> = { ...STEP_CEILING_USD };
+  const ceilings: Record<string, number> = { ...start };
   const warnings: string[] = [];
   let next = 0;
   const openSum = () => [...open.values()].reduce((a, b) => a + b, 0);

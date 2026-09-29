@@ -46,8 +46,10 @@ export interface CallUsage {
   cacheWriteTokens?: number;
   /** The CLI's own duration of the call. */
   durationMs?: number | null;
-  /** Model turns (1 when the image travels inside the request). */
+  /** The CLI's turn count (a tool round counts as a turn). */
   turns?: number | null;
+  /** Model requests (distinct answers streamed); 1 when the image travels inside the request. */
+  requests?: number;
   /** Wall time from process start to exit. */
   wallMs?: number;
 }

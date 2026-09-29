@@ -127,6 +127,19 @@ export function cliResult(stdout: string): CliResult | null {
   return null;
 }
 
+/** Distinct model answers in a stream-json output (one per request to the model). */
+export function modelRequests(stdout: string): number {
+  const ids = new Set<string>();
+  for (const l of stdout.split(/\r?\n/)) {
+    if (!l.includes('"assistant"')) continue;
+    try {
+      const o = JSON.parse(l) as { type?: string; message?: { id?: string } };
+      if (o.type === "assistant" && o.message?.id) ids.add(o.message.id);
+    } catch {}
+  }
+  return ids.size;
+}
+
 /** Tokens and time of one call, summed over every model the CLI used. */
 export function usageOf(out: CliResult): CallUsage | null {
   const models = Object.values(out.modelUsage ?? {});
@@ -178,7 +191,8 @@ export function claudeProvider(model: string, o: ClaudeOptions): Provider {
       const out = cliResult(r.stdout);
       const usage = out ? usageOf(out) : null;
       const wallMs = Date.now() - started;
-      const withWall = usage ? { ...usage, wallMs } : { wallMs };
+      const requests = useInline ? modelRequests(r.stdout) : undefined;
+      const withWall = { ...(usage ?? {}), wallMs, ...(requests ? { requests } : {}) };
       if (!out)
         return {
           ok: false,

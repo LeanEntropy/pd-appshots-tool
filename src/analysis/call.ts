@@ -92,6 +92,7 @@ function addUsage(a: CallUsage | undefined, b: CallUsage | undefined): CallUsage
     cacheWriteTokens: n(a.cacheWriteTokens) + n(b.cacheWriteTokens),
     durationMs: n(a.durationMs) + n(b.durationMs),
     turns: n(a.turns) + n(b.turns),
+    requests: n(a.requests) + n(b.requests),
     wallMs: n(a.wallMs) + n(b.wallMs),
   };
 }
