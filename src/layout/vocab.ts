@@ -10,7 +10,7 @@
 // card/slot/row; notes carry who it is and its look; caps 16 in-game, 10 marketing.
 export const LAYOUT_CONTRACT = "layout.v3";
 /** Shape of the saved layout; part of every layout key. */
-// v2 (2026-09-29): composition.focus, marketingCovers and focusMatch.
+// v2 (2026-09-29): composition.focus, marketingCovers, focusMatch and reinforcement.
 export const LAYOUT_SCHEMA_VERSION = "layout-schema.v2";
 
 /**

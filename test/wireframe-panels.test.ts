@@ -91,6 +91,7 @@ function layout(): Layout {
       focus: { kind: "gear / upgrade", words: "the gear grid" },
       marketingCovers: "the grid's right column",
       focusMatch: { verdict: "match", reason: "headline says level up" },
+      reinforcement: "the hero points at the grid",
       summary: "s",
     },
   } as Layout;

@@ -67,6 +67,7 @@ test("a layout.v3 answer says focus, covers and the focus match itself", () => {
       focus: { kind: "gear / upgrade", words: "the gear grid" },
       marketingCovers: "covers the grid's right column, keeps the roster visible",
       focusMatch: { verdict: "mismatch", reason: "says Battle! on a gear screen" },
+      reinforcement: "the cut-out points away from the grid",
     },
   } as Layout;
   const f = focusView(v3, final);
@@ -74,5 +75,6 @@ test("a layout.v3 answer says focus, covers and the focus match itself", () => {
   assert.equal(f.covers, "covers the grid's right column, keeps the roster visible");
   assert.equal(f.verdict, "mismatch");
   assert.equal(f.match, "mismatch: says Battle! on a gear screen");
+  assert.equal(f.reinforcement, "the cut-out points away from the grid");
   assert.equal(focusView({ ...older, marketing: [] }, final).match, "No marketing layer.");
 });

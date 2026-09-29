@@ -11,6 +11,8 @@ export interface FocusView {
   /** match / partial / mismatch / no marketing layer, or "" when the saved layout predates it. */
   verdict: string;
   match: string;
+  /** How the marketing layer reinforces the focus; "" when the saved layout predates it. */
+  reinforcement: string;
 }
 
 const str = (v: unknown, n: number) =>
@@ -66,5 +68,6 @@ export function focusView(saved: Layout, final: ImageAnalysis | null): FocusView
       : l.marketing.length
         ? `Not judged for this saved layout.${head ? ` Headline “${str(head, 80)}” on a ${screen || "screen"} screen.` : ""}`
         : "No marketing layer.",
+    reinforcement: str(c.reinforcement, 120),
   };
 }

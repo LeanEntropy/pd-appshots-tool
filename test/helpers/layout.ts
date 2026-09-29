@@ -58,6 +58,7 @@ export function fakeLayout(a: ImageAnalysis): Layout {
       summary: "A full capture with a band on top.",
       focus: { kind: "battle", words: "a boss fight" },
       marketingCovers: m.present ? "the top strip; the battle stays visible" : "",
+      reinforcement: m.present ? "the band sits above the fight the headline names" : "",
       focusMatch: m.present
         ? { verdict: "match", reason: "the headline names the fight" }
         : { verdict: "no marketing layer", reason: "" },

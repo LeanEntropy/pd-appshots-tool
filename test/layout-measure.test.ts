@@ -74,6 +74,7 @@ function layout(): Layout {
       focus: { kind: "battle", words: "" },
       marketingCovers: "",
       focusMatch: { verdict: "match", reason: "" },
+      reinforcement: "",
       summary: "s",
     },
   };

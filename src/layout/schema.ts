@@ -90,6 +90,11 @@ export const layoutSchema = z.strictObject({
         .string()
         .describe("at most 120 characters: how the headline and the rest fit the focus, or not"),
     }),
+    reinforcement: z
+      .string()
+      .describe(
+        "one short sentence, at most 120 characters: how the marketing layer reinforces the screenshot's focus; empty without a marketing layer",
+      ),
     summary: z
       .string()
       .describe("one or two sentences: the layout, then the minor details that are not boxes"),

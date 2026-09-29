@@ -126,6 +126,9 @@ export function layoutProblems(l: Layout, core: ImageAnalysis): string[] {
     p("marketingCovers must be empty without a marketing layer");
   if (c.focus.words.length > 80) p("focus.words must be at most 80 characters");
   if (c.marketingCovers.length > 120) p("marketingCovers must be at most 120 characters");
+  if (!l.marketing.length && c.reinforcement.trim())
+    p("reinforcement must be empty without a marketing layer");
+  if (c.reinforcement.length > 120) p("reinforcement must be at most 120 characters");
   if (c.focusMatch.reason.length > 120) p("focusMatch.reason must be at most 120 characters");
   return out;
 }
