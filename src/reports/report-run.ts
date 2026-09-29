@@ -10,7 +10,7 @@ import { type Provider, providerFor } from "../analysis/providers.ts";
 import { recordWriter, withCurrentMapping } from "../analysis/record-refresh.ts";
 import { readRecords } from "../analysis/records.ts";
 import type { RunDeps, RunError } from "../analysis/run.ts";
-import { analyseChunk, modelCopy } from "../analysis/run-chunk.ts";
+import { analyseChunk, layoutAfterSave, modelCopy } from "../analysis/run-chunk.ts";
 import { withOwnCost } from "../analysis/run-context.ts";
 import { analyseImages } from "../analysis/run-images.ts";
 import { STOPPED_STEP, stepTracker } from "../analysis/run-status.ts";
@@ -147,6 +147,7 @@ export async function runReport(
     counter,
     total,
     item: deps.onItem,
+    afterSave: layoutAfterSave(loaded, paths, db, ctx, deps.producer),
   });
   let cancelled = produce.cancelled;
   let stoppedForBudget = produce.stoppedForBudget;

@@ -11,6 +11,7 @@ import type { ProjectState } from "../projects/state.ts";
 import type { StoreDeps } from "../steps/add-competitor.ts";
 import { PROJECT_ID, type Storage, workspaceStorage } from "../storage/index.ts";
 import { statusPage } from "../view/pages-html.ts";
+import { Computed } from "./computed.ts";
 
 export type Loaded = { loaded: LoadedConfig } | { draft: ProjectSettings };
 
@@ -27,6 +28,8 @@ export interface AppContext {
   load: (id: string) => Loaded | null;
   /** Caches a project's derived state for the home screen. */
   remember: (id: string, s: ProjectState) => void;
+  /** Derived project data kept in memory while the data is unchanged (single flight). */
+  computed: Computed;
   opened: (id: string) => void;
   /** The most recently opened project (for old links), or null. */
   recent: () => string | null;
@@ -105,6 +108,7 @@ export function createAppContext(o: AppOptions): AppContext {
         summary: { stage: s.stage, line: s.line, updatedAt: new Date().toISOString() },
       });
     },
+    computed: new Computed(),
     opened(id) {
       lastOpened = id;
       if (entry(id)) markOpened(storage, id);

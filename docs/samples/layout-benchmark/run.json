@@ -1,0 +1,1443 @@
+{
+ "separate": true,
+ "prompt": {
+  "hash": "963e6e6284fbe0f13c2ddb957b2aec7f511869fd6f2b33e754d8dfe64ff363d5",
+  "chars": 4377,
+  "blockChars": 4377
+ },
+ "images": [
+  {
+   "name": "archero2-4",
+   "imageId": "b799e91aee76927b805be9c807e1892ea169d45aadc645dbc29608176b35ba21",
+   "readingFrom": "paired run (today's prompt)",
+   "reading": {
+    "imageRef": "img1",
+    "screenshot": {
+     "composition": "single_full_capture",
+     "screenType": "metagame",
+     "subtype": "gear",
+     "captures": [
+      {
+       "orientation": "portrait",
+       "screenType": "metagame",
+       "subtype": "gear",
+       "region": {
+        "x": 0,
+        "y": 0,
+        "w": 100,
+        "h": 85
+       },
+       "areaPercent": 83,
+       "framing": "full_bleed",
+       "description": "A hero showcase hall with seven chibi heroes standing on tiered purple podiums, and below it the Gear tab of the collection screen showing a grid of S-rank equipment cards (axe, spear, helmet, armour, ring) with By Quality and Blacksmith buttons."
+      }
+     ],
+     "captureAreaPercent": 83,
+     "description": "Top half shows a lineup of chibi heroes (pirate bear, green-armoured elf, ice mage, red horned warrior, golden winged knight, dark hooded sorcerer) on glowing purple stage tiers; bottom half shows the Characters / Gear / Runes tabs with the Gear tab active and a grid of purple-red S-rank gear cards.",
+     "action": "The player is browsing their collection of heroes and S-rank gear in the Gear tab.",
+     "atmosphere": "Vibrant, epic, collectible",
+     "mainColours": [
+      {
+       "name": "deep purple",
+       "hex": "#3a2a7a"
+      },
+      {
+       "name": "navy blue",
+       "hex": "#243a7a"
+      },
+      {
+       "name": "magenta red",
+       "hex": "#a02060"
+      },
+      {
+       "name": "gold yellow",
+       "hex": "#f5c020"
+      },
+      {
+       "name": "neon green",
+       "hex": "#5ee040"
+      }
+     ]
+    },
+    "marketingLayer": {
+     "present": true,
+     "coveragePercent": 28,
+     "backgroundMasks": [
+      {
+       "shape": "diagonal_band",
+       "colourName": "light blue",
+       "colourHex": "#9ad8f5",
+       "location": "bottom",
+       "region": {
+        "x": 0,
+        "y": 83,
+        "w": 100,
+        "h": 17
+       }
+      }
+     ],
+     "texts": [
+      {
+       "role": "headline",
+       "text": "Beyond All Limits",
+       "language": "en",
+       "colour": "yellow #f7d52a",
+       "strokeColour": "dark blue outline with white edge",
+       "fontStyle": "heavy rounded sans, bold, slightly tilted, outlined",
+       "size": "huge",
+       "position": "bottom",
+       "region": {
+        "x": 6,
+        "y": 84,
+        "w": 88,
+        "h": 9
+       }
+      },
+      {
+       "role": "subheadline",
+       "text": "Deep progression, maximum fun",
+       "language": "en",
+       "colour": "white #ffffff",
+       "strokeColour": "dark blue outline",
+       "fontStyle": "heavy rounded sans, bold, slightly tilted, outlined",
+       "size": "large",
+       "position": "bottom",
+       "region": {
+        "x": 4,
+        "y": 92,
+        "w": 94,
+        "h": 7
+       }
+      }
+     ],
+     "elements": [
+      {
+       "kind": "character",
+       "what": "Chibi female hero with long brown hair, golden crown, gold earrings and white-gold armour",
+       "position": "bottom-right, over the gear grid and the band",
+       "pose": "front-facing, standing, glowing eyes",
+       "colours": "brown, gold, white, red",
+       "scale": "large",
+       "breaksFrame": false,
+       "region": {
+        "x": 60,
+        "y": 58,
+        "w": 40,
+        "h": 28
+       }
+      }
+     ],
+     "mainColours": [
+      {
+       "name": "light blue",
+       "hex": "#9ad8f5"
+      },
+      {
+       "name": "yellow",
+       "hex": "#f7d52a"
+      },
+      {
+       "name": "white",
+       "hex": "#ffffff"
+      },
+      {
+       "name": "gold",
+       "hex": "#e8a020"
+      }
+     ],
+     "relationToScreen": "describes"
+    },
+    "headline": "Beyond All Limits Deep progression, maximum fun",
+    "confidence": 0.85,
+    "notes": "The gear grid at the bottom is partially covered by the added hero character and the diagonal blue band."
+   },
+   "output": {
+    "images": [
+     {
+      "layout": {
+       "inGame": [
+        {
+         "id": "S1",
+         "role": "main-scene",
+         "box": {
+          "x": 0,
+          "y": 0,
+          "w": 100,
+          "h": 49
+         },
+         "tiltDeg": 0,
+         "z": 0,
+         "textEn": null,
+         "note": "",
+         "capture": 0,
+         "textRef": null,
+         "text": null,
+         "covers": []
+        },
+        {
+         "id": "S2",
+         "role": "nav-bar",
+         "box": {
+          "x": 0,
+          "y": 49,
+          "w": 100,
+          "h": 5
+         },
+         "tiltDeg": 0,
+         "z": 1,
+         "textEn": "Characters / Gear / Runes",
+         "note": "",
+         "capture": 0,
+         "textRef": null,
+         "text": "Characters / Gear / Runes",
+         "covers": []
+        },
+        {
+         "id": "S3",
+         "role": "hud",
+         "box": {
+          "x": 0,
+          "y": 55,
+          "w": 100,
+          "h": 5
+         },
+         "tiltDeg": 0,
+         "z": 2,
+         "textEn": "By Quality / Blacksmith",
+         "note": "",
+         "capture": 0,
+         "textRef": null,
+         "text": "By Quality / Blacksmith",
+         "covers": []
+        },
+        {
+         "id": "S4",
+         "role": "panel",
+         "box": {
+          "x": 0,
+          "y": 61,
+          "w": 100,
+          "h": 24
+         },
+         "tiltDeg": 0,
+         "z": 1,
+         "textEn": "S",
+         "note": "",
+         "capture": 0,
+         "textRef": null,
+         "text": "S",
+         "covers": []
+        }
+       ],
+       "marketing": [
+        {
+         "id": "M1",
+         "role": "cut-out",
+         "box": {
+          "x": 60,
+          "y": 58,
+          "w": 40,
+          "h": 28
+         },
+         "tiltDeg": 0,
+         "z": 0,
+         "textEn": null,
+         "note": "",
+         "capture": null,
+         "textRef": null,
+         "text": null,
+         "covers": [
+          "S3",
+          "S4"
+         ]
+        },
+        {
+         "id": "M2",
+         "role": "band",
+         "box": {
+          "x": 0,
+          "y": 83,
+          "w": 100,
+          "h": 17
+         },
+         "tiltDeg": -3,
+         "z": 1,
+         "textEn": null,
+         "note": "",
+         "capture": null,
+         "textRef": null,
+         "text": null,
+         "covers": [
+          "S4"
+         ]
+        },
+        {
+         "id": "M3",
+         "role": "headline",
+         "box": {
+          "x": 6,
+          "y": 84,
+          "w": 88,
+          "h": 9
+         },
+         "tiltDeg": -4,
+         "z": 2,
+         "textEn": "Beyond All Limits",
+         "note": "",
+         "capture": null,
+         "textRef": 0,
+         "text": null,
+         "covers": [
+          "S4"
+         ]
+        },
+        {
+         "id": "M4",
+         "role": "subline",
+         "box": {
+          "x": 4,
+          "y": 92,
+          "w": 94,
+          "h": 7
+         },
+         "tiltDeg": -4,
+         "z": 2,
+         "textEn": "Deep progression, maximum fun",
+         "note": "",
+         "capture": null,
+         "textRef": 1,
+         "text": null,
+         "covers": []
+        }
+       ],
+       "composition": {
+        "focal": {
+         "x": 50,
+         "y": 88,
+         "id": "M3"
+        },
+        "readingOrder": [
+         "M3",
+         "M1",
+         "S1",
+         "S4",
+         "M4"
+        ],
+        "overlaySharePercent": 28,
+        "summary": "Full-height metagame capture (hero showcase above a gear grid); a chibi hero cut-out sits over the lower right of the grid and a slightly tilted light-blue band across the bottom sixth carries the headline and subline."
+       }
+      }
+     }
+    ]
+   },
+   "failed": null,
+   "problems": [],
+   "calls": []
+  },
+  {
+   "name": "roguelegend-1",
+   "imageId": "ddd7f0710af668e6ed7d088a2e010a8704b1b3a34b6500f2de30c5f9a8dea732",
+   "readingFrom": "paired run (today's prompt)",
+   "reading": {
+    "imageRef": "img1",
+    "screenshot": {
+     "composition": "pure_art",
+     "screenType": "title_image",
+     "subtype": "logo_with_art",
+     "captures": [],
+     "captureAreaPercent": 0,
+     "description": "Full-screen title art: the game logo 'ROGUE LEGEND' sits at the top over a dark blue cave scene; a small elf hero with white hair, orange armour, a round shield and a glowing sword faces a large dark stone golem with glowing cyan runes and red eyes, while silhouetted monsters (spider, bats, werewolf, slime creatures) with red eyes lurk on ledges above; glowing cyan crystals and rune stones light the cave floor.",
+     "action": "A small elf hero confronts a giant rune-covered stone golem in a monster-filled cave.",
+     "atmosphere": "Dark, adventurous and slightly ominous but stylised and playful",
+     "mainColours": [
+      {
+       "name": "dark navy blue",
+       "hex": "#0e1a3a"
+      },
+      {
+       "name": "steel blue",
+       "hex": "#2b4a7a"
+      },
+      {
+       "name": "glowing cyan",
+       "hex": "#3ee6ff"
+      },
+      {
+       "name": "golden yellow",
+       "hex": "#f5c518"
+      },
+      {
+       "name": "orange",
+       "hex": "#e07a2a"
+      }
+     ]
+    },
+    "marketingLayer": {
+     "present": true,
+     "coveragePercent": 18,
+     "backgroundMasks": [],
+     "texts": [
+      {
+       "role": "headline",
+       "text": "ROGUE",
+       "language": "en",
+       "colour": "white #ffffff",
+       "strokeColour": "dark navy #1a2a4a",
+       "fontStyle": "heavy rounded sans, bold, outlined logo lettering",
+       "size": "huge",
+       "position": "top",
+       "region": {
+        "x": 19,
+        "y": 7,
+        "w": 62,
+        "h": 9
+       }
+      },
+      {
+       "role": "headline",
+       "text": "LEGEND",
+       "language": "en",
+       "colour": "golden yellow #f5c518",
+       "strokeColour": "dark navy #1a2a4a",
+       "fontStyle": "heavy rounded sans, bold, outlined logo lettering",
+       "size": "huge",
+       "position": "top",
+       "region": {
+        "x": 19,
+        "y": 16,
+        "w": 62,
+        "h": 9
+       }
+      }
+     ],
+     "elements": [
+      {
+       "kind": "logo",
+       "what": "the game logo 'ROGUE LEGEND' in white and yellow block letters",
+       "position": "top-centre",
+       "pose": "n/a",
+       "colours": "white, golden yellow, dark navy outline",
+       "scale": "large",
+       "breaksFrame": false,
+       "region": {
+        "x": 18,
+        "y": 6,
+        "w": 64,
+        "h": 20
+       }
+      }
+     ],
+     "mainColours": [
+      {
+       "name": "white",
+       "hex": "#ffffff"
+      },
+      {
+       "name": "golden yellow",
+       "hex": "#f5c518"
+      },
+      {
+       "name": "dark navy",
+       "hex": "#1a2a4a"
+      }
+     ],
+     "relationToScreen": "describes"
+    },
+    "headline": "ROGUE LEGEND",
+    "confidence": 0.9,
+    "notes": "The only added element is the game's own logo; the rest is full-screen title art with no visible game UI."
+   },
+   "output": {
+    "images": [
+     {
+      "layout": {
+       "inGame": [
+        {
+         "id": "S1",
+         "role": "main-scene",
+         "box": {
+          "x": 0,
+          "y": 0,
+          "w": 100,
+          "h": 100
+         },
+         "tiltDeg": 0,
+         "z": 0,
+         "textEn": null,
+         "note": "",
+         "capture": null,
+         "textRef": null,
+         "text": null,
+         "covers": []
+        },
+        {
+         "id": "S2",
+         "role": "other",
+         "box": {
+          "x": 5,
+          "y": 28,
+          "w": 90,
+          "h": 28
+         },
+         "tiltDeg": 0,
+         "z": 1,
+         "textEn": null,
+         "note": "silhouetted monsters with red eyes: spider, bats, wolf, ghouls",
+         "capture": null,
+         "textRef": null,
+         "text": null,
+         "covers": []
+        },
+        {
+         "id": "S3",
+         "role": "character",
+         "box": {
+          "x": 32,
+          "y": 52,
+          "w": 56,
+          "h": 30
+         },
+         "tiltDeg": 0,
+         "z": 2,
+         "textEn": null,
+         "note": "",
+         "capture": null,
+         "textRef": null,
+         "text": null,
+         "covers": []
+        },
+        {
+         "id": "S4",
+         "role": "character",
+         "box": {
+          "x": 23,
+          "y": 72,
+          "w": 28,
+          "h": 18
+         },
+         "tiltDeg": 0,
+         "z": 3,
+         "textEn": null,
+         "note": "",
+         "capture": null,
+         "textRef": null,
+         "text": null,
+         "covers": []
+        }
+       ],
+       "marketing": [
+        {
+         "id": "M1",
+         "role": "logo",
+         "box": {
+          "x": 18,
+          "y": 6,
+          "w": 64,
+          "h": 20
+         },
+         "tiltDeg": 0,
+         "z": 0,
+         "textEn": "ROGUE LEGEND",
+         "note": "",
+         "capture": null,
+         "textRef": 0,
+         "text": null,
+         "covers": [
+          "S1"
+         ]
+        }
+       ],
+       "composition": {
+        "focal": {
+         "x": 50,
+         "y": 16,
+         "id": "M1"
+        },
+        "readingOrder": [
+         "M1",
+         "S3",
+         "S4",
+         "S2",
+         "S1"
+        ],
+        "overlaySharePercent": 13,
+        "summary": "Full-screen cave art with the ROGUE LEGEND logo stacked in the top fifth, a rune-covered stone golem boss looming centre-lower and the small elf hero facing it at bottom-left, monster silhouettes lurking mid-frame."
+       }
+      }
+     }
+    ]
+   },
+   "failed": null,
+   "problems": [],
+   "calls": []
+  },
+  {
+   "name": "legend-of-mushroom-3",
+   "imageId": "ce1c0012193fae117746075beee7b27af321fd86e732f5610ffc2837d938545b",
+   "readingFrom": "paired run (today's prompt)",
+   "reading": {
+    "imageRef": "img1",
+    "screenshot": {
+     "composition": "single_full_capture",
+     "screenType": "gameplay",
+     "subtype": "battle",
+     "captures": [
+      {
+       "orientation": "landscape",
+       "screenType": "gameplay",
+       "subtype": "battle",
+       "region": {
+        "x": 1,
+        "y": 1,
+        "w": 98,
+        "h": 98
+       },
+       "areaPercent": 95,
+       "framing": "full_bleed",
+       "description": "A landscape auto-battle stage 1-6 in a mushroom forest where a mushroom-capped hero with a sword and animal companions (fox, banana, turtle, cat) fight skeleton and goat-horned enemies with floating damage numbers; a left-side grid of level 10 equipment icons and a top HUD with player level, HP bar and currencies."
+      }
+     ],
+     "captureAreaPercent": 95,
+     "description": "Landscape battle screen: mushroom hero and cute companions attack blue skeleton and goblin enemies on a grassy field with a giant fallen log, mushroom houses and a bright sky; equipment icon grid (Lv.10) on the left, HUD at top (LV 17, 13450/1520, 999,999 coins, 9,999 gems, stage 1-6 progress bar).",
+     "action": "The hero and companion squad auto-fight a wave of enemies, dealing damage shown as -583, -2774, -587 numbers with a bright slash effect.",
+     "atmosphere": "cheerful, cute, energetic",
+     "mainColours": [
+      {
+       "name": "sky blue",
+       "hex": "#8fd0f0"
+      },
+      {
+       "name": "grass green",
+       "hex": "#7cc44a"
+      },
+      {
+       "name": "beige ground",
+       "hex": "#e8d8a8"
+      },
+      {
+       "name": "purple",
+       "hex": "#8a5bd0"
+      },
+      {
+       "name": "orange red",
+       "hex": "#e8613a"
+      }
+     ]
+    },
+    "marketingLayer": {
+     "present": true,
+     "coveragePercent": 40,
+     "backgroundMasks": [
+      {
+       "shape": "frame",
+       "colourName": "white",
+       "colourHex": "#ffffff",
+       "location": "full",
+       "region": {
+        "x": 0,
+        "y": 0,
+        "w": 100,
+        "h": 100
+       }
+      },
+      {
+       "shape": "band",
+       "colourName": "white with light blue",
+       "colourHex": "#e6f3fb",
+       "location": "bottom",
+       "region": {
+        "x": 10,
+        "y": 87,
+        "w": 43,
+        "h": 9
+       }
+      }
+     ],
+     "texts": [
+      {
+       "role": "headline",
+       "text": "Collect Companions",
+       "language": "en",
+       "colour": "blue #2f7fd6",
+       "strokeColour": "white",
+       "fontStyle": "heavy rounded sans, bold, white outline",
+       "size": "huge",
+       "position": "bottom",
+       "region": {
+        "x": 2,
+        "y": 73,
+        "w": 58,
+        "h": 14
+       }
+      },
+      {
+       "role": "subheadline",
+       "text": "Combat Squad, Auto Upgrade",
+       "language": "en",
+       "colour": "blue #2f7fd6",
+       "strokeColour": "none",
+       "fontStyle": "bold rounded sans",
+       "size": "medium",
+       "position": "bottom",
+       "region": {
+        "x": 18,
+        "y": 88,
+        "w": 34,
+        "h": 7
+       }
+      }
+     ],
+     "elements": [
+      {
+       "kind": "creature",
+       "what": "giant white round mascot creature with blue horn, star pendant and blue collar",
+       "position": "bottom-right, over the capture",
+       "pose": "facing front, mouth open, smiling",
+       "colours": "white, pink, blue, yellow",
+       "scale": "dominant",
+       "breaksFrame": true,
+       "region": {
+        "x": 68,
+        "y": 30,
+        "w": 32,
+        "h": 66
+       }
+      },
+      {
+       "kind": "character",
+       "what": "mushroom-capped hero holding a golden sword",
+       "position": "bottom-centre-right",
+       "pose": "standing, facing front, sword raised",
+       "colours": "green, brown, yellow",
+       "scale": "medium",
+       "breaksFrame": true,
+       "region": {
+        "x": 56,
+        "y": 68,
+        "w": 20,
+        "h": 30
+       }
+      },
+      {
+       "kind": "creature",
+       "what": "small yellow chick in a pink hood",
+       "position": "bottom-right, beside the mascot",
+       "pose": "sitting, facing front",
+       "colours": "yellow, pink, white",
+       "scale": "small",
+       "breaksFrame": false,
+       "region": {
+        "x": 76,
+        "y": 76,
+        "w": 12,
+        "h": 20
+       }
+      },
+      {
+       "kind": "badge",
+       "what": "small mushroom hero icon with sword on the subheadline band",
+       "position": "bottom-left, left end of the band",
+       "pose": "n/a",
+       "colours": "green, brown, white",
+       "scale": "small",
+       "breaksFrame": false,
+       "region": {
+        "x": 10,
+        "y": 86,
+        "w": 8,
+        "h": 10
+       }
+      }
+     ],
+     "mainColours": [
+      {
+       "name": "white",
+       "hex": "#ffffff"
+      },
+      {
+       "name": "blue",
+       "hex": "#2f7fd6"
+      },
+      {
+       "name": "pink",
+       "hex": "#f5b8c8"
+      },
+      {
+       "name": "green",
+       "hex": "#6fae3c"
+      }
+     ],
+     "relationToScreen": "describes"
+    },
+    "headline": "Collect Companions",
+    "confidence": 0.9,
+    "notes": "Landscape gameplay capture with a white rounded frame; the large mascot and hero art overlap the bottom-right corner and break the frame edge."
+   },
+   "output": {
+    "images": [
+     {
+      "layout": {
+       "inGame": [
+        {
+         "id": "S1",
+         "role": "main-scene",
+         "box": {
+          "x": 1,
+          "y": 1,
+          "w": 98,
+          "h": 98
+         },
+         "tiltDeg": 0,
+         "z": 0,
+         "textEn": "damage numbers -583, -2774, -587",
+         "note": "",
+         "capture": 0,
+         "textRef": null,
+         "text": "-583 -2774 -587",
+         "covers": []
+        },
+        {
+         "id": "S2",
+         "role": "hud",
+         "box": {
+          "x": 2,
+          "y": 4,
+          "w": 35,
+          "h": 7
+         },
+         "tiltDeg": 0,
+         "z": 2,
+         "textEn": "Level 17, HP 13450/1520, gold 999,999, gems 9,999",
+         "note": "",
+         "capture": 0,
+         "textRef": null,
+         "text": "LV 17 13450/1520 999,999 9,999",
+         "covers": []
+        },
+        {
+         "id": "S3",
+         "role": "hud",
+         "box": {
+          "x": 84,
+          "y": 4,
+          "w": 13,
+          "h": 6
+         },
+         "tiltDeg": 0,
+         "z": 2,
+         "textEn": "stage 1-6",
+         "note": "",
+         "capture": 0,
+         "textRef": null,
+         "text": "1-6",
+         "covers": []
+        },
+        {
+         "id": "S4",
+         "role": "panel",
+         "box": {
+          "x": 3,
+          "y": 16,
+          "w": 15,
+          "h": 60
+         },
+         "tiltDeg": 0,
+         "z": 2,
+         "textEn": "Level 10 equipment slots",
+         "note": "",
+         "capture": 0,
+         "textRef": null,
+         "text": "Lv.10",
+         "covers": []
+        },
+        {
+         "id": "S5",
+         "role": "character",
+         "box": {
+          "x": 20,
+          "y": 36,
+          "w": 22,
+          "h": 30
+         },
+         "tiltDeg": 0,
+         "z": 1,
+         "textEn": null,
+         "note": "",
+         "capture": 0,
+         "textRef": null,
+         "text": null,
+         "covers": []
+        },
+        {
+         "id": "S6",
+         "role": "character",
+         "box": {
+          "x": 48,
+          "y": 30,
+          "w": 26,
+          "h": 36
+         },
+         "tiltDeg": 0,
+         "z": 1,
+         "textEn": null,
+         "note": "",
+         "capture": 0,
+         "textRef": null,
+         "text": null,
+         "covers": []
+        }
+       ],
+       "marketing": [
+        {
+         "id": "M1",
+         "role": "frame",
+         "box": {
+          "x": 0,
+          "y": 0,
+          "w": 100,
+          "h": 100
+         },
+         "tiltDeg": 0,
+         "z": 0,
+         "textEn": null,
+         "note": "",
+         "capture": null,
+         "textRef": null,
+         "text": null,
+         "covers": [
+          "S1"
+         ]
+        },
+        {
+         "id": "M2",
+         "role": "cut-out",
+         "box": {
+          "x": 68,
+          "y": 30,
+          "w": 32,
+          "h": 66
+         },
+         "tiltDeg": 0,
+         "z": 1,
+         "textEn": null,
+         "note": "",
+         "capture": null,
+         "textRef": null,
+         "text": null,
+         "covers": [
+          "S1",
+          "S6"
+         ]
+        },
+        {
+         "id": "M3",
+         "role": "cut-out",
+         "box": {
+          "x": 56,
+          "y": 68,
+          "w": 20,
+          "h": 30
+         },
+         "tiltDeg": 0,
+         "z": 3,
+         "textEn": null,
+         "note": "",
+         "capture": null,
+         "textRef": null,
+         "text": null,
+         "covers": [
+          "S1"
+         ]
+        },
+        {
+         "id": "M4",
+         "role": "cut-out",
+         "box": {
+          "x": 76,
+          "y": 76,
+          "w": 12,
+          "h": 20
+         },
+         "tiltDeg": 0,
+         "z": 4,
+         "textEn": null,
+         "note": "",
+         "capture": null,
+         "textRef": null,
+         "text": null,
+         "covers": [
+          "S1"
+         ]
+        },
+        {
+         "id": "M5",
+         "role": "headline",
+         "box": {
+          "x": 2,
+          "y": 73,
+          "w": 58,
+          "h": 14
+         },
+         "tiltDeg": 0,
+         "z": 2,
+         "textEn": "Collect Companions",
+         "note": "",
+         "capture": null,
+         "textRef": 0,
+         "text": null,
+         "covers": [
+          "S1",
+          "S4"
+         ]
+        },
+        {
+         "id": "M6",
+         "role": "band",
+         "box": {
+          "x": 10,
+          "y": 87,
+          "w": 43,
+          "h": 9
+         },
+         "tiltDeg": 0,
+         "z": 2,
+         "textEn": null,
+         "note": "",
+         "capture": null,
+         "textRef": null,
+         "text": null,
+         "covers": [
+          "S1"
+         ]
+        },
+        {
+         "id": "M7",
+         "role": "subline",
+         "box": {
+          "x": 18,
+          "y": 88,
+          "w": 34,
+          "h": 7
+         },
+         "tiltDeg": 0,
+         "z": 3,
+         "textEn": "Combat Squad, Auto Upgrade",
+         "note": "",
+         "capture": null,
+         "textRef": 1,
+         "text": null,
+         "covers": [
+          "S1"
+         ]
+        },
+        {
+         "id": "M8",
+         "role": "badge",
+         "box": {
+          "x": 10,
+          "y": 86,
+          "w": 8,
+          "h": 10
+         },
+         "tiltDeg": 0,
+         "z": 4,
+         "textEn": null,
+         "note": "",
+         "capture": null,
+         "textRef": null,
+         "text": null,
+         "covers": [
+          "S1"
+         ]
+        }
+       ],
+       "composition": {
+        "focal": {
+         "x": 31,
+         "y": 80,
+         "id": "M5"
+        },
+        "readingOrder": [
+         "M5",
+         "M2",
+         "M3",
+         "M7",
+         "S6"
+        ],
+        "overlaySharePercent": 45,
+        "summary": "Full battle capture inside a white frame; a large white mascot cut-out with a mushroom hero and chick dominates the right, while a big blue headline and a pill band with the subline fill the bottom-left."
+       }
+      }
+     }
+    ]
+   },
+   "failed": null,
+   "problems": [],
+   "calls": []
+  },
+  {
+   "name": "survivorio-jp-4",
+   "imageId": "9890be41062c557eb4ac1b6261516a3d47acc9c41009f68aca3302b930c01ce7",
+   "readingFrom": "saved record",
+   "reading": {
+    "imageRef": "img1",
+    "screenshot": {
+     "composition": "single_full_capture",
+     "screenType": "metagame",
+     "subtype": "skills_talents",
+     "captures": [
+      {
+       "orientation": "portrait",
+       "screenType": "metagame",
+       "subtype": "skills_talents",
+       "region": {
+        "x": 0,
+        "y": 0,
+        "w": 100,
+        "h": 80
+       },
+       "areaPercent": 72,
+       "framing": "full_bleed",
+       "description": "A vertical talent tree on a blue bunker-style background with grey locked nodes (weapon, skull, shield) and unlocked blue nodes (golden reroll card, glowing light bulb), plus a tooltip for talent level 2 'ラッキードッグ' explaining it grants one skill at battle start."
+      }
+     ],
+     "captureAreaPercent": 72,
+     "description": "Talent upgrade tree screen: a column of talent nodes connected by a track, lower nodes unlocked in blue, upper nodes locked in grey, with a dark tooltip panel describing the 'Lucky Dog' talent.",
+     "action": "The player is viewing / upgrading talents in the talent tree, reading the description of the Lucky Dog talent.",
+     "atmosphere": "Cartoony, playful, upbeat",
+     "mainColours": [
+      {
+       "name": "steel blue",
+       "hex": "#3d7fb0"
+      },
+      {
+       "name": "dark navy",
+       "hex": "#1f2a3a"
+      },
+      {
+       "name": "grey",
+       "hex": "#6a6f78"
+      },
+      {
+       "name": "bright blue",
+       "hex": "#2fb4ff"
+      },
+      {
+       "name": "golden yellow",
+       "hex": "#f5c518"
+      }
+     ]
+    },
+    "marketingLayer": {
+     "present": true,
+     "coveragePercent": 45,
+     "backgroundMasks": [
+      {
+       "shape": "diagonal_band",
+       "colourName": "purple",
+       "colourHex": "#7a1fa8",
+       "location": "bottom",
+       "region": {
+        "x": 0,
+        "y": 74,
+        "w": 100,
+        "h": 26
+       }
+      },
+      {
+       "shape": "diagonal_band",
+       "colourName": "white",
+       "colourHex": "#ffffff",
+       "location": "bottom",
+       "region": {
+        "x": 0,
+        "y": 72,
+        "w": 100,
+        "h": 10
+       }
+      }
+     ],
+     "texts": [
+      {
+       "role": "headline",
+       "text": "タレントを進化させて!",
+       "language": "ja",
+       "colour": "white #ffffff",
+       "strokeColour": "none",
+       "fontStyle": "heavy bold sans, italic, slightly tilted",
+       "size": "huge",
+       "position": "bottom",
+       "region": {
+        "x": 2,
+        "y": 84,
+        "w": 96,
+        "h": 14
+       }
+      }
+     ],
+     "elements": [
+      {
+       "kind": "logo",
+       "what": "Game logo 'ダダサバイバー' in yellow-orange gradient with black outline",
+       "position": "top-left",
+       "pose": "n/a",
+       "colours": "yellow, orange, black",
+       "scale": "medium",
+       "breaksFrame": false,
+       "region": {
+        "x": 3,
+        "y": 1,
+        "w": 50,
+        "h": 7
+       }
+      },
+      {
+       "kind": "creature",
+       "what": "Large purple one-eyed zombie/plant-like creature with green body, gaping round mouth and light-blue eye",
+       "position": "bottom-right, overlapping the talent tree and sitting on the band",
+       "pose": "facing left, close-up head and shoulders",
+       "colours": "purple, green, black, light blue",
+       "scale": "large",
+       "breaksFrame": true,
+       "region": {
+        "x": 40,
+        "y": 42,
+        "w": 60,
+        "h": 38
+       }
+      }
+     ],
+     "mainColours": [
+      {
+       "name": "purple",
+       "hex": "#7a1fa8"
+      },
+      {
+       "name": "white",
+       "hex": "#ffffff"
+      },
+      {
+       "name": "violet",
+       "hex": "#9b3fc4"
+      },
+      {
+       "name": "yellow",
+       "hex": "#f7c22a"
+      }
+     ],
+     "relationToScreen": "describes"
+    },
+    "headline": "タレントを進化させて!",
+    "confidence": 0.92,
+    "notes": "The bottom band has a halftone dot texture; the purple creature is a mascot enemy placed as marketing art over the talent screen."
+   },
+   "output": {
+    "images": [
+     {
+      "layout": {
+       "inGame": [
+        {
+         "id": "S1",
+         "role": "main-scene",
+         "box": {
+          "x": 0,
+          "y": 0,
+          "w": 100,
+          "h": 80
+         },
+         "tiltDeg": 0,
+         "z": 0,
+         "textEn": null,
+         "note": "",
+         "capture": 0,
+         "textRef": null,
+         "text": null,
+         "covers": []
+        },
+        {
+         "id": "S2",
+         "role": "panel",
+         "box": {
+          "x": 15,
+          "y": 5,
+          "w": 20,
+          "h": 68
+         },
+         "tiltDeg": 0,
+         "z": 1,
+         "textEn": null,
+         "note": "",
+         "capture": 0,
+         "textRef": null,
+         "text": null,
+         "covers": []
+        },
+        {
+         "id": "S3",
+         "role": "dialog",
+         "box": {
+          "x": 46,
+          "y": 18,
+          "w": 52,
+          "h": 24
+         },
+         "tiltDeg": 0,
+         "z": 2,
+         "textEn": "Lucky Dog: Gain 1 skill at battle start. All survivors are favored by the gods",
+         "note": "",
+         "capture": 0,
+         "textRef": null,
+         "text": "ラッキードッグ 戦闘開始時に1個のスキルを獲得 すべてのサバイバーは神のお気に入り",
+         "covers": []
+        }
+       ],
+       "marketing": [
+        {
+         "id": "M1",
+         "role": "band",
+         "box": {
+          "x": 0,
+          "y": 72,
+          "w": 100,
+          "h": 10
+         },
+         "tiltDeg": -8,
+         "z": 0,
+         "textEn": null,
+         "note": "",
+         "capture": null,
+         "textRef": null,
+         "text": null,
+         "covers": [
+          "S1"
+         ]
+        },
+        {
+         "id": "M2",
+         "role": "band",
+         "box": {
+          "x": 0,
+          "y": 74,
+          "w": 100,
+          "h": 26
+         },
+         "tiltDeg": -8,
+         "z": 1,
+         "textEn": null,
+         "note": "",
+         "capture": null,
+         "textRef": null,
+         "text": null,
+         "covers": [
+          "S1"
+         ]
+        },
+        {
+         "id": "M3",
+         "role": "cut-out",
+         "box": {
+          "x": 40,
+          "y": 42,
+          "w": 60,
+          "h": 38
+         },
+         "tiltDeg": 0,
+         "z": 2,
+         "textEn": null,
+         "note": "",
+         "capture": null,
+         "textRef": null,
+         "text": null,
+         "covers": [
+          "S1",
+          "S3"
+         ]
+        },
+        {
+         "id": "M4",
+         "role": "headline",
+         "box": {
+          "x": 2,
+          "y": 84,
+          "w": 96,
+          "h": 14
+         },
+         "tiltDeg": -8,
+         "z": 3,
+         "textEn": "Evolve your talents!",
+         "note": "",
+         "capture": null,
+         "textRef": 0,
+         "text": null,
+         "covers": []
+        },
+        {
+         "id": "M5",
+         "role": "logo",
+         "box": {
+          "x": 3,
+          "y": 1,
+          "w": 50,
+          "h": 7
+         },
+         "tiltDeg": 0,
+         "z": 4,
+         "textEn": "Survivor.io",
+         "note": "",
+         "capture": null,
+         "textRef": null,
+         "text": "ダダサバイバー",
+         "covers": [
+          "S1",
+          "S2"
+         ]
+        }
+       ],
+       "composition": {
+        "focal": {
+         "x": 65,
+         "y": 58,
+         "id": "M3"
+        },
+        "readingOrder": [
+         "M3",
+         "M4",
+         "S3",
+         "S2",
+         "M5"
+        ],
+        "overlaySharePercent": 50,
+        "summary": "Full talent-tree capture with a skill tooltip; a large purple creature cut-out breaks out over the lower right, above tilted white and purple bands across the bottom quarter carrying the headline, with the game logo top-left."
+       }
+      }
+     }
+    ]
+   },
+   "failed": null,
+   "problems": [],
+   "calls": [
+    {
+     "step": "layout",
+     "model": "claude-fable-5-1",
+     "key": "87585e8cc283a53c8926985412e00a91edd27197db779af03eb0634a626b6ea3",
+     "imageIds": [
+      "9890be41062c557eb4ac1b6261516a3d47acc9c41009f68aca3302b930c01ce7"
+     ],
+     "ok": true,
+     "costUsd": 0.1116985,
+     "usage": {
+      "inputTokens": 2,
+      "outputTokens": 1031,
+      "cacheReadTokens": 3714,
+      "cacheWriteTokens": 2960,
+      "durationMs": 11055,
+      "turns": 2,
+      "wallMs": 14551,
+      "requests": 1
+     },
+     "at": "2026-09-29T08:40:42.609Z"
+    }
+   ]
+  }
+ ]
+}

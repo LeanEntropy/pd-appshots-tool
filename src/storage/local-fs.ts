@@ -13,7 +13,8 @@ import {
 } from "node:fs";
 import { dirname, join, relative, resolve, sep } from "node:path";
 import type { Readable } from "node:stream";
-import { REPORT_DELETE_KEY, type Storage } from "./types.ts";
+import { dataChanged, dataChangedLater, watchWorkspace } from "./changes.ts";
+import { REPORT_DELETE_KEY, type Storage, TRIAL_DELETE_KEY } from "./types.ts";
 
 /** Top-level key namespaces and their folders inside the workspace. */
 const NAMESPACES: Record<string, string> = {
@@ -28,12 +29,38 @@ const sha256 = (b: Buffer) => createHash("sha256").update(b).digest("hex");
 
 let tmpCounter = 0;
 
+/** One read instead of a check and a read (each file-system call is slow on Windows). */
+function readIfExists(p: string): Buffer | undefined;
+function readIfExists(p: string, enc: "utf8"): string | undefined;
+function readIfExists(p: string, enc?: "utf8"): Buffer | string | undefined {
+  try {
+    return enc ? readFileSync(p, enc) : readFileSync(p);
+  } catch (e) {
+    const code = (e as NodeJS.ErrnoException).code;
+    if (code === "ENOENT" || code === "ENOTDIR") return undefined;
+    throw e;
+  }
+}
+
+const SAME_SCREEN = /^(library|projects\/[a-z0-9-]+)\/same-screen\//;
+
+/** Counts a data write for the cached page data (changes.ts). */
+function changed(k: string): void {
+  // The registry (names, last opened, the home card's summary) is not project data: opening a
+  // project must not throw away what was computed for it.
+  if (k.startsWith("registry/")) return;
+  // The same-screen check writes one small result per pair for minutes: counted when it ends.
+  if (SAME_SCREEN.test(k)) dataChangedLater();
+  else dataChanged();
+}
+
 /** The local file-system implementation, rooted at the workspace folder. */
 export class LocalFsStorage implements Storage {
   readonly root: string;
 
   constructor(root: string) {
     this.root = resolve(root);
+    watchWorkspace(this.root);
   }
 
   localPath(k: string): string {
@@ -60,7 +87,8 @@ export class LocalFsStorage implements Storage {
 
   getJson(k: string): unknown {
     const p = this.localPath(k);
-    return existsSync(p) ? JSON.parse(readFileSync(p, "utf8")) : undefined;
+    const text = readIfExists(p, "utf8");
+    return text === undefined ? undefined : JSON.parse(text);
   }
 
   putJson(k: string, value: unknown): void {
@@ -69,7 +97,7 @@ export class LocalFsStorage implements Storage {
 
   getText(k: string): string | undefined {
     const p = this.localPath(k);
-    return existsSync(p) ? readFileSync(p, "utf8") : undefined;
+    return readIfExists(p, "utf8");
   }
 
   putText(k: string, text: string): void {
@@ -78,6 +106,7 @@ export class LocalFsStorage implements Storage {
     const tmp = `${p}.${process.pid}.${++tmpCounter}.tmp`;
     writeFileSync(tmp, text);
     renameSync(tmp, p);
+    changed(k);
   }
 
   putJsonOnce(k: string, value: unknown): boolean {
@@ -85,6 +114,7 @@ export class LocalFsStorage implements Storage {
     mkdirSync(dirname(p), { recursive: true });
     try {
       writeFileSync(p, `${JSON.stringify(value, null, 2)}\n`, { flag: "wx" });
+      changed(k);
       return true;
     } catch (e) {
       if ((e as NodeJS.ErrnoException).code === "EEXIST") return false;
@@ -115,12 +145,13 @@ export class LocalFsStorage implements Storage {
     } finally {
       rmSync(tmp, { force: true });
     }
+    dataChanged();
     return "written";
   }
 
   getBytes(k: string): Buffer | undefined {
     const p = this.localPath(k);
-    return existsSync(p) ? readFileSync(p) : undefined;
+    return readIfExists(p);
   }
 
   readStream(k: string): Readable {
@@ -130,6 +161,12 @@ export class LocalFsStorage implements Storage {
   deleteReportFiles(k: string): void {
     if (!REPORT_DELETE_KEY.test(k)) throw new Error(`Refusing to delete "${k}"`);
     rmSync(this.localPath(k), { recursive: true, force: true });
+    dataChanged();
+  }
+
+  deleteTrialFile(k: string): void {
+    if (!TRIAL_DELETE_KEY.test(k)) throw new Error(`Refusing to delete "${k}"`);
+    rmSync(this.localPath(k), { force: true });
   }
 
   exists(k: string): boolean {
@@ -147,6 +184,17 @@ export class LocalFsStorage implements Storage {
       )
       .map((e) => e.name)
       .sort();
+  }
+
+  children(prefix: string): string[] {
+    // One directory read; a missing folder is not an error (cheaper than probing each file).
+    try {
+      return readdirSync(this.localPath(prefix)).filter((n) => !n.endsWith(".tmp"));
+    } catch (e) {
+      const code = (e as NodeJS.ErrnoException).code;
+      if (code === "ENOENT" || code === "ENOTDIR") return [];
+      throw e;
+    }
   }
 
   *list(prefix: string): Iterable<string> {

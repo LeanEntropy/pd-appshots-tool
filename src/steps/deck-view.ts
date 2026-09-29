@@ -17,7 +17,7 @@ export interface DeckViewResult {
   deckPages: number;
 }
 
-function viewModel(loaded: LoadedConfig): ViewModel {
+export function viewModel(loaded: LoadedConfig): ViewModel {
   const paths = projectPaths(loaded);
   const run = latestRun(paths.runs);
   if (!run) throw new Error("No download run found yet. Run the download step first.");

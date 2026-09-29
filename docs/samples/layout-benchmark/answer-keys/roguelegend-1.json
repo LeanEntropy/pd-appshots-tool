@@ -1,0 +1,107 @@
+{
+  "name": "roguelegend-1",
+  "imageId": "ddd7f0710af668e6ed7d088a2e010a8704b1b3a34b6500f2de30c5f9a8dea732",
+  "width": 1080,
+  "height": 1920,
+  "captures": 0,
+  "marketingPresent": true,
+  "inGame": [
+    {
+      "id": "S1",
+      "role": "main-scene",
+      "box": {
+        "x": 0,
+        "y": 0,
+        "w": 100,
+        "h": 100
+      },
+      "tiltDeg": 0,
+      "z": 0,
+      "text": null,
+      "textEn": null
+    },
+    {
+      "id": "S2",
+      "role": "character",
+      "box": {
+        "x": 6,
+        "y": 25,
+        "w": 81,
+        "h": 30
+      },
+      "tiltDeg": 0,
+      "z": 1,
+      "text": null,
+      "textEn": null
+    },
+    {
+      "id": "S3",
+      "role": "character",
+      "box": {
+        "x": 32,
+        "y": 50.5,
+        "w": 55,
+        "h": 26.5
+      },
+      "tiltDeg": 0,
+      "z": 2,
+      "text": null,
+      "textEn": null
+    },
+    {
+      "id": "S4",
+      "role": "character",
+      "box": {
+        "x": 25,
+        "y": 72,
+        "w": 25,
+        "h": 17
+      },
+      "tiltDeg": 0,
+      "z": 3,
+      "text": null,
+      "textEn": null
+    }
+  ],
+  "marketing": [
+    {
+      "id": "M1",
+      "role": "logo",
+      "box": {
+        "x": 18.5,
+        "y": 6.5,
+        "w": 64.5,
+        "h": 19
+      },
+      "tiltDeg": 0,
+      "z": 0,
+      "text": "ROGUE\nLEGEND",
+      "textEn": "Rogue Legend",
+      "covers": [
+        "S1"
+      ]
+    }
+  ],
+  "composition": {
+    "focal": {
+      "x": 56,
+      "y": 62.5,
+      "id": "S3"
+    },
+    "readingOrder": [
+      "M1",
+      "S3",
+      "S4",
+      "S1",
+      "S2"
+    ],
+    "overlaySharePercent": 12.2
+  },
+  "measurements": {
+    "bands": [],
+    "coveragePercent": 12.2,
+    "headlineGlyphPercent": null,
+    "headlineContrast": null
+  },
+  "reductionNotes": "Full-screen key art: no capture, the painted scene is the in-game layer. S1 cave environment (walls, ceiling, mist, ledges, floor, crack) plus the S5 set dressing (standing stones, crystals: props) -> S1 main-scene; S2 seven-monster crowd -> S2 character (one group); S3 golem -> S3 character; S4 hero with sword and shield -> S4 character. Marketing M1 outline plate + M2 'ROGUE' + M3 'LEGEND' -> one logo (two lines joined with a newline); fitted tilt -0.9 deg is under 1 deg, so 0. The logo only covers the ceiling part of S1. Reading-order step 4 (crystals and crack) maps to S1 because the props merged into it."
+}

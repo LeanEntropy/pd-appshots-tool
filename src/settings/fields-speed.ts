@@ -39,6 +39,11 @@ export function speedFields(): FieldDef[] {
       "Colours measured by code",
       "Colour statistics and the recommendation input use colours measured from the pixels of each layer instead of the model's. Switching it on marks the AI-written parts of reports built before as out of date.",
     ),
+    sw(
+      "layoutCapture",
+      "Layout breakdown for new analyses",
+      "After each new screenshot analysis, a separate AI call draws a coarse wireframe of both layers (up to 8 boxes each), about $0.09 to $0.15 per image. The analysis itself is never changed. Images analysed before show 'layout missing' until you add their layouts.",
+    ),
     {
       id: "options.pixelCheck.mode",
       group: "speed",

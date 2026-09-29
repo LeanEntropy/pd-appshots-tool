@@ -1,4 +1,5 @@
 import type { ProjectPaths } from "../config/load.ts";
+import { layoutView } from "../layout/info.ts";
 import type { InfoView, ViewAnalysis } from "../view/model.ts";
 import { artWording, artWordingDeep } from "./art-wording.ts";
 import type { ImageIdentity } from "./identity.ts";
@@ -157,6 +158,7 @@ export function infoViews(
       composition: usable ? (COMPOSITION[r.final.screenshot.composition] ?? null) : null,
       captures: usable ? captureLines(r.final, idn?.image, label) : [],
       pending: usable ? null : pendingMessage(r),
+      layout: usable ? layoutView(paths, r) : null,
     });
   }
   return out;

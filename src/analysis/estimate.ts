@@ -1,4 +1,5 @@
 import type { Config } from "../config/schema.ts";
+import { LAYOUT_USD_PER_IMAGE } from "../layout/vocab.ts";
 import { secondOpinionOn } from "../settings/access.ts";
 import type { TierResult } from "./tiers.ts";
 
@@ -54,8 +55,12 @@ export function estimate(
   const disputes = config.review.enabled ? Math.ceil(reviewImages * e.expectedDisputeRate) : 0;
   const adjCalls = Math.min(disputes, byApp.size);
   const allowance = 1 + e.retryAllowance;
+  // The layout breakdown: its own call after each new full analysis (Settings switch).
+  const layout = config.options.speed.layoutCapture ? full : 0;
   const usd: [number, number] = [0, 1].map((k) => {
-    const fa = full * (e.fullAnalysisUsdPerImage[k] as number);
+    const fa =
+      full * (e.fullAnalysisUsdPerImage[k] as number) +
+      layout * (LAYOUT_USD_PER_IMAGE[k] as number);
     const ld = diff * (e.layerDiffUsdPerImage[k] as number);
     // Synthesis covers the pattern wording, recommendations, check and revision; the A/B tests
     // are one more call of about a quarter of that (a retry at most doubles it).
@@ -94,6 +99,17 @@ export function estimate(
       images: disputes,
       note: `estimate: ${Math.round(e.expectedDisputeRate * 100)}% of cross-checked images`,
     },
+    ...(layout
+      ? [
+          {
+            role: "Layout breakdown (wireframe)",
+            model: modelName(config.models.fullAnalysis),
+            calls: layout,
+            images: layout,
+            note: `its own call after each new analysis, about $${LAYOUT_USD_PER_IMAGE[0].toFixed(2)} to $${LAYOUT_USD_PER_IMAGE[1].toFixed(2)} per image`,
+          },
+        ]
+      : []),
   ];
   if (synthesis) {
     const rec = modelName(config.models.recommend);

@@ -42,6 +42,15 @@ export interface ImageLoopDeps {
   sleep?: (ms: number, shouldStop: () => boolean) => Promise<void>;
   /** Each image's state as it changes (the run panel's list). */
   item?: OnItem;
+  /**
+   * After a usable record is saved, still inside the image's pool task and lock: the layout
+   * breakdown in its own call. Its failure never fails the image.
+   */
+  afterSave?: (
+    r: AnalysisRecord,
+    image: ChunkImage,
+    onCost: (usd: number) => void,
+  ) => Promise<{ outcome: string; problems: string[] }>;
 }
 
 export interface ImageLoopResult {
@@ -157,11 +166,11 @@ export async function analyseImages(
       const closed = new Set<string>();
       // Closed only after the record is saved: a crash in between leaves the attempt "started",
       // counted at its estimate, never a paid attempt without its result on disk.
-      const close = (id: string, ok: boolean) => {
+      const close = (id: string, ok: boolean, extra = 0) => {
         const a = attempt.get(id);
         if (!a || closed.has(id)) return;
         closed.add(id);
-        endAttempt(d.paths, id, a, d.batchId, ok ? "finished" : "failed", share ?? 0);
+        endAttempt(d.paths, id, a, d.batchId, ok ? "finished" : "failed", (share ?? 0) + extra);
       };
       try {
         const chunk: ChunkImage[] = [];
@@ -195,7 +204,6 @@ export async function analyseImages(
           // Saved immediately (with its identity block), under the lock, before the next image.
           const rec = await d.save(paid);
           const ok = isUsable(rec) || rec.status === "disputed";
-          close(rec.imageId, ok);
           out.records.push(rec);
           count(rec.imageId);
           const item = part.find((p) => p.imageId === rec.imageId);
@@ -203,6 +211,20 @@ export async function analyseImages(
           if (rec.status === "disputed")
             mark(rec.imageId, "ok", `disagreement not settled: ${rec.differences.join("; ")}`);
           else mark(rec.imageId, ok ? "ok" : "failed", ok ? null : msg);
+          const im = chunk.find((c) => c.imageId === rec.imageId);
+          // The layout call's cost joins this image's paid attempt (resume and the limit see it).
+          let extra = 0;
+          if (ok && d.afterSave && im && isUsable(rec)) {
+            d.progress("analysis", `${label}: adding the layout breakdown`);
+            const l = await d
+              .afterSave(rec, im, (u) => {
+                extra += u;
+              })
+              .catch((e: unknown) => ({ outcome: "failed", problems: [String(e)] }));
+            if (l.outcome === "failed")
+              d.progress("analysis", `${label}: layout missing (${l.problems[0] ?? "no answer"})`);
+          }
+          close(rec.imageId, ok, extra);
           if (ok) {
             if (rec.status === "disputed")
               d.fail(

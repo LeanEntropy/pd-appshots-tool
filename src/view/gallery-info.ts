@@ -60,6 +60,13 @@ function infoHtml(v) {
       + m.elements.map((e) => "<li>" + words(e.kind) + ": " + esc(e.what) + ", " + esc(e.position) + (e.pose && e.pose !== "n/a" ? ", pose " + esc(e.pose) : "") + ", " + esc(e.colours) + "</li>").join("")
       + "</ul>";
   }
+  // The layout wireframe is drawn by the server from the saved layout (its labels escaped there).
+  if (v.layout) {
+    h += "<h5>Layout</h5>";
+    if (v.layout.svg) h += '<div class="wf">' + v.layout.svg + "</div><p>" + esc(v.layout.summary) + "</p>"
+      + (v.layout.coverageUpTo != null ? '<p class="meta">Marketing layer covers up to ' + v.layout.coverageUpTo + "% (measured from the pixels). Dashed boxes are estimated.</p>" : "");
+    else h += '<p class="meta">' + (v.layout.status === "outdated" ? "The layout is from an older version." : v.layout.status === "stale" ? "The saved layout no longer matches this analysis." : "Layout missing: analysed before layouts existed. Add it on the Analysis page.") + "</p>";
+  }
   if (a.notes) h += '<p class="meta">' + esc(a.notes) + "</p>";
   if (v.differences.length) h += '<p class="meta">Readings differed on: ' + esc(v.differences.join("; ")) + "</p>";
   return h;

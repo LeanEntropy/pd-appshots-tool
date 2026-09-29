@@ -20,6 +20,7 @@
     "core": "tsx src/cli.ts core",
     "fit": "tsx src/cli.ts fit",
     "refresh-records": "tsx src/cli.ts refresh-records",
+    "cleanup-trials": "tsx src/cli.ts cleanup-trials",
     "store-text": "tsx src/cli.ts store-text",
     "overview": "tsx src/cli.ts overview",
     "report": "tsx src/cli.ts report",

@@ -29,7 +29,10 @@ test("every page script carries the feedback helper; no page posts or alerts on 
 const CONTROLS: [string, RegExp][] = [
   ["Import it", /if \(t\.dataset\.import\) importing\(/],
   ["Show what will happen", /if \(t\.dataset\.dry\) \{\s*const id = t\.dataset\.dry;\s*act\(t,/],
-  ["Archive / Show again", /if \(t\.dataset\.archive\) \{[\s\S]{0,300}?\n\s*act\(t,/],
+  [
+    "Archive / Show again (Settings)",
+    /t\.id !== "archiveYes" && t\.id !== "archiveRestore"\) return;[\s\S]{0,80}?\n\s*act\(t,/,
+  ],
   ["Start analysis", /id === "startAnalysis"\) openApproval\(/],
   ["Continue", /id === "continueRun"[^\n]*openApproval\(/],
   [

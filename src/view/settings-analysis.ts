@@ -1,4 +1,5 @@
 import { ACTION_SCRIPT } from "./action.ts";
+import { ARCHIVE_SCRIPT, archiveBoxHtml } from "./archive-box.ts";
 import { page } from "./pages-html.ts";
 import { SETTINGS_SCRIPT } from "./settings-script.ts";
 import { appBar, escHtml } from "./shell.ts";
@@ -43,6 +44,8 @@ export function settingsPage(
   view: SettingsPageView | null,
   token: string,
   fixedText: string,
+  /** Archived or not; null when the project cannot be archived (not in the registry). */
+  archived: boolean | null = null,
 ): string {
   const back = `<a class="btn-new" href="/p/${encodeURIComponent(id)}/">Back to the project</a>`;
   const data = JSON.stringify({ id, view }).replace(/</g, "\\u003c");
@@ -51,9 +54,15 @@ export function settingsPage(
 <main><h1>Settings</h1>
 <p class="meta">Every change is saved at once. A change that costs money (for example a new model, which means analysing images again) shows the number of images and the cost first and asks you.</p>
 ${view ? '<div id="settings"></div>' : `<div class="card"><p>${escHtml(fixedText)}</p></div>`}
+${archived === null ? "" : archiveBoxHtml(id, name, archived)}
 </main>
 <dialog id="confirmDlg" aria-labelledby="confirmTitle"><h2 id="confirmTitle">Before this is saved</h2><div id="confirmBody"></div>
 <div class="btns"><button type="button" class="btn primary" id="confirmYes">Save this change</button><button type="button" class="btn" id="confirmNo">Cancel</button></div></dialog>
 <script type="application/json" id="settingsData">${data}</script>`;
-  return page(`Settings: ${name}`, body, token, `${ACTION_SCRIPT}${SETTINGS_SCRIPT}`);
+  return page(
+    `Settings: ${name}`,
+    body,
+    token,
+    `${ACTION_SCRIPT}${SETTINGS_SCRIPT}${ARCHIVE_SCRIPT}`,
+  );
 }

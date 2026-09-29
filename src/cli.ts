@@ -1,9 +1,10 @@
-﻿import { writeFileSync } from "node:fs";
+﻿import { existsSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { refreshAllRecords } from "./analysis/record-refresh.ts";
 import { writeCurrentReport } from "./analysis/report-inputs.ts";
 import { importCommand, loadForCommand, printProjects, ROOT } from "./cli-project.ts";
 import { type LoadedConfig, projectPaths } from "./config/load.ts";
+import { cleanupTrialFiles } from "./library/trial-cleanup.ts";
 import { asiaVsUs, writeOverview } from "./overview/overview-report.ts";
 import { reportCommand } from "./reports/cli.ts";
 import { ensureSameScreens } from "./reports/same-screen-run.ts";
@@ -18,6 +19,7 @@ import { buildPlan, newClient, planProblem, readPlan } from "./steps/preview.ts"
 import { describePlan, previewMarkdown } from "./steps/preview-report.ts";
 import { currentFit, describeFit, runSelect } from "./steps/select.ts";
 import { runStoreTextBackfill } from "./steps/store-text.ts";
+import { workspaceStorage } from "./storage/index.ts";
 import { type Args, confirm, parseArgs } from "./util/cli-io.ts";
 
 const log = (s: string) => console.log(s);
@@ -43,6 +45,7 @@ const HELP = `Store Screenshot Recipe: setup commands (no AI analysis)
   npm run report      Write the report from the saved analyses, no AI (-- --stage core for the core check)
                       -- "<report name or id>" saves a new version of that report instead (no AI)
   npm run refresh-records  Rebuild each analysis record's identity block and taxonomy mapping (no AI)
+  npm run cleanup-trials   Remove the layout trial files (structure-test-v0.json) that equal docs/samples
   npm run store-text  Fill in the category, tags and store text of the pages already downloaded
                       (free, no AI). Shows the count first; -- --yes reads them, one at a time
 
@@ -207,6 +210,26 @@ Landscape images: US ${Math.round(a.us * 100)}%, Asian markets ${Math.round(a.as
       const r = await refreshAllRecords(loaded);
       log(`Refreshed ${r.records} analysis records (identity and taxonomy mapping, no AI call).`);
       for (const m of r.mapped) log(`  ${m}`);
+      return 0;
+    }
+    case "cleanup-trials": {
+      const dir = join(ROOT, "docs", "samples");
+      const samples = readdirSync(dir, { withFileTypes: true })
+        .filter((e) => e.isDirectory() && existsSync(join(dir, e.name, "structure.json")))
+        .map(
+          (e) => JSON.parse(readFileSync(join(dir, e.name, "structure.json"), "utf8")) as unknown,
+        );
+      const storage = workspaceStorage(projectPaths(loaded).workspace);
+      const plan = cleanupTrialFiles(storage, samples, false);
+      for (const k of plan.kept) log(`Kept ${k.key}: ${k.reason}`);
+      const go = plan.found.length - plan.kept.length;
+      if (!go) {
+        log("No trial files to remove.");
+        return 0;
+      }
+      log(`${go} trial files (structure-test-v0.json) equal their copies in docs/samples.`);
+      if (!(await confirm("Remove them from the library?", args.yes))) return 0;
+      for (const k of cleanupTrialFiles(storage, samples, true).removed) log(`Removed ${k}`);
       return 0;
     }
     case "store-text": {

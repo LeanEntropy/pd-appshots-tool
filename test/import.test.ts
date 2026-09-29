@@ -74,6 +74,7 @@ test("import: hardlinks into the library, same approvals and views, then a no-op
   // The project settings run the same config; the registry lists it.
   const p = loadProject("rogue-legend", { root });
   assert.equal(p.hash, loaded.hash);
+  p.config.options.speed.layoutCapture = false; // as in the test project (tempProject)
   assert.equal(buildAnalysisPlan(p, "core").planHash, core.planHash);
   assert.deepEqual(
     listProjects(workspaceStorage(join(root, "workspace"))).map((x) => x.id),
