@@ -4,7 +4,7 @@ import { test } from "node:test";
 import { approvalProblem } from "../src/analysis/job.ts";
 import { buildAnalysisPlan } from "../src/analysis/plan.ts";
 import { settingsOf } from "../src/settings/access.ts";
-import { type FieldView, madeByAnotherProject, settingsServer } from "./helpers/settings.ts";
+import { type FieldView, madeByAnotherProject, settingsServer, TOKEN } from "./helpers/settings.ts";
 
 /** A valid value different from the current one, per kind of field. */
 const NUMBERS: Record<string, number> = {
@@ -195,6 +195,20 @@ test("settings: the page and the Settings link", async () => {
     assert.ok(gallery.includes(`href="/p/${s.id}/settings"`));
     const noToken = await fetch(s.api, { method: "POST", body: "{}" });
     assert.equal(noToken.status, 403);
+    // Archiving lives here (the home card has one button): asked for in the page first.
+    assert.match(page, /id="archiveAsk">Archive project</);
+    assert.match(page, /id="archiveConfirm"[^>]*hidden/);
+    const archive = (archived: boolean) =>
+      fetch(`${s.origin}/p/${s.id}/api/archive`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "X-SSR-Token": TOKEN },
+        body: JSON.stringify({ archived }),
+      });
+    assert.equal((await archive(true)).status, 200);
+    const after = await (await fetch(`${s.origin}/p/${s.id}/settings`)).text();
+    assert.match(after, /This project is archived/);
+    assert.match(after, /id="archiveRestore"/);
+    assert.equal((await archive(false)).status, 200);
   } finally {
     s.server.close();
   }

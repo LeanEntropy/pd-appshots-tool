@@ -1,8 +1,10 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
 import type { LoadedConfig } from "../config/load.ts";
+import { draftsFromExpansion } from "../reports/drafts.ts";
 import type { AppContext } from "./app-context.ts";
 import { send, writeRequest } from "./http-util.ts";
-import { getReports, getReportVersion, patchReport, removeReport } from "./reports-api.ts";
+import { reportList } from "./project-data.ts";
+import { getReportVersion, patchReport, removeReport, reportsResponse } from "./reports-api.ts";
 import { saveScope } from "./reports-builder-api.ts";
 import { builderRoute, GONE } from "./routes-builder.ts";
 
@@ -40,7 +42,9 @@ export async function reportsRoute(
   }
   if (id === undefined) {
     if (req.method !== "GET") return send(res, 405, { problems: ["Not allowed."] });
-    const r = getReports(loaded);
+    // Drafts first (a new draft is a data change), then the list kept for the current data.
+    const drafts = draftsFromExpansion(loaded);
+    const r = reportsResponse(loaded, drafts, await reportList(app, loaded));
     return send(res, r.status, r.body);
   }
   if (vid !== undefined) {

@@ -17,7 +17,8 @@ const HOME_CSS = `
 .pcard .line { font-size: 16px; font-weight: 600; margin: 0; }
 .pcard progress { width: 100%; height: 12px; accent-color: var(--accent); }
 .pcard .actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 4px; }
-.pcard .actions .right { margin-left: auto; }
+.pcard .btn.big { font-size: 17px; padding: 10px 28px; }
+.pcard .line .pill { margin-right: 6px; vertical-align: 2px; }
 .pcard.st-setup, .pcard.st-preview { border-left-color: var(--muted); }
 .pcard.st-pick { border-left-color: var(--mid); } .pcard.st-pick .pill { background: var(--mid); }
 .pcard.st-pilot, .pcard.st-core { border-left-color: var(--accent); } .pcard.st-pilot .pill, .pcard.st-core .pill { background: var(--accent); }
@@ -32,7 +33,7 @@ const HOME_CSS = `
 .linkbtn { background: none; border: none; color: var(--accent); font: inherit; font-weight: 600; cursor: pointer; text-decoration: underline; padding: 0; }
 `;
 
-/** The projects home (plan 1.1): one card per project with its status, progress and next step. */
+/** The projects home (plan 1.1): one card per project with its status and one button, Open. */
 export function homeHtml(token: string): string {
   const body = `<div id="working" role="status" aria-live="polite" hidden></div>
 ${appBar(null, '<a class="btn-new" href="/new">+ New project</a>')}
