@@ -51,3 +51,11 @@ Date: 2026-09-29. Branch: fix/text-reading. Reviewer: `codex exec -m gpt-5.6-ter
 NEW problems: none.
 
 Remaining after round 2: the c4 split (user decision) and the c1-c4 fake fixtures (declined, reason above).
+
+## Paid check (user-approved, scratch copy)
+
+- The user ruled that the Capybara Go title is two blocks ("LIVING IS" / "FORTUNE").
+- Run 1 (4 images, $0.76, one automatic retry): both Rogue Legends cases right. Overgeared Hero US #2 wrong: it listed "NEW", "Legendary" and "DRAGON KNIGHT", because the round-1 wording ("even when it is styled like the game's UI") let the model treat the dimmed reveal screen as a composited showcase. Capybara Go was not reached under the cap.
+- Fix (user-approved): game UI text (hero and item names, rarity labels, "NEW" tags...) is ALWAYS screenshot-layer text, even when the capture is dimmed or used as a showcase. Only text on a band, box, burst, badge or sticker added for the store, or a large store headline or caption over the art, is marketing text. The "styled like the game's UI" wording is gone. The check script's cap now goes through the tool's spending ledger, so every call, including a retry, may spend only what is left under the cap.
+- Run 2 (2 images, $0.38): Capybara Go US #2 ["Big Win !", "DAY 2", "FORTUNE", "LIVING IS"] right; Overgeared Hero US #2 ["UPGRADE"] right.
+- Rogue Legends US #2 and #4 were not re-run: their texts sit on added bands (still marketing text under the stricter rule), and the block and spacing rules did not change.

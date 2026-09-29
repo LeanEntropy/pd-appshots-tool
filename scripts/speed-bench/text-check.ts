@@ -6,6 +6,7 @@
  * Runs against a SCRATCH copy only (BENCH_ROOT/workspace), like the speed benchmark.
  * Usage (tsx): text-check.ts        -> shows the plan and the estimate, calls nothing
  *              text-check.ts --paid -> runs the 4 calls (hard cap CHECK_CAP_USD)
+ * Options: --only=<prefix>,<prefix> checks those images only (in that order); --cap=<usd>.
  */
 import { join } from "node:path";
 import { analyseImages, type ChunkImage } from "../../src/analysis/call.ts";
@@ -16,9 +17,10 @@ import { loadTaxonomy, projectPaths } from "../../src/config/load.ts";
 import { openImageDb } from "../../src/store/imagedb.ts";
 import { benchContext, fullIds, load, need, readSpend, REPO, writeOut } from "./common.ts";
 
-const CHECK_CAP_USD = 1.2;
-/** Most one call may spend (the CLI stops it there); the highest benchmark call was $0.31. */
-const PER_CALL_USD = 0.45;
+const arg = (name: string) =>
+  process.argv.find((a) => a.startsWith(`--${name}=`))?.slice(name.length + 3);
+const CHECK_CAP_USD = Number(arg("cap") ?? 1.2);
+const ONLY = arg("only")?.split(",");
 
 /** The user's judgement (2026-09-29): the right marketing texts, sorted like the benchmark. */
 const CASES = [
@@ -40,10 +42,14 @@ const sorted = (xs: string[]) => [...xs].sort();
 const same = (a: string[], b: string[]) => JSON.stringify(sorted(a)) === JSON.stringify(sorted(b));
 
 async function main(): Promise<void> {
+  const cases = ONLY
+    ? ONLY.map((p) => CASES.find((c) => c.prefix === p) ?? fail(`unknown case ${p}`))
+    : CASES;
   const paid = process.argv.includes("--paid");
-  const est = ESTIMATE.firstUsd + ESTIMATE.restUsd.reduce((a, b) => a + b, 0);
-  console.log(`Text-reading check: ${CASES.length} images, 1 call each, full answer, inline image.`);
-  for (const c of CASES) console.log(`- ${c.name} (${c.prefix}): expect ${JSON.stringify(c.right)}`);
+  const rest = ESTIMATE.restUsd.slice(0, cases.length - 1);
+  const est = ESTIMATE.firstUsd + rest.reduce((a, b) => a + b, 0);
+  console.log(`Text-reading check: ${cases.length} images, 1 call each, full answer, inline image.`);
+  for (const c of cases) console.log(`- ${c.name} (${c.prefix}): expect ${JSON.stringify(c.right)}`);
   console.log(`Estimated cost: about $${est.toFixed(2)} (hard cap $${CHECK_CAP_USD.toFixed(2)}).`);
   if (!paid) {
     console.log("Nothing was called. Run again with --paid after the user approves.");
@@ -57,16 +63,16 @@ async function main(): Promise<void> {
   const db = openImageDb(paths);
   const { taxonomy } = loadTaxonomy(loaded);
   const all = fullIds(loaded);
-  const ctx = benchContext(loaded, "text-check");
-  ctx.maxBudgetUsd = PER_CALL_USD;
+  // Hard cap: every call (repairs too) may spend at most what is left under the cap.
+  const ctx = benchContext(loaded, "text-check", CHECK_CAP_USD, {});
+  ctx.maxBudgetUsd = CHECK_CAP_USD;
   const provider = providerFor(loaded.config.models.fullAnalysis, join(paths.objects, "schemas"), {
     inlineImages: true,
   });
   const prompt = renderAnalysisPrompt(REPO, paths.objects, taxonomy, false);
   const rows = [];
-  for (const c of CASES) {
-    // Hard cap: a call starts only when even its most expensive outcome stays under the cap.
-    if (readSpend().usd + PER_CALL_USD > CHECK_CAP_USD) {
+  for (const c of cases) {
+    if (CHECK_CAP_USD - readSpend().usd < 0.15) {
       console.log(`Stopped before ${c.name}: the cap is near.`);
       break;
     }
@@ -86,6 +92,10 @@ async function main(): Promise<void> {
   }
   writeOut("text-check.json", { prompt: prompt.hash, spentUsd: readSpend().usd, rows });
   console.log(`spent: $${readSpend().usd.toFixed(4)}`);
+}
+
+function fail(msg: string): never {
+  throw new Error(msg);
 }
 
 await main();
