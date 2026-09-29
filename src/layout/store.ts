@@ -26,6 +26,8 @@ export interface LayoutFile {
   object: string;
   createdAt: string;
   layout: Layout;
+  /** Where it disagrees with the analysis, in plain words (soft checks; absent before them). */
+  notes?: string[];
 }
 
 /** stale: saved for this analysis, but its reading changed since and it no longer fits. */
@@ -79,7 +81,7 @@ export function saveLayout(
   paths: ProjectPaths,
   r: AnalysisRecord,
   layout: Layout,
-  from: { source: LayoutFile["source"]; model: string; object: string },
+  from: { source: LayoutFile["source"]; model: string; object: string; notes?: string[] },
 ): LayoutFile {
   const recordKey = recordKeyOf(paths, r);
   const file: LayoutFile = {
