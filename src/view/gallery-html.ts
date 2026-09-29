@@ -1,3 +1,4 @@
+import { APPSTORE_CSS, APPSTORE_PANEL_HTML, APPSTORE_PANEL_SCRIPT } from "./appstore-ui.ts";
 import { COUNTRY_ADD_CSS } from "./country-add.ts";
 import { FLAG_CSS } from "./flags.ts";
 import { ADD_CSS } from "./gallery-add.ts";
@@ -58,7 +59,7 @@ export function galleryTop(token = "", served?: GalleryServed): string {
 <meta name="ssr-token" content="${escHtml(token)}">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Store Screenshot Recipe</title>
-<style>${CSS}${REPORT_LIST_CSS}${REPORT_SUMMARY_CSS}${ADD_CSS}${BUILDER_CSS}${PAIR_GROUP_CSS}${SUGGEST_CSS}${FLAG_CSS}${COUNTRY_ADD_CSS}${REPORT_COUNTRY_CSS}${REPORT_WORDS_CSS}${REPORTS_A_CSS}${REPORT_CARDS_CSS}${SHARE_PANEL_CSS}</style>
+<style>${CSS}${REPORT_LIST_CSS}${REPORT_SUMMARY_CSS}${ADD_CSS}${BUILDER_CSS}${PAIR_GROUP_CSS}${SUGGEST_CSS}${FLAG_CSS}${COUNTRY_ADD_CSS}${REPORT_COUNTRY_CSS}${REPORT_WORDS_CSS}${REPORTS_A_CSS}${REPORT_CARDS_CSS}${SHARE_PANEL_CSS}${APPSTORE_CSS}</style>
 </head>
 <body>
 <div id="runbar" role="status" aria-live="polite" hidden></div>
@@ -80,7 +81,7 @@ export function galleryRest(vm: ViewModel, served?: GalleryServed): string {
 <div id="overview"></div></section>
 <section data-page="competitors" hidden><h2 class="ph" tabindex="-1">Competitors</h2>
 <p class="meta">Tick the named competitors for the core check, then drag them into priority order in the list. Your pick saves automatically. Tablet-shaped screenshots are shown but not analysed.</p>
-<div id="addComp" class="card"></div>
+${served ? APPSTORE_PANEL_HTML : ""}<div id="addComp" class="card"></div>
 <div class="twocol"><div id="named"></div><div class="side"><div id="panel"></div></div></div></section>
 <section data-page="screenshots" hidden><h2 class="ph" tabindex="-1">Screenshots</h2>
 <details class="sec" open><summary><span class="sec-t">Comparison grid: ${escHtml(vm.coreMarket.label)}</span></summary><div class="sec-b">
@@ -108,7 +109,7 @@ export function galleryRest(vm: ViewModel, served?: GalleryServed): string {
 <script type="application/json" id="data">${data}</script>
 <script type="application/json" id="app">${app.replace(/</g, "\\u003c")}</script>
 <script>${GALLERY_SCRIPT}</script>
-${served ? `<script>${SHARE_PANEL_SCRIPT}</script>` : ""}
+${served ? `<script>${SHARE_PANEL_SCRIPT}</script><script>${APPSTORE_PANEL_SCRIPT}</script>` : ""}
 </body>
 </html>
 `;

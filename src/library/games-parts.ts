@@ -1,4 +1,5 @@
 import { isUsable, readRecords } from "../analysis/records.ts";
+import { type Platform, platformOf } from "../appstore/data.ts";
 import { type LoadedConfig, projectPaths } from "../config/load.ts";
 import { projectKey, type Storage } from "../storage/index.ts";
 import { stableHash } from "../util/hash.ts";
@@ -9,15 +10,8 @@ import { countryName, gameNames, latestDecks, roleIn } from "./project-decks.ts"
  * pages as its latest download saw them, and which of its pictures have a usable reading. A
  * part is rebuilt only when its stamp changes; the stamp uses only Storage reads.
  */
-export type Platform = "play" | "appstore";
-
-/**
- * The one reader of a store page's platform (plan-app-store 3): missing means Google Play, so
- * old decks and saved lists stay valid; "apple" (the refs spelling) is the App Store too.
- */
-export function platformOf(v: unknown): Platform {
-  return v === "appstore" || v === "apple" ? "appstore" : "play";
-}
+// The one reader of a store page's platform lives with the App Store data (plan-app-store 3).
+export { type Platform, platformOf };
 
 /**
  * Which stores we hold data for, Google Play first: every platform with a page, and the

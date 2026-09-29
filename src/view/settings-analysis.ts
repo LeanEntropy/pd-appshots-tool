@@ -1,4 +1,5 @@
 import { ACTION_SCRIPT } from "./action.ts";
+import { APPSTORE_CSS, APPSTORE_SETTINGS_SCRIPT, appStoreBoxHtml } from "./appstore-ui.ts";
 import { ARCHIVE_SCRIPT, archiveBoxHtml } from "./archive-box.ts";
 import { page } from "./pages-html.ts";
 import { SETTINGS_SCRIPT } from "./settings-script.ts";
@@ -46,15 +47,18 @@ export function settingsPage(
   fixedText: string,
   /** Archived or not; null when the project cannot be archived (not in the registry). */
   archived: boolean | null = null,
+  /** The project's App Store switch; null hides it (a project from a config file). */
+  appStore: boolean | null = null,
 ): string {
   const back = `<a class="btn-new" href="/p/${encodeURIComponent(id)}/">Back to the project</a> <a class="btn-new" href="/games">Games library</a>`;
   const data = JSON.stringify({ id, view }).replace(/</g, "\\u003c");
   const body = `${appBar(name, back)}
-<style>${SETTINGS_CSS}</style>
+<style>${SETTINGS_CSS}${APPSTORE_CSS}</style>
 <main><h1>Settings</h1>
 <p class="meta">Every change is saved at once. A change that costs money (for example a new model, which means analysing images again) shows the number of images and the cost first and asks you.</p>
 ${view ? '<div id="settings"></div>' : `<div class="card"><p>${escHtml(fixedText)}</p></div>`}
 <p class="meta">The knowledge base is shared by all projects: <a href="/knowledge">review and approve its entries</a>.</p>
+${view && appStore !== null ? appStoreBoxHtml(id, appStore) : ""}
 ${archived === null ? "" : archiveBoxHtml(id, name, archived)}
 </main>
 <dialog id="confirmDlg" aria-labelledby="confirmTitle"><h2 id="confirmTitle">Before this is saved</h2><div id="confirmBody"></div>
@@ -64,6 +68,6 @@ ${archived === null ? "" : archiveBoxHtml(id, name, archived)}
     `Settings: ${name}`,
     body,
     token,
-    `${ACTION_SCRIPT}${SETTINGS_SCRIPT}${ARCHIVE_SCRIPT}`,
+    `${ACTION_SCRIPT}${SETTINGS_SCRIPT}${ARCHIVE_SCRIPT}${APPSTORE_SETTINGS_SCRIPT}`,
   );
 }

@@ -6,6 +6,8 @@ export const ImageSourceSchema = z.object({
   gl: z.string(),
   hl: z.string(),
   position: z.number().int(),
+  /** Missing means Google Play; read through platformOf (src/appstore/data.ts). */
+  platform: z.literal("appstore").optional(),
 });
 
 /** Which library images one project uses, and where each appears (plan 12A, A1). */

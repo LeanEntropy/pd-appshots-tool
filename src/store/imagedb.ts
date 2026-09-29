@@ -10,6 +10,8 @@ export interface ImageSource {
   hl: string;
   /** 1-based store position. */
   position: number;
+  /** Missing means Google Play (every source written before the App Store). */
+  platform?: "appstore";
 }
 
 export interface ImageRecord extends ImageFacts {
