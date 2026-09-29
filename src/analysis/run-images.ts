@@ -35,6 +35,8 @@ export interface ImageLoopDeps {
   total: number;
   /** Model calls at the same time (Settings); 1 = one after another. */
   concurrency?: number;
+  /** The least one call needs (its reserved ceiling): below it, the batch stops for budget. */
+  minCallUsd?: number;
   /** Waiting after a rate limit (tests pass a fake). */
   sleep?: (ms: number, shouldStop: () => boolean) => Promise<void>;
 }
@@ -85,7 +87,8 @@ export async function analyseImages(
 
   const gate = (): boolean => {
     if (d.shouldStop()) out.cancelled = true;
-    else if (d.budgetLeft() <= 0) out.stoppedForBudget = true;
+    // What is left must fund one call's reserved ceiling (budget.ts).
+    else if (d.budgetLeft() < Math.max(0.01, d.minCallUsd ?? 0)) out.stoppedForBudget = true;
     return !out.cancelled && !out.stoppedForBudget;
   };
 

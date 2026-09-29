@@ -255,7 +255,7 @@ async function writeAndReview(
  * plan-analysis-speed item 3). An answer saved under the older order (instruction first) is
  * still used, so reports built before keep their written parts on a free rebuild.
  */
-async function textStep<T>(
+export async function textStep<T>(
   step: string,
   provider: Provider,
   system: RenderedPrompt,

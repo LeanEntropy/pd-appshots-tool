@@ -13,6 +13,14 @@ export const STEP_CEILING_USD: Readonly<Record<string, number>> = {
   "layer-diff": 0.2,
 };
 
+/**
+ * What an image's "started" attempt counts after a crash: the plan's estimate, or the step's
+ * reserved ceiling when several calls run at once (each may be in flight).
+ */
+export function crashEstimate(estimate: number, step: string, parallel: number): number {
+  return Math.max(estimate, parallel > 1 ? (STEP_CEILING_USD[step] ?? 0) : 0);
+}
+
 export interface Reservation {
   /** The most this call may spend (the CLI's own budget guard). */
   maxUsd: number;

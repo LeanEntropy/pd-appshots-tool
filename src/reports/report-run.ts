@@ -1,6 +1,6 @@
 import { join } from "node:path";
 import { endAttempt, SYNTHESIS, startAttempt } from "../analysis/attempts.ts";
-import { ledger, STEP_CEILING_USD } from "../analysis/budget.ts";
+import { crashEstimate, ledger, STEP_CEILING_USD } from "../analysis/budget.ts";
 import { compareLayers, type LayerItem } from "../analysis/layer-diff-run.ts";
 import { snapshotOrder } from "../analysis/orders.ts";
 import type { PlanItem } from "../analysis/plan.ts";
@@ -96,11 +96,13 @@ export async function runReport(
     batchId,
     size: config.estimates.imagesPerCall,
     stopAfterSameErrors: config.run.stopAfterSameErrors,
-    estimatePerImage: Math.max(
+    estimatePerImage: crashEstimate(
       config.estimates.fullAnalysisUsdPerImage[1],
-      speed.parallelCalls > 1 ? (STEP_CEILING_USD["full-analysis"] ?? 0) : 0,
+      "full-analysis",
+      speed.parallelCalls,
     ),
     concurrency: speed.parallelCalls,
+    minCallUsd: STEP_CEILING_USD["full-analysis"],
     image: (id) => modelCopy(paths, db, id),
     analyse: (chunk, part, label, onCost) =>
       analyseChunk(chunk, part, label, {
@@ -154,12 +156,14 @@ export async function runReport(
       runId,
       batchId,
       records: withCurrentMapping(readRecords(paths)),
-      estimatePerImage: Math.max(
+      estimatePerImage: crashEstimate(
         config.estimates.layerDiffUsdPerImage[1],
-        speed.parallelCalls > 1 ? (STEP_CEILING_USD["layer-diff"] ?? 0) : 0,
+        "layer-diff",
+        speed.parallelCalls,
       ),
       stopAfterSameErrors: config.run.stopAfterSameErrors,
       concurrency: speed.parallelCalls,
+      minCallUsd: STEP_CEILING_USD["layer-diff"],
       shouldStop,
       budgetLeft: book.remaining,
       spent: () => spent,

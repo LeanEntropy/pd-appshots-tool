@@ -1,0 +1,595 @@
+{
+ "images": [
+  {
+   "prefix": "704abf82ee",
+   "why": "ours (Rogue Legends US #4), three captures"
+  },
+  {
+   "prefix": "7faff58709",
+   "why": "ours (Rogue Legends US #2), heavy band, settled earlier"
+  },
+  {
+   "prefix": "afd912586a",
+   "why": "multi-capture composite (portrait)"
+  },
+  {
+   "prefix": "50643e8866",
+   "why": "multi-capture composite (landscape)"
+  },
+  {
+   "prefix": "f2b013c413",
+   "why": "full-screen art: title with logo (Archero 2 #1)"
+  },
+  {
+   "prefix": "98742f3c3a",
+   "why": "full-screen art: feature art (Capybara Go #2)"
+  },
+  {
+   "prefix": "ce1c001219",
+   "why": "landscape, capture in marketing art"
+  },
+  {
+   "prefix": "dd853ada50",
+   "why": "Japanese text (Rogue Legends Japan #3), three captures"
+  },
+  {
+   "prefix": "a09e24ef3b",
+   "why": "Japanese text (Capybara Go Japan #1)"
+  },
+  {
+   "prefix": "fe87b878fc",
+   "why": "gameplay with three bands (Survivor.io #4)"
+  }
+ ],
+ "paired": [
+  "704abf82ee",
+  "7faff58709",
+  "50643e8866",
+  "f2b013c413",
+  "98742f3c3a",
+  "dd853ada50",
+  "a09e24ef3b"
+ ],
+ "spentUsd": 2.7787,
+ "speed": {
+  "new": {
+   "images": 10,
+   "calls": 10,
+   "medianSeconds": 20.398,
+   "medianWallSeconds": 22.9755,
+   "medianCostUsd": 0.132999,
+   "totalCostUsd": 1.4465409999999999,
+   "medianOutputTokens": 1591.5,
+   "medianCacheRead": 6196,
+   "medianCacheWrite": 2589,
+   "repeatedAnswers": 0,
+   "armWallSeconds": 101.123,
+   "imagesPerMinute": 5.933368274279838
+  },
+  "control": {
+   "images": 7,
+   "calls": 7,
+   "medianSeconds": 25.847,
+   "medianWallSeconds": 28.826,
+   "medianCostUsd": 0.160584,
+   "totalCostUsd": 1.33241025,
+   "medianOutputTokens": 2038,
+   "medianCacheRead": 15054,
+   "medianCacheWrite": 3000,
+   "repeatedAnswers": 1,
+   "armWallSeconds": 209.267,
+   "imagesPerMinute": 2.0070054045788397
+  },
+  "newWarmMedianCostUsd": 0.132399
+ },
+ "table": [
+  {
+   "group": "critical",
+   "field": "category",
+   "seen": 10,
+   "newErrorsAll": 0,
+   "newErrorsPaired": 0,
+   "controlErrorsPaired": 1
+  },
+  {
+   "group": "critical",
+   "field": "marketing layer present",
+   "seen": 10,
+   "newErrorsAll": 0,
+   "newErrorsPaired": 0,
+   "controlErrorsPaired": 0
+  },
+  {
+   "group": "critical",
+   "field": "marketing texts",
+   "seen": 10,
+   "newErrorsAll": 4,
+   "newErrorsPaired": 3,
+   "controlErrorsPaired": 5
+  },
+  {
+   "group": "critical",
+   "field": "headline",
+   "seen": 10,
+   "newErrorsAll": 0,
+   "newErrorsPaired": 0,
+   "controlErrorsPaired": 1
+  },
+  {
+   "group": "critical",
+   "field": "game logo tag",
+   "seen": 10,
+   "newErrorsAll": 0,
+   "newErrorsPaired": 0,
+   "controlErrorsPaired": 0
+  },
+  {
+   "group": "critical",
+   "field": "text languages",
+   "seen": 10,
+   "newErrorsAll": 0,
+   "newErrorsPaired": 0,
+   "controlErrorsPaired": 2
+  },
+  {
+   "group": "standard",
+   "field": "subtype",
+   "seen": 10,
+   "newErrorsAll": 4,
+   "newErrorsPaired": 3,
+   "controlErrorsPaired": 2
+  },
+  {
+   "group": "standard",
+   "field": "capture types",
+   "seen": 10,
+   "newErrorsAll": 2,
+   "newErrorsPaired": 1,
+   "controlErrorsPaired": 2
+  },
+  {
+   "group": "standard",
+   "field": "capture orientation",
+   "seen": 10,
+   "newErrorsAll": 3,
+   "newErrorsPaired": 3,
+   "controlErrorsPaired": 2
+  },
+  {
+   "group": "standard",
+   "field": "capture framing",
+   "seen": 10,
+   "newErrorsAll": 3,
+   "newErrorsPaired": 2,
+   "controlErrorsPaired": 3
+  },
+  {
+   "group": "standard",
+   "field": "text roles",
+   "seen": 10,
+   "newErrorsAll": 4,
+   "newErrorsPaired": 4,
+   "controlErrorsPaired": 5
+  },
+  {
+   "group": "standard",
+   "field": "mask count",
+   "seen": 10,
+   "newErrorsAll": 4,
+   "newErrorsPaired": 2,
+   "controlErrorsPaired": 4
+  },
+  {
+   "group": "standard",
+   "field": "mask shapes",
+   "seen": 10,
+   "newErrorsAll": 4,
+   "newErrorsPaired": 2,
+   "controlErrorsPaired": 4
+  },
+  {
+   "group": "standard",
+   "field": "mask locations",
+   "seen": 10,
+   "newErrorsAll": 5,
+   "newErrorsPaired": 3,
+   "controlErrorsPaired": 4
+  },
+  {
+   "group": "standard",
+   "field": "element kinds",
+   "seen": 10,
+   "newErrorsAll": 4,
+   "newErrorsPaired": 2,
+   "controlErrorsPaired": 2
+  },
+  {
+   "group": "standard",
+   "field": "relation to screen",
+   "seen": 10,
+   "newErrorsAll": 0,
+   "newErrorsPaired": 0,
+   "controlErrorsPaired": 1
+  },
+  {
+   "group": "numbers",
+   "field": "coverage",
+   "seen": 10,
+   "newErrorsAll": 2,
+   "newErrorsPaired": 1,
+   "controlErrorsPaired": 1
+  },
+  {
+   "group": "numbers",
+   "field": "capture share",
+   "seen": 10,
+   "newErrorsAll": 3,
+   "newErrorsPaired": 2,
+   "controlErrorsPaired": 2
+  },
+  {
+   "group": "numbers",
+   "field": "capture areas",
+   "seen": 10,
+   "newErrorsAll": 3,
+   "newErrorsPaired": 2,
+   "controlErrorsPaired": 2
+  },
+  {
+   "group": "numbers",
+   "field": "mask boxes (IoU ≥ 0.5)",
+   "seen": 9,
+   "newErrorsAll": 3,
+   "newErrorsPaired": 3,
+   "controlErrorsPaired": 3
+  },
+  {
+   "group": "numbers",
+   "field": "text boxes (IoU ≥ 0.5)",
+   "seen": 8,
+   "newErrorsAll": 0,
+   "newErrorsPaired": 0,
+   "controlErrorsPaired": 0
+  },
+  {
+   "group": "critical",
+   "field": "art message",
+   "seen": 2,
+   "newErrorsAll": 0,
+   "newErrorsPaired": 0,
+   "controlErrorsPaired": 0
+  }
+ ],
+ "gates": {
+  "critical": {
+   "pass": false,
+   "failures": [
+    {
+     "id": "704abf82eeab6b27de6739215198dc59ea29b5a551e1186129dc848c7ca85406",
+     "field": "marketing texts",
+     "group": "critical",
+     "key": "[\"EVERY BOARD\",\"NEW ADVENTURE !\"]",
+     "new": "[\"EVERY BOARD NEW ADVENTURE !\"]",
+     "control": "[\"EVERY BOARD\",\"NEW ADVENTURE !\"]"
+    }
+   ]
+  },
+  "standard": {
+   "pass": true,
+   "failures": []
+  },
+  "downstream": {
+   "pass": false,
+   "newDiffPaths": 44,
+   "controlDiffPaths": 118,
+   "unexplained": 15,
+   "unexplainedAreas": [
+    "patterns.colours",
+    "patterns.byScreenType",
+    "per image: terminology"
+   ],
+   "unexplainedSample": [
+    "patterns.colours.screenshot.2.n",
+    "patterns.colours.screenshot.2.share",
+    "patterns.colours.screenshot.5.key",
+    "patterns.colours.screenshot.5.n",
+    "patterns.colours.screenshot.5.share",
+    "patterns.colours.screenshot.6.key",
+    "patterns.colours.screenshot.7.key",
+    "patterns.colours.masks.0.n",
+    "patterns.colours.masks.9.key",
+    "patterns.colours.masks.9.n",
+    "patterns.colours.masks.9.share",
+    "patterns.byScreenType.2.maskColours.1.n",
+    "patterns.byScreenType.2.maskColours.6",
+    "perImage.704abf82ee.terminology.texts.0.1",
+    "perImage.704abf82ee.terminology.texts.1"
+   ],
+   "verdict": {
+    "key": "optimised",
+    "new": "optimised",
+    "control": "optimised"
+   }
+  },
+  "colours": {
+   "agreement": 0.41025641025641024,
+   "pass": false,
+   "rows": [
+    {
+     "id": "704abf82ee",
+     "what": "screen",
+     "key": "green",
+     "measured": "green"
+    },
+    {
+     "id": "704abf82ee",
+     "what": "layer",
+     "key": "blue",
+     "measured": "blue"
+    },
+    {
+     "id": "704abf82ee",
+     "what": "mask 1",
+     "key": "blue",
+     "measured": "blue"
+    },
+    {
+     "id": "704abf82ee",
+     "what": "mask 2",
+     "key": "white",
+     "measured": "grey"
+    },
+    {
+     "id": "7faff58709",
+     "what": "screen",
+     "key": "green",
+     "measured": "green"
+    },
+    {
+     "id": "7faff58709",
+     "what": "layer",
+     "key": "black",
+     "measured": "black"
+    },
+    {
+     "id": "7faff58709",
+     "what": "mask 1",
+     "key": "black",
+     "measured": "brown"
+    },
+    {
+     "id": "7faff58709",
+     "what": "mask 2",
+     "key": "blue",
+     "measured": "pink"
+    },
+    {
+     "id": "7faff58709",
+     "what": "mask 3",
+     "key": "pink",
+     "measured": "pink"
+    },
+    {
+     "id": "afd912586a",
+     "what": "screen",
+     "key": "blue",
+     "measured": "black"
+    },
+    {
+     "id": "afd912586a",
+     "what": "layer",
+     "key": "orange",
+     "measured": "black"
+    },
+    {
+     "id": "afd912586a",
+     "what": "mask 1",
+     "key": "orange",
+     "measured": "brown"
+    },
+    {
+     "id": "afd912586a",
+     "what": "mask 2",
+     "key": "orange",
+     "measured": "yellow"
+    },
+    {
+     "id": "50643e8866",
+     "what": "screen",
+     "key": "white",
+     "measured": "blue"
+    },
+    {
+     "id": "50643e8866",
+     "what": "layer",
+     "key": "blue",
+     "measured": "blue"
+    },
+    {
+     "id": "50643e8866",
+     "what": "mask 1",
+     "key": "blue",
+     "measured": "blue"
+    },
+    {
+     "id": "f2b013c413",
+     "what": "screen",
+     "key": "purple",
+     "measured": "blue"
+    },
+    {
+     "id": "f2b013c413",
+     "what": "layer",
+     "key": "red",
+     "measured": "black"
+    },
+    {
+     "id": "98742f3c3a",
+     "what": "screen",
+     "key": "orange",
+     "measured": "orange"
+    },
+    {
+     "id": "98742f3c3a",
+     "what": "layer",
+     "key": "yellow",
+     "measured": "red"
+    },
+    {
+     "id": "98742f3c3a",
+     "what": "mask 1",
+     "key": "pink",
+     "measured": "pink"
+    },
+    {
+     "id": "98742f3c3a",
+     "what": "mask 2",
+     "key": "red",
+     "measured": "brown"
+    },
+    {
+     "id": "ce1c001219",
+     "what": "screen",
+     "key": "blue",
+     "measured": "green"
+    },
+    {
+     "id": "ce1c001219",
+     "what": "layer",
+     "key": "white",
+     "measured": "green"
+    },
+    {
+     "id": "ce1c001219",
+     "what": "mask 1",
+     "key": "white",
+     "measured": "green"
+    },
+    {
+     "id": "ce1c001219",
+     "what": "mask 2",
+     "key": "blue",
+     "measured": "blue"
+    },
+    {
+     "id": "dd853ada50",
+     "what": "screen",
+     "key": "green",
+     "measured": "green"
+    },
+    {
+     "id": "dd853ada50",
+     "what": "layer",
+     "key": "blue",
+     "measured": "blue"
+    },
+    {
+     "id": "dd853ada50",
+     "what": "mask 1",
+     "key": "blue",
+     "measured": "blue"
+    },
+    {
+     "id": "dd853ada50",
+     "what": "mask 2",
+     "key": "blue",
+     "measured": "yellow"
+    },
+    {
+     "id": "dd853ada50",
+     "what": "mask 3",
+     "key": "blue",
+     "measured": "green"
+    },
+    {
+     "id": "a09e24ef3b",
+     "what": "screen",
+     "key": "green",
+     "measured": "teal"
+    },
+    {
+     "id": "a09e24ef3b",
+     "what": "layer",
+     "key": "yellow",
+     "measured": "green"
+    },
+    {
+     "id": "a09e24ef3b",
+     "what": "mask 1",
+     "key": "green",
+     "measured": "green"
+    },
+    {
+     "id": "fe87b878fc",
+     "what": "screen",
+     "key": "orange",
+     "measured": "grey"
+    },
+    {
+     "id": "fe87b878fc",
+     "what": "layer",
+     "key": "white",
+     "measured": "grey"
+    },
+    {
+     "id": "fe87b878fc",
+     "what": "mask 1",
+     "key": "blue",
+     "measured": "grey"
+    },
+    {
+     "id": "fe87b878fc",
+     "what": "mask 2",
+     "key": "white",
+     "measured": "grey"
+    },
+    {
+     "id": "fe87b878fc",
+     "what": "mask 3",
+     "key": "green",
+     "measured": "green"
+    }
+   ]
+  },
+  "speed": {
+   "medianSeconds": true,
+   "costPerImage": false,
+   "throughput": true,
+   "noDoubleFailure": true
+  }
+ },
+ "cases": [
+  {
+   "id": "704abf82eeab6b27de6739215198dc59ea29b5a551e1186129dc848c7ca85406",
+   "field": "marketing texts",
+   "group": "critical",
+   "key": "[\"EVERY BOARD\",\"NEW ADVENTURE !\"]",
+   "new": "[\"EVERY BOARD NEW ADVENTURE !\"]",
+   "control": "[\"EVERY BOARD\",\"NEW ADVENTURE !\"]"
+  },
+  {
+   "id": "7faff58709212d086a139273115e53d6da1d71879ac3d002b5001044060fd939",
+   "field": "marketing texts",
+   "group": "critical",
+   "key": "[\"BATTLE AND\",\"LEVEL UP!\"]",
+   "new": "[\"BATTLE AND LEVEL UP!\"]",
+   "control": "[\"BATTLE AND LEVEL UP!\"]"
+  },
+  {
+   "id": "afd912586ad48ca57f98665b1d6b7e87931314d16e7b97f66493ab36a084f15c",
+   "field": "marketing texts",
+   "group": "critical",
+   "key": "[\"UPGRADE\"]",
+   "new": "[\"DRAGON KNIGHT\",\"Legendary\",\"NEW\",\"UPGRADE\"]",
+   "control": null
+  },
+  {
+   "id": "98742f3c3a9bb7d06b74fd8c5614010412b94df90b3960eef9345b0f02f1cd45",
+   "field": "marketing texts",
+   "group": "critical",
+   "key": "[\"Big Win !\",\"DAY 2\",\"LIVING IS FORTUNE\"]",
+   "new": "[\"Big Win!\",\"DAY 2\",\"LIVING IS FORTUNE\"]",
+   "control": "[\"Big Win!\",\"DAY 2\",\"LIVING IS FORTUNE\"]"
+  }
+ ]
+}

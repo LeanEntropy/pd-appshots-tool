@@ -6,7 +6,7 @@ import { openImageDb } from "../store/imagedb.ts";
 import { newRunId } from "../store/manifest.ts";
 import { writeJsonOnce } from "../util/fsx.ts";
 import { endAttempt, SYNTHESIS, startAttempt } from "./attempts.ts";
-import { STEP_CEILING_USD } from "./budget.ts";
+import { crashEstimate, STEP_CEILING_USD } from "./budget.ts";
 import { measuredRecords } from "./colour-store.ts";
 import { batchDataHash, batchEntries } from "./entries.ts";
 import { writeFinalReport } from "./final-report.ts";
@@ -105,6 +105,7 @@ export async function runAnalysis(
   const analysePrompt = renderAnalysisPrompt(loaded.root, paths.objects, taxonomy, lean);
   const adjudicatePrompt = renderPrompt(loaded.root, paths.objects, "adjudicate", taxonomy);
   const full = plan.items.filter((i) => i.tier === "full");
+  const perImage = full.length ? plan.estimate.usd[1] / full.length : 0;
   const records: AnalysisRecord[] = [];
   const errors: RunError[] = [];
   const counter = { done: 0 };
@@ -135,12 +136,9 @@ export async function runAnalysis(
     batchId,
     size: config.estimates.imagesPerCall,
     stopAfterSameErrors: config.run.stopAfterSameErrors,
-    // Several calls at once: a crash counts each open image at the reserved ceiling.
-    estimatePerImage: Math.max(
-      full.length ? plan.estimate.usd[1] / full.length : 0,
-      speed.parallelCalls > 1 ? (STEP_CEILING_USD["full-analysis"] ?? 0) : 0,
-    ),
+    estimatePerImage: crashEstimate(perImage, "full-analysis", speed.parallelCalls),
     concurrency: speed.parallelCalls,
+    minCallUsd: STEP_CEILING_USD["full-analysis"],
     image: (id) => modelCopy(paths, db, id),
     analyse: (chunk, part, label, onCost) =>
       analyseChunk(chunk, part, label, {

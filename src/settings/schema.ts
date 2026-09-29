@@ -86,7 +86,7 @@ export const OptionsSchema = z
         /** AI calls at the same time inside one batch; 1 = one after another (as before). */
         parallelCalls: z.number().int().min(1).max(5).default(3),
         /** The image travels inside the request (one model turn) instead of a Read-tool turn. */
-        inlineImages: z.boolean().default(false),
+        inlineImages: z.boolean().default(true),
         /** The shorter answer (fields nothing reads are no longer asked for). */
         leanAnswer: z.boolean().default(false),
         /** Colour statistics use colours measured by code per layer instead of the model's. */

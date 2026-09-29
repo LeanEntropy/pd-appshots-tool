@@ -1,0 +1,50 @@
+{
+ "ok": true,
+ "turns": 2,
+ "cliVersion": "2.1.284 (Claude Code)",
+ "command": [
+  "-p",
+  "--model",
+  "claude-fable-5-1",
+  "--setting-sources",
+  "",
+  "--disable-slash-commands",
+  "--strict-mcp-config",
+  "--no-session-persistence",
+  "--system-prompt-file",
+  "C:\\Users\\User\\AppData\\Local\\Temp\\claude\\C--projects-ai-pd-appstore-tool\\9b150f72-d30c-4d72-a5fa-2d1770596957\\scratchpad\\bench-root\\workspace\\rogue-legend\\objects\\prompts\\dddc6dec615164cfa57de1d43b64fd3a39ce2e0b6203e775a4d72691cb336542.md",
+  "--tools",
+  "",
+  "--input-format",
+  "stream-json",
+  "--output-format",
+  "stream-json",
+  "--verbose",
+  "--json-schema",
+  "{\"...\":\"the lean answer schema\"}",
+  "--max-budget-usd",
+  "0.60"
+ ],
+ "problems": [],
+ "call": {
+  "step": "full-analysis",
+  "model": "claude-fable-5-1",
+  "key": "c388374cf9d8c47521a55d617e19f8a78b1a2f40ca1956a818ef7dc2437b9a15",
+  "imageIds": [
+   "704abf82eeab6b27de6739215198dc59ea29b5a551e1186129dc848c7ca85406"
+  ],
+  "ok": true,
+  "costUsd": 0.25582,
+  "usage": {
+   "inputTokens": 2,
+   "outputTokens": 1602,
+   "cacheReadTokens": 0,
+   "cacheWriteTokens": 8785,
+   "durationMs": 20707,
+   "turns": 2,
+   "wallMs": 25117,
+   "requests": 1
+  },
+  "at": "2026-09-29T00:18:46.734Z"
+ }
+}

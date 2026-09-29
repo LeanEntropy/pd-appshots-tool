@@ -52,6 +52,8 @@ export interface LayerLoopDeps {
   total: number;
   /** Model calls at the same time (Settings); 1 = one after another. */
   concurrency?: number;
+  /** The least one call needs (its reserved ceiling): below it, the batch stops for budget. */
+  minCallUsd?: number;
   /**
    * The pixel check of an image against its anchor (item 8): the crops then cover the texts
    * and the changed areas, and only what changed is asked. Absent (check off): as before.
@@ -98,7 +100,8 @@ export async function compareLayers(
   let rateWait: number | null = null;
   const gate = () => {
     if (d.shouldStop()) out.cancelled = true;
-    else if (d.budgetLeft() <= 0) out.stoppedForBudget = true;
+    // What is left must fund one call's reserved ceiling (budget.ts).
+    else if (d.budgetLeft() < Math.max(0.01, d.minCallUsd ?? 0)) out.stoppedForBudget = true;
     return !out.cancelled && !out.stoppedForBudget;
   };
   /** One image; false ends the batch (the same error repeated). */

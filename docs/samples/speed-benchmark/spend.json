@@ -1,0 +1,372 @@
+{
+ "usd": 2.7787,
+ "calls": [
+  {
+   "step": "full-analysis",
+   "model": "claude-fable-5-1",
+   "key": "c388374cf9d8c47521a55d617e19f8a78b1a2f40ca1956a818ef7dc2437b9a15",
+   "imageIds": [
+    "704abf82eeab6b27de6739215198dc59ea29b5a551e1186129dc848c7ca85406"
+   ],
+   "ok": true,
+   "costUsd": 0.25582,
+   "usage": {
+    "inputTokens": 2,
+    "outputTokens": 1602,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 8785,
+    "durationMs": 20707,
+    "turns": 2,
+    "wallMs": 25117,
+    "requests": 1
+   },
+   "at": "2026-09-29T00:18:46.734Z",
+   "arm": "new"
+  },
+  {
+   "step": "full-analysis",
+   "model": "claude-fable-5-1",
+   "key": "b4d858b6b44f25443e2420bd0e469537ef9c819686f95a4992594a2028284eda",
+   "imageIds": [
+    "7faff58709212d086a139273115e53d6da1d71879ac3d002b5001044060fd939"
+   ],
+   "ok": true,
+   "costUsd": 0.11404900000000001,
+   "usage": {
+    "inputTokens": 2,
+    "outputTokens": 1214,
+    "cacheReadTokens": 6196,
+    "cacheWriteTokens": 2589,
+    "durationMs": 16251,
+    "turns": 2,
+    "wallMs": 18972,
+    "requests": 1
+   },
+   "at": "2026-09-29T00:19:46.118Z",
+   "arm": "new"
+  },
+  {
+   "step": "full-analysis",
+   "model": "claude-fable-5-1",
+   "key": "ab2550ed88268e7b014e707f76fb9d081139c0e512205dd2a7961e4a5b6d3b5c",
+   "imageIds": [
+    "50643e8866172cebd500b7cf5b1e6128c90cd2ed1b72f768522ca55f3d1ef9f7"
+   ],
+   "ok": true,
+   "costUsd": 0.145029,
+   "usage": {
+    "inputTokens": 2,
+    "outputTokens": 1968,
+    "cacheReadTokens": 6196,
+    "cacheWriteTokens": 2253,
+    "durationMs": 26344,
+    "turns": 2,
+    "wallMs": 29114,
+    "requests": 1
+   },
+   "at": "2026-09-29T00:19:56.501Z",
+   "arm": "new"
+  },
+  {
+   "step": "full-analysis",
+   "model": "claude-fable-5-1",
+   "key": "f34e8bf1974c3db326597369b02671da8a705b0164d965add51cd0f670633a23",
+   "imageIds": [
+    "f2b013c4130ccf24741fcb51441614eda15993e8eea344e2c57c11f445774afa"
+   ],
+   "ok": true,
+   "costUsd": 0.098799,
+   "usage": {
+    "inputTokens": 2,
+    "outputTokens": 909,
+    "cacheReadTokens": 6196,
+    "cacheWriteTokens": 2589,
+    "durationMs": 12578,
+    "turns": 2,
+    "wallMs": 15236,
+    "requests": 1
+   },
+   "at": "2026-09-29T00:20:01.380Z",
+   "arm": "new"
+  },
+  {
+   "step": "full-analysis",
+   "model": "claude-fable-5-1",
+   "key": "e87055ec509204d5947b72077fb84683a0a6029e8892d095a4a8e8ee02ee2a18",
+   "imageIds": [
+    "afd912586ad48ca57f98665b1d6b7e87931314d16e7b97f66493ab36a084f15c"
+   ],
+   "ok": true,
+   "costUsd": 0.18384899999999998,
+   "usage": {
+    "inputTokens": 2,
+    "outputTokens": 2610,
+    "cacheReadTokens": 6196,
+    "cacheWriteTokens": 2589,
+    "durationMs": 32642,
+    "turns": 2,
+    "wallMs": 35345,
+    "requests": 1
+   },
+   "at": "2026-09-29T00:20:02.623Z",
+   "arm": "new"
+  },
+  {
+   "step": "full-analysis",
+   "model": "claude-fable-5-1",
+   "key": "9e05c529c50bb85c9d7fb19a9c112a5ec2a6cc84a42d5cb414b0933bd2fc250c",
+   "imageIds": [
+    "98742f3c3a9bb7d06b74fd8c5614010412b94df90b3960eef9345b0f02f1cd45"
+   ],
+   "ok": true,
+   "costUsd": 0.13359900000000002,
+   "usage": {
+    "inputTokens": 2,
+    "outputTokens": 1605,
+    "cacheReadTokens": 6196,
+    "cacheWriteTokens": 2589,
+    "durationMs": 20188,
+    "turns": 2,
+    "wallMs": 22642,
+    "requests": 1
+   },
+   "at": "2026-09-29T00:20:19.157Z",
+   "arm": "new"
+  },
+  {
+   "step": "full-analysis",
+   "model": "claude-fable-5-1",
+   "key": "1d69a313e454333f6bea30e40958ef11297e134dba90b037c896571973f67493",
+   "imageIds": [
+    "ce1c0012193fae117746075beee7b27af321fd86e732f5610ffc2837d938545b"
+   ],
+   "ok": true,
+   "costUsd": 0.132399,
+   "usage": {
+    "inputTokens": 2,
+    "outputTokens": 1581,
+    "cacheReadTokens": 6196,
+    "cacheWriteTokens": 2589,
+    "durationMs": 20434,
+    "turns": 2,
+    "wallMs": 23017,
+    "requests": 1
+   },
+   "at": "2026-09-29T00:20:24.411Z",
+   "arm": "new"
+  },
+  {
+   "step": "full-analysis",
+   "model": "claude-fable-5-1",
+   "key": "2be76397316b2ce49b4b86ba0a523b0eefdcc03bcd9ff2ddffd53856194f73ac",
+   "imageIds": [
+    "dd853ada50a95e0ab7f96061a20a223f1a6145e84151b46af27cea6824b619e6"
+   ],
+   "ok": true,
+   "costUsd": 0.131349,
+   "usage": {
+    "inputTokens": 2,
+    "outputTokens": 1560,
+    "cacheReadTokens": 6196,
+    "cacheWriteTokens": 2589,
+    "durationMs": 20535,
+    "turns": 2,
+    "wallMs": 23706,
+    "requests": 1
+   },
+   "at": "2026-09-29T00:20:26.347Z",
+   "arm": "new"
+  },
+  {
+   "step": "full-analysis",
+   "model": "claude-fable-5-1",
+   "key": "1a3a6d8ca8807780b79a0e7107c780b3b8a9111303f838d630a436d22ab2d592",
+   "imageIds": [
+    "a09e24ef3b6b709cd0c6932ab68fc99d0e6a0796cecceedf68fe873e7cfe2d6f"
+   ],
+   "ok": true,
+   "costUsd": 0.134849,
+   "usage": {
+    "inputTokens": 2,
+    "outputTokens": 1630,
+    "cacheReadTokens": 6196,
+    "cacheWriteTokens": 2589,
+    "durationMs": 20362,
+    "turns": 2,
+    "wallMs": 22934,
+    "requests": 1
+   },
+   "at": "2026-09-29T00:20:42.105Z",
+   "arm": "new"
+  },
+  {
+   "step": "full-analysis",
+   "model": "claude-fable-5-1",
+   "key": "8bcbb3b6fc193fe95d1195d12ad327bccae24e62ed9c98e3247f08196524a240",
+   "imageIds": [
+    "fe87b878fc98eea43b60ee2f79b04020e570f27cf3ffa020aa2728542203ed18"
+   ],
+   "ok": true,
+   "costUsd": 0.116799,
+   "usage": {
+    "inputTokens": 2,
+    "outputTokens": 1269,
+    "cacheReadTokens": 6196,
+    "cacheWriteTokens": 2589,
+    "durationMs": 16267,
+    "turns": 2,
+    "wallMs": 18691,
+    "requests": 1
+   },
+   "at": "2026-09-29T00:20:43.117Z",
+   "arm": "new"
+  },
+  {
+   "step": "full-analysis",
+   "model": "claude-fable-5-1",
+   "key": "85d8f2f9450437f7cb27032b1b61de58ec078dd987a0454bf2608f1c9521b729",
+   "imageIds": [
+    "704abf82eeab6b27de6739215198dc59ea29b5a551e1186129dc848c7ca85406"
+   ],
+   "ok": true,
+   "costUsd": 0.31012925,
+   "usage": {
+    "inputTokens": 34,
+    "outputTokens": 2139,
+    "cacheReadTokens": 7997,
+    "cacheWriteTokens": 10042,
+    "durationMs": 27907,
+    "turns": 3,
+    "wallMs": 30813
+   },
+   "at": "2026-09-29T00:21:47.076Z",
+   "arm": "control"
+  },
+  {
+   "step": "full-analysis",
+   "model": "claude-fable-5-1",
+   "key": "b6d171278a73751cab059323741bf9dede7c9de99b23cc85ac1597ef9d6346bb",
+   "imageIds": [
+    "7faff58709212d086a139273115e53d6da1d71879ac3d002b5001044060fd939"
+   ],
+   "ok": true,
+   "costUsd": 0.13796124999999998,
+   "usage": {
+    "inputTokens": 34,
+    "outputTokens": 1486,
+    "cacheReadTokens": 15045,
+    "cacheWriteTokens": 2978,
+    "durationMs": 20898,
+    "turns": 3,
+    "wallMs": 23712
+   },
+   "at": "2026-09-29T00:22:10.824Z",
+   "arm": "control"
+  },
+  {
+   "step": "full-analysis",
+   "model": "claude-fable-5-1",
+   "key": "3ed23de47268fdacbd9ff434e8cf330af18ffc7fd9044bbeb43a46c7823346e9",
+   "imageIds": [
+    "f2b013c4130ccf24741fcb51441614eda15993e8eea344e2c57c11f445774afa"
+   ],
+   "ok": true,
+   "costUsd": 0.12367225,
+   "usage": {
+    "inputTokens": 34,
+    "outputTokens": 1197,
+    "cacheReadTokens": 15049,
+    "cacheWriteTokens": 2986,
+    "durationMs": 16953,
+    "turns": 3,
+    "wallMs": 19842
+   },
+   "at": "2026-09-29T00:22:30.685Z",
+   "arm": "control"
+  },
+  {
+   "step": "full-analysis",
+   "model": "claude-fable-5-1",
+   "key": "eff3c03f78a2a3d008ec60dc876c499d46773af9dd79994eb06228d31ff227db",
+   "imageIds": [
+    "98742f3c3a9bb7d06b74fd8c5614010412b94df90b3960eef9345b0f02f1cd45"
+   ],
+   "ok": true,
+   "costUsd": 0.1500035,
+   "usage": {
+    "inputTokens": 34,
+    "outputTokens": 1718,
+    "cacheReadTokens": 15054,
+    "cacheWriteTokens": 3000,
+    "durationMs": 21998,
+    "turns": 3,
+    "wallMs": 24948
+   },
+   "at": "2026-09-29T00:22:55.645Z",
+   "arm": "control"
+  },
+  {
+   "step": "full-analysis",
+   "model": "claude-fable-5-1",
+   "key": "bfb9d8991f2bbf2728d83fc5a2256f58b7f430a9eaf87f80314119aa13a3a73a",
+   "imageIds": [
+    "dd853ada50a95e0ab7f96061a20a223f1a6145e84151b46af27cea6824b619e6"
+   ],
+   "ok": true,
+   "costUsd": 0.28393525,
+   "usage": {
+    "inputTokens": 66,
+    "outputTokens": 3520,
+    "cacheReadTokens": 25101,
+    "cacheWriteTokens": 5050,
+    "durationMs": 40353,
+    "turns": 4,
+    "wallMs": 43343
+   },
+   "at": "2026-09-29T00:23:38.998Z",
+   "arm": "control"
+  },
+  {
+   "step": "full-analysis",
+   "model": "claude-fable-5-1",
+   "key": "5214e3e1b751e7aa33e80f11d46214d2e014d6cdc5e48874d08443e4dbe8618f",
+   "imageIds": [
+    "a09e24ef3b6b709cd0c6932ab68fc99d0e6a0796cecceedf68fe873e7cfe2d6f"
+   ],
+   "ok": true,
+   "costUsd": 0.16612475,
+   "usage": {
+    "inputTokens": 34,
+    "outputTokens": 2038,
+    "cacheReadTokens": 15059,
+    "cacheWriteTokens": 3006,
+    "durationMs": 25847,
+    "turns": 3,
+    "wallMs": 28826
+   },
+   "at": "2026-09-29T00:24:07.835Z",
+   "arm": "control"
+  },
+  {
+   "step": "full-analysis",
+   "model": "claude-fable-5-1",
+   "key": "c1917a502cd7168c05578b48dc51dadbd6510d5d2ce6b764e544e51791c05a05",
+   "imageIds": [
+    "50643e8866172cebd500b7cf5b1e6128c90cd2ed1b72f768522ca55f3d1ef9f7"
+   ],
+   "ok": true,
+   "costUsd": 0.160584,
+   "usage": {
+    "inputTokens": 34,
+    "outputTokens": 2064,
+    "cacheReadTokens": 15056,
+    "cacheWriteTokens": 2664,
+    "durationMs": 32254,
+    "turns": 3,
+    "wallMs": 37659
+   },
+   "at": "2026-09-29T00:24:45.509Z",
+   "arm": "control"
+  }
+ ]
+}

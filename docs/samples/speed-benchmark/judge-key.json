@@ -1,0 +1,21 @@
+{
+ "c1": {
+  "A": "control",
+  "B": "new",
+  "C": "saved"
+ },
+ "c2": {
+  "A": "new",
+  "B": "saved",
+  "C": "control"
+ },
+ "c3": {
+  "A": "new",
+  "B": "saved"
+ },
+ "c4": {
+  "A": "saved",
+  "B": "control",
+  "C": "new"
+ }
+}
