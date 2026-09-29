@@ -6,6 +6,7 @@ import { eligibility, eligibilityProblem, scopeIncomplete } from "../reports/eli
 import { mainMarketRef } from "../reports/main-market.ts";
 import { DOUBT_BITS, matchCheck, savePairVerdict } from "../reports/match-check.ts";
 import { suggestName } from "../reports/names.ts";
+import { sameScope } from "../reports/same-scope.ts";
 import { buildScopePlan, chartGames, projectMarkets } from "../reports/scope-plan.ts";
 import { createReport, listDefs, readDef, saveDef } from "../reports/store.ts";
 import { researchSnapshot } from "../reports/suggest.ts";
@@ -121,12 +122,17 @@ export function getBuilder(loaded: LoadedConfig): ApiResponse {
   };
 }
 
-/** The numbers of a scope (code only): what it needs, the cost, and the suggested name. */
-export function planFor(loaded: LoadedConfig, scope: ReportScope): ApiResponse {
+/**
+ * The numbers of a scope (code only): what it needs, the cost, the suggested name, and the other
+ * reports set up exactly the same way (the builder reopens such a draft instead of a new one).
+ */
+export function planFor(loaded: LoadedConfig, scope: ReportScope, exceptId = ""): ApiResponse {
   const plan = buildScopePlan(loaded, scope);
+  const paths = projectPaths(loaded);
+  const same = sameScope(listDefs(workspaceStorage(paths.workspace), paths), scope, exceptId);
   return {
     status: 200,
-    body: { plan, suggestedName: suggestName(scope, mainMarketRef(loaded)) },
+    body: { plan, suggestedName: suggestName(scope, mainMarketRef(loaded)), same },
   };
 }
 
@@ -151,8 +157,12 @@ export function postDraft(loaded: LoadedConfig, raw: unknown): ApiResponse {
   const refused = eligibilityProblem(eligibility(loaded), scope.type);
   if (refused) return { status: 409, body: { problems: [refused] } };
   const paths = projectPaths(loaded);
+  const s = workspaceStorage(paths.workspace);
+  // A draft set up exactly like this one already exists: that draft is reopened, never a copy.
+  const draft = sameScope(listDefs(s, paths), scope).find((d) => d.draft);
+  if (draft) return { status: 200, body: { id: draft.id, name: draft.name, existing: true } };
   const name = b.data.name?.trim() || suggestName(scope, mainMarketRef(loaded));
-  const def = createReport(workspaceStorage(paths.workspace), paths, {
+  const def = createReport(s, paths, {
     name,
     type: scope.type,
     scope,
@@ -184,7 +194,7 @@ export function getReportPlan(loaded: LoadedConfig, id: string): ApiResponse | n
   // A draft saved before its countries were picked has no numbers yet.
   const incomplete = scopeIncomplete(def.scope);
   if (incomplete) return { status: 200, body: { ...about, plan: null, problem: incomplete } };
-  const r = planFor(loaded, def.scope);
+  const r = planFor(loaded, def.scope, def.id);
   return { ...r, body: { ...(r.body as object), ...about } };
 }
 

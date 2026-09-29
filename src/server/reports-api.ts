@@ -3,6 +3,7 @@ import { artWording, artWordingDeep } from "../analysis/art-wording.ts";
 import { buildReportData } from "../analysis/report-data.ts";
 import { reportInputs } from "../analysis/report-inputs.ts";
 import { type LoadedConfig, projectPaths } from "../config/load.ts";
+import { readJournal } from "../jobs/journal.ts";
 import { draftsFromExpansion } from "../reports/drafts.ts";
 import { listReports } from "../reports/list.ts";
 import { mainMarketRef } from "../reports/main-market.ts";
@@ -203,7 +204,14 @@ export function removeReport(loaded: LoadedConfig, id: string): ApiResponse {
   const def = findDef(loaded, id);
   if (!def) return gone();
   const paths = projectPaths(loaded);
-  const r = deleteReport(workspaceStorage(paths.workspace), paths, def.id);
+  const s = workspaceStorage(paths.workspace);
+  const job = readJournal(s, paths).jobs.ai;
+  if (job?.state === "running" && job.reportId === def.id)
+    return {
+      status: 409,
+      body: { problems: ["This report is running. Stop the run first, then delete it."] },
+    };
+  const r = deleteReport(s, paths, def.id);
   if (!r.ok) return { status: r.status, body: { problems: [r.problem] } };
   return { status: 200, body: { id: def.id, deleted: true } };
 }

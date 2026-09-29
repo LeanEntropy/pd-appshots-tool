@@ -46,29 +46,38 @@ ${S} .pill.slightly, ${S} .pill.stale, ${S} .pill.moderate, ${S} .pill.very, ${S
 ${S} .pill.t-pilot, ${S} .pill.t-compare, ${S} .pill.t-country { background: var(--a-teal); color: var(--a-h); }
 
 /* What next?, Suggested next research, the builder */
-${S} .expand, ${S} #sgSec, ${S} #builder { border: 0; border-radius: 14px; padding: 18px 24px; margin: 0 0 14px; }
+${S} .expand, ${S} #sgSec, ${S} #builder { border: 0; border-radius: 12px; padding: 12px 18px; margin: 0 0 10px; }
 ${S} .expand { background: var(--a-teal); } ${S} #sgSec { background: var(--a-sand); } ${S} #builder { background: var(--a-grey); }
-${S} .expand h3 { font-size: 20px; font-weight: 800; color: var(--a-h); margin: 0 0 6px; }
+${S} .expand h3 { font-size: 17px; font-weight: 750; color: var(--a-h); margin: 0 0 2px; }
+${S} .expand > .meta { margin: 4px 0 0; font-size: 12.5px; }
 ${S} #sgSec > summary { display: flex; align-items: center; flex-wrap: wrap; gap: 6px 14px; padding: 0; background: none; border-radius: 0; }
-${S} #sgSec > summary .sec-t { flex: 1; font-size: 20px; font-weight: 800; color: var(--a-h2); }
-${S} #sgSec > .sec-b { padding: 10px 0 0; }
-${S} .offers { grid-template-columns: minmax(0, 1fr); gap: 0; margin: 6px 0 10px; }
-${S} .offer { gap: 6px; padding: 12px 0 8px; border: 0; border-top: 1px solid var(--a-div); border-radius: 0; background: none; }
-${S} .offer h4 { font-size: 16px; font-weight: 750; }
-${S} .offer .offer-acts { margin-top: 2px; }
+${S} #sgSec > summary .sec-t { flex: 1; font-size: 17px; font-weight: 750; color: var(--a-h2); }
+${S} #sgSec > .sec-b { padding: 6px 0 0; } ${S} #sgSec > .sec-b > p.meta { margin: 0 0 4px; font-size: 12.5px; }
+${S} .offers { grid-template-columns: minmax(0, 1fr); gap: 0; margin: 4px 0 6px; }
+/* A suggestion or option as one compact row: title and chip, the short line under it, the button at the right */
+${S} .offer { display: grid; grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "top acts" "why acts" "more more"; gap: 1px 14px; align-items: center; padding: 7px 0; border: 0; border-top: 1px solid var(--a-div); border-radius: 0; background: none; }
+${S} .offer > .offer-top { grid-area: top; justify-content: flex-start; align-items: center; }
+${S} .offer > .why { grid-area: why; font-size: 13.5px; line-height: 1.4; }
+${S} .offer > details.offer-more { grid-area: more; } ${S} .offer details.offer-more > summary { font-size: 12.5px; }
+${S} .offer > .offer-acts { grid-area: acts; margin: 0; flex-wrap: nowrap; }
+${S} .offer h4 { font-size: 15px; font-weight: 650; }
+${S} .offer .chip { font-size: 11.5px; padding: 1px 8px; }
 ${S} .bwarn { border-left: 0; border-radius: 8px; background: var(--a-bad-bg); }
 
 /* Report cards */
-${S} .rcard { border: 0; border-radius: 14px; overflow: clip; background: var(--a-grey); }
+${S} .rcard { margin: 0 0 6px; border: 0; border-radius: 10px; overflow: clip; background: var(--a-grey); }
 ${S} .rcard.t-pilot { background: var(--a-blue); } ${S} .rcard.t-compare { background: var(--a-grey2); }
-${S} .rcard > summary { position: relative; padding: 16px 44px 16px 24px; color: var(--a-h); }
-${S} .rcard > summary::after { position: absolute; right: 18px; top: 24px; margin: 0; }
-${S} .rcard[open] > summary::after { top: 30px; margin: 0; }
-${S} .rcard > summary .pill { white-space: normal; max-width: 100%; }
-${S} .rc-name { font-size: 18px; font-weight: 800; color: var(--a-h); }
-${S} .rc-desc { font-size: 13px; color: var(--muted); }
-${S} .rcard[open] > summary { background: var(--a-head); color: #fff; padding: 22px 44px 8px 24px; }
-${S} .rcard[open] .rc-name { color: #fff; font-size: 24px; }
+/* Folded: one line (title, kind chip, status chip, date at the right); the description only when open */
+${S} .rcard > summary { position: relative; flex-wrap: nowrap; gap: 8px; padding: 9px 40px 9px 18px; color: var(--a-h); }
+${S} .rcard > summary::after { position: absolute; right: 16px; top: calc(50% - 7px); margin: 0; }
+${S} .rcard[open] > summary::after { top: 26px; margin: 0; }
+${S} .rcard > summary .pill { flex: none; font-size: 11.5px; font-weight: 600; padding: 1px 8px; white-space: nowrap; }
+${S} .rc-name { flex: 0 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 16px; font-weight: 500; color: var(--a-h); }
+${S} .rc-desc { font-size: 13px; color: var(--muted); } ${S} .rcard:not([open]) > summary .rc-desc { display: none; }
+${S} .rc-date { font-size: 12.5px; }
+${S} .rcard[open] > summary { flex-wrap: wrap; background: var(--a-head); color: #fff; padding: 18px 44px 8px 24px; }
+${S} .rcard[open] .rc-name { flex-basis: 100%; white-space: normal; color: #fff; font-size: 22px; font-weight: 800; }
+${S} .rcard[open] > summary .rc-date { color: rgba(255,255,255,.75); margin-left: 0; }
 ${S} .rcard[open] > summary .rc-desc { color: rgba(255,255,255,.8); }
 ${S} .rcard[open] > summary .pill { background: rgba(255,255,255,.16); color: #fff; }
 ${S} .rcard > .rc-b { padding: 0; border: 0; }
@@ -84,6 +93,9 @@ ${S} .rc-top select option, ${S} .rc-top select optgroup { color: #1e2327; backg
 ${S} .rc-top .act-msg { color: #fff; } ${S} .rc-top .act-msg.bad { color: #ffd0c8; }
 ${S} .rc-top .pdfres, ${S} .rc-top .banner { border: 0; border-radius: 8px; background: var(--a-surface); color: var(--text); }
 ${S} .rc-top .pdfres .meta, ${S} .rc-top .banner .meta { color: var(--muted); }
+${S} .rc-top .rc-del { background: var(--a-surface); color: var(--text); }
+${S} .rc-top .rc-del button:not(.danger) { background: var(--a-surface); color: var(--text); border: 1px solid var(--a-line); }
+${S} .rc-top .rc-del button.danger { background: var(--a-bad); color: var(--a-surface); border-color: transparent; }
 ${S} .rbox > p, ${S} .rbox > .card, ${S} .rbox > .banner { margin: 0; padding: 16px 24px; border: 0; border-radius: 0; background: none; }
 
 /* Report sections: full-width tinted bands, coloured by kind */
@@ -150,10 +162,13 @@ ${S} table.rt tr.ourrow td { background: var(--a-our); }
 }
 @container (max-width: 560px) {
   ${S} .expand, ${S} #sgSec, ${S} #builder, ${S} .rc-top, ${S} .rc-b > .banner, ${S} .rbox > p, ${S} .rbox > .card, ${S} .rbox nav.toc, ${band()} { padding-left: 14px; padding-right: 14px; }
-  ${S} .rcard > summary, ${S} .rcard[open] > summary { padding-left: 14px; padding-right: 40px; }
+  ${S} .rcard > summary, ${S} .rcard[open] > summary { flex-wrap: wrap; padding-left: 14px; padding-right: 40px; }
+  ${S} .rcard > summary .rc-name { flex-basis: 100%; white-space: normal; }
+  ${S} .rcard > summary::after { top: 16px; }
+  ${S} .offer { grid-template-columns: minmax(0, 1fr); grid-template-areas: "top" "why" "acts" "more"; }
   ${S} .rcard > summary::after { right: 14px; }
   ${S} .rbox > details.sec:not([data-sec]):not(.research) > summary { padding-left: 14px; padding-right: 14px; }
-  ${band(" .sec-t")} { font-size: 21px; } ${S} .rcard[open] .rc-name { font-size: 21px; }
+  ${band(" .sec-t")} { font-size: 21px; } ${S} .rcard[open] .rc-name { font-size: 20px; }
 }
 @container (max-width: 600px) {
   ${S} table.rt.fit, ${S} table.rt.fit tbody { display: block; }

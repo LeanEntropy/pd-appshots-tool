@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 import { saveExpansion } from "../src/analysis/expansion.ts";
 import { projectPaths } from "../src/config/load.ts";
+import { JobSchema, readJournal, writeJournal } from "../src/jobs/journal.ts";
 import { draftsFromExpansion } from "../src/reports/drafts.ts";
 import { listReports } from "../src/reports/list.ts";
 import { buildScopePlan } from "../src/reports/scope-plan.ts";
@@ -91,7 +92,15 @@ test("builder API: options, drafts, plans, instant build and refusals", async ()
     const list = await (await fetch(`${api}/reports`)).json();
     const card = list.reports.find((r: { id: string }) => r.id === draft.id);
     assert.equal(card.status.kind, "draft");
-    assert.equal(card.status.text, "Draft: ready to build, free");
+    assert.equal(card.status.text, "Draft \u00b7 ready to build, free");
+    // Opening the builder again for the same setup reopens that draft: never a second copy.
+    const again = await post("/reports", { scope });
+    assert.equal(again.status, 200);
+    assert.deepEqual(await again.json(), { id: draft.id, name: draft.name, existing: true });
+    assert.equal(listDefs(s, paths).filter((d) => d.type === "country").length, 1);
+    const same = await (await post("/reports/plan", { scope })).json();
+    assert.deepEqual(same.same, [{ id: draft.id, name: draft.name, draft: true }]);
+    assert.deepEqual((await (await fetch(`${api}/reports/${draft.id}/plan`)).json()).same, []);
     // Plan: code only, the same numbers as the planner.
     const plan = await (await fetch(`${api}/reports/${draft.id}/plan`)).json();
     assert.equal(plan.plan.instant, true);
@@ -109,6 +118,31 @@ test("builder API: options, drafts, plans, instant build and refusals", async ()
     // The written parts are not paid for yet: listed as missing, with how to get them.
     assert.ok(v.country.missing.length > 0);
     assert.ok(Array.isArray(v.research.items));
+    // A report whose run is going is not deleted (stop the run first); nothing is removed.
+    const before = readJournal(s, paths);
+    const at = new Date().toISOString();
+    writeJournal(s, paths, {
+      ...before,
+      jobs: {
+        ...before.jobs,
+        ai: JobSchema.parse({
+          id: "j-test",
+          kind: "analysis",
+          planHash: "h",
+          reportId: draft.id,
+          lockNonce: "n",
+          startedAt: at,
+          heartbeatAt: at,
+          progress: { phase: "images", done: 1, total: 9, message: "", spentUsd: 0.1 },
+          state: "running",
+        }),
+      },
+    });
+    const busy = await post(`/reports/${draft.id}`, {}, "DELETE");
+    assert.equal(busy.status, 409);
+    assert.match(JSON.stringify(await busy.json()), /Stop the run first/);
+    assert.ok(readDef(s, paths, draft.id));
+    writeJournal(s, paths, before);
     const md = s.getText(versionFileKey(paths, versionId, "report.md")) ?? "";
     assert.match(md, /## 1\. Summary: the bottom line[\s\S]*## What to research next/);
     // Autosave of a new scope (and name) for a report of the builder.
