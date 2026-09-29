@@ -2,6 +2,7 @@ import type { AnalysisRecord } from "../analysis/records.ts";
 import type { ProjectPaths } from "../config/load.ts";
 import { type FocusView, focusView } from "./focus.ts";
 import { applyMeasure } from "./measure/index.ts";
+import { layoutNotes } from "./notes.ts";
 import { type LayoutStatus, layoutStatus, readLayoutMeasure, readOlderLayout } from "./store.ts";
 import { type Wireframe, wireframe } from "./wireframe-svg.ts";
 
@@ -17,6 +18,8 @@ export interface LayoutView {
   focus: FocusView | null;
   /** Drawn from a layout saved by an older layout version (kept until a new one is made). */
   older: boolean;
+  /** Where the current layout disagrees with the analysis (never a reason to redo it). */
+  notes: string[];
 }
 
 /** The layout part of an analysed image's (i) popover (read from its files; no AI). */
@@ -32,6 +35,7 @@ export function layoutView(paths: ProjectPaths, r: AnalysisRecord): LayoutView {
       coverageUpTo: null,
       focus: null,
       older: false,
+      notes: [],
     };
   const m = s.file ? readLayoutMeasure(paths, r) : (old?.measure ?? null);
   const img = r.identity?.image;
@@ -46,5 +50,7 @@ export function layoutView(paths: ProjectPaths, r: AnalysisRecord): LayoutView {
     coverageUpTo: m?.coverageUpTo ?? null,
     focus: focusView(file.layout, r.final),
     older: !s.file,
+    // Saved with the layout; a layout saved before notes existed gets them worked out now.
+    notes: s.file && r.final ? (s.file.notes ?? layoutNotes(s.file.layout, r.final)) : [],
   };
 }

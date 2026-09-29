@@ -12,7 +12,7 @@ import { fakeProvider, reading } from "./helpers/fake-provider.ts";
 import { legacyProject } from "./helpers/imported.ts";
 import { fakeLayout } from "./helpers/layout.ts";
 
-test("a character the analysis puts on the marketing layer must be a cut-out in the layout", () => {
+test("a creature the analysis puts on the marketing layer and not drawn as a cut-out is a note", () => {
   const core = reading("img1", "gameplay", "EPIC");
   core.marketingLayer.elements = [
     {
@@ -24,7 +24,9 @@ test("a character the analysis puts on the marketing layer must be a cut-out in 
       region: { x: 60, y: 40, w: 30, h: 30 },
     },
   ];
-  assert.match(readLayout(fakeLayout(core), core).problems.join(), /add a marketing "cut-out"/);
+  const without = readLayout(fakeLayout(core), core);
+  assert.ok(without.layout, "saved, not retried");
+  assert.deepEqual(without.notes, ["Note: the purple mascot isn't drawn as its own box."]);
   const l = fakeLayout(core);
   l.marketing.push({
     ...(l.marketing[0] as (typeof l.marketing)[0]),
@@ -33,7 +35,7 @@ test("a character the analysis puts on the marketing layer must be a cut-out in 
     box: { x: 60, y: 40, w: 30, h: 30 },
     covers: [],
   });
-  assert.deepEqual(readLayout(l, core).problems, []);
+  assert.deepEqual(readLayout(l, core).notes, []);
 });
 
 test("the layout call shares the batch's spending limit; when it cannot be paid the analysis is kept", async () => {
@@ -90,7 +92,7 @@ test("the layout call's cost is part of the image's paid attempt (resume and the
   }
 });
 
-test("nothing the reading lists may be left out: its captures and its headlines", () => {
+test("a capture or headline of the reading left without a box is a note, not a rejection", () => {
   const core = reading("img1", "gameplay", "EPIC");
   const l = fakeLayout(core);
   assert.deepEqual(readLayout(l, core).problems, []);
@@ -101,7 +103,11 @@ test("nothing the reading lists may be left out: its captures and its headlines"
       captures: [...core.screenshot.captures, ...core.screenshot.captures],
     },
   };
-  assert.match(readLayout(l, two).problems.join(), /capture 1 has no in-game element/);
+  const r2 = readLayout(l, two);
+  assert.ok(r2.layout);
+  assert.deepEqual(r2.notes, ["Note: screenshot area 2 of 2 has no box."]);
   const noHeadline = { ...l, marketing: l.marketing.filter((e) => e.role !== "headline") };
-  assert.match(readLayout(noHeadline, core).problems.join(), /headline text 0/);
+  const r3 = readLayout(noHeadline, core);
+  assert.ok(r3.layout);
+  assert.match(r3.notes.join(), /the headline "EPIC" has no box/);
 });

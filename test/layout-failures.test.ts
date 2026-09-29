@@ -45,8 +45,13 @@ function flaky(plans: Plan[]): Provider & { calls: VisionCall[]; seen: Map<strin
         return { ok: false, output: null, costUsd: 0.05, error: "the call timed out after 600 s" };
       const r = await good.call(c);
       if (plan === "checks" || (plan === "once" && n === 1)) {
-        const out = r.output as { layout: { marketing: unknown[] } };
-        return { ...r, output: { layout: { ...out.layout, marketing: [] } } };
+        // A box entirely outside the picture: a hard check, so it is repaired.
+        const out = r.output as { layout: { inGame: { box: unknown }[] } };
+        const inGame = out.layout.inGame.map((e) => ({
+          ...e,
+          box: { x: 120, y: 0, w: 10, h: 10 },
+        }));
+        return { ...r, output: { layout: { ...out.layout, inGame } } };
       }
       return r;
     },
@@ -72,7 +77,7 @@ test("layout failures: each is recorded with why, its cost counts, and only a ne
   const checks = end.failed.find((f) => f.kind === "checks");
   const timeout = end.failed.find((f) => f.kind === "timeout");
   assert.ok(checks && timeout);
-  assert.match(checks.reason, /marketing layer did not match/);
+  assert.match(checks.reason, /a box was empty or entirely outside the picture/);
   assert.equal(checks.calls, 3, "the first answer and two repairs");
   assert.equal(checks.usd, 0.3);
   assert.match(timeout.reason, /took too long/);
@@ -89,6 +94,10 @@ test("layout failures: each is recorded with why, its cost counts, and only a ne
   const log = storage.getJson(projectKey(paths, "runs", end.runId, "layout.json")) as LayoutRunLog;
   assert.equal(log.failed.length, 2);
   assert.equal(log.calls.length, bad.calls.length);
+  // Each rejected answer keeps why it was rejected: 3 for the failure, 1 for the retried image.
+  const rejected = log.calls.filter((c) => c.problems?.length);
+  assert.equal(rejected.length, 4);
+  assert.ok(rejected.every((c) => c.problems?.some((x) => /has an empty box/.test(x))));
   assert.equal(log.spentUsd, end.spentUsd);
   assert.ok(log.endedAt);
 
@@ -162,39 +171,66 @@ test("layout estimate: from the recorded calls of today's contract (per image tr
   assert.deepEqual(scope.perImageUsd, [0.16, 0.18]);
 });
 
-test("layout failure reasons in plain words", () => {
+test("layout failure reasons in plain words, one precise sentence per hard check", () => {
   const m = "fake-model";
   assert.equal(explainFailure(["the spending limit for this batch was reached"], m).kind, "budget");
   assert.equal(explainFailure([`${m}: rate limit, 429`], m).kind, "model");
   const c = explainFailure(
     [
-      'img1 layout: the analysis lists a marketing item ("chest") at 50%, 60%: add a marketing "cut-out" element for it',
-      'img1 layout: headline text 0 ("GO") has no element; point at it',
-      "img1 layout: M1 note must be at most 80 characters",
+      "img1 layout: S2 has an empty box (or one outside the image)",
+      "img1 layout: M1 textRef 4 does not exist (2 marketing texts)",
+      "img1 layout: M1 note must be at most 160 characters",
     ],
     m,
   );
   assert.equal(c.kind, "checks");
-  assert.match(
+  assert.equal(
     c.reason,
-    /no cut-out or badge covered an item in the analysis; a headline had no box/,
+    "The AI's layout failed the checks on every attempt: a box was empty or entirely outside the picture; a box pointed at a marketing text the analysis does not have; a box description was too long.",
   );
-  assert.doesNotMatch(c.reason, /more than 8/);
+  const each: [string, RegExp][] = [
+    ["img1 layout: every element id must be unique", /two boxes had the same id/],
+    ['img1 layout: marketing id "M11" must be M1 to M10', /more boxes than one layer allows/],
+    ["layout.inGame: Too big: expected array to have <=16 items", /more boxes than one layer/],
+    ["img1 layout: S1 tilt must be between -45 and 45", /tilted more than 45 degrees/],
+    ['img1 layout: M3 has role "other" and needs a note', /kind "other" had no description/],
+    ["img1 layout: S1 capture 2 does not exist (1 captures)", /screenshot area the analysis/],
+    ["img1 layout: the focal point must be inside the image (0-100)", /focal point was outside/],
+    ["img1 layout: focus.words must be at most 80 characters", /a focus text was too long/],
+    ["layout.inGame.0.box.x: Invalid input: expected number, received NaN", /inGame\.0\.box\.x/],
+  ];
+  for (const [problem, want] of each) {
+    const r = explainFailure([problem], m).reason;
+    assert.match(r, want, problem);
+    assert.doesNotMatch(r, /malformed/, problem);
+  }
 });
 
-test("an item the analysis lists may be a cut-out or a badge; a character stays a cut-out", () => {
+test("soft checks: an analysis element without its own box, or with the wrong kind, is a note", () => {
   const core = reading("img1", "gameplay", "EPIC");
   const el = {
-    position: "right",
+    position: "centre",
     pose: "",
     colours: "gold",
-    region: { x: 60, y: 40, w: 30, h: 30 },
+    region: { x: 35, y: 25, w: 30, h: 30 },
   };
-  core.marketingLayer.elements = [{ kind: "item", what: "treasure chest", ...el }];
+  core.marketingLayer.elements = [
+    { kind: "item", what: "enlarged highlighted monster card of Rub", ...el },
+  ];
   const l = fakeLayout(core);
+  const plain = readLayout(l, core);
+  assert.ok(plain.layout, "saved");
+  assert.deepEqual(plain.problems, []);
+  assert.deepEqual(plain.notes, [
+    "Note: the enlarged highlighted monster card of Rub isn't drawn as its own box.",
+  ]);
   const base = l.marketing[0] as (typeof l.marketing)[0];
   l.marketing.push({ ...base, id: "M3", role: "badge", box: el.region, covers: [] });
-  assert.deepEqual(readLayout(l, core).problems, []);
-  core.marketingLayer.elements = [{ kind: "character", what: "hero", ...el }];
-  assert.match(readLayout(l, core).problems.join(), /add a marketing "cut-out"/);
+  assert.deepEqual(readLayout(l, core).notes, [], "an item may be a badge");
+  core.marketingLayer.elements = [{ kind: "character", what: "red-haired heroine", ...el }];
+  const hero = readLayout(l, core);
+  assert.ok(hero.layout, "saved");
+  assert.deepEqual(hero.notes, [
+    "Note: the red-haired heroine is drawn as a badge (M3), not as a character cut-out.",
+  ]);
 });

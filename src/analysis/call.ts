@@ -36,6 +36,8 @@ export interface CallLog {
   at: string;
   /** Layout calls: the layout contract asked for (its cost differs between contracts). */
   contract?: string;
+  /** Why this answer was rejected and repaired (the check results), when it was. */
+  problems?: string[];
 }
 
 export interface CallContext {
@@ -172,17 +174,20 @@ export async function validatedCall<T>(
     paid += cost ?? 0;
     held?.done(cost ?? 0);
     usage = addUsage(usage, r.usage);
-    ctx.onCall?.({
-      step,
-      model: provider.model,
-      key,
-      imageIds: images.map((i) => i.imageId),
-      ok: r.ok,
-      costUsd: r.costUsd,
-      usage: r.usage ?? null,
-      at: new Date().toISOString(),
-    });
+    const logCall = (rejected: string[]) =>
+      ctx.onCall?.({
+        step,
+        model: provider.model,
+        key,
+        imageIds: images.map((i) => i.imageId),
+        ok: r.ok,
+        costUsd: r.costUsd,
+        usage: r.usage ?? null,
+        at: new Date().toISOString(),
+        ...(rejected.length ? { problems: rejected.slice(0, 10) } : {}),
+      });
     if (!r.ok) {
+      logCall([]);
       // A failed call (CLI error, timeout) is retried once; the same error twice ends it.
       const err = `${provider.model}: ${r.error ?? "the model call failed"}`;
       callErrors++;
@@ -204,6 +209,7 @@ export async function validatedCall<T>(
         ? []
         : parsed.error.issues.slice(0, 10).map((i) => `${i.path.join(".")}: ${i.message}`);
     repairs = problems;
+    logCall(problems);
     if (value && problems.length === 0) {
       const obj: StoredObject = {
         step,

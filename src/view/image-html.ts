@@ -105,7 +105,11 @@ export function imageHtml(p: ImagePage, token: string): string {
   const picture = `<div class="pic" id="picture"><a href="${esc(p.picture.src)}" id="picLink"><img class="big" id="bigPic" src="${esc(p.picture.src)}" alt="${esc(`${c.game}, ${c.country}, position ${c.pos}`)}"></a>
 ${p.picture.previewOnly ? `<p>Preview only (shared Light copy). <a class="btn" href="${esc(p.picture.overview)}">Download full-size pictures</a></p>` : ""}</div>`;
   const wf = p.wireframe
-    ? `<div id="wf"></div>${p.summary ? `<p class="meta">In one sentence: ${esc(p.summary)}</p>` : ""}${p.older ? '<p class="meta">Drawn from a layout saved by an older version.</p>' : ""}`
+    ? `<div id="wf"></div>${p.summary ? `<p class="meta">In one sentence: ${esc(p.summary)}</p>` : ""}${p.older ? '<p class="meta">Drawn from a layout saved by an older version.</p>' : ""}${
+        p.layoutNotes.length
+          ? `<details class="fold"><summary>Layout notes (${p.layoutNotes.length})</summary><ul class="rows">${p.layoutNotes.map((n) => `<li>${esc(n)}</li>`).join("")}</ul></details>`
+          : ""
+      }`
     : `<p>${esc(p.layoutNote || "Not analysed yet.")}</p>`;
   const data = JSON.stringify({ project: p.project, wireframe: p.wireframe, info: p.info }).replace(
     /</g,

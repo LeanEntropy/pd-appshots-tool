@@ -130,6 +130,34 @@ test("a settled reading the layout no longer fits leaves it missing; older versi
   assert.equal(view.wireframe?.panels.length, 2);
 });
 
+test("a layout that disagrees with the analysis is saved in one call, with its notes shown", async () => {
+  const { loaded } = await libraryProject();
+  loaded.config.options.speed.layoutCapture = true;
+  const p = providers();
+  const call = p.producer.call.bind(p.producer);
+  let layoutCalls = 0;
+  // Every layout answer leaves out the marketing boxes: soft only, so never retried.
+  p.producer.call = async (c) => {
+    const r = await call(c);
+    if (!c.prompt.startsWith("Draw the layout")) return r;
+    layoutCalls++;
+    const out = r.output as { layout: Record<string, unknown> };
+    return { ...r, output: { layout: { ...out.layout, marketing: [] } } };
+  };
+  await runAnalysis(loaded, buildAnalysisPlan(loaded, "core"), p);
+  const paths = projectPaths(loaded);
+  const saved = [...readRecords(paths).values()].filter((r) => readLayoutFile(paths, r));
+  assert.ok(saved.length > 0);
+  assert.equal(layoutCalls, saved.length, "one call per image, no retries");
+  const r = saved[0] as AnalysisRecord;
+  const notes = readLayoutFile(paths, r)?.notes ?? [];
+  assert.ok(
+    notes.includes("Note: the analysis found a marketing layer, but no marketing box is drawn."),
+  );
+  assert.equal(layoutStatus(paths, r).status, "current");
+  assert.deepEqual(layoutView(paths, r).notes, notes);
+});
+
 test("trial files are skipped by the record reader and removed only when equal to their sample", async () => {
   const { loaded, storage } = await libraryProject();
   const paths = projectPaths(loaded);

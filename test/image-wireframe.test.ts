@@ -157,6 +157,7 @@ function evilPage(): ImagePage {
     wireframe: null,
     summary: EVIL,
     older: false,
+    layoutNotes: [EVIL],
     texts: [
       {
         role: "Headline",
@@ -202,6 +203,16 @@ test("image page HTML: every value escaped, the data JSON cannot end its script,
   const where = /<section class="band blue" id="where">([\s\S]*?)<\/section>/.exec(html)?.[1] ?? "";
   assert.doesNotMatch(where, /img class="flag"/);
   assert.match(html, /<h1>[^<]*·\s*<span class="cty"><img class="flag"/);
+});
+
+test("image page: layout notes are shown folded under the wireframes, escaped", () => {
+  const core = reading("img1", "gameplay", "EPIC");
+  const wf = numberedWireframe(fakeLayout(core), { width: 1080, height: 1920 });
+  const html = imageHtml({ ...evilPage(), wireframe: wf }, "tok");
+  assert.match(html, /<details class="fold"><summary>Layout notes \(1\)<\/summary>/);
+  assert.doesNotMatch(html, /<img src=x/);
+  const none = imageHtml({ ...evilPage(), wireframe: wf, layoutNotes: [] }, "tok");
+  assert.doesNotMatch(none, /<summary>Layout notes \(\d/);
 });
 
 test("the (i) popover links to the image page in a new tab, with the thumbnail's context", () => {
