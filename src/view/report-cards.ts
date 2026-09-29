@@ -1,7 +1,8 @@
 /**
  * The Reports tab's cards (user design, 2026-09-29): one card per report type, side by side and
- * wrapping by width. The Full check first, then Compare countries and one card per single-country
- * report country (flag in the title) by their newest report, and the Pilot always last. A card
+ * wrapping by width. The Full check first, then Compare countries, then one card per single-country
+ * report country (flag in the title) in the newest comparison's country order (the rest by their
+ * newest report), and the Pilot always last; the action cards after them. A card
  * shows its title, the date and status of the report picked (the newest by default), a meta line
  * (its competitor count; for Compare countries, the Full check and the Pilot also the flags of its
  * countries, named in tooltips), a dropdown of its reports when it has more than one, and Open
@@ -44,8 +45,9 @@ const OPEN_KEY = "ssr.report.open:" + API;
 const STATUS_WORD = { draft: "Draft", partial: "Partial", ready: "Ready", running: "Running", none: "Not written yet" };
 const cardKey = (r) => (r.type === "country" ? "country:" + ((r.markets || [])[0] || "") : r.type);
 
-// One group per card, each with its reports newest first (the list's own order): the Full check
-// first, the others by their newest report, the Pilot last.
+// One group per card, each with its reports newest first (the list's own order). Big reports first
+// (user, 2026-09-29): the Full check, Compare countries, the one-country cards in the order of the
+// newest comparison's countries (the others after them, by their newest report), the Pilot last.
 function typeGroups(list) {
   const groups = [];
   const byKey = {};
@@ -54,8 +56,10 @@ function typeGroups(list) {
     if (!byKey[k]) { byKey[k] = { key: k, type: r.type, reports: [] }; groups.push(byKey[k]); }
     byKey[k].reports.push(r);
   }
-  const rank = (g) => (g.type === "core" ? 0 : g.type === "pilot" ? 2 : 1);
-  return groups.map((g, i) => ({ g, i })).sort((a, b) => rank(a.g) - rank(b.g) || a.i - b.i).map((x) => x.g);
+  const rank = (g) => (g.type === "core" ? 0 : g.type === "compare" ? 1 : g.type === "pilot" ? 3 : 2);
+  const cmpMarkets = (list.find((r) => r.type === "compare") || {}).markets || [];
+  const inCmp = (g) => { const k = g.type === "country" ? cmpMarkets.indexOf((g.reports[0].markets || [])[0]) : -1; return k < 0 ? cmpMarkets.length : k; };
+  return groups.map((g, i) => ({ g, i })).sort((a, b) => rank(a.g) - rank(b.g) || inCmp(a.g) - inCmp(b.g) || a.i - b.i).map((x) => x.g);
 }
 
 // The report to show when none is asked for: the newest one (the list's order: drafts, then by

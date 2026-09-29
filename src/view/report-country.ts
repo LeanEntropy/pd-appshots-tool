@@ -122,7 +122,7 @@ function renderCountryReport(box, c, rid, research) {
   const n = (id) => repSecs.findIndex((s) => s.id === id);
   const part = (id, body, imgs) => (n(id) < 0 ? "" : sec(n(id), body, imgs, false));
   box.classList.toggle("noimg", !showImgs);
-  box.innerHTML = part("summary", samePagesTop(c) + countrySummaryHtml(c) + groupsLine(c) + derivedBandHtml(c), false) + countryTocHtml(c, across)
+  box.innerHTML = part("summary", derivedBandHtml(c) + samePagesTop(c) + countrySummaryHtml(c) + groupsLine(c), false) + countryTocHtml(c, across)
     + part("across", across.map(subSec).join(""), false)
     + part("countries", countryTabsHtml(c), true);
 }
