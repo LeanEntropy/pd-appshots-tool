@@ -86,15 +86,20 @@ export function readSpend(): Spend {
 }
 
 /** A call context whose answers go to the bench store and whose spend is capped across runs. */
-export function benchContext(loaded: LoadedConfig, arm: string): CallContext {
+export function benchContext(
+  loaded: LoadedConfig,
+  arm: string,
+  cap = CAP_USD,
+  ceilings: Record<string, number> = { "full-analysis": 0.3 },
+): CallContext {
   const spend = readSpend();
-  const left = CAP_USD - spend.usd;
+  const left = cap - spend.usd;
   if (left <= 0.3) throw new Error(`Benchmark cap reached: $${spend.usd.toFixed(2)} spent.`);
   const store = workspaceStorage(join(OUT, "answers", arm));
   const { taxonomy, hash } = loadTaxonomy(loaded);
   let spent = 0;
   // A tighter ceiling than the tool's $0.40 so the $3 cap funds both arms (p90 was $0.24).
-  const book = ledger(left, () => spent, { "full-analysis": 0.3 });
+  const book = ledger(left, () => spent, ceilings);
   const save = () => writeFileSync(join(OUT, "spend.json"), JSON.stringify(spend, null, 1));
   return {
     storage: store,
