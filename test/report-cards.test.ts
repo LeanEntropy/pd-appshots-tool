@@ -27,6 +27,34 @@ test("one card per report type: Full check first, the others by their newest rep
   assert.equal((cards.match(/class="rt-open" disabled[^>]*>Showing<\/button>/g) ?? []).length, 1);
 });
 
+test("big reports first: the one-country cards follow the comparison's country order, the rest after them", () => {
+  const { t, boxes } = page();
+  const tw = { markets: ["tw"], countryNames: ["Taiwan"], countryLabels: ["Taiwan"] };
+  t.setList([
+    PILOT,
+    rep({ id: "r-tw", name: "Taiwan vs 2", ...tw, generatedAt: "2026-09-29T12:00:00.000Z" }),
+    rep({ id: "r-jp", name: "Japan vs 2" }),
+    cmp("r-cmp", { markets: ["kr", "jp"], countryNames: ["South Korea", "Japan"] }),
+    rep({
+      id: "r-kr",
+      name: "South Korea vs 2",
+      markets: ["kr"],
+      countryNames: ["South Korea"],
+      countryLabels: ["South Korea"],
+    }),
+    CORE,
+  ]);
+  t.render();
+  assert.deepEqual(titles(boxes.reportCards?.innerHTML ?? ""), [
+    "Full check",
+    "Compare countries",
+    "South Korea",
+    "Japan",
+    "Taiwan",
+    "Pilot",
+  ]);
+});
+
 test("a dropdown only when a type has more than one report, newest first with date and status", () => {
   const { t, boxes } = page();
   t.setList(LIST);
