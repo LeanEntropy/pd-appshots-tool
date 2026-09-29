@@ -133,7 +133,7 @@ Each output item records its basis: `dataFactIds` (computed facts), `kbRefs`, an
 - items in recommendations, key points and country actions cite only corroborated or established, non-contested entries; otherwise the **whole item** is regenerated once with the problem listed, then dropped with "left out" (never only its citation);
 - unverified or contested handles appear only in test ideas and A/B hypotheses;
 - a conflict record exists whenever a cited entry is linked (by the entry's `contradictsConvention` tags) to a dimension where the data shows a clear pattern the other way;
-- the "why" (the reason, in plain words) is rendered by code from the entry; sources, dates, links and trust badges are NEVER written in the report or recommendation text: they appear only behind a citation marker (e.g. [1]) as a tooltip or popover, rendered by code (user rule, 2026-09-29);
+- the "why" (the reason, in plain words) is rendered by code from the entry; sources are NEVER written in the report or recommendation text. A citation marker (e.g. [1]) shows a tooltip with ONLY the source link(s), opening in a new tab. No trust level, dates or other data in the tooltip (user rule, 2026-09-29).
 - unexpected numbers in model text (not in the computed data or the cited entries' `facts`) raise a **warning** for the reviewer, not a hard failure.
 
 **Reviewer (semantic, measured):** citation supports the statement; no convention sold as proven; no omitted counter-claim or store rule; right market and script. In evaluation (section 10) a human checks a sample of the reviewer's calls to measure its miss rate.
