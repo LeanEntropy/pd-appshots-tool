@@ -11,8 +11,7 @@ let shownReport = null;
 const RTIER = { full: "full analysis", "layer-diff": "text comparison" };
 
 function reportPairHtml(x) {
-  const img = (t, alt) => (t ? '<img src="' + IMG + esc(t) + '" alt="' + esc(alt) + '">' : "");
-  return '<div class="pair">' + img(x.anchor.thumb, "the analysed picture") + img(x.image.thumb, x.country) + "<div><strong>" + esc(x.game) + "</strong>, position " + x.position + " in " + esc(theCountryOf(x.country)) + ": the same screen as the analysed picture (left), with new text?<br>"
+  return '<div class="pair">' + pgPictures(x) + "<div><strong>" + esc(x.game) + "</strong>, position " + x.position + " in " + esc(theCountryOf(x.country)) + ": the same screen as the analysed picture (left), with new text?" + esc(pgChanged(x)) + "<br>"
     + '<button type="button" class="pairr" data-img="' + esc(x.image.id) + '" data-anchor="' + esc(x.anchor.id) + '" data-same="true">Same screen</button> <button type="button" class="pairr" data-img="' + esc(x.image.id) + '" data-anchor="' + esc(x.anchor.id) + '" data-same="false">Different screens</button></div></div>';
 }
 
@@ -25,12 +24,18 @@ function reportApprovalHtml(r) {
     + list.map((it) => '<figure class="' + esc(it.tier) + '" title="' + esc(it.reason) + '">' + (it.thumb ? '<img src="' + IMG + esc(it.thumb) + '" alt="' + esc(it.name + " position " + it.position) + '">' : "") + "<figcaption>#" + it.position + " " + esc(RTIER[it.tier] || it.tier) + "</figcaption></figure>").join("") + "</div></div>").join("");
   const passes = p.images.passes.filter((x) => x.calls > 0).map((x) => "<tr><td>" + esc(x.role) + "</td><td>" + esc(x.model) + "</td><td>" + x.calls + "</td><td>" + x.images + "</td><td></td></tr>").join("");
   const text = p.text.parts.map((t) => "<tr><td>" + esc(t.label) + "</td><td>" + esc(t.model) + "</td><td>" + t.calls + "</td><td>0</td><td>" + usdRange(t.usd) + "</td></tr>").join("");
-  const doubt = r.doubtful.length ? '<div class="contbox"><h4>First, ' + r.doubtful.length + " doubtful picture " + (r.doubtful.length === 1 ? "match" : "matches") + "</h4><p>These pictures are close to the line between \\u201csame picture, new text\\u201d (a cheap text comparison) and \\u201cdifferent screen\\u201d (a full analysis). Answer each one, or all at once; the numbers below update.</p>"
+  // The pixel check's one-click block and the answers given there, then the rest one by one.
+  const ctx = "r:" + r.id;
+  const one = r.doubtful.filter((x) => !x.group);
+  const grouped = pgGroupHtml(ctx, r.doubtful) + pgDoneHtml(ctx) + pgDecidedHtml(ctx, r.doubtful);
+  // What the run waits for: the pairs asked one by one and the block's "same picture" pairs.
+  const waiting = one.length + (pgBlock.get(ctx) || []).filter((x) => x.group === "same-new-text").length;
+  const doubt = one.length ? '<div class="contbox"><h4>' + (grouped ? "Then " : "First, ") + one.length + " doubtful picture " + (one.length === 1 ? "match" : "matches") + "</h4><p>These pictures are close to the line between \\u201csame picture, new text\\u201d (a cheap text comparison) and \\u201cdifferent screen\\u201d (a full analysis). Answer each one, or all at once; the numbers below update.</p>"
     + '<p><button type="button" class="pairall" data-same="true">All: the same screen (text comparison)</button> <button type="button" class="pairall" data-same="false">All: different screens (full analysis)</button></p>'
-    + r.doubtful.map(reportPairHtml).join("") + "</div>" : "";
-  const blocked = r.doubtful.length ? "Answer the doubtful picture matches above first." : p.overLimit ? "This is over the spending limit of " + money(p.limitUsd) + ": leave some games or countries out in the report setup first." : "";
+    + one.map(reportPairHtml).join("") + "</div>" : "";
+  const blocked = waiting ? "Answer the picture matches above first." : p.overLimit ? "This is over the spending limit of " + money(p.limitUsd) + ": leave some games or countries out in the report setup first." : "";
   const nothing = !paid.length && !p.text.parts.length;
-  return '<h3 id="approvalTitle">Approve \\u201c' + esc(r.name) + "\\u201d?</h3>" + doubt
+  return '<h3 id="approvalTitle">Approve \\u201c' + esc(r.name) + "\\u201d?</h3>" + grouped + doubt
     + '<p class="big"><strong>' + paid.length + " images will be sent to AI</strong> (full analysis: " + p.counts.full + ", text comparison: " + p.counts.layerDiff + "). Already analysed or identical, free: " + p.counts.identical + ".</p>"
     + blocks
     + '<table class="passes"><tr><th>Step</th><th>Model</th><th>Calls</th><th>Images</th><th>Cost</th></tr>' + passes + text + "</table>"
@@ -74,7 +79,7 @@ document.addEventListener("click", (e) => {
     act(b, { busy: "Saving your answer...", run: async () => { await send(API + "/reports/match-check", { image: b.dataset.img, anchor: b.dataset.anchor, same: b.dataset.same === "true" }); await showReportApproval(rid); }, done: "" });
   } else if (b.classList.contains("pairall") && shownReport) {
     const rid = shownReport.id;
-    const list = shownReport.doubtful.slice();
+    const list = shownReport.doubtful.filter((x) => !x.group);
     act(b, { busy: "Saving " + list.length + " answers...", run: async () => { for (const x of list) await send(API + "/reports/match-check", { image: x.image.id, anchor: x.anchor.id, same: b.dataset.same === "true" }); await showReportApproval(rid); }, done: "" });
   } else if (b.id === "continueRun" && lastStatus && lastStatus.reportId) openReportApproval(b, lastStatus.reportId);
 });

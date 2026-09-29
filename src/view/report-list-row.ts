@@ -1,7 +1,7 @@
 /**
- * The folded report row of the Report tab (report-list.ts): a short title (more than three
- * countries show the first three and "+N"; the full name on hover and when open), the date, the
- * "same setup as" hint, and the in-page Delete confirmation (no browser dialog) that says plainly
+ * Helpers of the Report tab's cards and shown report (report-cards.ts, report-list.ts): a short
+ * title (more than three countries show the first three and "+N"), the date, and the in-page
+ * Delete confirmation (no browser dialog) that says plainly
  * what is kept: paid image analyses stay in the shared library and are reused for free.
  */
 export const REPORT_ROW_SCRIPT = `
@@ -14,17 +14,11 @@ function shortTitle(r) {
   return names.slice(0, 3).join(", ") + " +" + (names.length - 3) + name.slice(lead.length);
 }
 
-// The date at the right of a folded row: "29 Sep 2026" (the time is in the tooltip).
+// The date of a card or header band: "29 Sep 2026" (the time is in the tooltip).
 function rowDate(iso) {
   const d = new Date(iso);
   if (!iso || isNaN(d.getTime())) return "";
   return d.toLocaleDateString(undefined, { day: "numeric", month: "short", year: "numeric" });
-}
-
-function rowTitleHtml(r) {
-  const short = shortTitle(r);
-  if (short === r.name) return '<span class="rc-name">' + flagText(r.name) + "</span>";
-  return '<span class="rc-name" title="' + esc(r.name) + '"><span class="rc-short">' + flagText(short) + '</span><span class="rc-full">' + flagText(r.name) + "</span></span>";
 }
 
 // Asked in the card itself: what goes and what stays, then Delete or Cancel.

@@ -23,7 +23,7 @@ const STATE = {
   progress: null,
   next: { href: "/p/rl/views/gallery.html#core", label: "Continue" },
   notices: [],
-  suggestion: null,
+  suggestion: { text: "Settle the weak patterns", href: "/p/rl/views/gallery.html#report" },
 };
 
 async function browserOrSkip(t: { skip: (m: string) => void }): Promise<Browser | null> {
@@ -36,7 +36,12 @@ async function browserOrSkip(t: { skip: (m: string) => void }): Promise<Browser 
   }
 }
 
-async function homePage(page: Page, hits: Record<string, number>, hold: Promise<void>) {
+async function homePage(
+  page: Page,
+  hits: Record<string, number>,
+  hold: Promise<void>,
+  stateHold: Promise<void> = Promise.resolve(),
+) {
   const json = (r: Route, body: unknown) =>
     r.fulfill({ contentType: "application/json", body: JSON.stringify(body) });
   await page.route(`${ORIGIN}/**`, async (r) => {
@@ -47,7 +52,12 @@ async function homePage(page: Page, hits: Record<string, number>, hold: Promise<
     if (path === "/api/projects") return json(r, { projects: [PROJECT] });
     if (path === "/api/jobs") return json(r, { lanes: [] });
     if (path === "/api/import") return json(r, { found: [], importing: null });
-    if (path === "/p/rl/api/state?home=1") return json(r, STATE);
+    if (path === "/p/rl/api/state?home=1") {
+      await stateHold;
+      await json(r, STATE);
+      hits.stateSent = 1;
+      return;
+    }
     // The project page is slow to come (the tool works out the project's state first).
     if (path === "/p/rl/") {
       await hold;
@@ -120,6 +130,80 @@ test("home: one press on Open opens the project; a card refresh keeps it opening
     assert.equal(hits["/p/rl/"], 1, "the project page was asked for once, not again");
   } finally {
     release();
+    await browser.close();
+  }
+});
+
+// The card as the page shows it after the press, every 25 ms, kept for after the navigation.
+const RECORD = `window.addEventListener("click", () => setInterval(() => {
+  const log = JSON.parse(sessionStorage.getItem("log") || "[]");
+  const controls = [...document.querySelectorAll("#cards a, #cards button")].map((a) => a.textContent.trim());
+  log.push({ controls, opens: document.querySelectorAll('#cards a[href="/p/rl/"]').length });
+  sessionStorage.setItem("log", JSON.stringify(log));
+}, 25), { once: true });`;
+
+test("home: Open pressed while the card's state is still coming opens the project; nothing grows", async (t) => {
+  const browser = await browserOrSkip(t);
+  if (!browser) return;
+  let release = () => {};
+  let releaseState = () => {};
+  const hold = new Promise<void>((r) => {
+    release = r;
+  });
+  const stateHold = new Promise<void>((r) => {
+    releaseState = r;
+  });
+  try {
+    const page = await browser.newPage();
+    const hits: Record<string, number> = {};
+    await homePage(page, hits, hold, stateHold);
+    await page.goto(`${ORIGIN}/`);
+    const open = page.locator('#cards a.btn[href="/p/rl/"]');
+    await open.waitFor();
+    await page.evaluate(RECORD);
+    // One press, as soon as the card shows; its fresh state (with more to show) arrives after it.
+    await open.click({ noWaitAfter: true });
+    releaseState();
+    for (let i = 0; i < 100 && !hits.stateSent; i++) await pause(50);
+    await pause(300);
+    release();
+    await page.waitForURL(`${ORIGIN}/p/rl/`);
+    const log: { controls: string[]; opens: number }[] = JSON.parse(
+      String(await page.evaluate("sessionStorage.getItem('log')")),
+    );
+    assert.ok(log.length > 5, "the card was recorded while the project page loaded");
+    for (const seen of log) {
+      assert.deepEqual(seen.controls, ["Opening...", "Archive"], "the card changed after Open");
+      assert.equal(seen.opens, 1, "a second Open appeared");
+    }
+    assert.equal(hits["/p/rl/"], 1, "one press asked for the project page once");
+  } finally {
+    releaseState();
+    release();
+    await browser.close();
+  }
+});
+
+test("home: Open stays where it was when the card's state arrives", async (t) => {
+  const browser = await browserOrSkip(t);
+  if (!browser) return;
+  let releaseState = () => {};
+  const stateHold = new Promise<void>((r) => {
+    releaseState = r;
+  });
+  try {
+    const page = await browser.newPage();
+    await homePage(page, {}, Promise.resolve(), stateHold);
+    await page.goto(`${ORIGIN}/`);
+    const open = page.locator('#cards a.btn[href="/p/rl/"]');
+    await open.waitFor();
+    const before = await open.boundingBox();
+    releaseState();
+    await page.locator("#cards a.btn.primary").waitFor();
+    assert.deepEqual(await open.boundingBox(), before, "Open moved when the card grew");
+    assert.equal(await page.locator("#cards a", { hasText: /^Open$/ }).count(), 1, "one Open");
+  } finally {
+    releaseState();
     await browser.close();
   }
 });
