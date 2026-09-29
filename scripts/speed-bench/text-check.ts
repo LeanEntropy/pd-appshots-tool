@@ -9,7 +9,8 @@
  * Options: --only=<prefix>,<prefix> checks those images only (in that order); --cap=<usd>.
  */
 import { join } from "node:path";
-import { analyseImages, type ChunkImage } from "../../src/analysis/call.ts";
+import type { ChunkImage } from "../../src/analysis/call.ts";
+import { analyseImages } from "../../src/analysis/call-images.ts";
 import { renderAnalysisPrompt } from "../../src/analysis/prompts.ts";
 import { providerFor } from "../../src/analysis/providers.ts";
 import { modelCopy } from "../../src/analysis/run-chunk.ts";

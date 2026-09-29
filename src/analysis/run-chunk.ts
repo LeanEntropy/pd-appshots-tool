@@ -4,7 +4,8 @@ import { imageKey, modelFile } from "../library/layout.ts";
 import { workspaceStorage } from "../storage/index.ts";
 import type { ImageDb } from "../store/imagedb.ts";
 import { sha256 } from "../util/hash.ts";
-import { analyseImages, type CallContext, type ChunkImage, type ChunkResult } from "./call.ts";
+import type { CallContext, ChunkImage, ChunkResult } from "./call.ts";
+import { analyseImages } from "./call-images.ts";
 import { compareReadings } from "./compare.ts";
 import { MODEL_COPY } from "./pipeline.ts";
 import type { PlanItem } from "./plan.ts";
@@ -73,6 +74,11 @@ export interface ChunkDeps {
   ctx: CallContext;
   /** Ask for the lean answer (Settings, "Shorter answers"). */
   lean?: boolean;
+  /**
+   * The producer's prompt with the layout block (layout capture on): the producer also returns
+   * the layout, checked apart from the core. The second opinion keeps `analysePrompt`.
+   */
+  layoutPrompt?: RenderedPrompt | null;
   /** Phase changes inside the chunk ("review", "settle"). */
   phase: (phase: string, message: string) => void;
 }
@@ -88,10 +94,11 @@ export async function analyseChunk(
   const produced = await analyseImages(
     "full-analysis",
     d.producer,
-    d.analysePrompt,
+    d.layoutPrompt ?? d.analysePrompt,
     chunk,
     d.ctx,
     lean,
+    !!d.layoutPrompt,
   );
   const sample = reviewSample(
     chunk.map((c) => c.imageId),

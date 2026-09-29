@@ -91,6 +91,11 @@ export const OptionsSchema = z
         leanAnswer: z.boolean().default(false),
         /** Colour statistics use colours measured by code per layer instead of the model's. */
         measuredColours: z.boolean().default(false),
+        /**
+         * New full analyses also return a layout breakdown, saved in its own file. Off until a
+         * benchmark passes (the 2026-09-29 run did not: docs/samples/layout-benchmark/).
+         */
+        layoutCapture: z.boolean().default(false),
       })
       .prefault({}),
     /** Pixel check of near-identical pictures across countries (plan-analysis-speed item 8). */

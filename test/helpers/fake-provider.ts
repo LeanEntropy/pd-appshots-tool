@@ -1,5 +1,6 @@
 import type { Provider, VisionCall, VisionResult } from "../../src/analysis/providers.ts";
 import type { ImageAnalysis } from "../../src/analysis/schema.ts";
+import { asksLayout, fakeLayout } from "./layout.ts";
 
 export function reading(
   imageRef: string,
@@ -238,9 +239,11 @@ export function fakeProvider(o: FakeOptions): Provider & { calls: VisionCall[] }
         }));
         return ok({ decisions });
       }
+      const layout = asksLayout(c.schema);
       const images = c.images.map((i) => {
         const r = o.read(i.image.localPath ?? "");
-        return reading(i.ref, r.screenType, r.headline);
+        const a = reading(i.ref, r.screenType, r.headline);
+        return layout ? { ...a, layout: fakeLayout(a) } : a;
       });
       return ok({ images });
     },

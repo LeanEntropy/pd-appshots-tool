@@ -29,6 +29,9 @@ export const LIB = {
   analysisDir: (sha: string) => libraryKey("analysis", sha),
   record: (sha: string, key: string) => libraryKey("analysis", sha, `${key}.json`),
   object: (step: string, key: string) => libraryKey("objects", step, `${key}.json`),
+  /** layout/<sha>/<layout key>.json: an image's layout breakdown (write-once per key). */
+  layoutDir: (sha: string) => libraryKey("layout", sha),
+  layout: (sha: string, key: string) => libraryKey("layout", sha, `${key}.json`),
 };
 
 export const refsKey = (ctx: ProjectContext) => projectKey(ctx, "refs.json");

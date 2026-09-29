@@ -5,7 +5,12 @@ import type { CallLog } from "../analysis/call.ts";
 import { compareLayers, type LayerItem } from "../analysis/layer-diff-run.ts";
 import { snapshotOrder } from "../analysis/orders.ts";
 import type { PlanItem } from "../analysis/plan.ts";
-import { renderAnalysisPrompt, renderPrompt, renderReportPrompt } from "../analysis/prompts.ts";
+import {
+  layoutPromptFor,
+  renderAnalysisPrompt,
+  renderPrompt,
+  renderReportPrompt,
+} from "../analysis/prompts.ts";
 import { type Provider, providerFor } from "../analysis/providers.ts";
 import { recordWriter, withCurrentMapping } from "../analysis/record-refresh.ts";
 import { readRecords } from "../analysis/records.ts";
@@ -136,6 +141,7 @@ export async function runReport(
         runId,
         ctx: withOwnCost(ctx, onCost),
         lean: speed.leanAnswer,
+        layoutPrompt: layoutPromptFor(loaded.root, paths.objects, taxonomy, config),
         phase: report,
       }),
     save: writeRec,

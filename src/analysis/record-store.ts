@@ -15,6 +15,8 @@ import { LEAN_SCHEMA_VERSION } from "./schema.ts";
  *      exactly as it saw it before the library existed.
  * Other projects' records under other settings are never used.
  */
+const RECORD_FILE = /^([0-9a-f]{32}|unproven-[a-z0-9-]{1,60})\.json$/;
+
 export function readStoredRecord(paths: ProjectPaths, imageId: string): AnalysisRecord | undefined {
   const storage = workspaceStorage(paths.workspace);
   const lib = paths.library;
@@ -37,7 +39,9 @@ export function readStoredRecord(paths: ProjectPaths, imageId: string): Analysis
   const own = unprovenKey(paths.projectId);
   const lean = isLean(lib.pipeline);
   for (const k of storage.list(LIB.analysisDir(imageId))) {
-    if (!k.endsWith(".json")) continue;
+    // Only record files (an analysis key or an unproven key), never other files in the folder
+    // (e.g. the layout trial's structure-test-v0.json).
+    if (!RECORD_FILE.test(k.split("/").pop() ?? "")) continue;
     const r = storage.getJson(k) as AnalysisRecord | undefined;
     if (!r || (r.key !== own && r.writtenBy !== paths.projectId)) continue;
     // A lean record never stands in for a pipeline that asks for the full answer.

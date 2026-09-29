@@ -16,7 +16,7 @@ import { compareOurs, type OursVsPatterns } from "./ours-vs.ts";
 import { patternFit } from "./pattern-fit.ts";
 import { findPatterns, type Patterns } from "./patterns.ts";
 import type { AnalysisPlan } from "./plan.ts";
-import { type PromptName, renderAnalysisPrompt, renderPrompt } from "./prompts.ts";
+import { layoutPromptFor, type PromptName, renderAnalysisPrompt, renderPrompt } from "./prompts.ts";
 import type { Provider } from "./providers.ts";
 import { recordWriter, withCurrentMapping } from "./record-refresh.ts";
 import { type AnalysisRecord, readRecords } from "./records.ts";
@@ -103,7 +103,6 @@ export async function runAnalysis(
   const budget = deps.budgetUsd ?? batchLimit(loaded, plan);
   const batchId = deps.batchId ?? null;
   const bc = batchContext(paths, taxonomy, taxonomyHash, budget);
-  const { ctx } = bc;
   const speed = config.options.speed;
   const lean = speed.leanAnswer;
   const analysePrompt = renderAnalysisPrompt(loaded.root, paths.objects, taxonomy, lean);
@@ -153,8 +152,9 @@ export async function runAnalysis(
         taxonomy,
         coverage: config.review.enabled ? config.review.coreCoverage : 0,
         runId,
-        ctx: withOwnCost(ctx, onCost),
+        ctx: withOwnCost(bc.ctx, onCost),
         lean,
+        layoutPrompt: layoutPromptFor(loaded.root, paths.objects, taxonomy, config),
         phase: report,
       }),
     save: writeRec,
@@ -229,7 +229,7 @@ export async function runAnalysis(
           competitors: entries.competitors,
           ourDeckLength: entries.ourDeckLength,
         },
-        ctx,
+        bc.ctx,
         report,
       );
       endAttempt(paths, SYNTHESIS, attempt, batchId, "finished", bc.spent() - before);

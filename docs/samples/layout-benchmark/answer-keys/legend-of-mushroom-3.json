@@ -1,0 +1,238 @@
+{
+  "name": "legend-of-mushroom-3",
+  "imageId": "ce1c0012193fae117746075beee7b27af321fd86e732f5610ffc2837d938545b",
+  "width": 1920,
+  "height": 1080,
+  "captures": 1,
+  "marketingPresent": true,
+  "inGame": [
+    {
+      "id": "S1",
+      "role": "main-scene",
+      "box": {
+        "x": 1.5,
+        "y": 3,
+        "w": 96,
+        "h": 97
+      },
+      "tiltDeg": 0,
+      "z": 0,
+      "text": null,
+      "textEn": null
+    },
+    {
+      "id": "S2",
+      "role": "character",
+      "box": {
+        "x": 48.5,
+        "y": 31,
+        "w": 25,
+        "h": 34
+      },
+      "tiltDeg": 0,
+      "z": 1,
+      "text": null,
+      "textEn": null
+    },
+    {
+      "id": "S3",
+      "role": "character",
+      "box": {
+        "x": 19,
+        "y": 35,
+        "w": 28,
+        "h": 34.5
+      },
+      "tiltDeg": 0,
+      "z": 1,
+      "text": null,
+      "textEn": null
+    },
+    {
+      "id": "S4",
+      "role": "hud",
+      "box": {
+        "x": 84.5,
+        "y": 5,
+        "w": 11.5,
+        "h": 5
+      },
+      "tiltDeg": 0,
+      "z": 2,
+      "text": null,
+      "textEn": null
+    },
+    {
+      "id": "S5",
+      "role": "hud",
+      "box": {
+        "x": 3,
+        "y": 5,
+        "w": 33,
+        "h": 5
+      },
+      "tiltDeg": 0,
+      "z": 2,
+      "text": null,
+      "textEn": null
+    },
+    {
+      "id": "S6",
+      "role": "panel",
+      "box": {
+        "x": 4,
+        "y": 18,
+        "w": 13,
+        "h": 60.5
+      },
+      "tiltDeg": 0,
+      "z": 2,
+      "text": null,
+      "textEn": null
+    }
+  ],
+  "marketing": [
+    {
+      "id": "M1",
+      "role": "frame",
+      "box": {
+        "x": 0,
+        "y": 0,
+        "w": 100,
+        "h": 100
+      },
+      "tiltDeg": 0,
+      "z": 0,
+      "text": null,
+      "textEn": null,
+      "covers": []
+    },
+    {
+      "id": "M2",
+      "role": "other",
+      "box": {
+        "x": 0,
+        "y": 64,
+        "w": 100,
+        "h": 36
+      },
+      "tiltDeg": 0,
+      "z": 1,
+      "text": null,
+      "textEn": null,
+      "covers": [
+        "S1",
+        "S6"
+      ]
+    },
+    {
+      "id": "M3",
+      "role": "cut-out",
+      "box": {
+        "x": 66.5,
+        "y": 33,
+        "w": 33.5,
+        "h": 57
+      },
+      "tiltDeg": 0,
+      "z": 2,
+      "text": null,
+      "textEn": null,
+      "covers": [
+        "S1",
+        "S2"
+      ]
+    },
+    {
+      "id": "M4",
+      "role": "headline",
+      "box": {
+        "x": 1.5,
+        "y": 72,
+        "w": 61,
+        "h": 15.5
+      },
+      "tiltDeg": 0,
+      "z": 3,
+      "text": "Collect Companions",
+      "textEn": "Collect Companions",
+      "covers": [
+        "S1",
+        "S6"
+      ]
+    },
+    {
+      "id": "M5",
+      "role": "subline",
+      "box": {
+        "x": 10.5,
+        "y": 86.5,
+        "w": 42,
+        "h": 9.5
+      },
+      "tiltDeg": 0,
+      "z": 3,
+      "text": "Combat Squad, Auto Upgrade",
+      "textEn": "Combat Squad, Auto Upgrade",
+      "covers": [
+        "S1"
+      ]
+    },
+    {
+      "id": "M6",
+      "role": "cut-out",
+      "box": {
+        "x": 56.5,
+        "y": 68.5,
+        "w": 19,
+        "h": 23.5
+      },
+      "tiltDeg": 0,
+      "z": 4,
+      "text": null,
+      "textEn": null,
+      "covers": [
+        "S1"
+      ]
+    },
+    {
+      "id": "M7",
+      "role": "cut-out",
+      "box": {
+        "x": 75.5,
+        "y": 78,
+        "w": 11,
+        "h": 15.5
+      },
+      "tiltDeg": 0,
+      "z": 4,
+      "text": null,
+      "textEn": null,
+      "covers": [
+        "S1"
+      ]
+    }
+  ],
+  "composition": {
+    "focal": {
+      "x": 82,
+      "y": 57,
+      "id": "M3"
+    },
+    "readingOrder": [
+      "M3",
+      "M4",
+      "M5",
+      "M6",
+      "S3"
+    ],
+    "overlaySharePercent": 40
+  },
+  "measurements": {
+    "bands": [],
+    "coveragePercent": 40,
+    "headlineGlyphPercent": null,
+    "headlineContrast": null
+  },
+  "reductionNotes": "S1 battle viewport (sky, tree, log, props, ground, grass) plus S7 floating damage numbers (individual damage numbers never become elements) -> S1 main-scene; S6 enemy group -> S2 character; S5 party with its slash FX and skateboard -> S3 character (union incl. the FX to x 46.8); S3 stage HUD -> S4 hud and S2 player HUD -> S5 hud (both top-level, kept apart; S4 comes first because it starts 0.1 higher); S4 equipment column -> S6 panel. Marketing: M1 card margin + white outline + the second outline tilted ~1.5 deg -> M1 frame at 0 deg (the tilt belongs to a decorative child); M7 blurred bokeh foreground (three patches) -> M2 'other' (no vocab role fits a blurred foreground; closest alternatives band/backdrop); M4 cat + M4.1 halo -> M3 cut-out; M2 headline -> M4; M3 pill + text + icon -> M5 subline; M5 knight -> M6 cut-out; M6 chick -> M7 cut-out. Headline glyph fill box (13.3% tall) is not a cap height, so headlineGlyphPercent stays null."
+}

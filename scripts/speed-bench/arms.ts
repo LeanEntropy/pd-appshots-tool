@@ -5,7 +5,8 @@
  * - control: the 10 images with today's pipeline (full answer, Read tool), one at a time.
  */
 import { join } from "node:path";
-import { analyseImages, type CallLog, type ChunkImage } from "../../src/analysis/call.ts";
+import type { CallLog, ChunkImage } from "../../src/analysis/call.ts";
+import { analyseImages } from "../../src/analysis/call-images.ts";
 import { runPool, sleepUnlessStopped } from "../../src/analysis/pool.ts";
 import { renderAnalysisPrompt } from "../../src/analysis/prompts.ts";
 import { providerFor } from "../../src/analysis/providers.ts";
