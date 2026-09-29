@@ -64,8 +64,8 @@ interface Spend {
   calls: CallLog[];
 }
 
-export function readSpend(): Spend {
-  const f = join(OUT, "spend.json");
+export function readSpend(name = "spend.json"): Spend {
+  const f = join(OUT, name);
   return existsSync(f) ? (JSON.parse(readFileSync(f, "utf8")) as Spend) : { usd: 0, calls: [] };
 }
 
@@ -73,17 +73,23 @@ export function readSpend(): Spend {
  * A call context whose answers go to the scratch store and whose spend is capped across runs.
  * Ceiling $0.45 per call (production reserves $0.40), never more than what is left under the cap.
  */
-export function benchContext(loaded: LoadedConfig): CallContext {
-  const spend = readSpend();
-  const left = CAP_USD - spend.usd;
+export function benchContext(
+  loaded: LoadedConfig,
+  cap = CAP_USD,
+  spendFile = "spend.json",
+  oneAtATime = false,
+): CallContext {
+  const spend = readSpend(spendFile);
+  const left = cap - spend.usd;
   if (left <= 0.2) throw new Error(`Benchmark cap reached: $${spend.usd.toFixed(2)} spent.`);
   // Never more than what is left under the cap (the last call may reserve a little less).
   const ceiling = Math.min(0.45, Math.floor((left - 0.005) * 100) / 100);
   const store = workspaceStorage(join(BENCH_ROOT, "workspace"));
   const { taxonomy, hash } = loadTaxonomy(loaded);
   let spent = 0;
-  const book = ledger(left, () => spent, { "full-analysis": ceiling });
-  const save = () => writeFileSync(join(OUT, "spend.json"), JSON.stringify(spend, null, 1));
+  // One at a time: each call reserves everything left (the CLI budget is at most $0.45).
+  const book = ledger(left, () => spent, oneAtATime ? {} : { "full-analysis": ceiling });
+  const save = () => writeFileSync(join(OUT, spendFile), JSON.stringify(spend, null, 1));
   return {
     storage: store,
     answerKey: (step, key) => `library/objects/${step}-layout-bench/${key}.json`,

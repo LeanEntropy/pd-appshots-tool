@@ -47,7 +47,10 @@ const Marketing = z.strictObject({
     .int()
     .nullable()
     .describe("0-based index into marketingLayer.texts for its text, or null"),
-  text: z.null().describe("always null: marketing text is referenced by textRef"),
+  text: z
+    .string()
+    .nullable()
+    .describe("logo or badge text not in marketingLayer.texts (textRef null), as drawn; else null"),
   covers: z.array(z.string()).describe("ids of the in-game elements this element hides"),
 });
 

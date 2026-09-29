@@ -121,7 +121,7 @@ async function main(): Promise<void> {
       layoutShareOfAnswer: layoutChars / answerChars,
       layoutOutputTokens: Math.round((out * layoutChars) / answerChars),
       secondsPerOutputToken: out ? secs / out : 0,
-      baseline: base?.final ? { costUsd: baseObj?.costUsd ?? null, usage: baseObj?.usage ?? null, answerChars: JSON.stringify(baseObj?.output ?? "").length, coreDiff: coreSame(r.reading, base.final), madeAt: base.updatedAt } : null,
+      baseline: base?.final ? { costUsd: baseObj?.costUsd ?? null, usage: baseObj?.usage ?? null, answerChars: JSON.stringify(baseObj?.output ?? "").length, coreDiff: coreSame(r.reading, base.final), final: base.final, madeAt: base.updatedAt } : null,
       layoutProblems: got.problems,
       counts: got.layout ? { inGame: got.layout.inGame.length, marketing: got.layout.marketing.length } : null,
       layout: got.layout,

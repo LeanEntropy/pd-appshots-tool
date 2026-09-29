@@ -38,30 +38,46 @@
    "core": [
     {
      "image": "archero2-4",
-     "baselineMadeAt": "2026-09-27T21:19:53.566Z",
-     "differences": [
+     "against": "paired run without the layout request",
+     "differences": [],
+     "pairedVsSaved": [
+      "headline \"Beyond All Limits\" -> \"Beyond All Limits Deep progression, maximum fun\""
+     ],
+     "withLayoutVsSaved": [
       "headline \"Beyond All Limits\" -> \"Beyond All Limits Deep progression, maximum fun\""
      ]
     },
     {
      "image": "roguelegend-1",
-     "baselineMadeAt": "2026-09-27T21:10:44.909Z",
+     "against": "paired run without the layout request",
      "differences": [
+      "headline \"ROGUE LEGEND\" -> \"\""
+     ],
+     "pairedVsSaved": [
+      "composition single_full_capture -> pure_art"
+     ],
+     "withLayoutVsSaved": [
       "composition single_full_capture -> pure_art",
       "headline \"ROGUE LEGEND\" -> \"\""
      ]
     },
     {
      "image": "legend-of-mushroom-3",
-     "baselineMadeAt": "2026-09-28T16:30:14.792Z",
-     "differences": [
+     "against": "paired run without the layout request",
+     "differences": [],
+     "pairedVsSaved": [
+      "composition capture_in_marketing_art -> single_full_capture"
+     ],
+     "withLayoutVsSaved": [
       "composition capture_in_marketing_art -> single_full_capture"
      ]
     },
     {
      "image": "survivorio-jp-4",
-     "baselineMadeAt": "2026-09-29T04:51:19.428Z",
-     "differences": []
+     "against": "saved record",
+     "differences": [],
+     "pairedVsSaved": null,
+     "withLayoutVsSaved": []
     }
    ],
    "pass": false
@@ -125,6 +141,36 @@
     "costMeanWarm": 0.025,
     "wallMean": 9.4,
     "outputTokensMean": 681
+   },
+   "paired": {
+    "rows": [
+     {
+      "image": "archero2-4",
+      "cold": true,
+      "outputTokens": 1612,
+      "usd": 0.14,
+      "seconds": 16.1
+     },
+     {
+      "image": "roguelegend-1",
+      "cold": false,
+      "outputTokens": 724,
+      "usd": 0.037,
+      "seconds": 6.3
+     },
+     {
+      "image": "legend-of-mushroom-3",
+      "cold": false,
+      "outputTokens": 1463,
+      "usd": 0.074,
+      "seconds": 13.3
+     }
+    ],
+    "outputTokensMean": 1266,
+    "usdMean": 0.084,
+    "usdMeanWarm": 0.064,
+    "secondsMean": 11.9,
+    "oncePerBatchUsd": 0.059
    },
    "pass": true
   },

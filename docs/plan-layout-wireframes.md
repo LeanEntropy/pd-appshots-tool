@@ -336,3 +336,26 @@ Ways forward (each needs your decision): (a) a paired core-only run of the curre
 6. Two measuring-tool changes after the paid run, both free and disclosed: edges are found by colour step (bands of the same brightness as the screen), and a frame or backdrop counts for coverage only outside the capture (a full-image frame had counted 100%). Neither changed a gate result.
 7. The answer keys were made by a separate agent while the paid calls ran, with no access to the answers, and frozen before scoring (the plan had them frozen before the run).
 8. Not built yet: the layout-only backfill call (D3 not approved), the approval-screen cost line and the (i) popover wireframe (both wait for a go), the element cap as a setting (fixed at 8, D4).
+
+## 13. Follow-up (2026-09-29, approved: layout contract v2, paired check up to $0.60)
+
+**Verdict: still NO-GO, not merged.** Paired check spent $0.50 of its $0.60 cap (3 calls, `spend-paired.json`, `paired.json`). Benchmark total so far: $1.42.
+
+**Gate 3, now against a paired run** (the same 3 images, today's main-analysis prompt, same model and path, without the layout request):
+
+| Image | With layout vs without | Without layout vs the saved record |
+|---|---|---|
+| Archero 2 | unchanged | headline now joins the subline (newer text-reading rules) |
+| Rogue Legend | **headline "ROGUE LEGEND" becomes empty** | composition full-screen art instead of one capture |
+| Legend of Mushroom | unchanged | composition one capture instead of capture inside marketing art |
+| Survivor.io | (no paired run; unchanged vs saved) | unchanged |
+
+So 3 of the 4 earlier differences come from the newer prompt or run-to-run variation, not from the layout. One remains and points at the layout request: on our own title image the logo became a layout "logo" element and the headline was left empty. One sample cannot rule out variation, but the headline feeds patterns, terminology and A/B cards, so gate 3 fails.
+
+**Proposal: the layout in its own call (plan path B).** The main analysis runs exactly as today (its prompt and answer never change); a second, layout-only call per new image gets the image and the finished reading as text. Estimated cost per image: about 1,000 to 1,300 layout output tokens ($0.05 to $0.065) plus the image and reading written to the prompt cache (about 3,600 tokens, $0.07): **about $0.12 to $0.14 per image**, against **+$0.064** for the same-call version (measured, see below). Time: about 15 to 20 s per image in the second call; run 3 at a time next to the main analyses, it adds little to a batch's wall time. The same call serves the backfill (84 images, about $10 to $12, D3). A 4-image benchmark of the separate call would cost about $0.60 (cap $0.80).
+
+**Gate 4, exact on the paired images:** +1,266 output tokens, **+$0.064 per image** with a warm prompt cache (+$0.059 once per batch for writing the longer prompt to the cache), **+11.9 s** per image (model writing time). Passes ($0.07, 25 s), with little headroom.
+
+**Gate 1 (contract v2 built, not yet re-measured):** layout contract `layout.v2` and prompt block `layout-block.v2.md`: a logo or badge element carries its own text in the original script when no marketing text holds it (a headline or subline must still point at the transcribed text), and every band is asked for separately (two bands of different colour or angle are two boxes, even when they touch); at most 8 boxes per layer as before. Re-scoring the existing answers cannot show the effect: they were made with v1. Checking it needs new layout calls (Survivor.io alone about $0.35 with a cold cache; all 4 about $0.90).
+
+**Gate 6, which coverage is right for Legend of Mushroom:** neither is exact. The key's 40% is the agent's rounded area budget (card margin ~6 + headline ~7 + pill ~4 + cat ~10 + knight ~3.5 + chick ~1.5 + blurred foreground ~8), not a pixel count; only the cat was measured (8.9%). The tool's 42.3% is an upper bound by design: cut-outs count by their rectangle (the cat's box is 34% x 68% of the image), and the blurred foreground has no box. The model's 40% equals the key's rounded estimate. The 2.3-point gap is within the key's own rounding, so this gate result says little either way; a pixel-mask coverage for the key (free) would settle it.

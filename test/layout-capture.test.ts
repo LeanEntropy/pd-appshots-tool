@@ -139,6 +139,24 @@ test("ownership checks: text and capture references, marketing present or absent
   assert.match(p, /textRef 3 does not exist/);
   assert.match(p, /covers "S9"/);
   assert.match(p, /capture 2 does not exist/);
+  // Contract v2: a logo carries its own text; a headline must point at the transcribed one.
+  const logo = { ...fakeLayout(core) };
+  logo.marketing = [
+    ...logo.marketing,
+    {
+      ...(logo.marketing[0] as (typeof logo.marketing)[0]),
+      id: "M3",
+      role: "logo",
+      text: "ダダサバイバー",
+      covers: [],
+    },
+  ];
+  assert.deepEqual(readLayout(logo, core).problems, []);
+  const head = fakeLayout(core);
+  const h = head.marketing[1];
+  if (h) h.textRef = null;
+  if (h) h.text = "EPIC";
+  assert.match(readLayout(head, core).problems.join(), /only logo and badge/);
   const noLayer = reading("img1", "gameplay", "", false);
   assert.match(readLayout(fakeLayout(core), noLayer).problems.join(), /marketing layer is absent/);
   assert.match(readLayout(undefined, core).problems.join(), /missing/);

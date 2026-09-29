@@ -101,7 +101,7 @@ export const LEAN_FULL_ANALYSIS = {
  * when layout capture is on. The second opinion never gets it. It changes the rendered text (so
  * the answer-cache key), never the analysis key: the layout is saved in its own file.
  */
-export const LAYOUT_BLOCK_FILE = "layout-block.v1";
+export const LAYOUT_BLOCK_FILE = "layout-block.v2";
 
 /** The full-analysis prompt of either answer shape, with the layout block when asked. */
 export function renderAnalysisPrompt(

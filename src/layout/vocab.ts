@@ -5,7 +5,8 @@
  */
 
 /** What the layout asks for; part of every layout key. */
-export const LAYOUT_CONTRACT = "layout.v1";
+// v2 (2026-09-29): logo and badge elements may carry their own text; every band separately.
+export const LAYOUT_CONTRACT = "layout.v2";
 /** Shape of the saved layout; part of every layout key. */
 export const LAYOUT_SCHEMA_VERSION = "layout-schema.v1";
 

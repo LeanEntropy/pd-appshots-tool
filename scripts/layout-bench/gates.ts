@@ -16,6 +16,33 @@ type Any = any;
 const mean = (xs: number[]) => (xs.length ? xs.reduce((a, b) => a + b, 0) / xs.length : 0);
 const r = (n: number, d = 3) => Math.round(n * 10 ** d) / 10 ** d;
 
+/** Exact increase on the paired images: same image, same path, with vs without the layout. */
+function pairedCost(imgs: Any[], spend: Any) {
+  if (!spend) return null;
+  const rows = (spend.calls as Any[]).map((c) => {
+    const w = imgs.find((i) => i.imageId === c.imageIds[0]);
+    const u = (w?.usage as Any[])[0] ?? {};
+    const cold = (u.cacheReadTokens ?? 0) === 0;
+    return {
+      image: w?.name,
+      cold,
+      outputTokens: (u.outputTokens ?? 0) - (c.usage.outputTokens ?? 0),
+      usd: r((w?.costUsd ?? 0) - (c.costUsd ?? 0)),
+      seconds: r(((u.durationMs ?? 0) - (c.usage.durationMs ?? 0)) / 1000, 1),
+    };
+  });
+  // Both first calls paid their cache write; the layout prompt's larger write is once per batch.
+  const warmUsd = rows.map((x) => x.outputTokens * PRICE.out + 2965 * PRICE.cacheRead);
+  return {
+    rows,
+    outputTokensMean: Math.round(mean(rows.map((x) => x.outputTokens))),
+    usdMean: r(mean(rows.map((x) => x.usd))),
+    usdMeanWarm: r(mean(warmUsd)),
+    secondsMean: r(mean(rows.map((x) => x.seconds)), 1),
+    oncePerBatchUsd: r(2965 * (PRICE.cacheWrite - PRICE.cacheRead)),
+  };
+}
+
 function main(): void {
   const s = readOut<Any>("scores.json");
   if (!s) throw new Error("Run score.ts first.");
@@ -39,8 +66,31 @@ function main(): void {
   // Gate 2: totals.
   const totals = imgs.map((i) => ({ image: i.name, modelOnly: r(i.modelOnly.total, 1), measured: r(i.measured.total, 1) }));
   const g2 = { totals, mean: r(mean(totals.map((t) => t.measured)), 1), pass: mean(totals.map((t) => t.measured)) >= 75 && totals.every((t) => t.measured >= 60) };
-  // Gate 3: core reading unchanged against the saved records.
-  const core = imgs.map((i) => ({ image: i.name, baselineMadeAt: i.baseline?.madeAt, differences: i.baseline?.coreDiff ?? ["no baseline"] }));
+  // Gate 3: the with-layout core reading against the paired run without the layout request
+  // (same prompt, model and path; approved 2026-09-29), else against the saved record.
+  const run = readOut<Any>("run.json");
+  const paired = readOut<Any>("paired.json");
+  const diff = (a: Any, b: Any) => {
+    const d: string[] = [];
+    const sa = a.screenshot;
+    const sb = b.screenshot;
+    if (sa.screenType !== sb.screenType) d.push(`screen type ${sb.screenType} -> ${sa.screenType}`);
+    if (sa.composition !== sb.composition) d.push(`composition ${sb.composition} -> ${sa.composition}`);
+    if (a.marketingLayer.present !== b.marketingLayer.present) d.push("marketing layer present");
+    if (a.headline !== b.headline) d.push(`headline "${b.headline}" -> "${a.headline}"`);
+    return d;
+  };
+  const core = imgs.map((i) => {
+    const withLayout = run.images.find((x: Any) => x.imageId === i.imageId)?.reading;
+    const p = paired?.images.find((x: Any) => x.imageId === i.imageId)?.reading;
+    return {
+      image: i.name,
+      against: p ? "paired run without the layout request" : "saved record",
+      differences: p ? diff(withLayout, p) : (i.baseline?.coreDiff ?? ["no baseline"]),
+      pairedVsSaved: p && i.baseline?.final ? diff(p, i.baseline.final) : null,
+      withLayoutVsSaved: i.baseline?.coreDiff ?? null,
+    };
+  });
   const g3 = { core, pass: core.every((c) => !c.differences.length) };
   // Gate 4: cost and time.
   const per = imgs.map((i) => {
@@ -71,6 +121,7 @@ function main(): void {
       wallMean: r(mean(per.map((p) => p.wallS)) - BASE.wallS, 1),
       outputTokensMean: Math.round(mean(per.map((p) => p.outputTokens)) - BASE.outTokens),
     },
+    paired: pairedCost(imgs, readOut<Any>("spend-paired.json")),
     pass: false,
   };
   g4.pass = g4.addedUsdMean <= 0.07 && g4.addedSecondsMean <= 25;

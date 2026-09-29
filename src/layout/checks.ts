@@ -26,7 +26,12 @@ export function tidyLayout(l: Layout, core: ImageAnalysis): Layout {
       box: clampBox(e.box),
       capture: e.capture === null && one ? 0 : e.capture,
     })),
-    marketing: l.marketing.map((e) => ({ ...e, box: clampBox(e.box) })),
+    // A text already referenced is not repeated; the reference wins.
+    marketing: l.marketing.map((e) => ({
+      ...e,
+      box: clampBox(e.box),
+      text: e.textRef === null ? e.text : null,
+    })),
   };
 }
 
@@ -63,6 +68,8 @@ export function layoutProblems(l: Layout, core: ImageAnalysis): string[] {
       p(`${e.id} textRef ${e.textRef} does not exist (${texts} marketing texts)`);
     if (e.textRef !== null && !TEXT_ROLES.has(e.role))
       p(`${e.id}: only headline, subline, badge and logo elements point at a text`);
+    if (e.text !== null && e.role !== "logo" && e.role !== "badge")
+      p(`${e.id}: only logo and badge elements carry their own text; point at the text instead`);
     for (const c of e.covers)
       if (!inIds.includes(c)) p(`${e.id} covers "${c}", which is not an in-game element`);
   }

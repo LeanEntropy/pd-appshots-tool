@@ -34,6 +34,147 @@
     "coreDiff": [
      "headline \"Beyond All Limits\" -> \"Beyond All Limits Deep progression, maximum fun\""
     ],
+    "final": {
+     "imageRef": "img1",
+     "screenshot": {
+      "composition": "single_full_capture",
+      "screenType": "metagame",
+      "subtype": "inventory",
+      "captures": [
+       {
+        "orientation": "portrait",
+        "screenType": "metagame",
+        "subtype": "inventory",
+        "region": {
+         "x": 0,
+         "y": 0,
+         "w": 100,
+         "h": 84
+        },
+        "areaPercent": 80,
+        "framing": "full_bleed",
+        "description": "A gear management screen: six chibi heroes with glowing auras stand on tiered purple pedestals in a dark hall, below them the tabs Characters / Gear / Runes (Gear selected), 'By Quality' and 'Blacksmith' buttons, and a grid of red S-rank equipment cards (axe, spear, helmet, armour, ring)."
+       }
+      ],
+      "captureAreaPercent": 80,
+      "description": "Portrait in-game hero hall with six chibi heroes (pirate bear, green-armoured elf, ice queen, red horned knight, golden winged warrior, dark horned mage) on stepped pedestals, and beneath it the Gear tab showing a grid of S-quality equipment cards with By Quality and Blacksmith buttons.",
+      "action": "The player browses their equipment collection on the Gear tab with all top-tier S-rank items displayed, ready to equip or upgrade at the blacksmith.",
+      "atmosphere": "epic, collectible, premium",
+      "mainColours": [
+       {
+        "name": "deep purple",
+        "hex": "#3a2a7a"
+       },
+       {
+        "name": "navy blue",
+        "hex": "#1e2a5a"
+       },
+       {
+        "name": "golden yellow",
+        "hex": "#f5c531"
+       },
+       {
+        "name": "magenta red",
+        "hex": "#a02050"
+       },
+       {
+        "name": "neon cyan",
+        "hex": "#4ad8ff"
+       }
+      ]
+     },
+     "marketingLayer": {
+      "present": true,
+      "coveragePercent": 25,
+      "backgroundMasks": [
+       {
+        "shape": "diagonal_band",
+        "colourName": "light blue",
+        "colourHex": "#6ab8e8",
+        "location": "bottom",
+        "region": {
+         "x": 0,
+         "y": 82,
+         "w": 100,
+         "h": 18
+        }
+       }
+      ],
+      "texts": [
+       {
+        "role": "headline",
+        "text": "Beyond All Limits",
+        "language": "en",
+        "colour": "yellow #f7d02a",
+        "strokeColour": "white with dark blue shadow",
+        "fontStyle": "heavy rounded sans, italic slanted, outlined",
+        "size": "huge",
+        "position": "bottom",
+        "region": {
+         "x": 8,
+         "y": 85,
+         "w": 86,
+         "h": 8
+        }
+       },
+       {
+        "role": "subheadline",
+        "text": "Deep progression, maximum fun",
+        "language": "en",
+        "colour": "white #ffffff",
+        "strokeColour": "dark blue",
+        "fontStyle": "heavy rounded sans, italic slanted, outlined",
+        "size": "large",
+        "position": "bottom",
+        "region": {
+         "x": 4,
+         "y": 92,
+         "w": 93,
+         "h": 6
+        }
+       }
+      ],
+      "elements": [
+       {
+        "kind": "character",
+        "what": "large chibi female hero with long brown hair, golden ornate armour, hoop earrings and glowing yellow eyes",
+        "position": "bottom-right, overlapping the gear grid and the top edge of the blue band",
+        "pose": "front-facing standing, arms at sides",
+        "colours": "brown hair, gold, white, red gem, glowing yellow eyes",
+        "scale": "large",
+        "breaksFrame": true,
+        "region": {
+         "x": 58,
+         "y": 59,
+         "w": 42,
+         "h": 27
+        }
+       }
+      ],
+      "mainColours": [
+       {
+        "name": "light blue",
+        "hex": "#6ab8e8"
+       },
+       {
+        "name": "yellow",
+        "hex": "#f7d02a"
+       },
+       {
+        "name": "white",
+        "hex": "#ffffff"
+       },
+       {
+        "name": "gold",
+        "hex": "#e8a83a"
+       }
+      ],
+      "relationToScreen": "describes"
+     },
+     "headline": "Beyond All Limits",
+     "confidence": 0.8,
+     "notes": "Gear tab is selected showing an equipment list grid; classified as metagame.inventory per definition (equipment inventory list), could also be read as metagame.gear. Upper half is a hero showcase hall which is part of the same screen."
+    },
     "madeAt": "2026-09-27T21:19:53.566Z"
    },
    "layoutProblems": [],
@@ -518,6 +659,114 @@
      "composition single_full_capture -> pure_art",
      "headline \"ROGUE LEGEND\" -> \"\""
     ],
+    "final": {
+     "imageRef": "img1",
+     "screenshot": {
+      "composition": "single_full_capture",
+      "screenType": "title_image",
+      "subtype": "title_screen",
+      "captures": [
+       {
+        "orientation": "portrait",
+        "screenType": "title_image",
+        "subtype": "title_screen",
+        "region": {
+         "x": 0,
+         "y": 0,
+         "w": 100,
+         "h": 100
+        },
+        "areaPercent": 100,
+        "framing": "full_bleed",
+        "description": "the in-game title screen (a title image counts as an in-game screen)"
+       }
+      ],
+      "captureAreaPercent": 100,
+      "description": "Painted key art of a dark blue cavern: a small white-haired elf hero with sword and round shield faces a large stone golem with glowing cyan runes and red eyes, while shadowy monsters with red eyes (spider, bats, wolf-like beasts, imps) lurk on ledges above; glowing cyan crystals and rune stones light the scene. The game logo ROGUE LEGEND sits at the top.",
+      "action": "The hero stands ready with sword drawn, confronting a rune-covered rock golem in a monster-filled cave.",
+      "atmosphere": "dark, adventurous, slightly menacing but cute stylised",
+      "mainColours": [
+       {
+        "name": "dark navy blue",
+        "hex": "#0e1e3a"
+       },
+       {
+        "name": "deep indigo",
+        "hex": "#1c3358"
+       },
+       {
+        "name": "glowing cyan",
+        "hex": "#3ee6f0"
+       },
+       {
+        "name": "golden yellow",
+        "hex": "#f5c018"
+       },
+       {
+        "name": "orange",
+        "hex": "#e07a2a"
+       }
+      ]
+     },
+     "marketingLayer": {
+      "present": true,
+      "coveragePercent": 20,
+      "backgroundMasks": [],
+      "texts": [
+       {
+        "role": "headline",
+        "text": "ROGUE LEGEND",
+        "language": "en",
+        "colour": "white #ffffff (ROGUE) and golden yellow #f5c018 (LEGEND)",
+        "strokeColour": "dark navy #1c3a5a outline with soft glow",
+        "fontStyle": "heavy rounded sans, bold, thick outlined 3D logo",
+        "size": "huge",
+        "position": "top",
+        "region": {
+         "x": 17,
+         "y": 6,
+         "w": 66,
+         "h": 20
+        }
+       }
+      ],
+      "elements": [
+       {
+        "kind": "logo",
+        "what": "the ROGUE LEGEND game logo",
+        "position": "top-centre",
+        "pose": "n/a",
+        "colours": "white, golden yellow, dark navy outline",
+        "scale": "large",
+        "breaksFrame": false,
+        "region": {
+         "x": 17,
+         "y": 6,
+         "w": 66,
+         "h": 20
+        }
+       }
+      ],
+      "mainColours": [
+       {
+        "name": "white",
+        "hex": "#ffffff"
+       },
+       {
+        "name": "golden yellow",
+        "hex": "#f5c018"
+       },
+       {
+        "name": "dark navy",
+        "hex": "#1c3a5a"
+       }
+      ],
+      "relationToScreen": "describes"
+     },
+     "headline": "ROGUE LEGEND",
+     "confidence": 0.95,
+     "notes": "Pure painted key art with the game logo; no in-game UI or capture. Hero and golem are part of the art, not marketing overlays."
+    },
     "madeAt": "2026-09-27T21:10:44.909Z"
    },
    "layoutProblems": [],
@@ -787,6 +1036,219 @@
     "coreDiff": [
      "composition capture_in_marketing_art -> single_full_capture"
     ],
+    "final": {
+     "imageRef": "img1",
+     "screenshot": {
+      "composition": "capture_in_marketing_art",
+      "screenType": "gameplay",
+      "subtype": "battle",
+      "captures": [
+       {
+        "orientation": "landscape",
+        "screenType": "gameplay",
+        "subtype": "battle",
+        "region": {
+         "x": 1,
+         "y": 1,
+         "w": 97,
+         "h": 92
+        },
+        "areaPercent": 85,
+        "framing": "tilted",
+        "description": "A landscape side-view battle in a forest with mushroom houses: a mushroom-hat hero with a sword, a banana character, a turtle on a skateboard and a red fox-cat fight skeletons, a goat-horned monster and a white-bearded wizard, with floating damage numbers and an equipment column on the left."
+       }
+      ],
+      "captureAreaPercent": 85,
+      "description": "Auto-battle gameplay in a cartoon forest stage (1-6): the player's squad of cute companions attacks skeleton enemies and a wizard boss; HUD shows player level 17, HP bar, gold 999,999, gems 9,999, a stage progress track top-right and a 3x3 grid of Lv.10 equipment slots on the left.",
+      "action": "The hero squad strikes skeletons and monsters with a glowing sword slash, dealing damage numbers -583, -2774, -587.",
+      "atmosphere": "cheerful, cute, energetic",
+      "mainColours": [
+       {
+        "name": "sky blue",
+        "hex": "#8fd3f0"
+       },
+       {
+        "name": "grass green",
+        "hex": "#7cc45a"
+       },
+       {
+        "name": "white",
+        "hex": "#ffffff"
+       },
+       {
+        "name": "sandy tan",
+        "hex": "#d9c48a"
+       },
+       {
+        "name": "purple",
+        "hex": "#8a5bc4"
+       }
+      ]
+     },
+     "marketingLayer": {
+      "present": true,
+      "coveragePercent": 35,
+      "backgroundMasks": [
+       {
+        "shape": "frame",
+        "colourName": "white",
+        "colourHex": "#ffffff",
+        "location": "full",
+        "region": {
+         "x": 0,
+         "y": 0,
+         "w": 100,
+         "h": 100
+        }
+       },
+       {
+        "shape": "band",
+        "colourName": "light blue with white outline",
+        "colourHex": "#cfe9fb",
+        "location": "bottom",
+        "region": {
+         "x": 10,
+         "y": 87,
+         "w": 43,
+         "h": 9
+        }
+       }
+      ],
+      "texts": [
+       {
+        "role": "headline",
+        "text": "Collect Companions",
+        "language": "en",
+        "colour": "blue gradient #3b8fe0",
+        "strokeColour": "white",
+        "fontStyle": "heavy rounded sans, bold, outlined",
+        "size": "huge",
+        "position": "bottom",
+        "region": {
+         "x": 3,
+         "y": 73,
+         "w": 57,
+         "h": 15
+        }
+       },
+       {
+        "role": "subheadline",
+        "text": "Combat Squad, Auto Upgrade",
+        "language": "en",
+        "colour": "blue #2f7fd4",
+        "strokeColour": "none",
+        "fontStyle": "bold rounded sans",
+        "size": "medium",
+        "position": "bottom",
+        "region": {
+         "x": 18,
+         "y": 88,
+         "w": 34,
+         "h": 7
+        }
+       }
+      ],
+      "elements": [
+       {
+        "kind": "creature",
+        "what": "large white round blob creature with blue cone horn, blue collar and star pendant",
+        "position": "bottom-right, breaking the capture frame",
+        "pose": "front-facing, happy open-mouth smile",
+        "colours": "white, blue, pink cheeks, yellow star",
+        "scale": "dominant",
+        "breaksFrame": true,
+        "region": {
+         "x": 68,
+         "y": 30,
+         "w": 32,
+         "h": 68
+        }
+       },
+       {
+        "kind": "character",
+        "what": "mushroom-hat hero holding a golden sword",
+        "position": "bottom-centre-right, over the headline's right end",
+        "pose": "standing, sword raised, determined face",
+        "colours": "green cap with red spots, brown, gold",
+        "scale": "medium",
+        "breaksFrame": false,
+        "region": {
+         "x": 57,
+         "y": 68,
+         "w": 20,
+         "h": 28
+        }
+       },
+       {
+        "kind": "creature",
+        "what": "small yellow chick in a white hooded cloak",
+        "position": "bottom-right, in front of the blob",
+        "pose": "sitting, facing front",
+        "colours": "yellow, white, pink",
+        "scale": "small",
+        "breaksFrame": false,
+        "region": {
+         "x": 75,
+         "y": 76,
+         "w": 12,
+         "h": 20
+        }
+       },
+       {
+        "kind": "character",
+        "what": "small mushroom hero icon with sword",
+        "position": "bottom-left, at the left end of the subheadline band",
+        "pose": "front-facing bust",
+        "colours": "green, red, brown",
+        "scale": "small",
+        "breaksFrame": false,
+        "region": {
+         "x": 10,
+         "y": 86,
+         "w": 8,
+         "h": 10
+        }
+       },
+       {
+        "kind": "effect",
+        "what": "white curved swoosh decoration",
+        "position": "left edge behind the headline",
+        "pose": "n/a",
+        "colours": "white",
+        "scale": "small",
+        "breaksFrame": false,
+        "region": {
+         "x": 0,
+         "y": 68,
+         "w": 14,
+         "h": 15
+        }
+       }
+      ],
+      "mainColours": [
+       {
+        "name": "white",
+        "hex": "#ffffff"
+       },
+       {
+        "name": "blue",
+        "hex": "#3b8fe0"
+       },
+       {
+        "name": "light blue",
+        "hex": "#cfe9fb"
+       },
+       {
+        "name": "green",
+        "hex": "#6fb84a"
+       }
+      ],
+      "relationToScreen": "describes"
+     },
+     "headline": "Collect Companions",
+     "confidence": 0.9,
+     "notes": "Landscape capture set in a slightly tilted white frame with a thin white border; the large blob mascot and the hero art break out of the frame at the bottom right. Some damage numbers and left-column equipment slots are partially covered by the marketing layer."
+    },
     "madeAt": "2026-09-28T16:30:14.792Z"
    },
    "layoutProblems": [],
@@ -1373,6 +1835,158 @@
     },
     "answerChars": 2745,
     "coreDiff": [],
+    "final": {
+     "imageRef": "img1",
+     "screenshot": {
+      "composition": "single_full_capture",
+      "screenType": "metagame",
+      "subtype": "skills_talents",
+      "captures": [
+       {
+        "orientation": "portrait",
+        "screenType": "metagame",
+        "subtype": "skills_talents",
+        "region": {
+         "x": 0,
+         "y": 0,
+         "w": 100,
+         "h": 80
+        },
+        "areaPercent": 72,
+        "framing": "full_bleed",
+        "description": "A vertical talent tree on a blue bunker-style background with grey locked nodes (weapon, skull, shield) and unlocked blue nodes (golden reroll card, glowing light bulb), plus a tooltip for talent level 2 'ラッキードッグ' explaining it grants one skill at battle start."
+       }
+      ],
+      "captureAreaPercent": 72,
+      "description": "Talent upgrade tree screen: a column of talent nodes connected by a track, lower nodes unlocked in blue, upper nodes locked in grey, with a dark tooltip panel describing the 'Lucky Dog' talent.",
+      "action": "The player is viewing / upgrading talents in the talent tree, reading the description of the Lucky Dog talent.",
+      "atmosphere": "Cartoony, playful, upbeat",
+      "mainColours": [
+       {
+        "name": "steel blue",
+        "hex": "#3d7fb0"
+       },
+       {
+        "name": "dark navy",
+        "hex": "#1f2a3a"
+       },
+       {
+        "name": "grey",
+        "hex": "#6a6f78"
+       },
+       {
+        "name": "bright blue",
+        "hex": "#2fb4ff"
+       },
+       {
+        "name": "golden yellow",
+        "hex": "#f5c518"
+       }
+      ]
+     },
+     "marketingLayer": {
+      "present": true,
+      "coveragePercent": 45,
+      "backgroundMasks": [
+       {
+        "shape": "diagonal_band",
+        "colourName": "purple",
+        "colourHex": "#7a1fa8",
+        "location": "bottom",
+        "region": {
+         "x": 0,
+         "y": 74,
+         "w": 100,
+         "h": 26
+        }
+       },
+       {
+        "shape": "diagonal_band",
+        "colourName": "white",
+        "colourHex": "#ffffff",
+        "location": "bottom",
+        "region": {
+         "x": 0,
+         "y": 72,
+         "w": 100,
+         "h": 10
+        }
+       }
+      ],
+      "texts": [
+       {
+        "role": "headline",
+        "text": "タレントを進化させて!",
+        "language": "ja",
+        "colour": "white #ffffff",
+        "strokeColour": "none",
+        "fontStyle": "heavy bold sans, italic, slightly tilted",
+        "size": "huge",
+        "position": "bottom",
+        "region": {
+         "x": 2,
+         "y": 84,
+         "w": 96,
+         "h": 14
+        }
+       }
+      ],
+      "elements": [
+       {
+        "kind": "logo",
+        "what": "Game logo 'ダダサバイバー' in yellow-orange gradient with black outline",
+        "position": "top-left",
+        "pose": "n/a",
+        "colours": "yellow, orange, black",
+        "scale": "medium",
+        "breaksFrame": false,
+        "region": {
+         "x": 3,
+         "y": 1,
+         "w": 50,
+         "h": 7
+        }
+       },
+       {
+        "kind": "creature",
+        "what": "Large purple one-eyed zombie/plant-like creature with green body, gaping round mouth and light-blue eye",
+        "position": "bottom-right, overlapping the talent tree and sitting on the band",
+        "pose": "facing left, close-up head and shoulders",
+        "colours": "purple, green, black, light blue",
+        "scale": "large",
+        "breaksFrame": true,
+        "region": {
+         "x": 40,
+         "y": 42,
+         "w": 60,
+         "h": 38
+        }
+       }
+      ],
+      "mainColours": [
+       {
+        "name": "purple",
+        "hex": "#7a1fa8"
+       },
+       {
+        "name": "white",
+        "hex": "#ffffff"
+       },
+       {
+        "name": "violet",
+        "hex": "#9b3fc4"
+       },
+       {
+        "name": "yellow",
+        "hex": "#f7c22a"
+       }
+      ],
+      "relationToScreen": "describes"
+     },
+     "headline": "タレントを進化させて!",
+     "confidence": 0.92,
+     "notes": "The bottom band has a halftone dot texture; the purple creature is a mascot enemy placed as marketing art over the talent screen."
+    },
     "madeAt": "2026-09-29T04:51:19.428Z"
    },
    "layoutProblems": [],
