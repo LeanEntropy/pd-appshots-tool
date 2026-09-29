@@ -7,7 +7,8 @@ import { type AnalysisRecord, isUsable, readRecord, readRecords } from "../src/a
 import { runAnalysis } from "../src/analysis/run.ts";
 import { projectPaths } from "../src/config/load.ts";
 import { readLayoutMeasure } from "../src/layout/capture.ts";
-import { layoutStatus, readLayoutFile, saveLayout } from "../src/layout/store.ts";
+import { layoutView } from "../src/layout/info.ts";
+import { layoutStatus, readLayoutFile, readOlderLayout, saveLayout } from "../src/layout/store.ts";
 import { runImport } from "../src/library/import/run-import.ts";
 import { LIB } from "../src/library/layout.ts";
 import { cleanupTrialFiles } from "../src/library/trial-cleanup.ts";
@@ -121,6 +122,12 @@ test("a settled reading the layout no longer fits leaves it missing; older versi
     version: "layout-schema.v0",
   });
   assert.equal(layoutStatus(paths, otherKey).status, "outdated");
+  // Still drawn, marked older, until a layout of today's version is made.
+  assert.equal(readOlderLayout(paths, otherKey)?.file.version, "layout-schema.v0");
+  assert.equal(readOlderLayout(paths, r), null, "a current layout needs no fallback");
+  const view = layoutView(paths, otherKey);
+  assert.equal(view.older, true);
+  assert.equal(view.wireframe?.panels.length, 2);
 });
 
 test("trial files are skipped by the record reader and removed only when equal to their sample", async () => {

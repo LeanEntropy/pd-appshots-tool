@@ -124,9 +124,9 @@ test("ownership checks: text and capture references, marketing present or absent
   const noLayer = reading("img1", "gameplay", "", false);
   assert.match(readLayout(fakeLayout(core), noLayer).problems.join(), /marketing layer is absent/);
   assert.match(readLayout(undefined, core).problems.join(), /missing/);
-  const nine = {
+  const seventeen = {
     ...fakeLayout(core),
-    inGame: Array.from({ length: 9 }, (_, i) => ({ ...l.inGame[0], id: `S${i + 1}` })),
+    inGame: Array.from({ length: 17 }, (_, i) => ({ ...l.inGame[0], id: `S${i + 1}` })),
   };
-  assert.match(readLayout(nine, core).problems.join(), /inGame/);
+  assert.match(readLayout(seventeen, core).problems.join(), /inGame/);
 });

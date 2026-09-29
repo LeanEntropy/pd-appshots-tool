@@ -1,5 +1,12 @@
 import { z } from "zod";
-import { IN_GAME_ROLES, MARKETING_ROLES, MAX_PER_LAYER } from "./vocab.ts";
+import {
+  FOCUS_KINDS,
+  FOCUS_MATCH,
+  IN_GAME_ROLES,
+  MARKETING_ROLES,
+  MAX_IN_GAME,
+  MAX_MARKETING,
+} from "./vocab.ts";
 
 /**
  * The layout part of a per-image answer (plan-layout-wireframes 2.2). Every field is required
@@ -17,11 +24,15 @@ const common = {
   tiltDeg: z.number().describe("-45 to 45; 0 when level; negative = rising to the right"),
   z: z.number().int().describe("draw order within the layer, 0 = bottom"),
   textEn: z.string().nullable().describe("English meaning of the element's text, or null"),
-  note: z.string().describe('at most 80 characters; required for "other"'),
+  note: z
+    .string()
+    .describe(
+      'at most 160 characters: who or what it is, then its look (colours, expression, costume, pose); required for character, cut-out and "other"',
+    ),
 };
 
 const InGame = z.strictObject({
-  id: z.string().describe("S1 to S8"),
+  id: z.string().describe("S1 to S16"),
   role: z.enum(IN_GAME_ROLES),
   ...common,
   capture: z
@@ -35,7 +46,7 @@ const InGame = z.strictObject({
 });
 
 const Marketing = z.strictObject({
-  id: z.string().describe("M1 to M8"),
+  id: z.string().describe("M1 to M10"),
   role: z.enum(MARKETING_ROLES),
   ...common,
   capture: z.null().describe("always null in the marketing layer"),
@@ -52,8 +63,8 @@ const Marketing = z.strictObject({
 });
 
 export const layoutSchema = z.strictObject({
-  inGame: z.array(InGame).max(MAX_PER_LAYER),
-  marketing: z.array(Marketing).max(MAX_PER_LAYER),
+  inGame: z.array(InGame).max(MAX_IN_GAME),
+  marketing: z.array(Marketing).max(MAX_MARKETING),
   composition: z.strictObject({
     focal: z.strictObject({
       x: z.number(),
@@ -62,7 +73,26 @@ export const layoutSchema = z.strictObject({
     }),
     readingOrder: z.array(z.string()).max(5).describe("up to 5 ids, first seen first"),
     overlaySharePercent: z.number().describe("percent of the image the marketing layer covers"),
-    summary: z.string().describe("one sentence"),
+    focus: z
+      .strictObject({
+        kind: z.enum(FOCUS_KINDS),
+        words: z.string().describe("at most 80 characters: what exactly it shows off"),
+      })
+      .describe("what the screenshot was chosen to highlight"),
+    marketingCovers: z
+      .string()
+      .describe(
+        "at most 120 characters: what the marketing layer hides and what it leaves visible; empty without a marketing layer",
+      ),
+    focusMatch: z.strictObject({
+      verdict: z.enum(FOCUS_MATCH),
+      reason: z
+        .string()
+        .describe("at most 120 characters: how the headline and the rest fit the focus, or not"),
+    }),
+    summary: z
+      .string()
+      .describe("one or two sentences: the layout, then the minor details that are not boxes"),
   }),
 });
 

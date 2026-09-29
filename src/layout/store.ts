@@ -98,6 +98,33 @@ export function saveLayout(
 }
 
 /**
+ * The newest layout saved for this record by an older layout version, with its measurements.
+ * It is still drawn (marked older) until the record gets a layout of today's version.
+ */
+export function readOlderLayout(
+  paths: ProjectPaths,
+  r: AnalysisRecord,
+): { file: LayoutFile; measure: LayoutMeasure | null } | null {
+  const storage = workspaceStorage(paths.workspace);
+  const rk = recordKeyOf(paths, r);
+  let best: { file: LayoutFile; key: string } | null = null;
+  for (const k of storage.list(dirOf(paths, r.imageId))) {
+    const f = storage.getJson(k) as LayoutFile | undefined;
+    // Only a layout of the known shape (two element lists); wireframe() re-checks every value.
+    const l: Partial<Record<"inGame" | "marketing", unknown>> | undefined = f?.layout;
+    if (!f || !l || !Array.isArray(l.inGame) || !Array.isArray(l.marketing)) continue;
+    if (f.recordKey !== rk) continue;
+    if (f.version === LAYOUT_SCHEMA_VERSION && f.contract === LAYOUT_CONTRACT) continue;
+    if (!best || String(f.createdAt) > String(best.file.createdAt))
+      best = { file: f, key: (k.split("/").pop() ?? "").replace(/\.json$/, "") };
+  }
+  if (!best) return null;
+  const mk = measureKey(paths, r.imageId, best.key, LAYOUT_MEASURE_VERSION);
+  const measure = (storage.getJson(mk) as LayoutMeasure | undefined) ?? null;
+  return { file: best.file, measure };
+}
+
+/**
  * current: a layout of today's version for this record that fits its reading; outdated: only an
  * older layout version exists for it; missing: none (analysed before layouts, or it failed).
  */

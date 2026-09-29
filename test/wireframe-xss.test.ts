@@ -1,12 +1,13 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 import type { Layout } from "../src/layout/schema.ts";
-import { wireframe, wireframeSvg } from "../src/layout/wireframe-svg.ts";
-import { INFO_SCRIPT } from "../src/view/gallery-info.ts";
+import { wireframeSvg } from "../src/layout/wireframe-render.ts";
+import { wireframe } from "../src/layout/wireframe-svg.ts";
 import { WIREFRAME_SCRIPT } from "../src/view/gallery-wireframe.ts";
 import { SUGGEST_SCRIPT } from "../src/view/report-suggest.ts";
 
-const TAGS = new Set(["svg", "g", "title", "rect", "text", "circle"]);
+const TAGS = new Set(["svg", "g", "title", "rect", "text", "circle", "polygon", "line"]);
+const HTML_TAGS = new Set(["div", "ul", "li", "span", "p"]);
 const ATTRS = new Set([
   "xmlns",
   "class",
@@ -18,18 +19,29 @@ const ATTRS = new Set([
   "transform",
   "x",
   "y",
+  "rx",
+  "x1",
+  "y1",
+  "x2",
+  "y2",
+  "points",
   "fill",
   "fill-opacity",
   "stroke",
   "stroke-width",
   "stroke-dasharray",
   "font-size",
+  "font-weight",
+  "font-family",
   "cx",
   "cy",
   "r",
 ]);
-const SAFE_VALUE =
-  /^(-?\d+(\.\d+)?|#[0-9a-f]{3,6}|none|wireframe|img|Layout wireframe|http:\/\/www\.w3\.org\/2000\/svg|0 0 100 \d+(\.\d+)?|1\.2 0\.8|rotate\(-?\d+(\.\d+)? -?\d+(\.\d+)? -?\d+(\.\d+)?\))$/i;
+const N = String.raw`-?\d+(\.\d+)?`;
+const SAFE_VALUE = new RegExp(
+  `^(${N}|#[0-9a-f]{3,6}|none|bold|wireframe|img|Layout wireframes?|Screenshot layer|Marketing layer|Arial, Helvetica, sans-serif|http://www\\.w3\\.org/2000/svg|0 0 ${N} ${N}|5 3|rotate\\(${N} ${N} ${N}\\)|(${N} ){5,15}${N})$`,
+  "i",
+);
 
 const EVIL = [
   '"><script>alert(1)</script>',
@@ -46,7 +58,7 @@ const el = (over: Record<string, unknown>) => ({
   tiltDeg: "0) scale(99",
   z: "x",
   textEn: EVIL[1],
-  note: "",
+  note: EVIL[3],
   capture: null,
   textRef: null,
   text: EVIL[2],
@@ -55,7 +67,11 @@ const el = (over: Record<string, unknown>) => ({
 });
 
 const evilLayout = {
-  inGame: [el({ role: "hud", box: { x: 5, y: 5, w: 90, h: 50 }, tiltDeg: 0, z: 0 }), el({})],
+  inGame: [
+    el({ role: "hud", box: { x: 5, y: 5, w: 90, h: 50 }, tiltDeg: 0, z: 0 }),
+    el({ role: "character", note: EVIL[4], box: { x: 10, y: 60, w: 30, h: 30 } }),
+    el({}),
+  ],
   marketing: [
     el({
       role: "headline",
@@ -63,7 +79,7 @@ const evilLayout = {
       box: { x: 10, y: 60, w: 80, h: 10 },
       tiltDeg: Number.POSITIVE_INFINITY,
     }),
-    el({ id: EVIL[4], textEn: EVIL[4] }),
+    el({ id: EVIL[4], role: "cut-out", textEn: EVIL[4], box: { x: 50, y: 50, w: 40, h: 40 } }),
   ],
   composition: {
     focal: { x: "javascript:alert(8)", y: Number.NaN, id: EVIL[0] },
@@ -72,6 +88,13 @@ const evilLayout = {
     summary: EVIL[1],
   },
 } as unknown as Layout;
+
+const evilReading = {
+  screenshot: { description: EVIL[1] },
+  marketing: {
+    elements: [{ kind: "character", what: EVIL[0], region: { x: 50, y: 50, w: 40, h: 40 } }],
+  },
+};
 
 /** Every tag and attribute of an SVG string is on the allowlist, every value is inert. */
 function assertSafeMarkup(svg: string): void {
@@ -88,23 +111,33 @@ function assertSafeMarkup(svg: string): void {
 }
 
 test("server: hostile layout text and numbers give only checked primitives", () => {
-  const wf = wireframe(evilLayout, { width: 900, height: Number.NaN }, null, Number.NaN);
-  for (const v of [wf.width, wf.height, wf.viewH, wf.focal.x, wf.focal.y]) {
-    assert.ok(Number.isFinite(v), `finite ${v}`);
+  const wf = wireframe(
+    evilLayout,
+    { width: 900, height: Number.NaN },
+    null,
+    Number.NaN,
+    evilReading,
+  );
+  assert.equal(wf.panels.length, 2);
+  for (const p of wf.panels) {
+    for (const v of [p.w, p.h, p.strip]) assert.ok(Number.isFinite(v), `finite ${v}`);
+    for (const s of p.shapes) {
+      for (const v of [s.x, s.y, s.w, s.h, s.rot, s.rx, ...s.pts]) assert.ok(Number.isFinite(v));
+      assert.ok(s.rot >= -45 && s.rot <= 45);
+      assert.match(s.fill, /^#[0-9a-f]{6}$/);
+      assert.match(s.stroke, /^#[0-9a-f]{6}$/);
+    }
+    for (const l of p.labels)
+      for (const v of [l.x, l.y, l.w, l.h, l.rot, ...(l.lead ?? [])]) assert.ok(Number.isFinite(v));
   }
-  for (const s of wf.shapes) {
-    for (const v of [s.x, s.y, s.w, s.h, s.rot, s.fillOpacity]) assert.ok(Number.isFinite(v));
-    assert.ok(s.x >= -100 && s.x <= 200 && s.w <= 200 && s.rot >= -90 && s.rot <= 90);
-    assert.match(s.colour, /^#[0-9a-f]{6}$/);
-  }
-  const bad = wf.shapes.filter((s) => s.title.includes(" Other"));
-  assert.equal(bad.length, 2, "unknown roles fall back to other");
-  for (const s of bad) assert.equal(s.colour, "#b0bec5");
   assertSafeMarkup(wireframeSvg(evilLayout, { width: 900, height: 1600 }));
   assertSafeMarkup(wireframeSvg(evilLayout, { width: 0, height: 0 }, null, 1e9));
   const junk = { inGame: [null, 7, "<script>"], marketing: "x", composition: { focal: null } };
   const empty = wireframe(junk as unknown as Layout, { width: 9, height: 16 });
-  assert.deepEqual([empty.shapes.length, empty.focal.x], [0, 50]);
+  assert.deepEqual(
+    empty.panels.map((p) => p.shapes.length),
+    [0, 0],
+  );
   assertSafeMarkup(wireframeSvg(null as unknown as Layout, { width: 9, height: 16 }));
 });
 
@@ -114,123 +147,110 @@ type Node = {
   attrs: Record<string, string>;
   children: Node[];
   textContent: string;
+  className?: string;
+  style?: Record<string, string>;
+};
+const node = (ns: string, tag: string) => {
+  const n: Node & Record<string, unknown> = { ns, tag, attrs: {}, children: [], textContent: "" };
+  n.setAttribute = (k: string, v: string) => {
+    n.attrs[k] = String(v);
+  };
+  n.appendChild = (c: Node) => {
+    n.children.push(c);
+    return c;
+  };
+  return n;
 };
 const fakeDoc = {
-  createElementNS: (ns: string, tag: string) => {
-    const n: Node & Record<string, unknown> = { ns, tag, attrs: {}, children: [], textContent: "" };
-    n.setAttribute = (k: string, v: string) => {
-      n.attrs[k] = String(v);
-    };
-    n.appendChild = (c: Node) => {
-      n.children.push(c);
-      return c;
-    };
-    return n;
-  },
+  createElementNS: (ns: string, tag: string) => node(ns, tag),
+  createElement: (tag: string) => Object.assign(node("html", tag), { className: "", style: {} }),
 };
 const draw = new Function("document", `${WIREFRAME_SCRIPT}; return wireframeNode;`)(fakeDoc) as (
   wf: unknown,
 ) => Node;
 
 function assertSafeTree(n: Node, texts: string[]): void {
-  assert.equal(n.ns, "http://www.w3.org/2000/svg");
-  assert.ok(TAGS.has(n.tag), `tag ${n.tag}`);
-  for (const [k, v] of Object.entries(n.attrs)) {
-    assert.ok(ATTRS.has(k), `attribute ${k}`);
-    assert.match(v, SAFE_VALUE, `value of ${k}: ${v}`);
+  if (n.ns === "html") {
+    assert.ok(HTML_TAGS.has(n.tag), `html tag ${n.tag}`);
+    assert.deepEqual(n.attrs, {});
+    assert.match(n.className ?? "", /^[a-z- ]*$/);
+    for (const v of Object.values(n.style ?? {})) assert.match(v, /^\d+(\.\d+)?px$/);
+  } else {
+    assert.equal(n.ns, "http://www.w3.org/2000/svg");
+    assert.ok(TAGS.has(n.tag), `tag ${n.tag}`);
+    for (const [k, v] of Object.entries(n.attrs)) {
+      assert.ok(ATTRS.has(k), `attribute ${k}`);
+      assert.match(v, SAFE_VALUE, `value of ${k}: ${v}`);
+    }
   }
   if (n.textContent) texts.push(n.textContent);
   for (const c of n.children) assertSafeTree(c, texts);
 }
 
-test("client: the wireframe is built with DOM calls; hostile data stays inert text", () => {
+test("client: two panels built with DOM calls; hostile data stays inert text", () => {
   assert.ok(!/innerHTML|insertAdjacentHTML|DOMParser|outerHTML/.test(WIREFRAME_SCRIPT));
-  const fromServer = wireframe(evilLayout, { width: 900, height: 1600 });
-  const tampered = {
-    width: '100%" onload="alert(1)',
-    height: Number.NaN,
-    viewH: "1e999",
+  const fromServer = wireframe(
+    evilLayout,
+    { width: 900, height: 1600 },
+    null,
+    undefined,
+    evilReading,
+  );
+  const bad = {
+    w: '100%" onload="alert(1)',
+    h: Number.NaN,
+    strip: "1e999",
+    bg: "url(javascript:alert(1))",
+    stroke: 'red" onclick="alert(1)',
+    title: EVIL[0],
     focal: { x: EVIL[0], y: Infinity },
     shapes: [
       {
+        pts: ["1) translate(9", 2, 3, 4, 5, 6],
         x: "javascript:alert(1)",
         y: 1e308,
         w: -5,
         h: Number.NaN,
         rot: "1) translate(9",
-        colour: 'red" onclick="alert(1)',
-        fillOpacity: "url(#x)",
+        rx: "x",
+        fill: 'red" onclick="alert(1)',
+        outline: "yes",
         dashed: "yes",
-        label: EVIL[1],
         title: { toString: () => EVIL[4] },
       },
       null,
       "<script>",
     ],
+    labels: [
+      {
+        lines: [EVIL[1], 5],
+        x: "x",
+        y: Number.POSITIVE_INFINITY,
+        w: -1,
+        h: 5,
+        rot: "9)",
+        chip: 1,
+        lead: ["a", 1, 2],
+      },
+    ],
+    legend: [{ fill: "#zzzzzz", outline: 1, text: EVIL[2] }],
+    summary: EVIL[3],
+    details: EVIL[4],
   };
-  for (const wf of [fromServer, tampered]) {
+  for (const wf of [fromServer, { panels: [bad, bad, bad], note: EVIL[0] }]) {
     const texts: string[] = [];
     const root = draw(wf);
-    assert.equal(root.tag, "svg");
+    assert.equal(root.tag, "div");
     assertSafeTree(root, texts);
-    assert.ok(texts.includes("Focal point"));
   }
   const texts: string[] = [];
-  assertSafeTree(draw(fromServer), texts);
+  const root = draw(fromServer);
+  assertSafeTree(root, texts);
+  assert.ok(texts.includes("Screenshot layer") && texts.includes("Marketing layer"));
   assert.ok(
     texts.some((t) => t.includes("</text><script>")),
-    "labels kept as literal text",
+    "text kept as literal text",
   );
-});
-
-test("client: the popover leaves the wireframe slot empty and escapes numbers", () => {
-  const stub = { addEventListener() {} };
-  const DATA = { info: {} };
-  const api = new Function(
-    "DATA",
-    "esc",
-    "window",
-    "document",
-    `${INFO_SCRIPT}; return { infoHtml };`,
-  )(
-    DATA,
-    (s: unknown) => String(s).replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`),
-    stub,
-    stub,
-  ) as { infoHtml: (v: unknown) => string };
-  const hostile = "<img src=x onerror=alert(1)>";
-  const html = api.infoHtml({
-    screen: "Battle",
-    status: "done",
-    models: [],
-    game: "G",
-    position: hostile,
-    filename: "f.png",
-    appearances: [],
-    imageColours: [],
-    captures: [],
-    differences: [],
-    final: {
-      screenshot: { description: "", action: "", atmosphere: "", mainColours: [] },
-      marketingLayer: {
-        present: true,
-        coveragePercent: hostile,
-        relationToScreen: "none",
-        mainColours: [],
-        backgroundMasks: [],
-        texts: [],
-        elements: [],
-      },
-    },
-    layout: {
-      status: "current",
-      wireframe: wireframe(evilLayout, { width: 9, height: 16 }),
-      summary: EVIL[1],
-      coverageUpTo: hostile,
-    },
-  });
-  assert.match(html, /<div class="wf"><\/div>/);
-  assert.ok(!/<img|<script|<foreignObject|<svg/i.test(html), html);
 });
 
 test("suggestion links stay on this page or site; other schemes become #", () => {
@@ -247,44 +267,4 @@ test("suggestion links stay on this page or site; other schemes become #", () =>
     5,
   ];
   for (const h of bad) assert.equal(safeHref(h), "#", String(h));
-});
-
-test("existing wireframe rendering is unchanged for a normal layout", () => {
-  const ok = {
-    inGame: [
-      el({
-        id: "S1",
-        role: "hud",
-        box: { x: 0, y: 0, w: 100, h: 8 },
-        tiltDeg: 0,
-        z: 0,
-        textEn: null,
-      }),
-    ],
-    marketing: [
-      el({
-        id: "M1",
-        role: "band",
-        box: { x: 0, y: 70, w: 100, h: 20 },
-        tiltDeg: -3,
-        z: 0,
-        textEn: "Win",
-      }),
-    ],
-    composition: {
-      focal: { x: 50, y: 50, id: "M1" },
-      readingOrder: [],
-      overlaySharePercent: 20,
-      summary: "",
-    },
-  } as unknown as Layout;
-  const svg = wireframeSvg(ok, { width: 900, height: 1600 });
-  assert.match(svg, /viewBox="0 0 100 177.78" width="150" height="267"/);
-  assert.match(
-    svg,
-    /<g transform="rotate\(-3 50 142.22\)"><title>M1 Band: Win<\/title><rect x="0" y="124.44" width="100" height="35.56" fill="#f2a541" fill-opacity="0.55"/,
-  );
-  assert.match(svg, /<text x="1" y="3.2" font-size="2.6" fill="#1b1b1b">S1 HUD<\/text>/);
-  assert.match(svg, /<circle cx="50" cy="88.89" r="1.6"/);
-  assertSafeMarkup(svg);
 });

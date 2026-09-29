@@ -66,8 +66,12 @@ function infoHtml(v) {
   // its labels come from the model and are never parsed as markup.
   if (v.layout) {
     h += "<h5>Layout</h5>";
-    if (v.layout.wireframe) h += '<div class="wf"></div><p>' + esc(v.layout.summary) + "</p>"
-      + (v.layout.coverageUpTo != null ? '<p class="meta">Marketing layer covers up to ' + esc(v.layout.coverageUpTo) + "% (measured from the pixels). Dashed boxes are estimated.</p>" : "");
+    const f = v.layout.focus;
+    if (f) h += "<dl>" + (f.focus ? "<dt>Focus</dt><dd>" + esc(f.focus) + "</dd>" : "")
+      + (f.covers ? "<dt>Marketing covers</dt><dd>" + esc(f.covers) + "</dd>" : "")
+      + (f.match ? "<dt>Focus match</dt><dd" + (f.verdict === "mismatch" ? ' class="bad"' : "") + ">" + esc(f.match) + "</dd>" : "") + "</dl>";
+    if (v.layout.older) h += '<p class="meta">Drawn from a layout saved by an older version; adding layouts again replaces it.</p>';
+    if (v.layout.wireframe) h += '<div class="wf"></div>' + (v.layout.summary ? '<p class="meta">In one sentence: ' + esc(v.layout.summary) + "</p>" : "");
     else h += '<p class="meta">' + (v.layout.status === "outdated" ? "The layout is from an older version." : v.layout.status === "stale" ? "The saved layout no longer matches this analysis." : "Layout missing: analysed before layouts existed. Add it on the Analysis page.") + "</p>";
   }
   if (a.notes) h += '<p class="meta">' + esc(a.notes) + "</p>";
@@ -79,8 +83,10 @@ function infoHtml(v) {
 function placeInfo(btn, pop) {
   const r = btn.getBoundingClientRect();
   const vw = document.documentElement.clientWidth, vh = document.documentElement.clientHeight;
-  pop.style.width = Math.max(0, Math.min(380, vw - 16)) + "px";
-  pop.style.maxHeight = Math.max(0, Math.min(480, vh - 16)) + "px";
+  // Two wireframe panels side by side need a wider popover; they stack on a narrow screen.
+  const wide = pop.querySelector(".wf-panels") ? Math.min(760, Array.from(pop.querySelectorAll(".wf-panel svg.wireframe")).reduce((a, s) => a + Number(s.getAttribute("width") || 0) + 16, 40)) : 380;
+  pop.style.width = Math.max(0, Math.min(Math.max(380, wide), vw - 16)) + "px";
+  pop.style.maxHeight = Math.max(0, Math.min(wide > 380 ? 720 : 480, vh - 16)) + "px";
   const w = pop.offsetWidth, h = pop.offsetHeight;
   let left = r.left;
   if (left + w > vw - 8) left = r.right - w;

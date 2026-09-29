@@ -3,7 +3,8 @@ import { test } from "node:test";
 import sharp from "sharp";
 import { measureLayout } from "../src/layout/measure/index.ts";
 import type { Layout } from "../src/layout/schema.ts";
-import { wireframeSvg } from "../src/layout/wireframe-svg.ts";
+import { wireframeSvg } from "../src/layout/wireframe-render.ts";
+import { wireframe } from "../src/layout/wireframe-svg.ts";
 
 const W = 540;
 const H = 960;
@@ -70,6 +71,9 @@ function layout(): Layout {
       focal: { x: 50, y: 85, id: "M2" },
       readingOrder: ["M2"],
       overlaySharePercent: 30,
+      focus: { kind: "battle", words: "" },
+      marketingCovers: "",
+      focusMatch: { verdict: "match", reason: "" },
       summary: "s",
     },
   };
@@ -112,15 +116,27 @@ test("a plain image gives no measured band: the model's values stay (estimated)"
   assert.equal(m.elements.find((e) => e.id === "S2")?.box, null);
 });
 
-test("the wireframe is drawn by code: both layers, tilted bands rotated, unmeasured ones dashed", async () => {
+test("the wireframe is drawn by code: two panels, measured band a polygon, unmeasured dashed", async () => {
   const flat = await sharp({ create: { width: W, height: H, channels: 3, background: "#808080" } })
     .png()
     .toBuffer();
   const m = await measureLayout(flat, layout(), { imageId: "x", layoutKey: "k" });
   const svg = wireframeSvg(layout(), { width: W, height: H }, m);
-  assert.match(svg, /^<svg[^>]+viewBox="0 0 100 177.78"/);
-  assert.match(svg, /rotate\(-3 50 /);
-  assert.match(svg, /M2 Band \(estimated\)/);
+  assert.match(svg, /^<svg[^>]+viewBox="0 0 476 /);
+  assert.match(svg, />Screenshot layer</);
+  assert.match(svg, />Marketing layer</);
+  assert.match(svg, /rotate\(-3 115 /);
+  assert.match(svg, /Band \(tilted 3°\) \(tilt estimated\)/);
   assert.match(svg, /stroke-dasharray/);
-  assert.match(svg, /S2 Panel/);
+  assert.match(svg, />Panel</);
+  assert.ok(!/\b[SM]\d\b/.test(svg), "no internal codes");
+  // Measured on the real picture: the band is the slanted polygon from the measured top edge.
+  const real = await measureLayout(await picture(), layout(), { imageId: "x", layoutKey: "k" });
+  const band = wireframe(layout(), { width: W, height: H }, real).panels[1]?.shapes.find(
+    (s) => s.pts.length,
+  );
+  assert.ok(band, "measured band drawn as a polygon");
+  assert.equal(band.dashed, false);
+  const [, yl = 0, , yr = 0] = band.pts;
+  assert.ok(yl > yr, `rises to the right: ${yl} > ${yr}`);
 });

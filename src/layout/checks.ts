@@ -1,6 +1,6 @@
 import type { ImageAnalysis } from "../analysis/schema.ts";
 import { type Layout, type LayoutBox, layoutSchema } from "./schema.ts";
-import { TEXT_ROLES } from "./vocab.ts";
+import { MAX_NOTE, TEXT_ROLES } from "./vocab.ts";
 
 const r1 = (n: number) => Math.round(n * 10) / 10;
 
@@ -46,14 +46,16 @@ export function layoutProblems(l: Layout, core: ImageAnalysis): string[] {
   const mkIds = l.marketing.map((e) => e.id);
   const all = [...inIds, ...mkIds];
   if (new Set(all).size !== all.length) p("every element id must be unique");
-  for (const id of inIds) if (!/^S[1-8]$/.test(id)) p(`in-game id "${id}" must be S1 to S8`);
-  for (const id of mkIds) if (!/^M[1-8]$/.test(id)) p(`marketing id "${id}" must be M1 to M8`);
+  for (const id of inIds)
+    if (!/^S([1-9]|1[0-6])$/.test(id)) p(`in-game id "${id}" must be S1 to S16`);
+  for (const id of mkIds)
+    if (!/^M([1-9]|10)$/.test(id)) p(`marketing id "${id}" must be M1 to M10`);
   for (const e of [...l.inGame, ...l.marketing]) {
     if (e.box.w <= 0 || e.box.h <= 0) p(`${e.id} has an empty box`);
     if (!(e.tiltDeg >= -45 && e.tiltDeg <= 45)) p(`${e.id} tilt must be between -45 and 45`);
     if (e.z < 0) p(`${e.id} draw order must be 0 or more`);
     if (e.role === "other" && !e.note.trim()) p(`${e.id} has role "other" and needs a note`);
-    if (e.note.length > 80) p(`${e.id} note must be at most 80 characters`);
+    if (e.note.length > MAX_NOTE) p(`${e.id} note must be at most ${MAX_NOTE} characters`);
   }
   for (const e of l.inGame) {
     if (caps === 0 && e.capture !== null)
@@ -118,6 +120,13 @@ export function layoutProblems(l: Layout, core: ImageAnalysis): string[] {
   const pct = (n: number) => n >= 0 && n <= 100;
   if (!pct(c.focal.x) || !pct(c.focal.y)) p("the focal point must be inside the image (0-100)");
   if (!pct(c.overlaySharePercent)) p("overlaySharePercent must be 0-100");
+  if ((c.focusMatch.verdict === "no marketing layer") !== !l.marketing.length)
+    p('focusMatch.verdict is "no marketing layer" exactly when the marketing list is empty');
+  if (!l.marketing.length && c.marketingCovers.trim())
+    p("marketingCovers must be empty without a marketing layer");
+  if (c.focus.words.length > 80) p("focus.words must be at most 80 characters");
+  if (c.marketingCovers.length > 120) p("marketingCovers must be at most 120 characters");
+  if (c.focusMatch.reason.length > 120) p("focusMatch.reason must be at most 120 characters");
   return out;
 }
 

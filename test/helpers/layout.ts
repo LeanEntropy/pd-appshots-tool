@@ -56,6 +56,11 @@ export function fakeLayout(a: ImageAnalysis): Layout {
       readingOrder: m.present ? ["M2", "S1"] : ["S1"],
       overlaySharePercent: m.present ? 15 : 0,
       summary: "A full capture with a band on top.",
+      focus: { kind: "battle", words: "a boss fight" },
+      marketingCovers: m.present ? "the top strip; the battle stays visible" : "",
+      focusMatch: m.present
+        ? { verdict: "match", reason: "the headline names the fight" }
+        : { verdict: "no marketing layer", reason: "" },
     },
   };
 }

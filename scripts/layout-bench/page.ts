@@ -7,7 +7,7 @@ import { writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { applyMeasure } from "../../src/layout/measure/index.ts";
 import type { Layout } from "../../src/layout/schema.ts";
-import { wireframeSvg } from "../../src/layout/wireframe-svg.ts";
+import { wireframeSvg } from "../../src/layout/wireframe-render.ts";
 import { OUT, readOut } from "./common.ts";
 
 // biome-ignore lint/suspicious/noExplicitAny: benchmark JSON read back as written by score.ts

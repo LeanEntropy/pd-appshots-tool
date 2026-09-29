@@ -70,6 +70,13 @@ button.info:focus-visible { outline: 3px solid var(--text); outline-offset: 1px;
 #infoPop h4 { margin: 0 0 2px; font-size: 14px; } #infoPop h5 { margin: 8px 0 2px; font-size: 13px; }
 #infoPop dl { display: grid; grid-template-columns: max-content 1fr; gap: 2px 8px; margin: 0; } #infoPop dt { color: var(--muted); } #infoPop dd { margin: 0; }
 #infoPop ul, #infoPop ol { margin: 4px 0; padding-left: 18px; }
+#infoPop .wf-panels { display: flex; flex-wrap: wrap; gap: 16px; align-items: flex-start; }
+#infoPop .wf-panel { flex: 0 1 auto; max-width: 100%; }
+#infoPop .wf-title { font-weight: 700; margin: 4px 0; } #infoPop dd.bad { color: #b91c1c; font-weight: 600; }
+#infoPop .wf-panel svg.wireframe { display: block; max-width: 100%; height: auto; font-family: Arial, Helvetica, sans-serif; }
+#infoPop ul.wf-legend { list-style: none; padding: 0; margin: 6px 0 2px; display: flex; flex-wrap: wrap; gap: 2px 10px; font-size: 12px; }
+#infoPop ul.wf-legend li { display: inline-flex; align-items: center; gap: 4px; }
+#infoPop .wf-sum { margin: 4px 0 0; } #infoPop ul.wf-parts { margin: 4px 0 0; padding-left: 16px; font-size: 12px; } #infoPop .wf-part { font-weight: 600; } #infoPop .wf-details { margin: 4px 0 0; }
 .sw { display: inline-block; width: 11px; height: 11px; border: 1px solid var(--line); border-radius: 2px; margin: 0 3px -1px 0; }
 #status { background: var(--card); border: 2px solid var(--accent); border-radius: 8px; padding: 10px 12px; margin-bottom: 12px; }
 #status h2 { margin: 0 0 4px; font-size: 15px; } #status p { margin: 4px 0; }

@@ -1,159 +1,233 @@
 import type { LayoutMeasure } from "./measure/index.ts";
 import { isMeasured } from "./measure/index.ts";
 import type { Layout, LayoutElement } from "./schema.ts";
-import { type LayoutRole, ROLE_LABEL } from "./vocab.ts";
+import type { LayoutRole } from "./vocab.ts";
+import { FILL, type Item, item, list, num, roleOf, WORDS_ONLY } from "./wireframe-items.ts";
+import { type LabelJob, placeLabels, type Rect, type WireLabel } from "./wireframe-place.ts";
+import { detailsOf, labelOf, layerSummary, type Reading, WIRE_WORD } from "./wireframe-words.ts";
 
-/** Fixed colour per role: in-game roles cool and light, marketing roles warm and strong. */
-const COLOUR: Record<LayoutRole, string> = {
-  hud: "#7aa6c2",
-  "nav-bar": "#5b8db0",
-  "main-scene": "#a9c7b5",
-  character: "#6fb38a",
-  panel: "#8fa3d6",
-  dialog: "#b39ddb",
-  "game-text": "#90a4ae",
-  other: "#b0bec5",
-  band: "#f2a541",
-  headline: "#e4572e",
-  subline: "#f08a5d",
-  logo: "#c2185b",
-  badge: "#ffca3a",
-  "cut-out": "#d1495b",
-  frame: "#8d6e63",
-  callout: "#ff7043",
-  backdrop: "#bcaaa4",
+const LAYER = {
+  screenshot: { title: "Screenshot layer", stroke: "#2f5d45", bg: "#eef4f0" },
+  marketing: { title: "Marketing layer", stroke: "#7a3e0c", bg: "#fbf7f1" },
 };
+const TEXT_FIRST: ReadonlySet<LayoutRole> = new Set([
+  "headline",
+  "subline",
+  "callout",
+  "badge",
+  "logo",
+]);
+/** Characters and cut-outs are one simple rounded block each: size and lean, no silhouette. */
+const ROUND: ReadonlySet<LayoutRole> = new Set(["character", "cut-out"]);
 
-/** One box of the wireframe, reduced to checked primitives (numbers finite and clamped). */
+/** One drawn shape, reduced to checked primitives: a rotated (rounded) box or a polygon. */
 export interface WireShape {
+  /** Polygon points x,y,x,y... (a measured band), or empty for a box. */
+  pts: number[];
   x: number;
   y: number;
   w: number;
   h: number;
-  /** Rotation around the box centre, degrees; 0 when level. */
   rot: number;
-  /** One of the fixed role colours (#rrggbb). */
-  colour: string;
-  fillOpacity: number;
+  rx: number;
+  fill: string;
+  stroke: string;
+  /** Frames are drawn as an outline only. */
+  outline: boolean;
   dashed: boolean;
-  /** Short label drawn inside the box, or "" when the box is too small. Plain text. */
-  label: string;
-  /** Tooltip text. Plain text. */
   title: string;
 }
 
-/**
- * The combined wireframe of one image as data: what the page draws with DOM calls (never parsed
- * as markup). Coordinates are in the 100-wide viewBox; `viewH` follows the image's ratio.
- */
-export interface Wireframe {
-  width: number;
-  height: number;
-  viewH: number;
+export interface WirePanel {
+  title: string;
+  /** Picture size in px; the panel is `h + strip` tall. */
+  w: number;
+  h: number;
+  strip: number;
+  bg: string;
+  stroke: string;
   shapes: WireShape[];
-  focal: { x: number; y: number };
+  labels: WireLabel[];
+  legend: { fill: string; outline: boolean; text: string }[];
+  /** One plain sentence built from the boxes. */
+  summary: string;
+  /** What the boxes leave out, in words (the analysis' description, minor props). */
+  details: string;
+  /** The words of each box that has more to say than its label. */
+  parts: { label: string; about: string }[];
+  focal: { x: number; y: number } | null;
 }
 
-/** A finite number rounded to 2 decimals and clamped; anything else (NaN, a string) gives `lo`. */
-const num = (v: unknown, lo: number, hi: number): number => {
-  const x = typeof v === "number" && Number.isFinite(v) ? v : lo;
-  return Math.round(Math.min(hi, Math.max(lo, x)) * 100) / 100;
-};
-/** Text from saved data, forced to a short plain string. */
-const str = (v: unknown, max: number): string => (typeof v === "string" ? v.slice(0, max) : "");
-const roleOf = (r: unknown): LayoutRole =>
-  typeof r === "string" && Object.hasOwn(COLOUR, r) ? (r as LayoutRole) : "other";
+/** Both layers of one image as data the page draws with DOM calls (never parsed as markup). */
+export interface Wireframe {
+  panels: WirePanel[];
+  /** Plain-words key to the outlines, or "". */
+  note: string;
+}
 
-function shape(e: LayoutElement, sy: number, marketing: boolean, estimated: boolean): WireShape {
-  const role = roleOf(e.role);
-  const box = e.box ?? { x: 0, y: 0, w: 0, h: 0 };
-  const x = num(box.x, -100, 200);
-  const y = num(num(box.y, -100, 200) * sy, -1000, 2000);
-  const w = num(box.w, 0, 200);
-  const h = num(num(box.h, 0, 200) * sy, 0, 2000);
-  const id = str(e.id, 8);
-  const textEn = str(e.textEn, 200);
-  const head = `${id} ${ROLE_LABEL[role]}`;
+const area = (r: Rect) => r.w * r.h;
+
+function panel(
+  kind: "screenshot" | "marketing",
+  items: Item[],
+  img: { w: number; h: number },
+  words: { summary: string; details: string },
+): WirePanel {
+  const L = LAYER[kind];
+  // Biggest first, so a small box is never hidden under a big one; text always on top.
+  const top = (it: Item) => (TEXT_FIRST.has(it.role) ? 1 : 0);
+  const order = [...items].sort(
+    (a, b) =>
+      top(a) - top(b) ||
+      area(b.bounds) - area(a.bounds) ||
+      num(a.e.z, -1e6, 1e6) - num(b.e.z, -1e6, 1e6),
+  );
+  const shapes: WireShape[] = order.map((it) => {
+    const f = it.frame;
+    return {
+      pts: it.pts,
+      x: num(f.cx - f.w / 2, -2000, 4000),
+      y: num(f.cy - f.h / 2, -2000, 4000),
+      w: num(f.w, 0, 4000),
+      h: num(f.h, 0, 4000),
+      rot: num(f.rot, -45, 45),
+      rx: ROUND.has(it.role) ? num(Math.min(f.w, f.h) * 0.3, 0, 200) : 2,
+      fill: FILL[it.role],
+      stroke: L.stroke,
+      outline: it.role === "frame",
+      dashed: it.dashed,
+      title: `${labelOf(it.e, it.role, it.tilt, it.who)}${it.dashed ? " (tilt estimated)" : ""}${it.about ? ` - ${it.about}` : ""}`,
+    };
+  });
+  const jobs: LabelJob[] = order.map((it, i) => ({
+    // A repeat (same role, same name) gets a label only where it fits inside.
+    optional:
+      !TEXT_FIRST.has(it.role) &&
+      order.slice(0, i).some((o) => o.role === it.role && o.who === it.who),
+    text: labelOf(it.e, it.role, it.tilt, it.who),
+    frame: it.frame,
+    bounds: it.bounds,
+    above: order
+      .slice(i + 1)
+      .map((o) => o.bounds)
+      .filter((r) => r.w > 0 && r.h > 0),
+  }));
+  const rank = (i: number) => {
+    const it = order[i];
+    return !it ? 0 : TEXT_FIRST.has(it.role) ? -1e9 : area(it.bounds);
+  };
+  const byNeed = jobs
+    .map((j, i) => ({ j, i }))
+    .sort((a, b) => rank(a.i) - rank(b.i))
+    .map((x) => x.j);
+  const { labels, strip } = placeLabels(byNeed, img);
+  const lines = new Set<string>();
+  const parts = order
+    .filter((it) => it.about)
+    .map((it) => ({ label: labelOf(it.e, it.role, it.tilt, it.who), about: it.about }))
+    .filter((x) => !lines.has(`${x.label}|${x.about}`) && lines.add(`${x.label}|${x.about}`))
+    .slice(0, 12);
+  const seen = new Set<LayoutRole>();
+  const legend = order
+    .filter((it) => !seen.has(it.role) && seen.add(it.role))
+    .map((it) => ({ fill: FILL[it.role], outline: it.role === "frame", text: WIRE_WORD[it.role] }));
   return {
-    x,
-    y,
-    w,
-    h,
-    rot: num(e.tiltDeg, -90, 90),
-    colour: COLOUR[role],
-    fillOpacity: marketing ? 0.55 : 0.3,
-    dashed: estimated,
-    label: w > 14 && h > 3 ? head : "",
-    title: `${head}${textEn ? `: ${textEn}` : ""}${estimated ? " (estimated)" : ""}`,
+    title: L.title,
+    w: img.w,
+    h: num(img.h, 1, 4000),
+    strip,
+    bg: L.bg,
+    stroke: L.stroke,
+    shapes,
+    labels,
+    legend,
+    ...words,
+    parts,
+    focal: null,
   };
 }
 
+/** What the analysis read about the image, for the words under the panels (optional). */
+export interface WireReading {
+  screenshot?: Reading;
+  marketing?: Reading;
+}
+
 /**
- * The combined wireframe of one image, drawn by code from its saved layout (plan 5.1): the
- * in-game layer below, the marketing layer on top, in draw order. Values the measuring tool did
- * not confirm are dashed and labelled "estimated". Width and height are the image's own ratio.
- * Saved layouts are read back unchecked, so every value is re-checked here.
+ * The two wireframes of one image, drawn by code from its saved layout: the screenshot layer
+ * (the game screen) and the marketing layer (what was put on top), each in its own panel of the
+ * image's ratio with plain labels and a few words. Only what defines the composition is a box;
+ * minor props and in-game text go into the words. Saved layouts are read back unchecked, so every
+ * value is re-checked here. Tilted shapes the pixels did not confirm are dashed.
  */
 export function wireframe(
   layout: Layout,
   size: { width: number; height: number },
   measure: LayoutMeasure | null = null,
-  px = 150,
+  px?: number,
+  reading: WireReading = {},
 ): Wireframe {
   const ratio = size.height / size.width;
-  const sy = Number.isFinite(ratio) && ratio > 0 ? Math.min(10, Math.max(0.1, ratio)) : 16 / 9;
-  const list = (xs: unknown): LayoutElement[] =>
-    Array.isArray(xs) ? xs.filter((e): e is LayoutElement => !!e && typeof e === "object") : [];
-  const byZ = <T extends LayoutElement>(xs: T[]) =>
-    [...xs].sort((a, b) => num(a.z, -1e6, 1e6) - num(b.z, -1e6, 1e6));
+  const r = Number.isFinite(ratio) && ratio > 0 ? Math.min(3, Math.max(0.3, ratio)) : 16 / 9;
+  const w = num(px ?? (r >= 1.3 ? 230 : r >= 0.8 ? 270 : 330), 60, 800);
+  const img = { w, h: Math.round(w * r) };
   const est = (e: LayoutElement) =>
-    !!measure && (e.role === "band" || e.tiltDeg !== 0) && !isMeasured(measure, e.id);
-  const focal: unknown = layout?.composition?.focal;
-  const f = focal && typeof focal === "object" ? (focal as { x?: unknown; y?: unknown }) : {};
-  const width = num(px, 16, 2000);
-  return {
-    width,
-    height: Math.round(width * sy),
-    viewH: num(100 * sy, 1, 1000),
-    shapes: [
-      ...byZ(list(layout?.inGame)).map((e) => shape(e, sy, false, false)),
-      ...byZ(list(layout?.marketing)).map((e) => shape(e, sy, true, est(e))),
-    ],
-    focal: { x: num(f.x ?? 50, 0, 100), y: num(num(f.y ?? 50, 0, 100) * sy, 0, 1000) },
-  };
-}
-
-const esc = (s: string) =>
-  s
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#39;");
-
-const r2 = (v: number) => Math.round(v * 100) / 100;
-
-/** SVG markup of a wireframe made by wireframe() above (its values already checked); text escaped. */
-function wireframeSvgOf(wf: Wireframe): string {
-  const parts = wf.shapes.map((s) => {
-    const rot = s.rot
-      ? ` transform="rotate(${s.rot} ${r2(s.x + s.w / 2)} ${r2(s.y + s.h / 2)})"`
-      : "";
-    const dash = s.dashed ? ' stroke-dasharray="1.2 0.8"' : "";
-    const text = s.label
-      ? `<text x="${r2(s.x + 1)}" y="${r2(s.y + Math.min(s.h - 0.6, 3.2))}" font-size="2.6" fill="#1b1b1b">${esc(s.label)}</text>`
-      : "";
-    return `<g${rot}><title>${esc(s.title)}</title><rect x="${s.x}" y="${s.y}" width="${s.w}" height="${s.h}" fill="${s.colour}" fill-opacity="${s.fillOpacity}" stroke="${s.colour}" stroke-width="0.4"${dash}/>${text}</g>`;
-  });
-  const focal = `<circle cx="${wf.focal.x}" cy="${wf.focal.y}" r="1.6" fill="none" stroke="#111" stroke-width="0.5"><title>Focal point</title></circle>`;
-  return `<svg xmlns="http://www.w3.org/2000/svg" class="wireframe" viewBox="0 0 100 ${wf.viewH}" width="${wf.width}" height="${wf.height}" role="img" aria-label="Layout wireframe"><rect width="100" height="${wf.viewH}" fill="#f4f4f4" stroke="#999" stroke-width="0.3"/>${parts.join("")}${focal}</svg>`;
-}
-
-export function wireframeSvg(
-  layout: Layout,
-  size: { width: number; height: number },
-  measure: LayoutMeasure | null = null,
-  px = 150,
-): string {
-  return wireframeSvgOf(wireframe(layout, size, measure, px));
+    !!measure && (e.role === "band" || num(e.tiltDeg, -45, 45) !== 0) && !isMeasured(measure, e.id);
+  const drawn = (e: LayoutElement) => !WORDS_ONLY.has(roleOf(e.role));
+  const inAll = list(layout?.inGame);
+  const mkAll = list(layout?.marketing);
+  const inGame = inAll.filter(drawn).map((e) => item(e, img, measure, false, reading.screenshot));
+  const marketing = mkAll
+    .filter(drawn)
+    .map((e) => item(e, img, measure, est(e), reading.marketing));
+  const comp: unknown = layout?.composition;
+  const c =
+    comp && typeof comp === "object"
+      ? (comp as { overlaySharePercent?: unknown; focal?: unknown })
+      : {};
+  const cover = { percent: num(c.overlaySharePercent, 0, 100), measured: !!measure };
+  const left = (xs: LayoutElement[]) => xs.filter((e) => !drawn(e));
+  const panels = [
+    panel("screenshot", inGame, img, {
+      summary: layerSummary("screenshot", inGame, null),
+      details: detailsOf("screenshot", left(inAll), reading.screenshot),
+    }),
+    panel("marketing", marketing, img, {
+      summary: layerSummary("marketing", marketing, mkAll.length ? cover : null),
+      details: detailsOf("marketing", left(mkAll), reading.marketing),
+    }),
+  ];
+  const f =
+    c.focal && typeof c.focal === "object"
+      ? (c.focal as { x?: unknown; y?: unknown; id?: unknown })
+      : null;
+  let ring = false;
+  const at =
+    f && (marketing.find((it) => it.e.id === f.id) ?? inGame.find((it) => it.e.id === f.id));
+  if (f && at) {
+    const p = panels[inGame.includes(at) ? 0 : 1];
+    const x = num((num(f.x, 0, 100) / 100) * img.w, 0, 4000);
+    const y = num((num(f.y, 0, 100) / 100) * img.h, 0, 4000);
+    // The ring is left out where it would sit on a label; the summary still says it.
+    const clear = !p?.labels.some(
+      (l) => x > l.x - 7 && x < l.x + l.w + 7 && y > l.y - 7 && y < l.y + l.h + 7,
+    );
+    if (p && clear) {
+      p.focal = { x, y };
+      ring = true;
+    }
+    const name = at.role === "hud" ? "HUD" : (labelOf(at.e, at.role, 0).split(":")[0] ?? "");
+    if (p)
+      p.summary += ` The eye lands first on the ${name === "HUD" ? name : name.toLowerCase()}.`;
+  }
+  const dashed = panels.some((p) => p.shapes.some((s) => s.dashed));
+  const note = [
+    dashed
+      ? "Dashed outline: the tilt is the model's estimate; the pixels did not confirm it. Solid: measured or level."
+      : "",
+    ring ? "Ring: where the eye lands first." : "",
+  ]
+    .filter(Boolean)
+    .join(" ");
+  return { panels, note };
 }
