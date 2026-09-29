@@ -6,7 +6,10 @@
  * verdict, key points, key recommendations, A/B tests to run next, dates), 2 patterns with our
  * fit, 3 one row per store position (ours first), 4 recommendations, 5 A/B test details,
  * 6 store text and derived keywords per country, then (when the version kept it) what to research
- * next, and last the detailed statistics. Everything but the AI wording and the recommendations is computed by
+ * next, and last the detailed statistics. Open by default (user, 2026-09-29): the summary, the
+ * patterns with our fit, the position table and the recommended order; the A/B test details,
+ * store text, research list and statistics start folded, and method notes, dates and long specs
+ * sit in folds ("Details", "Show all", one per slot). Everything but the AI wording and the recommendations is computed by
  * code and always shown; when the AI parts are missing or out of date it says why and offers the
  * approval (nothing runs without it). Images fold globally (remembered per viewer) or per section.
  */
@@ -53,12 +56,25 @@ function sec(n, body, imgs, closed) {
     + '</summary><div class="sec-b">' + body + "</div></details>";
 }
 
-// "12 of 15 weighted pattern points"; reports saved before the points: from the saved patterns.
+// "12 of 15 pattern points"; reports saved before the points: from the saved patterns.
 function fitPoints(f) {
   const w = (x) => (x.strength === "pattern" ? 2 : 1);
   const judged = f.patterns.filter((x) => x.fits !== null);
   const p = f.points || { fit: judged.filter((x) => x.fits).reduce((n, x) => n + w(x), 0), total: judged.reduce((n, x) => n + w(x), 0) };
-  return p.fit + " of " + p.total + " weighted pattern points";
+  return p.fit + " of " + p.total + " pattern points";
+}
+// Fewer competitors than this: the verdict line says the sample is small (said once, there).
+const SMALL_SAMPLE = 10;
+function sampleText(n) { return n ? n + (n === 1 ? " competitor" : " competitors") + (n < SMALL_SAMPLE ? " (a small sample: read patterns as strong hints)" : "") : ""; }
+// What is open by default stays short; the rest goes behind one fold per block.
+function fold(summary, body, cls) { return body ? '<details class="fold' + (cls ? " " + cls : "") + '"><summary>' + summary + '</summary><div class="fold-b">' + body + "</div></details>" : ""; }
+function detailsFold(parts) { return fold("Details", parts.filter(Boolean).join(""), "more"); }
+// A long list: its first n items, the rest behind "Show all".
+function capList(tag, cls, items, n) {
+  const open = "<" + tag + (cls ? ' class="' + cls + '"' : "");
+  if (items.length <= n) return items.length ? open + ">" + items.join("") + "</" + tag + ">" : "";
+  return open + ">" + items.slice(0, n).join("") + "</" + tag + ">"
+    + fold("Show all (" + items.length + ")", open + (tag === "ol" ? ' start="' + (n + 1) + '"' : "") + ">" + items.slice(n).join("") + "</" + tag + ">", "showall");
 }
 
 const VERDICT_CLS = { optimised: "following", "on par": "following", "slightly different": "slightly", "relatively different": "slightly", "very different": "very", "not enough data": "none" };
@@ -74,12 +90,18 @@ function overviewHtml(d) {
   const status = s.state === "current" ? ""
     : '<div class="banner ' + s.state + '"><p>' + pill(s.state, s.state === "stale" ? "AI parts out of date" : "AI parts not written yet") + " " + esc(s.reason) + "</p><p><strong>How to get them:</strong> " + esc(s.howTo) + '</p><p><button type="button" class="primary reportApprove" data-stage="' + esc(repStage) + '">Open the approval</button> <span class="meta">Shows the exact images and cost first; nothing runs until you approve.</span></p></div>';
   return '<div class="verdict ' + (f ? VERDICT_CLS[f.verdict] || "" : "none") + '"><div class="vlabel">Our deck is</div><div class="vword">' + esc(f ? f.verdict : "not enough data") + "</div>"
-    + (f && f.score !== null ? '<div class="meta">Fits ' + fitPoints(f) + " (" + f.patterns.filter((x) => x.fits === true).length + " fit, " + f.patterns.filter((x) => x.fits === false).length + " different).</div>" : "") + "</div>"
+    + (f && f.score !== null ? '<div class="meta">' + esc([fitPoints(f), sampleText(d.patterns ? d.patterns.games.length : 0)].filter(Boolean).join(" \\u00b7 ")) + "</div>" : "") + "</div>"
     + (d.summary ? shortAnswerHtml(d) : worded ? "<p>" + esc(ai.verdictText) + "</p>" : "")
     + "<h3>Key points to optimise, most important first</h3>"
-    + (points.length ? '<ol class="keypoints">' + points.map((p) => "<li>" + esc(p) + "</li>").join("") + "</ol>" : "<p>None: our deck fits every competitor pattern found.</p>")
-    + status + (d.approved ? "" : '<p class="meta">No batch is approved for this stage yet: the games below are the batch Start analysis would propose.</p>')
-    + (d.leftOut && d.leftOut.length ? '<p class="meta">Not in this check: ' + esc(d.leftOut.join(", ")) + " (not on Google Play in " + esc(d.market) + "). They are shown in the countries where they exist.</p>" : "");
+    + (points.length ? capList("ol", "keypoints", points.map((p) => "<li>" + esc(p) + "</li>"), 3) :"<p>None: our deck fits every competitor pattern found.</p>")
+    + status;
+}
+// The summary's fold: how the verdict is scored and the notes about the batch.
+function overviewDetails(d) {
+  const f = d.fit;
+  return [f && f.score !== null ? "<p>" + f.patterns.filter((x) => x.fits === true).length + " patterns fit, " + f.patterns.filter((x) => x.fits === false).length + " differ. A pattern (nearly every competitor) counts 2 points, a partial pattern (at least half of them) 1.</p>" : "",
+    d.approved ? "" : "<p>No batch is approved for this stage yet: the games below are the batch Start analysis would propose.</p>",
+    d.leftOut && d.leftOut.length ? "<p>Not in this check: " + esc(d.leftOut.join(", ")) + " (not on Google Play in " + esc(d.market) + "). They are shown in the countries where they exist.</p>" : ""].join("");
 }
 
 function tocHtml() {
@@ -101,9 +123,9 @@ function renderReport(box, d, rid, stage, research) {
     + sec(1, fitHtml(d), false)
     + sec(2, positionsHtml(d), true)
     + sec(3, recsHtml(d), true)
-    + sec(4, abDetailsHtml(d), false)
-    + sec(5, storeTextHtml(d), false)
-    + (research ? sec(6, research, false) : "")
+    + sec(4, abDetailsHtml(d), false, true)
+    + sec(5, storeTextHtml(d), false, true)
+    + (research ? sec(6, research, false, true) : "")
     + sec(repSecs.length - 1, patternsHtml(d.patterns), false, true);
 }
 

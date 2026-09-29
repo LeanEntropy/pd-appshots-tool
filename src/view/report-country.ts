@@ -33,7 +33,7 @@ function missingHtml(c) {
 
 function verdictCard(v) {
   return '<div class="vcard ' + (VERDICT_CLS[v.verdict] || "") + '"><h4>' + cflag(v.gl, v.label) + (v.isMain ? ' <span class="meta">(main country)</span>' : "") + "</h4>"
-    + "<p>" + pill(VERDICT_CLS[v.verdict] || "none", v.verdict) + (v.points ? ' <span class="meta">' + v.points.fit + " of " + v.points.total + " pattern points, " + v.competitors + " competitors</span>" : "") + "</p>"
+    + "<p>" + pill(VERDICT_CLS[v.verdict] || "none", v.verdict) + (v.points ? ' <span class="meta">' + v.points.fit + " of " + v.points.total + " pattern points</span>" : "") + "</p>"
     + (v.keyPoint ? "<p><strong>Biggest gap:</strong> " + esc(v.keyPoint) + "</p>" : "")
     + (v.shortAnswer || v.localisation ? "<details><summary>More</summary>" + (v.shortAnswer ? "<p>" + esc(v.shortAnswer) + "</p>" : "") + (v.localisation ? "<p><strong>Localisation:</strong> " + esc(v.localisation) + "</p>" : "") + "</details>" : "") + "</div>";
 }
@@ -68,17 +68,25 @@ function countrySummaryHtml(c) {
   const s = c.summary;
   const n = c.countries.length;
   const shared = sharedPoints(c);
-  const across = shared.map((g) => "<li><strong>" + esc(g.key) + '</strong> <span class="meta">' + (g.per.length === n ? "All " + n + " countries" : g.per.length + " of " + n + " countries") + ": " + g.per.map((q) => esc(cname(q.label)) + (q.detail ? " (" + esc(q.detail) + ")" : "")).join("; ") + "</span></li>").join("");
+  // Each shared gap names its countries; what it looks like in each is in the tooltip.
+  const across = shared.map((g) => '<li title="' + esc(g.per.filter((q) => q.detail).map((q) => cname(q.label) + ": " + q.detail).join("; ")) + '"><strong>' + esc(g.key) + '</strong> <span class="meta">' + (g.per.length === n ? "all " + n + " countries" : esc(g.per.map((q) => cname(q.label)).join(", "))) + "</span></li>");
   const own = c.countries.map((x) => ({ x, pts: ownPoints(c, x.gl, shared) })).filter((o) => o.pts.length).map((o) => (n > 1 ? "<h4>" + cflag(o.x.gl, o.x.label) + "</h4>" : "") + '<ol class="keyrecs">'
-    + o.pts.map((p) => "<li>" + esc(p.text) + (p.why ? ' <span class="meta">' + esc(p.why) + "</span>" : "") + impactPill(p.impact) + (p.code ? ' <span class="meta">(computed gap)</span>' : "") + "</li>").join("")
+    + o.pts.map((p) => "<li>" + esc(p.text) + (p.why ? ' <span class="meta">' + esc(p.why) + "</span>" : "") + impactPill(p.impact) + "</li>").join("")
     + '</ol><p><button type="button" class="linkbtn" data-ctab="' + esc(o.x.gl) + '">Full spec for ' + esc(cname(o.x.label)) + "</button></p>").join("");
   const d = s.dates;
+  const comp = [...new Set(s.verdicts.map((v) => v.competitors).filter((k) => k))];
+  // The verdict line, with the sample-size caveat said once.
+  const lo = Math.min(...comp);
+  const hi = Math.max(...comp);
+  const vline = comp.length ? '<p class="meta">Against ' + (lo === hi ? hi : lo + " to " + hi) + " competitors" + (n > 1 ? " per country" : "") + (hi < SMALL_SAMPLE ? " (a small sample: read patterns as strong hints)" : "") + ".</p>" : "";
+  const meta = [comp.length > 1 ? "<p>Competitors per country: " + esc(s.verdicts.map((v) => cname(v.label) + " " + v.competitors).join(", ")) + ".</p>" : "",
+    across.length ? "<p>Gaps across countries are computed by code from each country\\u2019s competitor patterns.</p>" : "", abNoteHtml(c.abTests),
+    '<p class="dates">Generated ' + esc(fmtWhen(d.generated)) + ". Store pages from " + esc(d.storeFrom && d.storeTo && d.storeFrom !== d.storeTo ? d.storeFrom + " to " + d.storeTo : d.storeFrom || "not saved") + ". Analyses as of " + esc(d.analyses || "none yet") + ". Main country (the reference for what changed): " + esc(cname(c.main.label)) + ".</p>"];
   return missingHtml(c) + '<p class="short">' + esc(s.shortAnswer) + "</p>"
-    + '<div class="vcards">' + s.verdicts.map((v) => verdictCard(s.verdicts.length === 1 ? Object.assign({}, v, { shortAnswer: "" }) : v)).join("") + "</div>"
-    + (across ? '<h3>Across countries</h3><p class="meta">Gaps our page has in several countries, computed by code from each country\\u2019s competitor patterns.</p><ol class="keyrecs">' + across + "</ol>" : "")
+    + '<div class="vcards">' + s.verdicts.map((v) => verdictCard(s.verdicts.length === 1 ? Object.assign({}, v, { shortAnswer: "" }) : v)).join("") + "</div>" + vline
+    + (across.length ? "<h3>Across countries</h3>" + capList("ol", "keyrecs", across, 3) : "")
     + "<h3>" + (n > 1 ? "Key points per country" : "Key points") + "</h3>" + (own || "<p>None: our page follows the competitors\\u2019 patterns here.</p>")
-    + abCardsHtml({ abTests: c.abTests })
-    + '<p class="dates">Generated ' + esc(fmtWhen(d.generated)) + ". Store pages from " + esc(d.storeFrom && d.storeTo && d.storeFrom !== d.storeTo ? d.storeFrom + " to " + d.storeTo : d.storeFrom || "not saved") + ". Analyses as of " + esc(d.analyses || "none yet") + ". Main country (the reference for what changed): " + esc(cname(c.main.label)) + ".</p>";
+    + abCardsHtml({ abTests: c.abTests, multi: n > 1 }) + detailsFold(meta);
 }
 
 const CHANGE_WORDS = { same: "same as the main deck", translate: "translated", reword: "new wording", recapture: "recapture, local text", "new-picture": "new picture", moved: "moved" };
@@ -90,11 +98,11 @@ function adviceOne(a) {
   const rv = a.review;
   return '<p class="short">' + esc(noIdText(x.shortAnswer)) + "</p><h4>What to change, most important first</h4>"
     + '<div class="tablewrap"><table class="rt"><tr><th>Change</th><th>Why (evidence)</th><th>Positions</th><th>Impact</th></tr>' + acts + "</table></div>"
-    + "<h4>The deck for this country</h4>" + '<div class="tablewrap"><table class="rt"><tr><th>#</th><th>Change</th><th>Screen to capture</th><th>Local text (back-translation)</th><th>Band</th><th>Game logo</th><th>Wording and why</th></tr>' + deck + "</table></div>"
+    + fold("The deck for this country, image by image (" + x.deck.length + ")", '<div class="tablewrap"><table class="rt"><tr><th>#</th><th>Change</th><th>Screen to capture</th><th>Local text (back-translation)</th><th>Band</th><th>Game logo</th><th>Wording and why</th></tr>' + deck + "</table></div>", "slotd")
     + wordsToUseHtml(a)
     + (x.keepFromMain ? "<p><strong>Keep as on the main page:</strong> " + esc(x.keepFromMain) + "</p>" : "")
-    + (rv ? "<p><strong>Second opinion:</strong> " + (rv.verdict === "ok" ? "no major problems" : "changes requested") + (a.revised ? " (the advice above was revised after it)" : "") + ".</p>" + (rv.findings.length ? "<ul>" + rv.findings.map((f) => "<li>" + (f.severity === "major" ? "<strong>Major</strong>" : "Minor") + ", " + (f.position ? "position " + f.position : "whole deck") + ": " + esc(f.issue) + " " + esc(f.suggestion) + "</li>").join("") + "</ul>" : "") : "")
-    + '<p class="meta">' + esc(a.note) + "</p>";
+    + (rv ? fold("Second opinion on this advice", "<p>" + (rv.verdict === "ok" ? "No major problems" : "Changes requested") + (a.revised ? " (the advice above was revised after it)" : "") + ".</p>" + (rv.findings.length ? "<ul>" + rv.findings.map((f) => "<li>" + (f.severity === "major" ? "<strong>Major</strong>" : "Minor") + ", " + (f.position ? "position " + f.position : "whole deck") + ": " + esc(f.issue) + " " + esc(f.suggestion) + "</li>").join("") + "</ul>" : ""), "review") : "")
+    + detailsFold([a.note ? "<p>" + esc(a.note) + "</p>" : ""]);
 }
 // Fact ids (C1, C2) are internal: never shown.
 function noIdText(s) { return String(s || "").replace(/\\s*\\((?:facts? )?C\\d+(?:\\s*(?:,|and)\\s*C\\d+)*\\)/g, "").replace(/\\b(?:facts? )?C\\d+(?:(?:\\s*,\\s*|\\s+and\\s+)C\\d+)*\\b/g, "this evidence"); }

@@ -161,7 +161,8 @@ function showReportVersion(rid, r) {
   const rep = reportList.find((x) => x.id === rid) || {};
   if (!box) return;
   box.classList.toggle("noimg", !showImgs);
-  if (head) head.innerHTML = r.now ? "Now: computed from the saved analyses, with no AI call." : "Generated " + esc(fmtDate(r.generatedAt)) + (r.archived ? ". Earlier version (archived): kept as it was, never deleted." : ".");
+  // The version picker and the date already say which version this is: only an archived one is noted.
+  if (head) head.innerHTML = r.archived ? "Earlier version (archived): kept as it was, never deleted." : "";
   if (r.country && typeof renderCountryReport === "function") {
     const research = typeof researchBody === "function" && r.research && Array.isArray(r.research.items) ? researchBody(r.research) : "";
     renderCountryReport(box, r.country, rid, research);

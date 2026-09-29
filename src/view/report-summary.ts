@@ -16,6 +16,10 @@ ol.keyrecs li { margin: 5px 0; }
 .abtest { border: 1px solid var(--line); border-left: 6px solid var(--accent-2); border-radius: 10px; padding: 8px 14px; margin: 12px 0; break-inside: avoid; }
 .abtest.code { border-left-color: var(--mid); }
 .dates { color: var(--muted); font-size: 13px; }
+details.fold { margin: 6px 0; } details.fold > summary { cursor: pointer; color: var(--muted); font-size: 13px; width: fit-content; }
+details.fold > .fold-b { margin: 4px 0 8px; } details.fold.more > .fold-b { color: var(--muted); font-size: 13px; }
+details.fold.more > .fold-b p { margin: 4px 0; } details.fold.slotd > summary { color: inherit; font-size: 15px; font-weight: 650; }
+table.rt td .ptxt[title] { text-decoration: underline dotted; text-decoration-color: var(--line); }
 `;
 
 export const REPORT_SUMMARY_SCRIPT = `
@@ -26,23 +30,27 @@ function shortAnswerHtml(d) {
 function keyRecsHtml(d) {
   const s = d.summary;
   if (!s) return "";
-  const items = s.keyRecommendations.map((r) => "<li><strong>Position " + r.position + "</strong> (" + esc(s.country) + "): " + esc(r.text) + "</li>").join("");
+  // One country per Pilot and Full check: its name is not repeated on every line.
+  const items = s.keyRecommendations.map((r) => "<li><strong>Position " + r.position + ":</strong> " + esc(r.text) + "</li>");
   return "<h3>Key recommendations</h3>" + (s.recommendationsStale ? '<p class="warn">Written from older data (see Recommendations).</p>' : "")
-    + (items ? '<ol class="keyrecs">' + items + '</ol><p><button type="button" class="linkbtn" data-goto="rep-' + repRid + '-recs">Full spec per position</button></p>'
+    + (items.length ? capList("ol", "keyrecs", items, 3) + '<p><button type="button" class="linkbtn" data-goto="rep-' + repRid + '-recs">Full spec per position</button></p>'
       : "<p>None yet: the recommendations are not written, or they keep our current deck.</p>");
 }
 
+// The cards: title, hypothesis and the one variable; the setup and the rest are in the full spec.
+// d.multi: the report is about several countries, so each card says which.
 function abCardsHtml(d) {
   const ab = d.abTests;
   const h = "<h3>A/B tests to run next</h3>";
   if (!ab) return h + '<p class="meta">This version was made before A/B tests were part of reports.</p>';
   const cards = ab.tests.map((t) => '<div class="abcard' + (t.source === "code" ? " code" : "") + '"><h4><span class="abno">' + t.priority + "</span>" + esc(t.title) + "</h4>"
-    + (t.source === "code" ? '<p class="meta">Gap worth testing (written by code)</p>' : "")
     + "<p>" + esc(t.hypothesis) + "</p><p><strong>One variable:</strong> " + esc(t.variableName) + (t.positions.length ? ", position " + esc(t.positions.join(", ")) : "") + "</p>"
-    + "<p><strong>Countries:</strong> " + esc(t.countries.join(", ")) + "</p><p><strong>Setup:</strong> " + esc(t.setup.line) + "</p>"
+    + (d.multi ? "<p><strong>Countries:</strong> " + esc(t.countries.join(", ")) + "</p>" : "")
     + '<p><button type="button" class="linkbtn" data-goto="rep-' + repRid + "-abt-" + t.priority + '">Full spec</button></p></div>').join("");
-  return h + (ab.note ? '<p class="meta">' + esc(ab.note) + "</p>" : "") + (cards ? '<div class="abcards">' + cards + "</div>" : "");
+  return h + (cards ? '<div class="abcards">' + cards + "</div>" : "");
 }
+// The A/B tests' note (traffic, how many tests), for the summary's Details fold.
+function abNoteHtml(ab) { return ab && ab.note ? "<p>" + esc(ab.note) + "</p>" : ""; }
 
 function datesHtml(d) {
   const s = d.summary;
@@ -53,7 +61,7 @@ function datesHtml(d) {
 }
 function fmtWhen(iso) { const t = new Date(iso); return isNaN(t.getTime()) ? String(iso) : t.toLocaleString(undefined, { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" }); }
 
-function summaryHtml(d) { return overviewHtml(d) + keyRecsHtml(d) + abCardsHtml(d) + datesHtml(d); }
+function summaryHtml(d) { return overviewHtml(d) + keyRecsHtml(d) + abCardsHtml(d) + detailsFold([overviewDetails(d), abNoteHtml(d.abTests), datesHtml(d)]); }
 
 function variantHtml(v) {
   return "<p><em>" + esc(v.summary) + '</em></p><div class="tablewrap"><table class="rt"><tr><th>#</th><th>Changed</th><th>From our position</th><th>Orientation</th><th>Composition</th><th>Screen</th><th>Band</th><th>Headline</th><th>Extras</th></tr>'
@@ -61,7 +69,8 @@ function variantHtml(v) {
 }
 
 function abTestHtml(t) {
-  const ev = t.evidence.map((e) => "<li>" + esc(e.statement) + ' <span class="meta">(' + e.n + " of " + e.of + " " + esc(e.unit) + (e.games.length ? ": " + esc(e.games.join(", ")) : "") + ")</span></li>").join("");
+  // The statement carries its count; the games behind it are in the tooltip.
+  const ev = t.evidence.map((e) => '<li title="' + esc(e.n + " of " + e.of + " " + e.unit + (e.games.length ? ": " + e.games.join(", ") : "")) + '">' + esc(e.statement) + "</li>").join("");
   const ctl = '<table class="rt"><tr><th>#</th><th>Screen</th><th>Headline</th><th>Orientation</th></tr>' + t.control.map((c) => "<tr><th>" + c.position + "</th><td>" + esc(c.screen) + "</td><td>" + esc(c.headline) + "</td><td>" + esc(c.orientation) + "</td></tr>").join("") + "</table>";
   return '<div class="abtest' + (t.source === "code" ? " code" : "") + '" id="rep-' + repRid + "-abt-" + t.priority + '"><h3>Test ' + t.priority + ": " + esc(t.title) + "</h3>"
     + (t.source === "code" ? '<p class="meta">Gap worth testing, written by code (no AI wording).</p>' : "")

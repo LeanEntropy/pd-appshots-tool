@@ -38,11 +38,11 @@ function acrossParts(c, research) {
   const L0 = c.localisation;
   return [
     L0 && { id: "local", t: "How each game localises", body: localisationHtml(c), imgs: true, closed: true },
-    L0 && { id: "habits", t: "Our localisation vs the competitors\\u2019", body: habitsHtml(c) },
-    { id: "words", t: "Words compared across languages", body: wordsCrossHtml(c) },
-    { id: "abtests", t: "A/B test details", body: abDetailsHtml({ abTests: c.abTests }) },
+    L0 && { id: "habits", t: "Our localisation vs the competitors\\u2019", body: habitsHtml(c), closed: true },
+    { id: "words", t: "Words compared across languages", body: wordsCrossHtml(c), closed: true },
+    { id: "abtests", t: "A/B test details", body: abDetailsHtml({ abTests: c.abTests }), closed: true },
     { id: "sorting", t: "How we sort images", body: sortingHtml(c.sorting) || "<p>Nothing is sorted yet: no analyses in this report.</p>", imgs: true, closed: true },
-    research && { id: "research", t: "What to research next", body: research },
+    research && { id: "research", t: "What to research next", body: research, closed: true },
   ].filter((p) => p && p.body);
 }
 

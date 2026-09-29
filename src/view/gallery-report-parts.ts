@@ -50,18 +50,29 @@ const VERDICT = { following: "following", "slightly different": "slightly", "ver
 const GROUPS = { order: "Order (the sequence of screen types)", content: "Content (which screen types are used)", layer: "Marketing layer", format: "Format" };
 
 // [V] fits / [X] different, with the reason; every pattern and partial pattern, grouped.
+// Default view: the AI's reading and one row per pattern (mark, pattern, evidence, ours). The
+// definitions sit behind "What do these types mean?" (and in each pattern's tooltip); the coverage
+// and what "pattern" and "partial pattern" mean behind "Details".
 function fitHtml(d) {
   const f = d.fit;
-  const cov = '<p class="meta">Computed from ' + d.coverage.used + " of " + d.coverage.total + " screenshots in the batch" + (d.coverage.missing.length ? " (missing: " + esc(d.coverage.missing.join(", ")) + ")" : "") + '. A <strong>pattern</strong> holds for (nearly) every competitor; a <strong>partial pattern</strong> for at least half of them.</p>';
+  const cov = "<p>Computed from " + d.coverage.used + " of " + d.coverage.total + " screenshots in the batch" + (d.coverage.missing.length ? " (missing: " + esc(d.coverage.missing.join(", ")) + ")" : "") + ".</p>";
   const i = d.ai && d.ai.interpretation;
-  if (!f || !f.patterns.length) return cov + "<p>Fewer than 2 competitor screenshots are analysed, so there are no patterns yet.</p>";
+  if (!f || !f.patterns.length) return "<p>Fewer than 2 competitor screenshots are analysed, so there are no patterns yet.</p>" + detailsFold([cov]);
   const mark = (x) => x.fits === null ? pill("none", "n/a") : x.fits ? pill("following", "[V] fits") : pill("very", "[X] different");
-  return sortingHtml(d.sorting) + cov + (i ? "<p>" + (d.ai.current ? "" : '<em class="warn">From run ' + esc(d.ai.runId) + ", written from older analyses:</em> ") + esc(i.summary) + "</p>" : "") + Object.keys(GROUPS).map((g) => {
+  // A country tab has no sorting of its own: its link goes to the report's "How we sort images".
+  const shared = !d.sorting && reportData && reportData.sorting;
+  const items = ((d.sorting || shared) && (d.sorting || shared).items) || [];
+  const tip = (x) => [...new Set(x.categories || [])].map((k) => items.find((j) => j.key === k)).filter(Boolean).map((j) => j.label + ": " + j.definition).join(" ");
+  const legend = "<p>A pattern holds for (nearly) every competitor; a partial pattern for at least half of them. Partial patterns: " + f.patterns.filter((x) => x.strength !== "pattern").length + " of " + f.patterns.length + ".</p>";
+  const types = d.sorting ? fold("What do these types mean?", sortingHtml(d.sorting), "types")
+    : shared ? '<p><button type="button" class="linkbtn" data-goto="rep-' + repRid + '-sorting">What do these types mean?</button></p>' : "";
+  return (i ? "<p>" + (d.ai.current ? "" : '<em class="warn">From run ' + esc(d.ai.runId) + ", written from older analyses:</em> ") + esc(i.summary) + "</p>" : "")
+    + types + Object.keys(GROUPS).map((g) => {
     const rows = f.patterns.filter((x) => x.group === g);
     if (!rows.length) return "";
     return "<h3>" + esc(GROUPS[g]) + '</h3><div class="tablewrap"><table class="rt fit"><tr><th>Our deck</th><th>Pattern</th><th>Evidence</th><th>Ours</th></tr>'
-      + rows.map((x) => '<tr class="' + (x.fits === false ? "miss" : "") + '"><td>' + mark(x) + "</td><td><strong>" + esc(x.text) + '</strong> <span class="meta">(' + (x.strength === "pattern" ? "pattern" : "partial pattern") + ")</span>" + definedHtml(d, x.categories) + "</td><td>" + esc(x.evidence) + "</td><td>" + esc(x.reason) + "</td></tr>").join("") + "</table></div>";
-  }).join("");
+      + rows.map((x) => { const t = tip(x); return '<tr class="' + (x.fits === false ? "miss" : "") + '"><td>' + mark(x) + '</td><td><strong class="ptxt"' + (t ? ' title="' + esc(t) + '"' : "") + ">" + esc(x.text) + "</strong></td><td>" + esc(x.evidence) + "</td><td>" + esc(x.reason) + "</td></tr>"; }).join("") + "</table></div>";
+  }).join("") + detailsFold([cov, legend]);
 }
 
 // Decks that show the same screen twice: counted once (the repeated rows say which one they repeat).
@@ -80,12 +91,12 @@ function positionsHtml(d) {
     if (r.state === "excluded") return '<td class="meta">not analysed (tablet-shaped)</td>';
     return "<td" + (g.ours ? ' class="ourcell"' : "") + ">" + rthumb(null, r.thumb, r.file, g.name + " " + p) + '<div class="lbl">' + esc(r.screen || "not analysed yet") + (r.imageId ? " " + infoBtn(r.imageId) : "") + "</div>" + (r.headline ? '<div class="hl">"' + esc(r.headline) + '"</div>' : "") + "</td>";
   };
-  let h = '<p class="meta">Row N shows every game\\u2019s Nth Google Play screenshot: ours first, then each competitor. The (i) button shows the full analysis.</p>' + repeatsHtml(d) + '<div class="tablewrap"><table class="rt pos"><tr><th>#</th>' + cols.map((g) => "<th>" + esc(g.name) + (g.ours ? " (ours)" : "") + "</th>").join("") + "<th>How ours compares</th></tr>";
+  let h = repeatsHtml(d) + '<div class="tablewrap"><table class="rt pos"><tr><th>#</th>' + cols.map((g) => "<th>" + esc(g.name) + (g.ours ? " (ours)" : "") + "</th>").join("") + "<th>How ours compares</th></tr>";
   for (let p = 1; p <= max; p++) {
     const v = d.oursVs && d.oursVs.positions.find((x) => x.position === p);
     h += "<tr><th>" + p + "</th>" + cols.map((g) => cellOf(g, p)).join("") + "<td>" + (v ? pill(VERDICT[v.verdict] || "", v.verdict) + '<div class="meta">' + esc(v.reasons.join("; ")) + "</div>" : "") + "</td></tr>";
   }
-  return h + "</table></div>";
+  return h + "</table></div>" + detailsFold(["<p>Row N shows every game\\u2019s Nth Google Play screenshot: ours first, then each competitor. The (i) button shows the full analysis.</p>"]);
 }
 
 function slotHtml(d, p) {
@@ -97,9 +108,11 @@ function slotHtml(d, p) {
       + m.texts.map((t) => "<tr><td><strong>" + esc(t.text) + "</strong></td><td>" + esc(t.role) + "</td><td>" + esc(t.colour) + "</td><td>" + esc(t.strokeColour) + "</td><td>" + esc(t.fontStyle) + "</td><td>" + esc(t.size) + "</td><td>" + esc(String(t.position).replace(/_/g, " ")) + "</td></tr>").join("") + "</table>"
       + (m.elements.length ? "<ul>" + m.elements.map((e) => "<li><strong>Extra element:</strong> " + esc(e.what + ", at " + e.position + ", pose " + e.pose + ", " + e.colour) + "</li>").join("") + "</ul>" : "");
   const cat = ["title_image", "loading_screen", "key_art", "feature_image"].includes(p.screenType) ? "full_screen_art" : p.screenType;
-  return '<div class="slot"><h4>Position ' + p.position + ": " + esc(L(p.screenType)) + (p.subtype ? " / " + esc(L(p.subtype)) : "") + "</h4>" + definedHtml(d, [cat])
+  // Folded: the order table above is the default view; each position's full spec opens on demand.
+  const hl = (m.texts[0] || {}).text;
+  return '<details class="fold slotd slot"><summary>Position ' + p.position + ": " + esc(L(p.screenType)) + (p.subtype ? " / " + esc(L(p.subtype)) : "") + (hl ? ' <span class="meta">\\u201c' + esc(hl) + "\\u201d</span>" : "") + '</summary><div class="fold-b">' + definedHtml(d, [cat])
     + "<dl><dt>Source</dt><dd>" + esc(p.source) + "</dd>" + (p.logo ? "<dt>Game logo</dt><dd>" + (p.logo.show ? "yes" : "no") + ". " + esc(p.logo.why) + "</dd>" : "") + "<dt>Screen to capture</dt><dd>" + esc(s.whatToCapture) + " (" + esc(s.orientation) + ")</dd><dt>Action</dt><dd>" + esc(s.action) + "</dd><dt>Atmosphere</dt><dd>" + esc(s.atmosphere) + "</dd><dt>Main colours</dt><dd>" + esc(s.mainColours) + "</dd></dl>"
-    + layer + "<p><strong>Why:</strong> " + esc(p.why) + "</p>" + (ex ? '<p><strong>Competitor examples:</strong></p><div class="strip">' + ex + "</div>" : "") + "</div>";
+    + layer + "<p><strong>Why:</strong> " + esc(p.why) + "</p>" + (ex ? '<p><strong>Competitor examples:</strong></p><div class="strip">' + ex + "</div>" : "") + "</div></details>";
 }
 
 // The recommended order (summary table), then the full screenshot and marketing-layer spec per slot.
@@ -114,6 +127,6 @@ function recsHtml(d) {
     + "<p>" + esc(r.rationale) + "</p>"
     + '<table class="rt"><tr><th>#</th><th>Screen</th><th>Source</th><th>Headline</th></tr>' + pos.map((p) => "<tr><th>" + p.position + "</th><td>" + esc(L(p.screenType)) + (p.subtype ? " / " + esc(L(p.subtype)) : "") + "</td><td>" + esc(p.source) + "</td><td><strong>" + esc((p.marketingLayer.texts[0] || {}).text || "") + "</strong></td></tr>").join("") + "</table>"
     + pos.map((p) => slotHtml(d, p)).join("")
-    + (rv ? "<h3>Cross-check of the recommendations</h3><p>Verdict: " + (rv.verdict === "ok" ? "no major problems" : "changes requested") + (ai.revised ? " (the recommendations above were revised after this review)" : "") + ".</p><ul>" + rv.findings.map((f) => "<li>" + (f.severity === "major" ? "<strong>Major</strong>" : "Minor") + ", " + (f.position ? "position " + f.position : "whole deck") + ": " + esc(f.issue) + " Suggestion: " + esc(f.suggestion) + "</li>").join("") + "</ul>" : "");
+    + (rv ? fold("Cross-check of the recommendations", "<p>Verdict: " + (rv.verdict === "ok" ? "no major problems" : "changes requested") + (ai.revised ? " (the recommendations above were revised after this review)" : "") + ".</p><ul>" + rv.findings.map((f) => "<li>" + (f.severity === "major" ? "<strong>Major</strong>" : "Minor") + ", " + (f.position ? "position " + f.position : "whole deck") + ": " + esc(f.issue) + " Suggestion: " + esc(f.suggestion) + "</li>").join("") + "</ul>", "review") : "");
 }
 `;
