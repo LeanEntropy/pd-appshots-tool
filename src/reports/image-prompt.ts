@@ -78,6 +78,14 @@ function competitorPart(slot: PromptSlot): string[] {
       )}`,
     ),
     bullet(
+      `Image size and shape: ${
+        countLine(
+          cs.map((c) => c.size),
+          n,
+        ) || "not measured"
+      }`,
+    ),
+    bullet(
       `Marketing layer: ${yes(cs.map((c) => c.layer))} of ${n}. Game logo on the image: ${yes(cs.map((c) => c.logo))} of ${n}.`,
     ),
   ];

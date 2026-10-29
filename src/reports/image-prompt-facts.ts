@@ -1,4 +1,6 @@
+import { definitionOf } from "../analysis/categories.ts";
 import type { CountryAdvice } from "../analysis/country-advice-schema.ts";
+import { layerStructure } from "../analysis/layer-structure.ts";
 import { isUsable, readRecord } from "../analysis/records.ts";
 import type { OrderRow, ReportData } from "../analysis/report-data.ts";
 import type { ImageAnalysis } from "../analysis/schema.ts";
@@ -74,8 +76,26 @@ export function imageFacts(paths: ProjectPaths, row: OrderRow, name: string): Im
     name,
     screen: row.screen || "not analysed yet",
     orientation: row.orientation,
-    size: r?.identity?.image ? `${r.identity.image.width} x ${r.identity.image.height} px` : "",
-    structure: f ? structureOf(f, row.orientation) : "",
+    size: [
+      r?.identity?.image
+        ? `${r.identity.image.width} x ${r.identity.image.height} px`
+        : (row.size?.replace("x", " x ").concat(" px") ?? ""),
+      row.ratio && row.ratio !== "unknown" ? row.ratio : "",
+    ]
+      .filter(Boolean)
+      .join(", "),
+    // The report's layer structure (screenshot + layer / art + layer / all art), with how the
+    // image holds its captures (multi-capture, banner) from the analysis.
+    structure: f
+      ? [
+          definitionOf(layerStructure(f))?.label,
+          /in one image|inside marketing art|banner/.test(structureOf(f, row.orientation))
+            ? structureOf(f, row.orientation)
+            : "",
+        ]
+          .filter(Boolean)
+          .join(": ") || structureOf(f, row.orientation)
+      : "",
     layout: row.composition,
     layer: row.layer,
     logo: row.logo ?? null,
