@@ -51,16 +51,30 @@ function fileKey(paths: ProjectPaths, imageId: string, key: string): string {
     : projectKey(paths, "layout", imageId, `${key}.json`);
 }
 
-/** Storage key of the pixel measurements of one layout (write-once, next to the pixel facts). */
+/**
+ * Storage key of the pixel measurements of one layout (write-once, next to the pixel facts).
+ * A project not on the library keeps its pixel facts in images/facts/<id>.json whatever the
+ * version, so its measurements get their own versioned name beside it, never that file.
+ */
 export function measureKey(paths: ProjectPaths, imageId: string, key: string, version: string) {
-  return pixelsKey(paths, imageId, `${version}.${key}`);
+  return paths.library
+    ? pixelsKey(paths, imageId, `${version}.${key}`)
+    : projectKey(paths, "images", "facts", `${imageId}.${version}.${key}.json`);
 }
+
+/** A saved file is a layout measurement of today's version (anything else counts as none). */
+const asMeasure = (v: unknown): LayoutMeasure | null => {
+  const m = v as Partial<LayoutMeasure> | undefined;
+  return m?.version === LAYOUT_MEASURE_VERSION && Array.isArray(m.elements)
+    ? (m as LayoutMeasure)
+    : null;
+};
 
 /** The saved measurements of a record's layout, or null. */
 export function readLayoutMeasure(paths: ProjectPaths, r: AnalysisRecord): LayoutMeasure | null {
   const key = layoutKey(r.imageId, recordKeyOf(paths, r));
   const k = measureKey(paths, r.imageId, key, LAYOUT_MEASURE_VERSION);
-  return (workspaceStorage(paths.workspace).getJson(k) as LayoutMeasure | undefined) ?? null;
+  return asMeasure(workspaceStorage(paths.workspace).getJson(k));
 }
 
 /** The saved layout of a record, or null. */
@@ -122,7 +136,7 @@ export function readOlderLayout(
   }
   if (!best) return null;
   const mk = measureKey(paths, r.imageId, best.key, LAYOUT_MEASURE_VERSION);
-  const measure = (storage.getJson(mk) as LayoutMeasure | undefined) ?? null;
+  const measure = asMeasure(storage.getJson(mk));
   return { file: best.file, measure };
 }
 

@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { join } from "node:path";
 import { test } from "node:test";
+import { IMAGE_FACTS_VERSION, imageFacts } from "../src/analysis/image-facts.ts";
 import { analysisKey, currentPipeline } from "../src/analysis/pipeline.ts";
 import { buildAnalysisPlan } from "../src/analysis/plan.ts";
 import { type AnalysisRecord, isUsable, readRecord, readRecords } from "../src/analysis/records.ts";
@@ -8,11 +9,20 @@ import { runAnalysis } from "../src/analysis/run.ts";
 import { projectPaths } from "../src/config/load.ts";
 import { readLayoutMeasure } from "../src/layout/capture.ts";
 import { layoutView } from "../src/layout/info.ts";
-import { layoutStatus, readLayoutFile, readOlderLayout, saveLayout } from "../src/layout/store.ts";
+import {
+  layoutKey,
+  layoutStatus,
+  measureKey,
+  readLayoutFile,
+  readOlderLayout,
+  recordKeyOf,
+  saveLayout,
+} from "../src/layout/store.ts";
 import { runImport } from "../src/library/import/run-import.ts";
 import { LIB } from "../src/library/layout.ts";
 import { cleanupTrialFiles } from "../src/library/trial-cleanup.ts";
 import { workspaceStorage } from "../src/storage/index.ts";
+import { openImageDb } from "../src/store/imagedb.ts";
 import { fakeProvider } from "./helpers/fake-provider.ts";
 import { legacyProject } from "./helpers/imported.ts";
 
@@ -85,6 +95,35 @@ test("layout capture keeps every analysis key; new images get a write-once layou
   const again = saveLayout(paths, r, { ...first.layout, inGame: [] }, first);
   assert.equal(again.createdAt, first.createdAt);
   assert.equal(readLayoutFile(paths, r)?.layout.inGame.length, first.layout.inGame.length);
+});
+
+test("a project not on the library keeps its layout measurements apart from its pixel facts", async () => {
+  // Comfy Mahjong: its image facts overwrote the measurements (same file), so the project page
+  // read the facts as a measurement and failed on its missing element list.
+  const { loaded } = await legacyProject();
+  loaded.config.options.speed.layoutCapture = true;
+  await runAnalysis(loaded, buildAnalysisPlan(loaded, "core"), providers());
+  const paths = projectPaths(loaded);
+  assert.equal(paths.library, null);
+  const db = openImageDb(paths);
+  const laid = [...readRecords(paths).values()].filter((r) => readLayoutFile(paths, r));
+  assert.ok(laid.length > 0);
+  for (const r of laid) {
+    assert.equal((await imageFacts(paths, db, r.imageId))?.version, IMAGE_FACTS_VERSION);
+    assert.ok(Array.isArray(readLayoutMeasure(paths, r)?.elements), r.imageId);
+    assert.equal(layoutView(paths, r).wireframe?.panels.length, 2);
+  }
+  // A file of another shape at a measurement's place reads as no measurement.
+  const r = laid[0] as AnalysisRecord;
+  const k = measureKey(
+    paths,
+    r.imageId,
+    layoutKey(r.imageId, recordKeyOf(paths, r)),
+    "layout-measure.v1",
+  );
+  workspaceStorage(paths.workspace).putJson(k, { version: "layout-measure.v1" });
+  assert.equal(readLayoutMeasure(paths, r), null);
+  assert.equal(layoutView(paths, r).wireframe?.panels.length, 2, "drawn from the model's boxes");
 });
 
 test("a settled reading the layout no longer fits leaves it missing; older versions read as outdated", async () => {
