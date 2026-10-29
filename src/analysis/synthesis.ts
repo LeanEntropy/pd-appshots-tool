@@ -11,13 +11,15 @@ import {
   CATEGORIES,
   categoryOf,
   categoryOfType,
-  FULL_SCREEN_ART,
   HOW_WE_SORT,
+  isArtCategory,
+  LAYER_TAGS,
   reportLabeler,
   TAGS,
 } from "./categories.ts";
 import { artMessage, showsLogo } from "./image-tags.ts";
 import { plainLabel } from "./labels.ts";
+import { layerStructure } from "./layer-structure.ts";
 import type { OursVsPatterns } from "./ours-vs.ts";
 import type { FitSummary } from "./pattern-fit.ts";
 import { type DeckEntry, type Patterns, proportion } from "./patterns.ts";
@@ -55,7 +57,6 @@ export interface SynthesisResult {
   /** What each step cited from the knowledge base (all null when its Settings switch is off). */
   kb: SynthesisKb;
 }
-
 const L = reportLabeler(plainLabel);
 
 /**
@@ -83,21 +84,20 @@ export function brief(e: DeckEntry): string {
       ].join("; ")
     : "no marketing layer";
   const cat = categoryOf(e.final);
-  const sub = s.subtype && cat !== FULL_SCREEN_ART ? ` / ${L(s.subtype)}` : "";
+  const sub = s.subtype && !isArtCategory(cat) ? ` / ${L(s.subtype)}` : "";
   const tags = [
-    `game logo: ${showsLogo(e.final, e.name) ? "yes" : "no"}`,
-    ...(cat === FULL_SCREEN_ART ? [`line: ${L(artMessage(e.final, e.name))}`] : []),
+    `game logo: ${showsLogo(e.final, e.name) ? "yes" : "no"}, ${L(layerStructure(e.final))}`,
+    ...(isArtCategory(cat) ? [`line: ${L(artMessage(e.final, e.name))}`] : []),
   ].join(", ");
-  const caps =
-    cat === FULL_SCREEN_ART
-      ? "one full picture"
-      : s.captures
-          .map(
-            (c) =>
-              `${c.orientation} ${L(categoryOfType(c.screenType))}${c.subtype ? ` / ${L(c.subtype)}` : ""} ${c.framing} ${c.areaPercent}%`,
-          )
-          .join(" + ") || "none";
-  return `${e.name} #${e.position}: ${L(cat)}${sub} (${tags}), ${e.canvas} image, captures: ${caps}, ${s.description} Action: ${s.action} Mood: ${s.atmosphere}. Colours: ${colours(s.mainColours)}. ${layer}`;
+  const caps = isArtCategory(cat)
+    ? "one full picture"
+    : s.captures
+        .map(
+          (c) =>
+            `${c.orientation} ${L(categoryOfType(c.screenType))}${c.subtype ? ` / ${L(c.subtype)}` : ""} ${c.framing} ${c.areaPercent}%`,
+        )
+        .join(" + ") || "none";
+  return `${e.name} #${e.position}: ${L(cat)}${sub} (${tags}), ${e.canvas}${e.ratio ? ` ${e.ratio}` : ""} image, captures: ${caps}, ${s.description} Action: ${s.action} Mood: ${s.atmosphere}. Colours: ${colours(s.mainColours)}. ${layer}`;
 }
 
 /**
@@ -152,7 +152,7 @@ async function writeAndReview(
     kb: { interpretation: null, recommendations: null, abTests: null },
   };
   const facts = [
-    `How we sort images, and the plain name and definition of every screen category and tag code below (write the plain names, never the codes):\n${HOW_WE_SORT.join(" ")}\n${JSON.stringify(Object.values({ ...CATEGORIES, ...TAGS }))}`,
+    `How we sort images, and the plain name and definition of every screen category and tag code below (write the plain names, never the codes):\n${HOW_WE_SORT.join(" ")}\n${JSON.stringify(Object.values({ ...CATEGORIES, ...TAGS, ...LAYER_TAGS }))}`,
     `Computed patterns (JSON):\n${JSON.stringify(input.patterns)}`,
     `Our deck vs the patterns, computed (JSON):\n${JSON.stringify(input.oursVs)}`,
     `Pattern check, computed (JSON): verdict, key points in priority order, and every pattern with whether we fit:\n${JSON.stringify(input.fit, (k, v) => (k === "basis" ? undefined : v))}`,

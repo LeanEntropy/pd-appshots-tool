@@ -2,6 +2,7 @@ import type { ProjectPaths } from "../config/load.ts";
 import { layoutView } from "../layout/info.ts";
 import type { InfoView, ViewAnalysis } from "../view/model.ts";
 import { artWording, artWordingDeep } from "./art-wording.ts";
+import { type BannerMark, withBanners } from "./banner.ts";
 import type { ImageIdentity } from "./identity.ts";
 import { COMPOSITION, captureLines, imageLine, pendingMessage } from "./info-text.ts";
 import { type Labeler, plainLabel, screenName } from "./labels.ts";
@@ -45,6 +46,8 @@ export interface AnalysisRecord {
   mappedFrom?: MappedFrom | null;
   /** Version of the deterministic taxonomy mapping last applied. */
   mapping?: string;
+  /** In memory only (banner.ts): why the image reads as a promotional banner. Never saved. */
+  banner?: BannerMark;
   // Shared library only (plan 12A):
   /** Analysis key the record is stored under, or "unproven-<project>" for imported ones. */
   key?: string;
@@ -101,7 +104,7 @@ export function summaries(
   label: Labeler = plainLabel,
 ): Map<string, ViewAnalysis> {
   const out = new Map<string, ViewAnalysis>();
-  for (const [id, r] of readRecords(paths)) {
+  for (const [id, r] of withBanners(readRecords(paths))) {
     if (!isUsable(r)) continue;
     out.set(id, {
       screen: artWording(screenLabel(r.final, label)),
@@ -118,7 +121,8 @@ export function infoViews(
   label: Labeler = plainLabel,
 ): Record<string, InfoView> {
   const out: Record<string, InfoView> = {};
-  for (const [id, r] of readRecords(paths)) out[id] = viewOf(paths, r, label);
+  const raw = readRecords(paths);
+  for (const [id, r] of withBanners(raw)) out[id] = viewOf(paths, r, label, raw.get(id));
   return out;
 }
 
@@ -128,11 +132,19 @@ export function infoView(
   imageId: string,
   label: Labeler = plainLabel,
 ): InfoView | null {
-  const r = readRecord(paths, imageId);
-  return r ? viewOf(paths, r, label) : null;
+  const raw = readRecord(paths, imageId);
+  // A banner depends on the game's other images, so its whole project is read.
+  const r = raw?.final ? withBanners(readRecords(paths)).get(imageId) : raw;
+  return r ? viewOf(paths, r, label, raw) : null;
 }
 
-function viewOf(paths: ProjectPaths, r: AnalysisRecord, label: Labeler): InfoView {
+/** `saved`: the record as stored, which its layout was checked against (not the banner view). */
+function viewOf(
+  paths: ProjectPaths,
+  r: AnalysisRecord,
+  label: Labeler,
+  saved: AnalysisRecord = r,
+): InfoView {
   const usable = isUsable(r);
   const idn = r.identity;
   const id = r.imageId;
@@ -166,13 +178,17 @@ function viewOf(paths: ProjectPaths, r: AnalysisRecord, label: Labeler): InfoVie
           subtype: r.final.screenshot.subtype ? label(r.final.screenshot.subtype) : "",
         }
       : null,
-    mappedFrom: r.mappedFrom ? label(r.mappedFrom.screenType) : null,
+    mappedFrom: r.banner
+      ? label(r.banner.from.screenType)
+      : r.mappedFrom
+        ? label(r.mappedFrom.screenType)
+        : null,
     image: imageLine(idn?.image),
     imageColours:
       idn?.image?.dominantColours.map((c) => ({ name: c.family ?? c.hex, hex: c.hex })) ?? [],
     composition: usable ? (COMPOSITION[r.final.screenshot.composition] ?? null) : null,
     captures: usable ? captureLines(r.final, idn?.image, label) : [],
     pending: usable ? null : pendingMessage(r),
-    layout: usable ? layoutView(paths, r) : null,
+    layout: usable ? layoutView(paths, saved) : null,
   });
 }

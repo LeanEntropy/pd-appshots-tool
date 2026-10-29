@@ -79,7 +79,11 @@ test("our deck vs the patterns: following, slightly and very different, with rea
     v.positions.map((x) => x.verdict),
     ["following", "slightly different", "very different"],
   );
-  assert.ok(v.positions[2]?.reasons[0]?.includes("rare or unused"));
+  assert.ok(v.positions[2]?.reasons.some((r) => r.includes("rare or unused")));
+  assert.match(
+    v.positions[2]?.reasons[0] ?? "",
+    /^category: 1 of 2 competitors show Gameplay at image 3; ours is Social/,
+  );
   assert.notEqual(v.overall.verdict, "following");
   assert.ok(v.overall.reasons.some((r) => r.includes("Gameplay is used by 3 of 3 competitors")));
 });

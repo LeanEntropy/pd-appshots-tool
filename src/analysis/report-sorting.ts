@@ -3,11 +3,14 @@ import {
   categoryOfType,
   type Definition,
   definitionOf,
-  FULL_SCREEN_ART,
   HOW_WE_SORT,
+  isArtCategory,
+  LAYER_TAGS,
 } from "./categories.ts";
 import { type ArtMessage, artMessage, showsLogo } from "./image-tags.ts";
 import type { Labeler } from "./labels.ts";
+import type { OursVsPatterns } from "./ours-vs.ts";
+import type { Patterns } from "./patterns.ts";
 import type { ImageAnalysis } from "./schema.ts";
 import type { Recommendations } from "./synthesis-schema.ts";
 
@@ -23,6 +26,7 @@ export interface SortedRow {
   category?: string | null;
   logo?: boolean | null;
   message?: ArtMessage | null;
+  layerStructure?: string | null;
 }
 
 export interface Example {
@@ -50,7 +54,7 @@ export function rowTags(
 ): { screen: string; category: string | null; logo: boolean | null; message: ArtMessage | null } {
   if (!f) return { screen: "", category: null, logo: null, message: null };
   const category = categoryOf(f);
-  const art = category === FULL_SCREEN_ART;
+  const art = isArtCategory(category);
   const logo = showsLogo(f, game);
   const message = art ? artMessage(f, game) : null;
   const sub = f.screenshot.subtype && !art ? ` / ${label(f.screenshot.subtype)}` : "";
@@ -69,6 +73,32 @@ interface Game {
   name: string;
   ours: boolean;
   rows: SortedRow[];
+}
+
+/** Plain names for every code the report data uses. */
+export function labelsFor(
+  label: Labeler,
+  p: Patterns | null,
+  o: OursVsPatterns | null,
+  r: Recommendations | null,
+  games: readonly Game[] = [],
+): Record<string, string> {
+  const keys = new Set<string>();
+  for (const g of games)
+    for (const row of g.rows)
+      for (const k of [row.category, row.message, row.layerStructure]) if (k) keys.add(k);
+  for (const x of p?.perPosition ?? []) for (const t of x.types) keys.add(t.key);
+  for (const x of p?.perPosition ?? []) for (const t of x.layers ?? []) keys.add(t.key);
+  for (const t of p?.screenTypes ?? []) keys.add(t.key);
+  for (const t of p?.byScreenType ?? []) keys.add(t.key);
+  for (const c of p?.composition ?? []) keys.add(c.key);
+  for (const c of p?.layerStructure ?? []) keys.add(c.key);
+  for (const x of o?.positions ?? []) keys.add(x.ours.type);
+  for (const x of r?.positions ?? []) {
+    keys.add(x.screenType);
+    if (x.subtype) keys.add(x.subtype);
+  }
+  return Object.fromEntries([...keys].map((k) => [k, label(k)]));
 }
 
 /** Competitor examples per recommended position: same category, nearest position first. */
@@ -140,6 +170,7 @@ export function sortingPart(games: readonly Game[], recs: Recommendations | null
     "picture_only",
   ];
   for (const m of messages) tag(m, (r) => r.message === m);
+  for (const k of Object.keys(LAYER_TAGS)) tag(k, (r) => r.layerStructure === k);
   const undefinedCats = [...cats].filter((k) => !definitionOf(k));
   const intro = [
     ...HOW_WE_SORT,

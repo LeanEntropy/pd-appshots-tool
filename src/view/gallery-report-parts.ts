@@ -91,7 +91,8 @@ function positionsHtml(d) {
     const r = g.rows.find((x) => x.position === p);
     if (!r) return '<td class="empty"></td>';
     if (r.state === "excluded") return '<td class="meta">not analysed (tablet-shaped)</td>';
-    return "<td" + (g.ours ? ' class="ourcell"' : "") + ">" + rthumb(null, r.thumb, r.file, g.name + " " + p) + '<div class="lbl">' + esc(r.screen || "not analysed yet") + (r.imageId ? " " + infoBtn(r.imageId) : "") + "</div>" + (r.headline ? '<div class="hl">"' + esc(r.headline) + '"</div>' : "") + "</td>";
+    const fmt = [r.orientation, r.size, r.ratio,r.layerStructure ? L(r.layerStructure).toLowerCase() : ""].filter(Boolean).join(", ");
+    return "<td" + (g.ours ? ' class="ourcell"' : "") + ">" + rthumb(null, r.thumb, r.file, g.name + " " + p) + '<div class="lbl">' + esc(r.screen || "not analysed yet") + (r.imageId ? " " + infoBtn(r.imageId) : "") + "</div>" + (fmt ? '<div class="meta">' + esc(fmt) + "</div>" : "") + (r.headline ? '<div class="hl">"' + esc(r.headline) + '"</div>' : "") + "</td>";
   };
   let h = repeatsHtml(d) + '<div class="tablewrap"><table class="rt pos"><tr><th>#</th>' + cols.map((g) => "<th>" + esc(g.name) + (g.ours ? " (ours)" : "") + "</th>").join("") + "<th>How ours compares</th></tr>";
   for (let p = 1; p <= max; p++) {

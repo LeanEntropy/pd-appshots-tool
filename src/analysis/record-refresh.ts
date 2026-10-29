@@ -1,5 +1,6 @@
 import { type LoadedConfig, loadTaxonomy, projectPaths } from "../config/load.ts";
 import { type ImageDb, openImageDb } from "../store/imagedb.ts";
+import { withBanners } from "./banner.ts";
 import { namesBrand } from "./brand.ts";
 import { ensureMeasured } from "./colour-store.ts";
 import { type ImageIdentity, identityBuilder } from "./identity.ts";
@@ -161,17 +162,20 @@ export function refreshRecord(
  * Records saved under an older taxonomy mapping, with the current one applied in memory (no AI;
  * `npm run refresh-records` or the next write saves it). The report and the run both read
  * records this way, so the data fingerprint a run saves matches the report built after it.
+ * Promotional banners (banner.ts) are marked last: they depend on each game's other images.
  */
 export function withCurrentMapping(
   records: ReadonlyMap<string, AnalysisRecord>,
 ): Map<string, AnalysisRecord> {
-  return new Map(
-    [...records].map(([id, r]) => [
-      id,
-      r.final && r.identity && r.mapping !== TAXONOMY_MAPPING
-        ? refreshRecord(r, () => r.identity as ImageIdentity, r.taxonomy ?? "")
-        : r,
-    ]),
+  return withBanners(
+    new Map(
+      [...records].map(([id, r]) => [
+        id,
+        r.final && r.identity && r.mapping !== TAXONOMY_MAPPING
+          ? refreshRecord(r, () => r.identity as ImageIdentity, r.taxonomy ?? "")
+          : r,
+      ]),
+    ),
   );
 }
 

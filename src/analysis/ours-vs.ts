@@ -1,94 +1,20 @@
 import { asCounted } from "./categories.ts";
 import { colourFamily } from "./colours.ts";
 import { type Labeler, plainLabel } from "./labels.ts";
+import { layerStructure } from "./layer-structure.ts";
+import { type PositionVerdict, positionVerdict, type Verdict } from "./ours-vs-position.ts";
 import { counts, type DeckEntry, type Patterns, proportion, typeKey } from "./patterns.ts";
 
-export type Verdict = "following" | "slightly different" | "very different" | "not enough data";
-
-export interface PositionVerdict {
-  position: number;
-  imageId: string;
-  ours: { type: string; layer: boolean; proportion: string; maskColour: string | null };
-  verdict: Verdict;
-  reasons: string[];
-}
+export {
+  MIN_AT_POSITION,
+  type PositionVerdict,
+  type Verdict,
+} from "./ours-vs-position.ts";
 
 export interface OursVsPatterns {
   positions: PositionVerdict[];
   overall: { verdict: Verdict; reasons: string[] };
 }
-
-/** At least this many competitor screenshots at a position before judging it. */
-export const MIN_AT_POSITION = 2;
-
-function positionVerdict(e: DeckEntry, p: Patterns, label: Labeler): PositionVerdict {
-  const a = e.final;
-  const type = typeKey(a);
-  const mask = a.marketingLayer.backgroundMasks[0];
-  const ours = {
-    type,
-    layer: a.marketingLayer.present,
-    proportion: proportion(a),
-    maskColour: mask ? colourFamily(mask.colourName, mask.colourHex) : null,
-  };
-  const at = p.perPosition.find((x) => x.position === e.position);
-  if (!at || at.n < MIN_AT_POSITION || !at.top) {
-    return {
-      position: e.position,
-      imageId: e.imageId,
-      ours,
-      verdict: "not enough data",
-      reasons: [`only ${at?.n ?? 0} competitor screenshots at position ${e.position}`],
-    };
-  }
-  const reasons: string[] = [];
-  const mine = at.types.find((t) => t.key === type);
-  let verdict: Verdict;
-  if (at.top.key === type || (mine && mine.share >= 0.25)) {
-    verdict = "following";
-    reasons.push(
-      `${label(type)}: ${mine?.n ?? 0} of ${at.n} competitors at image ${e.position}${at.top.key === type ? "" : ` (most common: ${label(at.top.key)}, ${at.top.n} of ${at.n})`}`,
-    );
-  } else {
-    const near = p.perPosition
-      .filter((x) => Math.abs(x.position - e.position) === 1)
-      .some((x) => x.types.some((t) => t.key === type));
-    const overall = p.screenTypes.find((t) => t.key === type);
-    const common = !!overall && overall.images / Math.max(1, p.images) >= 0.1;
-    verdict = near || common ? "slightly different" : "very different";
-    reasons.push(
-      `competitors mostly show ${label(at.top.key)} here (${at.top.n} of ${at.n}); ${label(type)} ${near ? "appears at a neighbouring position" : common ? "appears elsewhere in their decks" : "is rare or unused in their decks"}`,
-    );
-  }
-  let minor = 0;
-  if (ours.layer !== at.layerShare >= 0.5) {
-    minor++;
-    reasons.push(
-      `marketing layer ${ours.layer ? "present" : "absent"}; ${Math.round(at.layerShare * at.n)} of ${at.n} competitors have one at this image`,
-    );
-  }
-  const topProp = at.proportions[0];
-  if (topProp && topProp.key !== ours.proportion) {
-    minor++;
-    reasons.push(`layout "${ours.proportion}"; competitors here mostly use "${topProp.key}"`);
-  }
-  const typeColours = p.byScreenType.find((t) => t.key === type)?.maskColours ?? [];
-  if (
-    ours.maskColour &&
-    typeColours.length &&
-    !typeColours.slice(0, 2).some((c) => c.key === ours.maskColour)
-  ) {
-    reasons.push(
-      `mask colour ${ours.maskColour}; for ${label(type)} competitors mostly use ${typeColours
-        .slice(0, 2)
-        .map((c) => c.key)
-        .join(" or ")}`,
-    );
-  }
-  if (verdict === "following" && minor >= 2) verdict = "slightly different";
-  return { position: e.position, imageId: e.imageId, ours, verdict, reasons };
-}
-
 /** Our analysed deck against the competitors' patterns, per position and overall (by code). */
 export function compareOurs(
   ours: readonly DeckEntry[],
@@ -130,6 +56,14 @@ export function compareOurs(
     slight++;
     reasons.push(
       `our images are mostly "${label(ourComp.key)}"; competitors' are mostly "${label(theirComp.key)}" (${theirComp.n} of ${p.images})`,
+    );
+  }
+  const ourLs = counts(ours.map((e) => layerStructure(e.final)))[0];
+  const theirLs = p.layerStructure?.[0];
+  if (ourLs && theirLs && ourLs.key !== theirLs.key) {
+    slight++;
+    reasons.push(
+      `our images are mostly "${label(ourLs.key)}"; competitors' are mostly "${label(theirLs.key)}" (${theirLs.n} of ${p.images})`,
     );
   }
   const layerShare = ours.length

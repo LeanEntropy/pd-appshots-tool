@@ -1,4 +1,5 @@
 import { dataPoints, pointsMarkdown } from "../reports/bottom-points-of.ts";
+import { definitionOf } from "./categories.ts";
 import type { Labeler } from "./labels.ts";
 import type { PatternFit } from "./pattern-fit.ts";
 import type { OrderRow, ReportData } from "./report-data.ts";
@@ -87,7 +88,9 @@ function cellOf(r: OrderRow | undefined, name: string): string {
   if (!r) return "";
   if (r.state === "excluded") return "_not analysed (tablet-shaped)_";
   const label = r.screen ? `**${cell(r.screen)}**` : "not analysed yet";
-  return `${img(r.thumb, r.file, `${name} ${r.position}`)} ${label}${r.headline ? `<br>"${cell(r.headline)}"` : ""}`;
+  const ls = r.layerStructure ? definitionOf(r.layerStructure)?.label.toLowerCase() : "";
+  const format = [r.orientation, r.size, r.ratio, ls].filter(Boolean).join(", ");
+  return `${img(r.thumb, r.file, `${name} ${r.position}`)} ${label}${format ? `<br>_${cell(format)}_` : ""}${r.headline ? `<br>"${cell(r.headline)}"` : ""}`;
 }
 
 /**

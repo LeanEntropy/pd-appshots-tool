@@ -2,7 +2,7 @@ import type { ProjectPaths } from "../config/load.ts";
 import type { ImageDb } from "../store/imagedb.ts";
 import { stableHash } from "../util/hash.ts";
 import { type DeckRepeats, repeatsOfItems, sameCheck, theirRepeatNote } from "./deck-repeats.ts";
-import { orientationOf } from "./image-facts.ts";
+import { orientationOf, ratioLabel } from "./image-facts.ts";
 import type { DeckEntry } from "./patterns.ts";
 import type { AnalysisPlan } from "./plan.ts";
 import { type AnalysisRecord, isUsable } from "./records.ts";
@@ -27,6 +27,8 @@ export function batchEntries(
   db: Pick<ImageDb, "get">,
   ourAppId: string,
   repeats: ReadonlyMap<string, DeckRepeats> = new Map(),
+  /** What each image highlights (its saved layout's focus kind), when known. */
+  focusOf?: (imageId: string) => string | null,
 ): BatchEntries {
   const out: BatchEntries = { ours: [], competitors: [], decks: [], ourDeckLength: 0, missing: [] };
   for (const g of plan.games) {
@@ -49,6 +51,10 @@ export function batchEntries(
         hl: item.hl,
         imageId: item.imageId,
         canvas: orientationOf(rec?.width ?? 0, rec?.height ?? 0),
+        ...(rec?.width && rec.height
+          ? { ratio: ratioLabel(rec.width, rec.height), size: `${rec.width}x${rec.height}` }
+          : {}),
+        ...(focusOf ? { focus: focusOf(item.imageId) } : {}),
         imageColours: (r.identity?.image?.dominantColours ?? [])
           .slice(0, 3)
           .map((c) => c.family)

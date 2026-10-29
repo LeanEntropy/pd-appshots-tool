@@ -1,5 +1,5 @@
 import { namesBrand } from "./brand.ts";
-import { categoryOf, FULL_SCREEN_ART } from "./categories.ts";
+import { categoryOf, isArtCategory } from "./categories.ts";
 import type { ImageAnalysis } from "./schema.ts";
 
 /**
@@ -95,7 +95,7 @@ export function tagStats(entries: readonly Tagged[]): TagStats {
       firstThree: mine.some((e) => e.position <= 3 && logo(e)),
     };
   });
-  const art = entries.filter((e) => categoryOf(e.final) === FULL_SCREEN_ART);
+  const art = entries.filter((e) => isArtCategory(categoryOf(e.final)));
   const m = new Map<ArtMessage, number>();
   for (const e of art) {
     const k = artMessage(e.final, e.name);

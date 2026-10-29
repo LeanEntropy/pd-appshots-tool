@@ -1,7 +1,8 @@
 import { ART_SCREEN } from "./art-wording.ts";
-import { asCounted, categoryOf, FULL_SCREEN_ART } from "./categories.ts";
+import { asCounted, categoryOf, isArtCategory } from "./categories.ts";
 import { colourFamily, textColourFamily } from "./colours.ts";
 import { type TagStats, tagStats } from "./image-tags.ts";
+import { layerStructure } from "./layer-structure.ts";
 import type { ImageAnalysis } from "./schema.ts";
 
 /** One analysed screenshot in store order. `canvas` comes from the image size, by code. */
@@ -12,6 +13,12 @@ export interface DeckEntry {
   imageId: string;
   /** The image's own orientation, from its pixel size. */
   canvas: "portrait" | "landscape" | "square";
+  /** Nearest common ratio from the pixel size, e.g. "16:9" (absent without a size). */
+  ratio?: string;
+  /** Pixel size, e.g. "1920x1080" (absent without a size). */
+  size?: string;
+  /** What the image highlights (its layout's focus kind), when a saved layout says it. */
+  focus?: string | null;
   /** Colour families measured from the pixels (colorthief), most dominant first. */
   imageColours?: string[];
   gl?: string;
@@ -32,6 +39,14 @@ export interface PositionStats {
   top: Count | null;
   layerShare: number;
   proportions: Count[];
+  /** Image orientation, ratio and layer structure here (absent in reports saved before 2026-10-30). */
+  canvases?: Count[];
+  ratios?: Count[];
+  /** Pixel sizes, e.g. "1920x1080". */
+  sizes?: Count[];
+  layers?: Count[];
+  /** What the images highlight, from saved layouts (images without one are not counted). */
+  focuses?: Count[];
 }
 
 export interface TypeStats {
@@ -67,6 +82,8 @@ export interface Patterns {
   portraitInLandscape: { n: number; share: number };
   marketingLayer: { share: number; perGame: { name: string; share: number }[] };
   proportion: Count[];
+  /** Screenshot or art, with or without a separate marketing layer (absent before 2026-10-30). */
+  layerStructure?: Count[];
   colours: { image: Count[]; screenshot: Count[]; layer: Count[]; masks: Count[]; texts: Count[] };
   maskShapes: Count[];
   maskLocations: Count[];
@@ -92,7 +109,7 @@ export const PROPORTION = {
  * screen / full-screen art is always the art layout, whichever form its analysis has.
  */
 export function proportion(a: ImageAnalysis): string {
-  if (categoryOf(a) === FULL_SCREEN_ART) return PROPORTION.art;
+  if (isArtCategory(categoryOf(a))) return PROPORTION.art;
   if (!a.marketingLayer.present) return PROPORTION.none;
   const c = a.screenshot.captureAreaPercent;
   if (c >= 80) return PROPORTION.small;
@@ -176,6 +193,11 @@ export function findPatterns(
       top: types[0] ?? null,
       layerShare: share(at.map((e) => e.final.marketingLayer.present)),
       proportions: counts(at.map((e) => proportion(e.final))),
+      canvases: counts(at.map((e) => e.canvas)),
+      ratios: counts(at.map((e) => e.ratio ?? null)),
+      sizes: counts(at.map((e) => e.size ?? null)),
+      layers: counts(at.map((e) => layerStructure(e.final))),
+      focuses: counts(at.map((e) => e.focus ?? null)),
     });
   }
   const gameCount = decks.length || 1;
@@ -240,6 +262,7 @@ export function findPatterns(
       })),
     },
     proportion: counts(entries.map((e) => proportion(e.final))),
+    layerStructure: counts(entries.map((e) => layerStructure(e.final))),
     colours: {
       image: counts(entries.flatMap((e) => e.imageColours ?? [])),
       screenshot: counts(
