@@ -102,7 +102,8 @@ function adviceOne(a) {
   const rv = a.review;
   return '<p class="short">' + esc(noIdText(x.shortAnswer)) + "</p><h4>What to change, most important first</h4>"
     + '<div class="tablewrap"><table class="rt"><tr><th>Change</th><th>Why (evidence)</th><th>Positions</th><th>Impact</th></tr>' + acts + "</table></div>"
-    + fold("The deck for this country, image by image (" + x.deck.length + ")", '<div class="tablewrap"><table class="rt"><tr><th>#</th><th>Change</th><th>Screen to capture</th><th>Local text (back-translation)</th><th>Band</th><th>Game logo</th><th>Wording and why</th></tr>' + deck + "</table></div>", "slotd")
+    + fold("The deck for this country, image by image (" + x.deck.length + ")", '<div class="tablewrap"><table class="rt"><tr><th>#</th><th>Change</th><th>Screen to capture</th><th>Local text (back-translation)</th><th>Band</th><th>Game logo</th><th>Wording and why</th></tr>' + deck + "</table></div>"
+      + (typeof ipButtons === "function" ? ipButtons(a.imagePrompts, x.deck.map((p) => [String(p.position), "Image " + p.position + " prompt"]).concat([["all", "Copy all prompts"]])) : ""), "slotd")
     + wordsToUseHtml(a)
     + (x.keepFromMain ? "<p><strong>Keep as on the main page:</strong> " + esc(x.keepFromMain) + "</p>" : "")
     + (rv ? fold("Second opinion on this advice", "<p>" + (rv.verdict === "ok" ? "No major problems" : "Changes requested") + (a.revised ? " (the advice above was revised after it)" : "") + ".</p>" + (rv.findings.length ? "<ul>" + rv.findings.map((f) => "<li>" + (f.severity === "major" ? "<strong>Major</strong>" : "Minor") + ", " + (f.position ? "position " + f.position : "whole deck") + ": " + esc(f.issue) + " " + esc(f.suggestion) + "</li>").join("") + "</ul>" : ""), "review") : "")

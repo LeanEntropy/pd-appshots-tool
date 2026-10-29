@@ -13,6 +13,7 @@ import { REPORT_SCRIPT } from "./gallery-report.ts";
 import { REPORT_PARTS_SCRIPT } from "./gallery-report-parts.ts";
 import { RUN_SCRIPT } from "./gallery-run.ts";
 import { STORE_SCRIPT } from "./gallery-store.ts";
+import { IMAGE_PROMPT_SCRIPT } from "./image-prompt-ui.ts";
 import { LAYOUT_BACKFILL_SCRIPT } from "./layout-backfill.ts";
 import { PAIR_GROUP_SCRIPT } from "./pair-group.ts";
 import { PLAY_CARD_SCRIPT } from "./play-card.ts";
@@ -83,5 +84,6 @@ document.getElementById("locale").innerHTML = '<option value="all">All countries
 `;
 
 export const GALLERY_SCRIPT = `${ACTION_SCRIPT}
+${IMAGE_PROMPT_SCRIPT}
 ${FLAG_SCRIPT}
 ${RENDER_SCRIPT}\n${INFO_SCRIPT}\n${STORE_SCRIPT}\n${PICKER_SCRIPT}\n${GRID_SCRIPT}\n${NAV_SCRIPT}\n${REPORT_SCRIPT}\n${REPORT_PARTS_SCRIPT}\n${REPORT_SUMMARY_SCRIPT}\n${REPORT_ROW_SCRIPT}\n${REPORT_LIST_SCRIPT}\n${REPORT_CARDS_SCRIPT}\n${RUN_SCRIPT}\n${ANALYSIS_SCRIPT}\n${LAYOUT_BACKFILL_SCRIPT}\n${ENGLISH_CARD_SCRIPT}\n${BUILDER_SCRIPT}\n${PAIR_GROUP_SCRIPT}\n${BUILDER_REVIEW_SCRIPT}\n${REPORT_COUNTRY_SCRIPT}\n${REPORT_COUNTRY_PARTS_SCRIPT}\n${REPORT_WORDS_SCRIPT}\n${REPORT_APPROVE_SCRIPT}\n${SUGGEST_SCRIPT}\n${EXPAND_SCRIPT}\n${EXPORT_SCRIPT}\n${PLAY_CARD_SCRIPT}\n${ADD_SCRIPT}\n${COUNTRY_ADD_SCRIPT}\n${SAME_SCREEN_SCRIPT}\nrender();\nloadSaved();\naddInit();\nshowPage(false);\nwatchSameScreens();\n`;

@@ -3,6 +3,7 @@ import type { WhereRow } from "../server/image-where.ts";
 import { ACTION_SCRIPT } from "./action.ts";
 import { countryLabel, FLAG_CSS } from "./flags.ts";
 import { INFO_SCRIPT } from "./gallery-info.ts";
+import { IMAGE_PROMPT_CSS, IMAGE_PROMPT_SCRIPT, ipButtonsHtml } from "./image-prompt-ui.ts";
 import { LIB_CSS } from "./library-css.ts";
 import { page } from "./pages-html.ts";
 import { appBar, escHtml as esc } from "./shell.ts";
@@ -49,6 +50,12 @@ ${row("Marketing covers", esc(f.covers || "Nothing named"))}
 ${row("Reinforcement", esc(f.reinforcement || "Not analysed yet"))}
 ${row("Focus match", f.verdict === "mismatch" ? `<span class="bad">${esc(f.match)}</span>` : esc(f.match || "Not judged"))}
 </ul></section>`;
+}
+
+// Our own image only: a prompt for Claude to make a better one (code only, free).
+function promptBand(p: ImagePage): string {
+  if (!p.prompt) return "";
+  return `<section class="band" id="prompt"><h2>Image prompt</h2><p class="meta">A prompt that tells Claude how to make the best image for this position, from the report's competitor data and recommendation.</p>${ipButtonsHtml(p.prompt, [[String(p.context.pos), "Write an image prompt"]])}</section>`;
 }
 
 function textsBand(p: ImagePage): string {
@@ -122,19 +129,20 @@ ${p.notice ? `<section class="band notice" role="note">${esc(p.notice)}</section
 <header class="lib-head"><h1>${esc(c.game)} · ${countryLabel(c.gl)} · position ${esc(c.pos)}</h1><span class="sub">${sub.join(" · ")}</span></header>
 ${picture}
 ${focusBand(p)}
+${promptBand(p)}
 <section class="band" id="wireframes"><h2>Wireframes</h2>${wf}</section>
 ${textsBand(p)}
 ${whereBand(p)}
 <section class="band plain" id="footer"><p class="meta">${esc(p.footer)}</p></section>
 ${folds(p)}
 </main>
-<style>${LIB_CSS}${FLAG_CSS}</style>
+<style>${LIB_CSS}${FLAG_CSS}${IMAGE_PROMPT_CSS}</style>
 <script type="application/json" id="page">${data}</script>`;
   return page(
     `${c.game} · ${c.country} · ${c.pos}`,
     body,
     token,
-    `${ACTION_SCRIPT}${IMAGE_SCRIPT}`,
+    `${ACTION_SCRIPT}${IMAGE_SCRIPT}${IMAGE_PROMPT_SCRIPT}`,
   );
 }
 

@@ -22,6 +22,7 @@ import type { AppContext } from "./app-context.ts";
 import { getEnglish, postEnglish, postEnglishStop } from "./english-api.ts";
 import { exportRoute } from "./export-api.ts";
 import { redirect, send, sendHtml, writeRequest } from "./http-util.ts";
+import { getOwnImagePrompt } from "./image-prompt-api.ts";
 import { getLayoutBackfill, postLayoutBackfill, postLayoutBackfillStop } from "./layout-api.ts";
 import { pageView, sameScreens, sameScreensRunning } from "./project-data.ts";
 import { getReportCurrent, getReportRun } from "./report-api.ts";
@@ -44,6 +45,8 @@ const GETS: Record<string, Get> = {
   "/api/report": (l, q) => getReportCurrent(l, q.get("stage")),
   "/api/report/run": (l, q) => getReportRun(l, q.get("stage"), q.get("id")),
   "/api/expansion": (l) => getExpansion(l),
+  // The image page's "Write an image prompt" for our own image (code only, free).
+  "/api/image-prompt": (l, q) => getOwnImagePrompt(l, q),
   "/api/layout-backfill": (l) => getLayoutBackfill(l),
   // English for marketing texts (paid, behind approval): the count and cost, and its progress.
   "/api/english": (l) => getEnglish(l),

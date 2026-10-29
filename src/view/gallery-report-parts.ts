@@ -101,6 +101,8 @@ function positionsHtml(d) {
   return h + "</table></div>" + detailsFold(["<p>Row N shows every game\\u2019s Nth Google Play screenshot: ours first, then each competitor. The (i) button shows the full analysis.</p>"]);
 }
 
+// "Write an image prompt" (code only): not on the print page, which has no prompt script.
+const ipSlot = (d, items) => (typeof ipButtons === "function" ? ipButtons(d.imagePrompts, items) : "");
 function slotHtml(d, p) {
   const s = p.screenshot; const m = p.marketingLayer;
   const ex = (d.examples[String(p.position)] || []).map((e) => '<span class="rimgs">' + rthumb(e.imageId, e.thumb, null, e.name + " " + e.position) + '<span class="meta">' + esc(e.name + " #" + e.position) + "</span></span>").join(" ");
@@ -112,7 +114,7 @@ function slotHtml(d, p) {
   const cat = ["title_image", "loading_screen", "key_art", "feature_image"].includes(p.screenType) ? "full_screen_art" : p.screenType;
   // Folded: the order table above is the default view; each position's full spec opens on demand.
   const hl = (m.texts[0] || {}).text;
-  return '<details class="fold slotd slot"><summary>Position ' + esc(p.position) + ": " + esc(L(p.screenType)) + (p.subtype ? " / " + esc(L(p.subtype)) : "") + (hl ? ' <span class="meta">\\u201c' + esc(hl) + "\\u201d</span>" : "") + '</summary><div class="fold-b">' + definedHtml(d, [cat])
+  return '<details class="fold slotd slot"><summary>Position ' + esc(p.position) + ": " + esc(L(p.screenType)) + (p.subtype ? " / " + esc(L(p.subtype)) : "") + (hl ? ' <span class="meta">\\u201c' + esc(hl) + "\\u201d</span>" : "") + '</summary><div class="fold-b">' + ipSlot(d, [[String(p.position), "Write an image prompt"]]) + definedHtml(d, [cat])
     + "<dl><dt>Source</dt><dd>" + esc(p.source) + "</dd>" + (p.logo ? "<dt>Game logo</dt><dd>" + (p.logo.show ? "yes" : "no") + ". " + esc(p.logo.why) + "</dd>" : "") + "<dt>Screen to capture</dt><dd>" + esc(s.whatToCapture) + " (" + esc(s.orientation) + ")</dd><dt>Action</dt><dd>" + esc(s.action) + "</dd><dt>Atmosphere</dt><dd>" + esc(s.atmosphere) + "</dd><dt>Main colours</dt><dd>" + esc(s.mainColours) + "</dd></dl>"
     + layer + "<p><strong>Why:</strong> " + esc(p.why) + kbMarks(d.ai && d.ai.recommendations, "position:" + p.position) + "</p>" + (ex ? '<p><strong>Competitor examples:</strong></p><div class="strip">' + ex + "</div>" : "") + "</div></details>";
 }
@@ -128,6 +130,7 @@ function recsHtml(d) {
     + ((d.recProblems || []).length ? '<div class="banner stale"><p><strong>Check these slots:</strong> the label does not match the spec (found by code).</p><ul>' + d.recProblems.map((x) => "<li>" + esc(x) + "</li>").join("") + "</ul></div>" : "")
     + "<p>" + esc(r.rationale) + "</p>"
     + '<table class="rt"><tr><th>#</th><th>Screen</th><th>Source</th><th>Headline</th></tr>' + pos.map((p) => "<tr><th>" + esc(p.position) + "</th><td>" + esc(L(p.screenType)) + (p.subtype ? " / " + esc(L(p.subtype)) : "") + "</td><td>" + esc(p.source) + "</td><td><strong>" + esc((p.marketingLayer.texts[0] || {}).text || "") + "</strong></td></tr>").join("") + "</table>"
+    + ipSlot(d, [["all", "Copy all prompts"]])
     + pos.map((p) => slotHtml(d, p)).join("")
     + (rv ? fold("Cross-check of the recommendations", "<p>Verdict: " + (rv.verdict === "ok" ? "no major problems" : "changes requested") + (ai.revised ? " (the recommendations above were revised after this review)" : "") + ".</p><ul>" + rv.findings.map((f) => "<li>" + (f.severity === "major" ? "<strong>Major</strong>" : "Minor") + ", " + (f.position ? "position " + esc(f.position) : "whole deck") + ": " + esc(f.issue) + " Suggestion: " + esc(f.suggestion) + "</li>").join("") + "</ul>", "review") : "");
 }

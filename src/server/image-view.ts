@@ -63,6 +63,8 @@ export interface ImagePage {
   /** The (i) popover's view of the reading (the Raw fields fold), without its wireframe. */
   info: InfoView | null;
   history: History;
+  /** Our own image: the address of its image prompt under the project's api, else null. */
+  prompt?: string | null;
 }
 
 export type ImageQuery = Partial<Record<"project" | "app" | "gl" | "hl" | "pos", string>>;
@@ -221,5 +223,9 @@ export async function imagePage(
     raw: rawOf(r),
     info: info ? { ...info, layout: null, file: null } : null,
     history: historyOf(app.storage, paths, r, sha),
+    prompt:
+      shown.appId === loaded.config.ourApp.id
+        ? `image-prompt?gl=${encodeURIComponent(shown.gl)}&pos=${shown.position}`
+        : null,
   };
 }

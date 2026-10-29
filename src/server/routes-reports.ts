@@ -3,6 +3,7 @@ import type { LoadedConfig } from "../config/load.ts";
 import { draftsFromExpansion } from "../reports/drafts.ts";
 import type { AppContext } from "./app-context.ts";
 import { send, writeRequest } from "./http-util.ts";
+import { getImagePrompts, withPromptLinks } from "./image-prompt-api.ts";
 import { reportList } from "./project-data.ts";
 import { getReportVersion, patchReport, removeReport, reportsResponse } from "./reports-api.ts";
 import { saveScope } from "./reports-builder-api.ts";
@@ -12,6 +13,9 @@ import { builderRoute, GONE } from "./routes-builder.ts";
 const PATH = /^\/api\/reports(?:\/([^/]+)(?:\/versions\/([^/]+))?)?$/;
 /** POST: "Make country reports now" on a comparison. */
 const DERIVE = /^\/api\/reports\/(r-[a-z0-9-]{1,80})\/derive$/;
+/** GET: the image prompts of one version (code only, free). */
+const PROMPTS =
+  /^\/api\/reports\/(r-[a-z0-9-]{1,80})\/versions\/([A-Za-z0-9._-]{1,120})\/image-prompts$/;
 
 /** True for the paths this module answers (everything under /p/<id>/api/reports, suggestions). */
 export const isReportsPath = (rest: string) =>
@@ -40,6 +44,17 @@ export async function reportsRoute(
     const r = deriveNow(loaded, dm[1]);
     return send(res, r.status, r.body);
   }
+  const pm = PROMPTS.exec(rest);
+  if (pm?.[1] && pm[2]) {
+    if (req.method !== "GET") return send(res, 405, { problems: ["Not allowed."] });
+    const r = getImagePrompts(
+      loaded,
+      pm[1],
+      pm[2],
+      new URL(req.url ?? "/", "http://x").searchParams.get("gl") ?? "",
+    );
+    return send(res, r.status, r.body);
+  }
   const m = PATH.exec(rest);
   if (!m) return send(res, 404, { problems: ["Not found."] });
   let id: string | undefined;
@@ -60,7 +75,7 @@ export async function reportsRoute(
   if (vid !== undefined) {
     if (req.method !== "GET") return send(res, 405, { problems: ["Not allowed."] });
     const r = getReportVersion(loaded, id, vid);
-    return send(res, r.status, r.body);
+    return send(res, r.status, r.status === 200 ? withPromptLinks(r.body, id, vid) : r.body);
   }
   if (req.method !== "PATCH" && req.method !== "DELETE")
     return send(res, 405, { problems: ["Not allowed."] });
