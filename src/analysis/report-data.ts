@@ -7,10 +7,11 @@ import type { AbTestsOutput } from "./ab-tests-schema.ts";
 import { artWordingDeep } from "./art-wording.ts";
 import { asCounted } from "./categories.ts";
 import { batchEntries } from "./entries.ts";
-import { orientationOf } from "./image-facts.ts";
+import { orientationOf, ratioLabel } from "./image-facts.ts";
 import type { ArtMessage } from "./image-tags.ts";
 import { COMPOSITION, captureLines } from "./info-text.ts";
 import type { Labeler } from "./labels.ts";
+import { layerStructure } from "./layer-structure.ts";
 import { compareOurs, type OursVsPatterns } from "./ours-vs.ts";
 import { type FitSummary, patternFit } from "./pattern-fit.ts";
 import { findPatterns, type Patterns } from "./patterns.ts";
@@ -20,6 +21,7 @@ import { type AnalysisRecord, isUsable } from "./records.ts";
 import { type DeckRepeats, type RepeatFinding, withRepeatFindings } from "./repeat-findings.ts";
 import {
   type Example,
+  labelsFor,
   recExamples,
   rowTags,
   type SortingPart,
@@ -47,6 +49,10 @@ export interface OrderRow {
   message?: ArtMessage | null;
   headline: string;
   orientation: string;
+  /** Pixel ratio and layer structure (absent in reports saved before 2026-10-30). */
+  ratio?: string;
+  size?: string;
+  layerStructure?: string | null;
   composition: string;
   captures: string[];
   layer: boolean | null;
@@ -132,6 +138,8 @@ export interface ReportInputs {
   play?: PlayContext;
   generatedAt?: string;
   repeats?: ReadonlyMap<string, DeckRepeats>;
+  /** What each image highlights (its saved layout's focus kind), when known. */
+  focus?: (imageId: string) => string | null;
 }
 
 function row(
@@ -159,12 +167,16 @@ function row(
     thumb: img?.thumb ?? null,
     file: img?.file ?? null,
     screen: t.screen,
-    screenType: f?.screenshot.screenType ?? null,
+    // The taxonomy type (a banner keeps the model's); `category` says it is a banner.
+    screenType: r?.banner?.from.screenType ?? f?.screenshot.screenType ?? null,
     category: t.category,
     logo: t.logo,
     message: t.message,
     headline: f?.headline ?? "",
     orientation: orientationOf(slot.width, slot.height),
+    ratio: ratioLabel(slot.width, slot.height),
+    ...(slot.width && slot.height ? { size: `${slot.width}x${slot.height}` } : {}),
+    layerStructure: f ? layerStructure(f) : null,
     composition: c
       ? (COMPOSITION[c.screenshot.composition] ?? x.label(c.screenshot.composition))
       : "",
@@ -174,28 +186,6 @@ function row(
     note: excluded ?? (f ? "" : r ? `${r.status}: ${r.problems.join("; ")}` : "not analysed yet"),
   };
   return out;
-}
-
-function labelsFor(
-  label: Labeler,
-  p: Patterns | null,
-  o: OursVsPatterns | null,
-  r: Recommendations | null,
-  games: readonly GameOrder[] = [],
-): Record<string, string> {
-  const keys = new Set<string>();
-  for (const g of games)
-    for (const row of g.rows) for (const k of [row.category, row.message]) if (k) keys.add(k);
-  for (const x of p?.perPosition ?? []) for (const t of x.types) keys.add(t.key);
-  for (const t of p?.screenTypes ?? []) keys.add(t.key);
-  for (const t of p?.byScreenType ?? []) keys.add(t.key);
-  for (const c of p?.composition ?? []) keys.add(c.key);
-  for (const x of o?.positions ?? []) keys.add(x.ours.type);
-  for (const x of r?.positions ?? []) {
-    keys.add(x.screenType);
-    if (x.subtype) keys.add(x.subtype);
-  }
-  return Object.fromEntries([...keys].map((k) => [k, label(k)]));
 }
 
 /** Everything the report shows, from the saved analyses only (no AI). Pure. */
@@ -218,7 +208,7 @@ export function buildReportData(x: ReportInputs): ReportData {
       rows,
     };
   });
-  const entries = batchEntries(plan, x.records, x.db, x.ourAppId, x.repeats);
+  const entries = batchEntries(plan, x.records, x.db, x.ourAppId, x.repeats, x.focus);
   const total = entries.decks.reduce((n, g) => n + g.deckLength, entries.ourDeckLength);
   const coverage = { used: total - entries.missing.length, total, missing: entries.missing };
   let patterns: Patterns | null = null;

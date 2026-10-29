@@ -49,10 +49,10 @@ test("both answer shapes carry the text-reading rules", () => {
     for (const re of RULES) assert.match(text, re, `${lean ? "lean" : "full"}: ${re}`);
     assert.doesNotMatch(text, /line breaks become a single space\)/, "the joining rule is gone");
   }
-  assert.equal(PROMPT_FILES.fullAnalysis, "full-analysis.v8");
-  assert.equal(LEAN_FULL_ANALYSIS.file, "full-analysis.v9");
+  assert.equal(PROMPT_FILES.fullAnalysis, "full-analysis.v10");
+  assert.equal(LEAN_FULL_ANALYSIS.file, "full-analysis.v11");
   // The earlier files stay on disk: saved answers point to them by content hash.
-  for (const f of ["full-analysis.v6", "full-analysis.v7"])
+  for (const f of ["full-analysis.v6", "full-analysis.v7", "full-analysis.v8", "full-analysis.v9"])
     assert.ok(existsSync(join(REPO, "prompts", "analysis", `${f}.md`)), f);
   const js = JSON.stringify(toJsonSchema(leanDeckSchema(TAXONOMY)));
   assert.match(js, /one separate text block, exactly as drawn/);
@@ -62,7 +62,7 @@ test("the answer shape and contract versions are unchanged, so analysis keys sta
   assert.equal(PROMPT_VERSIONS.fullAnalysis, "full-analysis.v4");
   assert.equal(LEAN_FULL_ANALYSIS.version, "full-analysis.v5");
   const old = readFileSync(join(REPO, "prompts", "analysis", "full-analysis.v6.md"), "utf8");
-  const now = readFileSync(join(REPO, "prompts", "analysis", "full-analysis.v8.md"), "utf8");
+  const now = readFileSync(join(REPO, "prompts", "analysis", "full-analysis.v10.md"), "utf8");
   const fields = (t: string) => [...t.matchAll(/^\s*- (\w+):/gm)].map((m) => m[1]);
   assert.deepEqual(
     fields(now).filter((f) => f !== "texts"),

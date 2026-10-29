@@ -15,6 +15,15 @@ import type { ImageAnalysis } from "./schema.ts";
  */
 export const FULL_SCREEN_ART = "full_screen_art";
 export const PROMO = "promo";
+/**
+ * Wide promotional artwork whose orientation differs from the game's play orientation (user,
+ * 2026-10-30). Decided by code (banner.ts); a screen type in memory only, never saved.
+ */
+export const PROMO_BANNER = "promo_banner";
+
+/** Categories with no game interface: one picture fills the image. */
+export const isArtCategory = (c: string | null | undefined) =>
+  c === FULL_SCREEN_ART || c === PROMO_BANNER;
 
 /** Taxonomy screen types that describe art or promotion rather than one game screen. */
 export const ART_TYPES: ReadonlySet<string> = new Set([
@@ -39,6 +48,7 @@ const ALWAYS_ART: ReadonlySet<string> = new Set(["title_image", "key_art", "load
  */
 export function categoryOf(a: ImageAnalysis): string {
   const s = a.screenshot;
+  if (s.screenType === PROMO_BANNER) return PROMO_BANNER;
   if (!ART_TYPES.has(s.screenType)) return s.screenType;
   // Title, key and loading art are always full-screen art; only feature and promo art can sit
   // on a real game capture.
@@ -63,7 +73,7 @@ export function categoryOf(a: ImageAnalysis): string {
  */
 export function asCounted(a: ImageAnalysis): ImageAnalysis {
   const s = a.screenshot;
-  if (categoryOf(a) !== FULL_SCREEN_ART) return a;
+  if (!isArtCategory(categoryOf(a))) return a;
   if (s.composition === "pure_art" && !s.captures.length && !s.captureAreaPercent) return a;
   return {
     ...a,
@@ -73,7 +83,7 @@ export function asCounted(a: ImageAnalysis): ImageAnalysis {
 
 /** The category of a recommended slot, from its taxonomy screen type alone. */
 export function categoryOfType(screenType: string): string {
-  if (screenType === PROMO) return PROMO;
+  if (screenType === PROMO || screenType === PROMO_BANNER) return screenType;
   return ART_TYPES.has(screenType) ? FULL_SCREEN_ART : screenType;
 }
 
@@ -98,8 +108,14 @@ export const CATEGORIES: Record<string, Definition> = {
   [FULL_SCREEN_ART]: def(
     FULL_SCREEN_ART,
     "Title screen / full-screen art",
-    "One full picture filling the image, often the game's title screen with its logo; no game interface visible.",
-    "Unlike a gameplay or menu screen: no buttons, HUD or game UI.",
+    "One full picture filling the image, usually in the game's own orientation and often its title screen with the logo; no game interface visible.",
+    "Unlike a gameplay or menu screen: no buttons, HUD or game UI. Unlike a promotional banner: it has the game's play orientation and works as its opening screen.",
+  ),
+  [PROMO_BANNER]: def(
+    PROMO_BANNER,
+    "Promotional banner",
+    "Wide promotional artwork (logo, slogan, product or tile art) whose orientation differs from the game's play orientation: a landscape banner in a portrait game; no game interface.",
+    "Unlike title screen / full-screen art: it is not shaped like the game's own screens, so it reads as an advert rather than the game's opening screen.",
   ),
   gameplay: def(
     "gameplay",
@@ -185,14 +201,48 @@ export const TAGS: Record<string, Definition> = {
   ),
 };
 
-export const hasDefinition = (key: string) => !!(CATEGORIES[key] ?? TAGS[key]);
+/** Layer structure of an image (layer-structure.ts), each defined like a tag. */
+export const LAYER_TAGS: Record<string, Definition> = {
+  screenshot_layer: def(
+    "screenshot_layer",
+    "Screenshot + marketing layer",
+    "A game screen with store additions (bands, headlines, badges, characters) on or around it.",
+    "Unlike art + marketing layer: the picture underneath is a screen with the game's interface.",
+  ),
+  screenshot_only: def(
+    "screenshot_only",
+    "Screenshot only",
+    "A game screen with nothing added for the store.",
+    "Unlike screenshot + marketing layer: no band, headline or badge was added.",
+  ),
+  art_layer: def(
+    "art_layer",
+    "Art + marketing layer",
+    "Full-screen art with a separate store addition on top: a band, badge or headline over the art.",
+    "Unlike all marketing art: the art stands on its own and the store text sits on top of it.",
+  ),
+  all_art: def(
+    "all_art",
+    "All marketing art, no separate layer",
+    "The whole image is one designed advert: logo, slogan and product art drawn together, with no band or badge on top.",
+    "Unlike art + marketing layer: there is no separate layer to take off; the text is part of the artwork.",
+  ),
+  art_plain: def(
+    "art_plain",
+    "Clean art, no marketing layer",
+    "Full-screen art with nothing added for the store.",
+    "Unlike art + marketing layer: no band, badge or headline on top.",
+  ),
+};
+
 export const definitionOf = (key: string): Definition | null =>
-  CATEGORIES[key] ?? TAGS[key] ?? null;
+  CATEGORIES[key] ?? TAGS[key] ?? LAYER_TAGS[key] ?? null;
+export const hasDefinition = (key: string) => !!definitionOf(key);
 
 /** Report labels: category names first (also for art taxonomy types), the taxonomy otherwise. */
 export function reportLabeler(base: Labeler): Labeler {
   return (code) => {
-    const c = CATEGORIES[code] ?? TAGS[code];
+    const c = definitionOf(code);
     if (c) return c.label;
     if (ART_TYPES.has(code)) return (CATEGORIES[categoryOfType(code)] as Definition).label;
     return base(code);
@@ -203,6 +253,7 @@ export function reportLabeler(base: Labeler): Labeler {
 export const HOW_WE_SORT = [
   "Every store image gets one screen type from what fills it. An image that shows a game screen takes that screen's type; the marketing text on top does not change it.",
   "One full picture with no game interface is Title screen / full-screen art, whatever it says and whether or not it shows the logo: studios upload the title screen clean, and title, key, loading and feature art are not reliably told apart.",
-  "Two tags describe an image further: whether it shows the game's logo, and, for full-screen art, what its line says. Findings compare the screen type first, then the tags.",
+  "Such a picture that is wide while the game plays in portrait (the image orientation is measured from the pixels; the play orientation comes from the game's own screens in its other images) is a Promotional banner instead: a landscape advert in a portrait game.",
+  "Three tags describe an image further: whether it shows the game's logo, for art what its line says, and its layer structure (a screenshot or art with a separate marketing layer, or all marketing art with none). Findings compare the screen type first, then the orientation, size and tags.",
   "A screen type or tag without a definition below never drives a finding, a recommendation or an A/B test.",
 ];

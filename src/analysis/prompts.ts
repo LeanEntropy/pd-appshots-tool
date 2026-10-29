@@ -31,10 +31,13 @@ export type PromptName = keyof typeof PROMPT_VERSIONS;
  * logo does not count), wording only, so no analysis is redone. full-analysis.v8 (lean: v9,
  * 2026-09-29) adds the text-reading rules (one entry per visually separate block, exact spaces
  * and punctuation, game UI text is not marketing text): the answer shape is unchanged, so saved
- * analyses stay current and only new analyses read text with the new rules.
+ * analyses stay current and only new analyses read text with the new rules. full-analysis.v10
+ * (lean: v11, 2026-10-30) says a wide advert-style image in another orientation than the game's
+ * screens is a promotional banner (pure art, "promotional banner" in notes), wording only: the
+ * banner category itself is decided by code (banner.ts), so saved analyses need no redo.
  */
 export const PROMPT_FILES: Record<PromptName, string> = {
-  fullAnalysis: "full-analysis.v8",
+  fullAnalysis: "full-analysis.v10",
   adjudicate: "adjudicate.v4",
   patterns: "patterns.v5",
   recommend: "recommend.v5",
@@ -92,7 +95,7 @@ export function renderReportPrompt(
  */
 export const LEAN_FULL_ANALYSIS = {
   version: "full-analysis.v5",
-  file: "full-analysis.v9",
+  file: "full-analysis.v11",
 } as const;
 
 /** The full-analysis prompt of either answer shape. */

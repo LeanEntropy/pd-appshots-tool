@@ -1,6 +1,7 @@
 import { type LoadedConfig, loadTaxonomy, projectPaths } from "../config/load.ts";
 import { coreDeck, notInCoreMarket } from "../core/selection.ts";
 import { legacyAnalysisJob, readJournal } from "../jobs/journal.ts";
+import { readLayoutFile } from "../layout/store.ts";
 import { playContextOf } from "../reports/play-context.ts";
 import { projectKey, workspaceStorage } from "../storage/index.ts";
 import { openImageDb } from "../store/imagedb.ts";
@@ -126,6 +127,10 @@ export function reportInputs(
     leftOut: notInCoreMarket(loaded).map((c) => c.name),
     play: playContextOf(loaded.config, [m]),
     repeats: repeatsOfItems(plan.items, (id) => db.get(id), sameCheck(paths, records)),
+    focus: (id) => {
+      const r = records.get(id);
+      return (r && readLayoutFile(paths, r)?.layout.composition?.focus?.kind) || null;
+    },
     storeText: compareStoreText(
       storage,
       loaded.config.markets,

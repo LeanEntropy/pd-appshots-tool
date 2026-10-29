@@ -1,4 +1,4 @@
-import { categoryOf, FULL_SCREEN_ART, reportLabeler } from "../analysis/categories.ts";
+import { categoryOf, isArtCategory, reportLabeler } from "../analysis/categories.ts";
 import { showsLogo } from "../analysis/image-tags.ts";
 import { labeler, screenName } from "../analysis/labels.ts";
 import { PATTERN_FIT_VERSION } from "../analysis/pattern-fit.ts";
@@ -64,7 +64,7 @@ export function storesReportOf(
       headline: f.headline ?? "",
       texts: f.marketingLayer.texts.map((t) => t.text),
       logo: showsLogo(f, game),
-      art: categoryOf(f) === FULL_SCREEN_ART || TITLE_ART_TYPES.has(f.screenshot.screenType),
+      art: isArtCategory(categoryOf(f)) || TITLE_ART_TYPES.has(f.screenshot.screenType),
     };
   };
   const slotsOf = (
