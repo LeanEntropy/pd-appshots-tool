@@ -127,7 +127,7 @@ export function projectState(
         };
   }
   const view = fitFor(loaded);
-  if (view.fit.selected.length < loaded.config.core.pilotCompetitors)
+  if (!view.fit.ok)
     return base("pick", `Pick competitors: ${view.fit.message || "the pick does not fit yet"}`, {
       label: "Pick competitors",
       href: gallery("competitors"),

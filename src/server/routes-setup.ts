@@ -20,7 +20,7 @@ export function warnings(s: ProjectSettings, minCompetitors = 5): string[] {
   const n = s.competitors.length;
   if (n < minCompetitors)
     out.push(
-      `The core check needs at least ${minCompetitors} competitors whose whole English decks fit. You have ${n}.`,
+      `The core check works best with ${minCompetitors} or more competitors whose whole English decks fit. You have ${n}: it still runs, and its report says the sample is small.`,
     );
   if (s.charts.enabled === false && !(s.ourApp.genreId ?? "").startsWith("GAME"))
     out.push("Your game is not listed in a game category, so the top-grossing charts are off.");

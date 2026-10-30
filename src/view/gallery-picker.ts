@@ -25,7 +25,7 @@ function fit() {
     else if (total + n > DATA.core.cap) skipped.push([id, "does not fit within the cap"]);
     else { kept.push(id); total += n; }
   }
-  return { total, kept, skipped, ok: kept.length >= DATA.core.min };
+  return { total, kept, skipped, ok: kept.length >= 1, few: kept.length < DATA.core.min };
 }
 
 function setSelection(next) {
@@ -98,7 +98,7 @@ function renderPanel() {
     const a = named.get(id); const skip = f.skipped.find((s) => s[0] === id);
     return '<li tabindex="0" data-index="' + i + '"' + (skip ? ' class="skip"' : "") + ' aria-label="' + esc((a ? a.name : id) + ", position " + (i + 1)) + '"><span class="grip" aria-hidden="true">&#8801;</span><span class="nm">' + esc(a ? a.name : id) + " (" + (a ? a.analysedLength : 0) + ")" + (skip ? " &ndash; " + esc(skip[1]) : "") + '</span><button data-remove="' + i + '" aria-label="Remove">Remove</button></li>';
   }).join("");
-  const status = f.ok ? "Ready" : "Needs at least " + DATA.core.min + " whole competitor decks";
+  const status = !f.ok ? "Needs at least 1 whole competitor deck" : f.few ? "Ready. Only " + f.kept.length + " " + (f.kept.length === 1 ? "competitor" : "competitors") + " (" + DATA.core.min + " or more recommended): the check runs, but its patterns rest on a small sample" : "Ready";
   const whole = f.kept.reduce((n, id) => n + (named.get(id) ? named.get(id).baselineLength : 0), ourWhole);
   const wholeNote = whole !== f.total ? " Whole decks including tablet-shaped: " + whole + "." : "";
   document.getElementById("panel").innerHTML = "<h2>Core check</h2><p>Our deck " + ourLen + " + " + f.kept.length + " competitor decks = <strong>" + f.total + "</strong> images analysed (target about " + DATA.core.target + ", hard stop " + DATA.core.cap + "). " + status + "." + wholeNote + '</p><p class="meta">Drag to reorder, or focus a name and press Alt+Up / Alt+Down. Changes save automatically.</p><ol id="order">' + rows + '</ol><p id="saveStatus" class="meta" role="status"></p>';

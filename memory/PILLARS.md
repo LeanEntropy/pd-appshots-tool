@@ -30,6 +30,7 @@ Output per locale:
   - Before processing any step, the tool MUST show the user how many images it will process, and get approval.
 - **Expanding-circle workflow**, the core product design, set by the user on 2026-09-26:
   1. **Core check:** 5–8 competitors in English only (plus our own). Establish the pattern and give a first recommendation.
+     - 5 is recommended, not required (user, 2026-10-30): a Full check runs with 1 or more whole competitor decks, and the report states the small sample.
   2. **The tool then ASKS the user how to expand:**
      - more English competitors; and/or
      - other countries, which the user picks with checkboxes.

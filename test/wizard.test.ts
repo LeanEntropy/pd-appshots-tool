@@ -71,7 +71,7 @@ test("wizard: look up, create, competitors, countries, charts, resume, create pr
       .competitors[0];
     assert.equal(c0?.name, "Capybara Go", "the name comes from Google Play, not the page");
     assert.ok(c0?.iconFile);
-    assert.match((one.body.warnings as string[])[0] ?? "", /at least 5 competitors/);
+    assert.match((one.body.warnings as string[])[0] ?? "", /5 or more competitors.*it still runs/);
     const dup = await set({
       competitors: [
         { id: "com.habby.capybara", tier: "direct" },

@@ -130,6 +130,7 @@ test("patterns, ours vs patterns, recommendations, review and the final report",
     assert.ok(md.includes(h), h);
   assert.ok(md.indexOf("## 1. Summary") < md.indexOf("## Contents"), "bottom line first");
   assert.match(md, /\*\*Verdict: our deck is /);
+  assert.match(md, /Against 2 competitors: a small sample, so read the patterns as strong hints/);
   assert.ok(md.indexOf("## 3. Position by position") < md.indexOf("## 4. Recommendations"));
   const dir = join(paths.reports, out.runId);
   for (const f of [

@@ -111,7 +111,14 @@ export function reportMarkdown(d: ReportData, label: Labeler, research?: string[
   const o = overviewText(d);
   const f = d.fit;
   out.push(head(0), "");
-  if (f) out.push(`**Verdict: our deck is ${f.verdict.toUpperCase()}**${fitsText(f)}.`, "");
+  const n = d.patterns?.games.length ?? 0;
+  // Same note as the page's verdict (gallery-report.ts): a small sample is said, never refused.
+  const sample =
+    n && n < 10
+      ? ` Against ${n} ${n === 1 ? "competitor" : "competitors"}: a small sample, so read the patterns as strong hints.`
+      : "";
+  if (f)
+    out.push(`**Verdict: our deck is ${f.verdict.toUpperCase()}**${fitsText(f)}.${sample}`, "");
   else out.push("**Verdict: not enough competitor data yet.**", "");
   if (d.summary) {
     const p = dataPoints(d);

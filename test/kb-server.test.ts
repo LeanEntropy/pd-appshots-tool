@@ -20,7 +20,11 @@ test("review list page: approve one entry and the unverified ones in bulk, saved
   files.putJson("tags.json", { version: 1, tags: c.tags });
   const seed = mkdtempSync(join(tmpdir(), "seed-"));
   writeJsonFile(join(seed, "entries-t.json"), { file: "entries-t", entries: entries() });
-  writeJsonFile(join(seed, "sources-t.json"), { sources: SOURCES });
+  // The server reviews against the real date: official pages count as verified today, so the
+  // auto-approved ones stay within their freshness window whenever the test runs.
+  const now = new Date().toISOString().slice(0, 10);
+  const sources = SOURCES.map((x) => ({ ...x, accessed: now }));
+  writeJsonFile(join(seed, "sources-t.json"), { sources });
   importSeeds(files, [seed], TODAY);
   const s = await startAppServer({ root, token: TOKEN });
   try {

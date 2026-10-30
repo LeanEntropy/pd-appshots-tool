@@ -40,6 +40,8 @@ export interface FitView {
   ours: FitCandidate;
   /** Whole decks including left-out device classes. */
   wholeDeckTotal: number;
+  /** The recommended number of competitors (below it the check is a small sample). */
+  minCompetitors: number;
 }
 
 /** Whole-deck fit rule for a given order (default: the saved pick, else config order). */
@@ -60,7 +62,7 @@ export function fitFor(loaded: LoadedConfig, order?: string[]): FitView {
     fit.selected.map((s) => s.deckLength),
     config.core.slotCountCap,
   );
-  return { fit, slots, ours, wholeDeckTotal: whole };
+  return { fit, slots, ours, wholeDeckTotal: whole, minCompetitors: config.core.minCompetitors };
 }
 
 /**

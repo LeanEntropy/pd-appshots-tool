@@ -3,6 +3,7 @@ import { z } from "zod";
 import { labeler } from "../analysis/labels.ts";
 import { infoViews, summaries } from "../analysis/records.ts";
 import { coreOrder, type LoadedConfig, loadTaxonomy, projectPaths } from "../config/load.ts";
+import { smallSample } from "../core/fit.ts";
 import { type FitView, fitFor, resolvePick, savePick } from "../core/selection.ts";
 import { overviewFile, writeOverview } from "../overview/overview-report.ts";
 import { markdownToHtml } from "../view/md-html.ts";
@@ -29,12 +30,13 @@ export const SelectionBody = z.strictObject({
 export function fitSummary(r: FitView): string {
   const extra =
     r.wholeDeckTotal !== r.fit.total ? ` (${r.wholeDeckTotal} including tablet-shaped)` : "";
-  return `${r.fit.selected.length} competitor decks plus ours = ${r.fit.total} images${extra}. ${r.fit.ok ? "Ready." : r.fit.message}`;
+  return `${r.fit.selected.length} competitor decks plus ours = ${r.fit.total} images${extra}. ${r.fit.ok ? `Ready.${r.fit.few ? ` ${smallSample(r.fit.selected.length, r.minCompetitors)}` : ""}` : r.fit.message}`;
 }
 
 function fitBody(r: FitView) {
   return {
     ok: r.fit.ok,
+    few: r.fit.few,
     total: r.fit.total,
     wholeDeckTotal: r.wholeDeckTotal,
     slots: r.slots,

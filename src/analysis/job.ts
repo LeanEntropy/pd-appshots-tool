@@ -32,17 +32,15 @@ export function approvalProblem(
 
 /**
  * The fit rule, enforced by the server and the terminal commands (plan 5.1): a batch needs a
- * finished download, and a pick whose whole English decks fit (the pilot needs its first
- * competitors, the core check the minimum number). Null when the batch may be planned.
+ * finished download, and a pick where at least one whole competitor English deck fits. Fewer
+ * than the recommended number runs too; the report says the sample is small (fit.few).
+ * Null when the batch may be planned.
  */
-export function fitProblem(loaded: LoadedConfig, stage: Stage): string | null {
+export function fitProblem(loaded: LoadedConfig, _stage: Stage): string | null {
   if (!latestRun(projectPaths(loaded).runs))
     return "Nothing is downloaded for this project yet. Download the store pages first.";
-  const { core } = loaded.config;
   const view = fitFor(loaded);
-  const need = stage === "pilot" ? core.pilotCompetitors : core.minCompetitors;
-  if (view.fit.selected.length < need || (stage === "core" && !view.fit.ok))
-    return `Pick at least ${need} competitors whose whole English decks fit within ${core.imageCap} images (on the Competitors page).`;
+  if (!view.fit.ok) return `${view.fit.message} Change the pick on the Competitors page.`;
   return null;
 }
 

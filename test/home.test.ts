@@ -143,8 +143,10 @@ test("a draft project opens on its setup steps and refuses analysis", async () =
 });
 
 test("state: nothing downloaded, pick, pilot ready", async () => {
+  const none = await tempProject({});
+  assert.equal(projectState(none).stage, "pick", "no whole competitor deck fits");
   const one = await tempProject({ Heroll: { phone: 2, tablet: 0 } });
-  assert.equal(projectState(one).stage, "pick");
+  assert.equal(projectState(one).stage, "pilot", "one competitor is a small sample, not a block");
   const five = await tempProject({
     "Archero 2": { phone: 2, tablet: 0 },
     "Capybara Go": { phone: 2, tablet: 0 },

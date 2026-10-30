@@ -72,16 +72,28 @@ test("an analysis run starts only for the exact plan that was shown", async () =
   assert.equal(postAnalysisRun(loaded, { stage: "pilot" }, quickRun).status, 400);
 });
 
-test("the plan and run endpoints refuse a pick that fails the fit rule", async () => {
+test("the plan and run endpoints refuse a pick where no whole competitor deck fits", async () => {
   const loaded = await tempProject({ Heroll: { phone: 2, tablet: 0 } });
-  postSelection(loaded, { coreCompetitors: ["Heroll"] });
+  postSelection(loaded, { coreCompetitors: ["Mini Tales"] });
   const r = postAnalysisPlan(loaded, { stage: "pilot" });
   assert.equal(r.status, 409);
-  assert.match(JSON.stringify(r.body), /Pick at least 2 competitors/);
+  assert.match(JSON.stringify(r.body), /No whole competitor deck fits/);
   const core = postAnalysisPlan(loaded, { stage: "core" });
-  assert.match(JSON.stringify(core.body), /Pick at least 5 competitors/);
+  assert.equal(core.status, 409);
   const run = postAnalysisRun(loaded, { stage: "pilot", planHash: "b".repeat(64) }, quickRun);
   assert.equal(run.status, 409);
+});
+
+test("a Full check with fewer competitors than recommended is planned, not refused", async () => {
+  const loaded = await tempProject({ Heroll: { phone: 2, tablet: 0 } });
+  postSelection(loaded, { coreCompetitors: ["Heroll"] });
+  const core = postAnalysisPlan(loaded, { stage: "core" });
+  assert.equal(core.status, 200);
+  const plan = (core.body as { plan: { planHash: string; estimate: { usd: number[] } } }).plan;
+  assert.match(plan.planHash, /^[0-9a-f]{64}$/);
+  assert.equal(plan.estimate.usd.length, 2);
+  const selection = postSelection(loaded, { coreCompetitors: ["Heroll"] }).body;
+  assert.match(JSON.stringify(selection), /5 or more recommended/);
 });
 
 test("static files are limited to data files in the image, view, own and icon folders", async () => {
@@ -153,7 +165,7 @@ test("one server serves each project under /p/<id>/ with its API base, and guard
     assert.equal(land.status, 302);
     assert.match(land.headers.get("location") ?? "", new RegExp(`^/p/${id}/views/gallery.html#`));
     const state = (await (await fetch(`${origin}/p/${id}/api/state`)).json()) as { stage: string };
-    assert.equal(state.stage, "pick");
+    assert.equal(state.stage, "pilot", "one saved competitor (Heroll) is enough to start");
   } finally {
     server.close();
   }
