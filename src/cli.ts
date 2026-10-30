@@ -4,6 +4,11 @@ import { refreshAllRecords } from "./analysis/record-refresh.ts";
 import { writeCurrentReport } from "./analysis/report-inputs.ts";
 import { importCommand, loadForCommand, printProjects, ROOT } from "./cli-project.ts";
 import { type LoadedConfig, projectPaths } from "./config/load.ts";
+import {
+  attributesScope,
+  describeAttributesScope,
+  runAttributesBackfill,
+} from "./engine/attributes-backfill.ts";
 import { cleanupTrialFiles } from "./library/trial-cleanup.ts";
 import { asiaVsUs, writeOverview } from "./overview/overview-report.ts";
 import { reportCommand } from "./reports/cli.ts";
@@ -43,6 +48,8 @@ const HELP = `App Shots Optimizer: setup commands (no AI analysis)
   npm run fit         Show which whole decks fit in the core check with the current pick
   npm run overview    Free store overview per country (orientation, ratios, deck length, reuse, colours). No AI
   npm run report      Write the report from the saved analyses, no AI (-- --stage core for the core check)
+  npm run attributes  Image attributes backfill (board density, HUD, people): shows the images and
+                      the cost; -- --approve <fingerprint> runs exactly that list (paid, D6)
                       -- "<report name or id>" saves a new version of that report instead (no AI)
   npm run refresh-records  Rebuild each analysis record's identity block and taxonomy mapping (no AI)
   npm run cleanup-trials   Remove the layout trial files (structure-test-v0.json) that equal docs/samples
@@ -231,6 +238,17 @@ Landscape images: US ${Math.round(a.us * 100)}%, Asian markets ${Math.round(a.as
       if (!(await confirm("Remove them from the library?", args.yes))) return 0;
       for (const k of cleanupTrialFiles(storage, samples, true).removed) log(`Removed ${k}`);
       return 0;
+    }
+    case "attributes": {
+      // D6: approval-gated; without --approve it only shows the list and the cost.
+      const approve = args.flags.get("approve");
+      if (typeof approve !== "string") {
+        log(describeAttributesScope(attributesScope(loaded), loaded.config.project));
+        return 0;
+      }
+      const r = await runAttributesBackfill(loaded, approve, log);
+      log(`Saved ${r.saved}, failed ${r.failed}; $${r.spentUsd.toFixed(2)} spent.`);
+      return r.failed ? 1 : 0;
     }
     case "store-text": {
       const client = newClient(loaded, projectPaths(loaded));

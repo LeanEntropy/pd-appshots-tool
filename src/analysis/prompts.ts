@@ -17,10 +17,13 @@ export const PROMPT_VERSIONS = {
   // analysis key) are unchanged.
   // 2026-10-30: copy and drop directives by code are hard input (the recommended order must copy
   // a dominant competitor pattern and drop a screen kind no competitor uses). Text steps only.
-  patterns: "patterns.v5",
-  recommend: "recommend.v5",
-  recommendReview: "recommend-review.v4",
-  abTests: "ab-tests.v3",
+  // 2026-10-31: the recommendation engine's skeleton contract (engine/facts.ts): the target deck
+  // and ranked directives are hard input, every "why" cites directive ids, objections are shown
+  // only (D8), and tests move toward the directives. Text steps only.
+  patterns: "patterns.v6",
+  recommend: "recommend.v6",
+  recommendReview: "recommend-review.v5",
+  abTests: "ab-tests.v4",
 } as const;
 export type PromptName = keyof typeof PROMPT_VERSIONS;
 
@@ -37,14 +40,17 @@ export type PromptName = keyof typeof PROMPT_VERSIONS;
  * (lean: v11, 2026-10-30) says a wide advert-style image in another orientation than the game's
  * screens is a promotional banner (pure art, "promotional banner" in notes), wording only: the
  * banner category itself is decided by code (banner.ts), so saved analyses need no redo.
+ * full-analysis.v12 (lean: v13, 2026-10-31) asks for one "Attributes:" line at the end of notes
+ * (board density, HUD, people, device in scene; engine/attributes.ts), wording only: notes is a
+ * free text field, so the answer shape and every saved analysis stay valid (D6: new images only).
  */
 export const PROMPT_FILES: Record<PromptName, string> = {
-  fullAnalysis: "full-analysis.v10",
+  fullAnalysis: "full-analysis.v12",
   adjudicate: "adjudicate.v4",
-  patterns: "patterns.v6",
-  recommend: "recommend.v6",
-  recommendReview: "recommend-review.v5",
-  abTests: "ab-tests.v3",
+  patterns: "patterns.v7",
+  recommend: "recommend.v7",
+  recommendReview: "recommend-review.v6",
+  abTests: "ab-tests.v4",
 };
 
 /** The one voice block of every synthesis prompt (plan-reports 3B.1), as {{VOICE}}. */
@@ -97,7 +103,7 @@ export function renderReportPrompt(
  */
 export const LEAN_FULL_ANALYSIS = {
   version: "full-analysis.v5",
-  file: "full-analysis.v11",
+  file: "full-analysis.v13",
 } as const;
 
 /** The full-analysis prompt of either answer shape. */
@@ -150,7 +156,7 @@ export function renderPrompt(
   return renderFile(root, objectsDir, PROMPT_FILES[name], taxonomy);
 }
 
-function renderFile(
+export function renderFile(
   root: string,
   objectsDir: string,
   fileName: string,
