@@ -1,4 +1,5 @@
 import type { ProjectPaths } from "../config/load.ts";
+import type { ImageAttributes } from "../engine/attributes.ts";
 import type { ImageDb } from "../store/imagedb.ts";
 import { stableHash } from "../util/hash.ts";
 import { type DeckRepeats, repeatsOfItems, sameCheck, theirRepeatNote } from "./deck-repeats.ts";
@@ -29,6 +30,8 @@ export function batchEntries(
   repeats: ReadonlyMap<string, DeckRepeats> = new Map(),
   /** What each image highlights (its saved layout's focus kind), when known. */
   focusOf?: (imageId: string) => string | null,
+  /** Engine attributes per image (engine/attributes.ts), when known. */
+  attrsOf?: (imageId: string) => ImageAttributes | null,
 ): BatchEntries {
   const out: BatchEntries = { ours: [], competitors: [], decks: [], ourDeckLength: 0, missing: [] };
   for (const g of plan.games) {
@@ -55,6 +58,7 @@ export function batchEntries(
           ? { ratio: ratioLabel(rec.width, rec.height), size: `${rec.width}x${rec.height}` }
           : {}),
         ...(focusOf ? { focus: focusOf(item.imageId) } : {}),
+        ...(attrsOf ? { attrs: attrsOf(item.imageId) } : {}),
         imageColours: (r.identity?.image?.dominantColours ?? [])
           .slice(0, 3)
           .map((c) => c.family)

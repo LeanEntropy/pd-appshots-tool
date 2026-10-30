@@ -2,6 +2,7 @@ import { CSS } from "./gallery-css.ts";
 import { REPORT_SCRIPT } from "./gallery-report.ts";
 import { REPORT_PARTS_SCRIPT } from "./gallery-report-parts.ts";
 import { STORE_SCRIPT } from "./gallery-store.ts";
+import { REPORT_ENGINE_SCRIPT } from "./report-engine.ts";
 import { SUGGEST_CSS } from "./report-suggest.ts";
 import { REPORT_SUMMARY_CSS, REPORT_SUMMARY_SCRIPT } from "./report-summary.ts";
 import { escHtml } from "./shell.ts";
@@ -120,6 +121,7 @@ function infoBtn(id) { const c = id && PRINT.captions[id]; return c ? '<span cla
 ${REPORT_SCRIPT}
 ${REPORT_PARTS_SCRIPT}
 ${REPORT_SUMMARY_SCRIPT}
+${REPORT_ENGINE_SCRIPT}
 ${STORE_SCRIPT}
 ${PRINT_SCRIPT}
 {

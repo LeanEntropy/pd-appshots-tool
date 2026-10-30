@@ -1,3 +1,4 @@
+import type { ImageAttributes } from "../engine/attributes.ts";
 import { ART_SCREEN } from "./art-wording.ts";
 import { asCounted, categoryOf, isArtCategory } from "./categories.ts";
 import { colourFamily, textColourFamily } from "./colours.ts";
@@ -21,6 +22,8 @@ export interface DeckEntry {
   focus?: string | null;
   /** Colour families measured from the pixels (colorthief), most dominant first. */
   imageColours?: string[];
+  /** Board density, HUD, people, device (engine/attributes.ts); absent = not measured. */
+  attrs?: ImageAttributes | null;
   gl?: string;
   hl?: string;
   final: ImageAnalysis;

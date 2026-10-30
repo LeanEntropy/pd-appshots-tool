@@ -1,0 +1,2167 @@
+{
+  "source": "comfy-mahjong-solitaire pilot us-en, saved analyses of 2026-10-31 (workspace copy)",
+  "ours": [
+    {
+      "appId": "com.deepmist.comfymahjong",
+      "name": "Comfy Mahjong Solitaire",
+      "position": 1,
+      "gl": "us",
+      "hl": "en",
+      "imageId": "07502d5c84704a33387fddcbb703770c6abd82f0e135692039447212e36f853a",
+      "canvas": "portrait",
+      "ratio": "9:16",
+      "size": "1080x1920",
+      "focus": "story / art",
+      "attrs": {
+        "boardDensity": null,
+        "hudVisible": null,
+        "people": null,
+        "deviceInScene": null,
+        "from": ["layout"],
+        "focusMatch": "match"
+      },
+      "imageColours": ["yellow", "green", "blue"],
+      "final": {
+        "imageRef": "img1",
+        "screenshot": {
+          "composition": "single_full_capture",
+          "screenType": "title_image",
+          "subtype": "title_screen",
+          "captures": [
+            {
+              "orientation": "portrait",
+              "screenType": "title_image",
+              "subtype": "title_screen",
+              "region": { "x": 0, "y": 0, "w": 100, "h": 100 },
+              "areaPercent": 100,
+              "framing": "full_bleed",
+              "description": "the in-game title screen (a title image counts as an in-game screen)"
+            }
+          ],
+          "captureAreaPercent": 100,
+          "description": "Full-screen art of the game's 'Comfy Mahjong' logo (green rounded letters framed by mahjon…",
+          "action": "No player action; a serene scenic title/key art presentation with the game logo.",
+          "atmosphere": "Calm, cosy, relaxing, sunny and natural",
+          "mainColours": [
+            { "name": "leaf green", "hex": "#6f9a3a" },
+            { "name": "teal water", "hex": "#6fb8b0" },
+            { "name": "sky blue", "hex": "#a9d2ee" },
+            { "name": "warm cream", "hex": "#f0e2b8" },
+            { "name": "mossy brown", "hex": "#8a7a4a" }
+          ]
+        },
+        "marketingLayer": {
+          "present": true,
+          "coveragePercent": 15,
+          "backgroundMasks": [
+            {
+              "shape": "band",
+              "colourName": "royal blue",
+              "colourHex": "#1f5fcf",
+              "location": "bottom",
+              "region": { "x": 0, "y": 85, "w": 100, "h": 15 }
+            },
+            {
+              "shape": "band",
+              "colourName": "gold line",
+              "colourHex": "#f0c23a",
+              "location": "bottom",
+              "region": { "x": 0, "y": 84.5, "w": 100, "h": 1 }
+            }
+          ],
+          "texts": [
+            {
+              "role": "headline",
+              "text": "RELAXING",
+              "language": "en",
+              "colour": "yellow-gold gradient #f3c84a",
+              "strokeColour": "dark blue shadow",
+              "fontStyle": "heavy bold sans, all caps, wide letter spacing",
+              "size": "huge",
+              "position": "bottom",
+              "region": { "x": 12, "y": 89, "w": 76, "h": 7 }
+            }
+          ],
+          "elements": [],
+          "mainColours": [
+            { "name": "royal blue", "hex": "#1f5fcf" },
+            { "name": "gold yellow", "hex": "#f3c84a" }
+          ],
+          "relationToScreen": "describes"
+        },
+        "headline": "RELAXING",
+        "confidence": 0.9,
+        "notes": "Game logo 'Comfy Mahjong' is part of the art, not counted as marketing text. Bottom blue band with headline is the only store addition."
+      }
+    },
+    {
+      "appId": "com.deepmist.comfymahjong",
+      "name": "Comfy Mahjong Solitaire",
+      "position": 2,
+      "gl": "us",
+      "hl": "en",
+      "imageId": "ab068608c1cc384caec899097245fc8b5e26fb5555033ee3d31a64a0654c76f8",
+      "canvas": "portrait",
+      "ratio": "9:16",
+      "size": "1080x1920",
+      "focus": "other",
+      "attrs": {
+        "boardDensity": null,
+        "hudVisible": true,
+        "people": null,
+        "deviceInScene": null,
+        "from": ["layout"],
+        "focusMatch": "partial"
+      },
+      "imageColours": ["green", "green", "blue"],
+      "final": {
+        "imageRef": "img1",
+        "screenshot": {
+          "composition": "single_full_capture",
+          "screenType": "gameplay",
+          "subtype": "board",
+          "captures": [
+            {
+              "orientation": "portrait",
+              "screenType": "gameplay",
+              "subtype": "board",
+              "region": { "x": 0, "y": 0, "w": 100, "h": 84 },
+              "areaPercent": 84,
+              "framing": "full_bleed",
+              "description": "A mahjong tile-matching board on a green felt table with four stacked tile clusters (flowe…"
+            }
+          ],
+          "captureAreaPercent": 84,
+          "description": "Green felt mahjong board with four groups of stacked tiles showing flowers, seasons and dr…",
+          "action": "The player is at the start of level 1, about to tap matching mahjong tiles to move them in…",
+          "atmosphere": "calm, relaxing, puzzle-like",
+          "mainColours": [
+            { "name": "dark green", "hex": "#1f5a35" },
+            { "name": "off-white", "hex": "#f4f1e4" },
+            { "name": "orange", "hex": "#f08a1e" },
+            { "name": "red", "hex": "#e03a2a" },
+            { "name": "gold", "hex": "#f2c84b" }
+          ]
+        },
+        "marketingLayer": {
+          "present": true,
+          "coveragePercent": 16,
+          "backgroundMasks": [
+            {
+              "shape": "band",
+              "colourName": "blue",
+              "colourHex": "#1f6fd0",
+              "location": "bottom",
+              "region": { "x": 0, "y": 84, "w": 100, "h": 16 }
+            }
+          ],
+          "texts": [
+            {
+              "role": "headline",
+              "text": "PLAY OFFLINE",
+              "language": "en",
+              "colour": "yellow #f5c842",
+              "strokeColour": "none",
+              "fontStyle": "heavy rounded sans, bold, all caps",
+              "size": "huge",
+              "position": "bottom",
+              "region": { "x": 5, "y": 89, "w": 90, "h": 7 }
+            }
+          ],
+          "elements": [],
+          "mainColours": [
+            { "name": "blue", "hex": "#1f6fd0" },
+            { "name": "yellow", "hex": "#f5c842" }
+          ],
+          "relationToScreen": "describes"
+        },
+        "headline": "PLAY OFFLINE",
+        "confidence": 0.92,
+        "notes": "Mahjong tile-matching puzzle; a thin yellow line separates the capture from the blue band."
+      }
+    },
+    {
+      "appId": "com.deepmist.comfymahjong",
+      "name": "Comfy Mahjong Solitaire",
+      "position": 3,
+      "gl": "us",
+      "hl": "en",
+      "imageId": "170a368aa6d6404a6c8ef7d1aaf1d0999eac8b00739d6e886b5b056f4e498cf0",
+      "canvas": "portrait",
+      "ratio": "9:16",
+      "size": "1080x1920",
+      "focus": "battle",
+      "attrs": {
+        "boardDensity": null,
+        "hudVisible": true,
+        "people": null,
+        "deviceInScene": null,
+        "from": ["layout"],
+        "focusMatch": "match"
+      },
+      "imageColours": ["teal", "green", "blue"],
+      "final": {
+        "imageRef": "img1",
+        "screenshot": {
+          "composition": "single_full_capture",
+          "screenType": "gameplay",
+          "subtype": "board",
+          "captures": [
+            {
+              "orientation": "portrait",
+              "screenType": "gameplay",
+              "subtype": "board",
+              "region": { "x": 0, "y": 0, "w": 100, "h": 84 },
+              "areaPercent": 84,
+              "framing": "full_bleed",
+              "description": "A mahjong-style tile-matching board on a dark green felt background: a pyramid stack of wh…"
+            }
+          ],
+          "captureAreaPercent": 84,
+          "description": "Tile-matching puzzle gameplay: a pyramid of mahjong-like tiles on green felt, a matched pa…",
+          "action": "The player is matching identical tiles, has just scored a 10-combo and the board bursts wi…",
+          "atmosphere": "cheerful, celebratory, cosy",
+          "mainColours": [
+            { "name": "dark teal green", "hex": "#1e5a55" },
+            { "name": "off-white", "hex": "#f2f4ec" },
+            { "name": "forest green", "hex": "#2b7a4b" },
+            { "name": "orange gold", "hex": "#e8921c" },
+            { "name": "navy blue", "hex": "#2a3f7a" }
+          ]
+        },
+        "marketingLayer": {
+          "present": true,
+          "coveragePercent": 16,
+          "backgroundMasks": [
+            {
+              "shape": "band",
+              "colourName": "blue gradient with gold top edge",
+              "colourHex": "#1f5fd0",
+              "location": "bottom",
+              "region": { "x": 0, "y": 84, "w": 100, "h": 16 }
+            }
+          ],
+          "texts": [
+            {
+              "role": "headline",
+              "text": "MATCH & CLEAR",
+              "language": "en",
+              "colour": "pale yellow #f5e27a",
+              "strokeColour": "none",
+              "fontStyle": "heavy geometric sans, bold, uppercase, wide letter spacing",
+              "size": "large",
+              "position": "bottom",
+              "region": { "x": 5, "y": 89, "w": 90, "h": 7 }
+            }
+          ],
+          "elements": [],
+          "mainColours": [
+            { "name": "blue", "hex": "#1f5fd0" },
+            { "name": "pale yellow", "hex": "#f5e27a" },
+            { "name": "gold", "hex": "#e8b830" }
+          ],
+          "relationToScreen": "describes"
+        },
+        "headline": "MATCH & CLEAR",
+        "confidence": 0.92,
+        "notes": "The 'Combo 10', 'Great', score and level texts are in-game UI, not marketing text."
+      }
+    },
+    {
+      "appId": "com.deepmist.comfymahjong",
+      "name": "Comfy Mahjong Solitaire",
+      "position": 4,
+      "gl": "us",
+      "hl": "en",
+      "imageId": "4543f45397919d4928f4faee667eed8e2b6b5116dfd8f1b7edee154943271ad0",
+      "canvas": "portrait",
+      "ratio": "9:16",
+      "size": "1080x1920",
+      "focus": "rewards",
+      "attrs": {
+        "boardDensity": null,
+        "hudVisible": null,
+        "people": null,
+        "deviceInScene": null,
+        "from": ["layout"],
+        "focusMatch": "partial"
+      },
+      "imageColours": ["black", "yellow", "blue"],
+      "final": {
+        "imageRef": "img1",
+        "screenshot": {
+          "composition": "single_full_capture",
+          "screenType": "gameplay",
+          "subtype": "victory",
+          "captures": [
+            {
+              "orientation": "portrait",
+              "screenType": "gameplay",
+              "subtype": "victory",
+              "region": { "x": 0, "y": 0, "w": 100, "h": 85 },
+              "areaPercent": 85,
+              "framing": "full_bleed",
+              "description": "A 'Level Completed' results screen on a dark green background with a cheerful white mahjon…"
+            }
+          ],
+          "captureAreaPercent": 85,
+          "description": "Level completion screen of a mahjong tile-matching game: stylised 'Level Completed' title …",
+          "action": "The player has just finished a level and is viewing the results, having set a new best sco…",
+          "atmosphere": "cheerful, rewarding, cosy",
+          "mainColours": [
+            { "name": "dark green", "hex": "#0f2a1c" },
+            { "name": "leaf green", "hex": "#6fb53a" },
+            { "name": "cream beige", "hex": "#f0e2c0" },
+            { "name": "gold", "hex": "#d9a53a" },
+            { "name": "white", "hex": "#f7f3ea" }
+          ]
+        },
+        "marketingLayer": {
+          "present": true,
+          "coveragePercent": 15,
+          "backgroundMasks": [
+            {
+              "shape": "band",
+              "colourName": "blue",
+              "colourHex": "#2358c7",
+              "location": "bottom",
+              "region": { "x": 0, "y": 85, "w": 100, "h": 15 }
+            }
+          ],
+          "texts": [
+            {
+              "role": "headline",
+              "text": "NO TIMERS",
+              "language": "en",
+              "colour": "yellow #f2c53d",
+              "strokeColour": "none",
+              "fontStyle": "heavy sans, bold, all caps",
+              "size": "huge",
+              "position": "bottom",
+              "region": { "x": 8, "y": 89, "w": 84, "h": 8 }
+            }
+          ],
+          "elements": [],
+          "mainColours": [
+            { "name": "blue", "hex": "#2358c7" },
+            { "name": "yellow", "hex": "#f2c53d" }
+          ],
+          "relationToScreen": "describes"
+        },
+        "headline": "NO TIMERS",
+        "confidence": 0.9,
+        "notes": "Texts such as 'Level Completed', 'NEW BEST', 'SCORE', 'BEST COMBO' and 'PERFECT COMBO +1,000' are in-game UI; only the bottom blue band with 'NO TIMERS' is marketing."
+      }
+    }
+  ],
+  "competitors": [
+    {
+      "appId": "com.vitastudio.mahjong",
+      "name": "Vita Mahjong",
+      "position": 1,
+      "gl": "us",
+      "hl": "en",
+      "imageId": "3b5ebfe2742779039ae449d59f53b89ede546f7a38e5a48776a2365198df8948",
+      "canvas": "landscape",
+      "ratio": "16:9",
+      "size": "1920x1080",
+      "focus": "story / art",
+      "attrs": {
+        "boardDensity": null,
+        "hudVisible": null,
+        "people": null,
+        "deviceInScene": null,
+        "from": ["layout"],
+        "focusMatch": "match"
+      },
+      "imageColours": ["black", "green", "brown"],
+      "final": {
+        "imageRef": "img1",
+        "screenshot": {
+          "composition": "pure_art",
+          "screenType": "promo_banner",
+          "subtype": "logo_with_art",
+          "captures": [],
+          "captureAreaPercent": 0,
+          "description": "Full-screen art: a dark green starry night background with pine branches in the top corner…",
+          "action": "No active play; the art presents the game's logo and a decorative arrangement of mahjong t…",
+          "atmosphere": "calm, festive, cosy",
+          "mainColours": [
+            { "name": "dark green", "hex": "#0e3b2e" },
+            { "name": "white", "hex": "#f4f4f0" },
+            { "name": "gold", "hex": "#f2c230" },
+            { "name": "red", "hex": "#c8201e" },
+            { "name": "green", "hex": "#1e7a3c" }
+          ]
+        },
+        "marketingLayer": {
+          "present": true,
+          "coveragePercent": 25,
+          "backgroundMasks": [],
+          "texts": [
+            {
+              "role": "headline",
+              "text": "Train Your Brain",
+              "language": "en",
+              "colour": "gold #f2c230",
+              "strokeColour": "dark brown shadow",
+              "fontStyle": "bold serif, 3D bevelled",
+              "size": "huge",
+              "position": "upper_middle",
+              "region": { "x": 3, "y": 28, "w": 48, "h": 30 }
+            }
+          ],
+          "elements": [
+            {
+              "kind": "logo",
+              "what": "Vita Mahjong game logo with a green leaf and a mahjong tile",
+              "position": "lower-left",
+              "pose": "n/a",
+              "colours": "white, dark brown, green",
+              "scale": "medium",
+              "breaksFrame": false,
+              "region": { "x": 13, "y": 60, "w": 26, "h": 20 }
+            },
+            {
+              "kind": "item",
+              "what": "diamond-shaped pyramid stack of mahjong tiles",
+              "position": "right-centre",
+              "pose": "n/a",
+              "colours": "white, green, red, blue",
+              "scale": "large",
+              "breaksFrame": false,
+              "region": { "x": 52, "y": 12, "w": 45, "h": 76 }
+            }
+          ],
+          "mainColours": [
+            { "name": "gold", "hex": "#f2c230" },
+            { "name": "white", "hex": "#f4f4f0" },
+            { "name": "dark brown", "hex": "#5a2412" }
+          ],
+          "relationToScreen": "describes"
+        },
+        "headline": "Train Your Brain",
+        "confidence": 0.9,
+        "notes": "Title-style art with the game's logo and a headline; the tile stack is decorative art rather than a UI capture."
+      }
+    },
+    {
+      "appId": "com.vitastudio.mahjong",
+      "name": "Vita Mahjong",
+      "position": 2,
+      "gl": "us",
+      "hl": "en",
+      "imageId": "ff659f70fab416d0c6c576789fca26c2d01654a8f9612a635b6894c28472683c",
+      "canvas": "portrait",
+      "ratio": "9:16",
+      "size": "1080x1920",
+      "focus": "other",
+      "attrs": {
+        "boardDensity": null,
+        "hudVisible": null,
+        "people": null,
+        "deviceInScene": null,
+        "from": ["layout"],
+        "focusMatch": "match"
+      },
+      "imageColours": ["black", "green", "grey"],
+      "final": {
+        "imageRef": "img1",
+        "screenshot": {
+          "composition": "single_full_capture",
+          "screenType": "gameplay",
+          "subtype": "board",
+          "captures": [
+            {
+              "orientation": "portrait",
+              "screenType": "gameplay",
+              "subtype": "board",
+              "region": { "x": 0, "y": 0, "w": 100, "h": 100 },
+              "areaPercent": 100,
+              "framing": "full_bleed",
+              "description": "A mahjong solitaire board with layered white tiles (characters, dots, bamboo, dragons, win…"
+            }
+          ],
+          "captureAreaPercent": 100,
+          "description": "Mahjong solitaire tile-matching layout: large white tiles with red, green and blue symbols…",
+          "action": "The player matches pairs of free mahjong tiles to clear the layered board.",
+          "atmosphere": "calm, cosy, wintry",
+          "mainColours": [
+            { "name": "dark teal green", "hex": "#0f3d3a" },
+            { "name": "white", "hex": "#f4f4f0" },
+            { "name": "red", "hex": "#d42a1f" },
+            { "name": "green", "hex": "#1f7a3a" },
+            { "name": "grey", "hex": "#9aa09c" }
+          ]
+        },
+        "marketingLayer": {
+          "present": true,
+          "coveragePercent": 18,
+          "backgroundMasks": [
+            {
+              "shape": "other",
+              "colourName": "dark ink brush stroke",
+              "colourHex": "#0b1f1e",
+              "location": "bottom",
+              "region": { "x": 5, "y": 80, "w": 90, "h": 18 }
+            }
+          ],
+          "texts": [
+            {
+              "role": "headline",
+              "text": "Large Tiles",
+              "language": "en",
+              "colour": "golden yellow gradient #f5c842",
+              "strokeColour": "dark brown/black shadow",
+              "fontStyle": "bold serif, 3D gradient",
+              "size": "huge",
+              "position": "bottom",
+              "region": { "x": 18, "y": 87, "w": 64, "h": 10 }
+            }
+          ],
+          "elements": [],
+          "mainColours": [
+            { "name": "golden yellow", "hex": "#f5c842" },
+            { "name": "dark ink", "hex": "#0b1f1e" }
+          ],
+          "relationToScreen": "describes"
+        },
+        "headline": "Large Tiles",
+        "confidence": 0.95,
+        "notes": "Headline sits on a dark ink brush-stroke mask at the bottom; the board itself fills the rest of the image."
+      }
+    },
+    {
+      "appId": "com.vitastudio.mahjong",
+      "name": "Vita Mahjong",
+      "position": 3,
+      "gl": "us",
+      "hl": "en",
+      "imageId": "7cb0b70c621d0b4950a3d242c0b7afdabd565ba1d042261eac9cb40e01d63257",
+      "canvas": "portrait",
+      "ratio": "9:16",
+      "size": "1079x1920",
+      "focus": "battle",
+      "attrs": {
+        "boardDensity": null,
+        "hudVisible": null,
+        "people": null,
+        "deviceInScene": null,
+        "from": ["layout"],
+        "focusMatch": "match"
+      },
+      "imageColours": ["black", "green", "grey"],
+      "final": {
+        "imageRef": "img1",
+        "screenshot": {
+          "composition": "single_full_capture",
+          "screenType": "gameplay",
+          "subtype": "board",
+          "captures": [
+            {
+              "orientation": "portrait",
+              "screenType": "gameplay",
+              "subtype": "board",
+              "region": { "x": 0, "y": 0, "w": 100, "h": 100 },
+              "areaPercent": 100,
+              "framing": "full_bleed",
+              "description": "A mahjong solitaire board with stacked white tiles bearing red, green and blue Chinese cha…"
+            }
+          ],
+          "captureAreaPercent": 100,
+          "description": "Mahjong solitaire tile-matching board: two clusters of layered white mahjong tiles (charac…",
+          "action": "The player is matching pairs of free mahjong tiles to clear the layered board.",
+          "atmosphere": "calm, wintry, relaxing",
+          "mainColours": [
+            { "name": "dark teal green", "hex": "#0f4a3f" },
+            { "name": "white", "hex": "#f2f2ee" },
+            { "name": "red", "hex": "#c8262a" },
+            { "name": "green", "hex": "#1f8a3a" },
+            { "name": "grey", "hex": "#9a9a9a" }
+          ]
+        },
+        "marketingLayer": {
+          "present": true,
+          "coveragePercent": 18,
+          "backgroundMasks": [
+            {
+              "shape": "other",
+              "colourName": "dark ink brush stroke",
+              "colourHex": "#0b2a26",
+              "location": "bottom",
+              "region": { "x": 5, "y": 80, "w": 90, "h": 18 }
+            }
+          ],
+          "texts": [
+            {
+              "role": "headline",
+              "text": "Sharpen Your Mind",
+              "language": "en",
+              "colour": "golden yellow #f2c23a",
+              "strokeColour": "dark brown",
+              "fontStyle": "bold serif, gradient 3D",
+              "size": "huge",
+              "position": "bottom",
+              "region": { "x": 12, "y": 84, "w": 76, "h": 13 }
+            }
+          ],
+          "elements": [],
+          "mainColours": [
+            { "name": "golden yellow", "hex": "#f2c23a" },
+            { "name": "dark ink", "hex": "#0b2a26" }
+          ],
+          "relationToScreen": "describes"
+        },
+        "headline": "Sharpen Your Mind",
+        "confidence": 0.95,
+        "notes": "Mahjong solitaire puzzle game; headline sits on a dark brush-stroke mask at the bottom."
+      }
+    },
+    {
+      "appId": "com.vitastudio.mahjong",
+      "name": "Vita Mahjong",
+      "position": 4,
+      "gl": "us",
+      "hl": "en",
+      "imageId": "4e264acc945f626ba2264f8affedfbb9ccf746ed39e8fade2e99d2f1e5402e2d",
+      "canvas": "portrait",
+      "ratio": "9:16",
+      "size": "1080x1920",
+      "focus": "other",
+      "attrs": {
+        "boardDensity": null,
+        "hudVisible": null,
+        "people": null,
+        "deviceInScene": null,
+        "from": ["layout"],
+        "focusMatch": "match"
+      },
+      "imageColours": ["teal", "green", "grey"],
+      "final": {
+        "imageRef": "img1",
+        "screenshot": {
+          "composition": "single_full_capture",
+          "screenType": "gameplay",
+          "subtype": "board",
+          "captures": [
+            {
+              "orientation": "portrait",
+              "screenType": "gameplay",
+              "subtype": "board",
+              "region": { "x": 0, "y": 0, "w": 100, "h": 100 },
+              "areaPercent": 100,
+              "framing": "full_bleed",
+              "description": "A mahjong solitaire board with tiles stacked in a heart/pyramid layout on a dark green nig…"
+            }
+          ],
+          "captureAreaPercent": 100,
+          "description": "A mahjong solitaire layout of white tiles (characters, bamboos, dots, winds, dragons, flow…",
+          "action": "The player is looking at the tile layout to find matching free tiles to remove.",
+          "atmosphere": "calm, cosy, wintry",
+          "mainColours": [
+            { "name": "dark teal green", "hex": "#0f3d3a" },
+            { "name": "white", "hex": "#f2f2f0" },
+            { "name": "grey", "hex": "#9a9a98" },
+            { "name": "red", "hex": "#c8302a" },
+            { "name": "green", "hex": "#2e7d3a" }
+          ]
+        },
+        "marketingLayer": {
+          "present": true,
+          "coveragePercent": 14,
+          "backgroundMasks": [
+            {
+              "shape": "band",
+              "colourName": "dark brush stroke",
+              "colourHex": "#0b2a28",
+              "location": "bottom",
+              "region": { "x": 0, "y": 80, "w": 100, "h": 16 }
+            }
+          ],
+          "texts": [
+            {
+              "role": "headline",
+              "text": "Eye- Friendly",
+              "language": "en",
+              "colour": "golden yellow gradient #f0c33c",
+              "strokeColour": "dark brown #5a3a08",
+              "fontStyle": "bold serif, gradient fill with dark outline",
+              "size": "huge",
+              "position": "bottom",
+              "region": { "x": 10, "y": 87, "w": 80, "h": 10 }
+            }
+          ],
+          "elements": [],
+          "mainColours": [
+            { "name": "golden yellow", "hex": "#f0c33c" },
+            { "name": "dark green-black", "hex": "#0b2a28" }
+          ],
+          "relationToScreen": "describes"
+        },
+        "headline": "Eye- Friendly",
+        "confidence": 0.9,
+        "notes": "Mahjong solitaire tile-matching board; headline sits on a dark ink brush-stroke band across the bottom. The hyphen is followed by a visible gap before 'Friendly'."
+      }
+    },
+    {
+      "appId": "com.vitastudio.mahjong",
+      "name": "Vita Mahjong",
+      "position": 5,
+      "gl": "us",
+      "hl": "en",
+      "imageId": "2d51a17925aaba830c1f5d0da63696d39f942891c3700ea1505a89b3beb425e2",
+      "canvas": "portrait",
+      "ratio": "9:16",
+      "size": "1080x1920",
+      "focus": "map / world",
+      "attrs": {
+        "boardDensity": null,
+        "hudVisible": null,
+        "people": null,
+        "deviceInScene": null,
+        "from": ["layout"],
+        "focusMatch": "partial"
+      },
+      "imageColours": ["black", "green", "grey"],
+      "final": {
+        "imageRef": "img1",
+        "screenshot": {
+          "composition": "single_full_capture",
+          "screenType": "gameplay",
+          "subtype": "board",
+          "captures": [
+            {
+              "orientation": "portrait",
+              "screenType": "gameplay",
+              "subtype": "board",
+              "region": { "x": 0, "y": 0, "w": 100, "h": 100 },
+              "areaPercent": 100,
+              "framing": "full_bleed",
+              "description": "A mahjong solitaire tile layout arranged in a rough letter shape over a dark teal night sk…"
+            }
+          ],
+          "captureAreaPercent": 100,
+          "description": "Mahjong solitaire board with stacked tiles (some highlighted white, some greyed out and un…",
+          "action": "Player is matching pairs of free mahjong tiles to clear the layout.",
+          "atmosphere": "calm, cosy, wintry",
+          "mainColours": [
+            { "name": "dark teal", "hex": "#0f3b3a" },
+            { "name": "white", "hex": "#f2f2f2" },
+            { "name": "grey", "hex": "#9aa0a0" },
+            { "name": "red", "hex": "#c62828" },
+            { "name": "dark blue", "hex": "#1f3c8a" }
+          ]
+        },
+        "marketingLayer": {
+          "present": true,
+          "coveragePercent": 16,
+          "backgroundMasks": [
+            {
+              "shape": "other",
+              "colourName": "dark teal brush stroke",
+              "colourHex": "#0b2f2f",
+              "location": "bottom",
+              "region": { "x": 0, "y": 80, "w": 100, "h": 16 }
+            }
+          ],
+          "texts": [
+            {
+              "role": "headline",
+              "text": "10000+ Levels",
+              "language": "en",
+              "colour": "golden yellow #f3c74a",
+              "strokeColour": "dark brown #5a3a0a",
+              "fontStyle": "bold serif, 3D bevelled gold",
+              "size": "huge",
+              "position": "bottom",
+              "region": { "x": 8, "y": 87, "w": 84, "h": 9 }
+            }
+          ],
+          "elements": [],
+          "mainColours": [
+            { "name": "gold", "hex": "#f3c74a" },
+            { "name": "dark teal", "hex": "#0b2f2f" }
+          ],
+          "relationToScreen": "describes"
+        },
+        "headline": "10000+ Levels",
+        "confidence": 0.9,
+        "notes": "Mahjong solitaire tile-matching board; dark brush-stroke band behind the headline at the bottom."
+      }
+    },
+    {
+      "appId": "com.vitastudio.mahjong",
+      "name": "Vita Mahjong",
+      "position": 6,
+      "gl": "us",
+      "hl": "en",
+      "imageId": "9499c16834db7673997fea3987d9480ea4bd3dfa1f36569ad782cbab713bfdf1",
+      "canvas": "portrait",
+      "ratio": "9:16",
+      "size": "1080x1920",
+      "focus": "other",
+      "attrs": {
+        "boardDensity": null,
+        "hudVisible": null,
+        "people": null,
+        "deviceInScene": null,
+        "from": ["layout"],
+        "focusMatch": "partial"
+      },
+      "imageColours": ["black", "green", "grey"],
+      "final": {
+        "imageRef": "img1",
+        "screenshot": {
+          "composition": "single_full_capture",
+          "screenType": "gameplay",
+          "subtype": "board",
+          "captures": [
+            {
+              "orientation": "portrait",
+              "screenType": "gameplay",
+              "subtype": "board",
+              "region": { "x": 0, "y": 0, "w": 100, "h": 100 },
+              "areaPercent": 100,
+              "framing": "full_bleed",
+              "description": "A mahjong solitaire tile layout stacked in layers on a dark green night background with pi…"
+            }
+          ],
+          "captureAreaPercent": 100,
+          "description": "A layered mahjong solitaire board of white tiles (characters, bamboo, circle, dragon, flow…",
+          "action": "The player is matching pairs of mahjong tiles to clear the layered board.",
+          "atmosphere": "calm, cosy, wintry",
+          "mainColours": [
+            { "name": "dark teal green", "hex": "#0f3d33" },
+            { "name": "off-white", "hex": "#f0f0ea" },
+            { "name": "red", "hex": "#c8241e" },
+            { "name": "green", "hex": "#1f7a3a" },
+            { "name": "navy blue", "hex": "#1f3f8a" }
+          ]
+        },
+        "marketingLayer": {
+          "present": true,
+          "coveragePercent": 18,
+          "backgroundMasks": [
+            {
+              "shape": "other",
+              "colourName": "dark brush stroke",
+              "colourHex": "#0d2b26",
+              "location": "bottom",
+              "region": { "x": 5, "y": 80, "w": 90, "h": 16 }
+            }
+          ],
+          "texts": [
+            {
+              "role": "headline",
+              "text": "Daily Challenge",
+              "language": "en",
+              "colour": "golden yellow #f2c230",
+              "strokeColour": "dark brown #5a3a0a",
+              "fontStyle": "bold serif, 3D gradient with shadow",
+              "size": "huge",
+              "position": "bottom",
+              "region": { "x": 20, "y": 84, "w": 60, "h": 14 }
+            }
+          ],
+          "elements": [],
+          "mainColours": [
+            { "name": "golden yellow", "hex": "#f2c230" },
+            { "name": "dark green", "hex": "#0d2b26" }
+          ],
+          "relationToScreen": "describes"
+        },
+        "headline": "Daily Challenge",
+        "confidence": 0.9,
+        "notes": "Mahjong solitaire tile-matching board with a dark brush-stroke band behind the golden headline."
+      }
+    },
+    {
+      "appId": "com.vitastudio.mahjong",
+      "name": "Vita Mahjong",
+      "position": 7,
+      "gl": "us",
+      "hl": "en",
+      "imageId": "ce45fa8e05353838111ea4271470b509838c96519b79e0443c3f03f67f97ce2f",
+      "canvas": "landscape",
+      "ratio": "16:9",
+      "size": "1920x1080",
+      "focus": "other",
+      "attrs": {
+        "boardDensity": null,
+        "hudVisible": null,
+        "people": null,
+        "deviceInScene": null,
+        "from": ["layout"],
+        "focusMatch": "partial"
+      },
+      "imageColours": ["black", "green", "orange"],
+      "final": {
+        "imageRef": "img1",
+        "screenshot": {
+          "composition": "single_full_capture",
+          "screenType": "gameplay",
+          "subtype": "board",
+          "captures": [
+            {
+              "orientation": "landscape",
+              "screenType": "gameplay",
+              "subtype": "board",
+              "region": { "x": 0, "y": 0, "w": 100, "h": 100 },
+              "areaPercent": 100,
+              "framing": "full_bleed",
+              "description": "A mahjong solitaire board with white tiles (bamboo, circles, characters, dragons, winds, f…"
+            }
+          ],
+          "captureAreaPercent": 100,
+          "description": "Heart-shaped mahjong solitaire tile layout floating over a snowy night-sky background fram…",
+          "action": "The player is presented with a heart-shaped mahjong tile layout to match and clear.",
+          "atmosphere": "calm, cosy, relaxing winter night",
+          "mainColours": [
+            { "name": "dark teal green", "hex": "#0e4a44" },
+            { "name": "white", "hex": "#f4f4f0" },
+            { "name": "red", "hex": "#c62a2a" },
+            { "name": "green", "hex": "#2e7d32" },
+            { "name": "blue", "hex": "#2b4fa0" }
+          ]
+        },
+        "marketingLayer": {
+          "present": true,
+          "coveragePercent": 18,
+          "backgroundMasks": [
+            {
+              "shape": "band",
+              "colourName": "very dark green brush stroke",
+              "colourHex": "#0b2a28",
+              "location": "bottom",
+              "region": { "x": 0, "y": 78, "w": 100, "h": 22 }
+            }
+          ],
+          "texts": [
+            {
+              "role": "headline",
+              "text": "Better Sleep",
+              "language": "en",
+              "colour": "golden yellow #f5c242",
+              "strokeColour": "dark brown shadow",
+              "fontStyle": "bold serif with gradient 3D shine",
+              "size": "large",
+              "position": "bottom",
+              "region": { "x": 30, "y": 84, "w": 40, "h": 14 }
+            }
+          ],
+          "elements": [],
+          "mainColours": [
+            { "name": "golden yellow", "hex": "#f5c242" },
+            { "name": "very dark green", "hex": "#0b2a28" }
+          ],
+          "relationToScreen": "describes"
+        },
+        "headline": "Better Sleep",
+        "confidence": 0.8,
+        "notes": "The board is shown without any game UI; the dark brush-stroke band at the bottom carries the headline. The headline promotes relaxation rather than a specific feature."
+      }
+    },
+    {
+      "appId": "com.vitastudio.mahjong",
+      "name": "Vita Mahjong",
+      "position": 8,
+      "gl": "us",
+      "hl": "en",
+      "imageId": "47cfe45756bff70fd181d6122e5e67cb5b31bf950065991d56e9b7908c07f52d",
+      "canvas": "landscape",
+      "ratio": "16:9",
+      "size": "1920x1080",
+      "focus": "other",
+      "attrs": {
+        "boardDensity": null,
+        "hudVisible": null,
+        "people": null,
+        "deviceInScene": null,
+        "from": ["layout"],
+        "focusMatch": "partial"
+      },
+      "imageColours": ["black", "white", "grey"],
+      "final": {
+        "imageRef": "img1",
+        "screenshot": {
+          "composition": "single_full_capture",
+          "screenType": "gameplay",
+          "subtype": "board",
+          "captures": [
+            {
+              "orientation": "landscape",
+              "screenType": "gameplay",
+              "subtype": "board",
+              "region": { "x": 0, "y": 0, "w": 100, "h": 100 },
+              "areaPercent": 100,
+              "framing": "full_bleed",
+              "description": "A mahjong solitaire tile layout stacked in a wide symmetrical arrangement over a dark gree…"
+            }
+          ],
+          "captureAreaPercent": 100,
+          "description": "A classic mahjong solitaire board of white tiles with red, green and blue Chinese characte…",
+          "action": "The player is partway through a mahjong solitaire puzzle, matching free tiles from the sta…",
+          "atmosphere": "calm, wintry, serene",
+          "mainColours": [
+            { "name": "dark teal green", "hex": "#0e3d3a" },
+            { "name": "white", "hex": "#f2f2ee" },
+            { "name": "red", "hex": "#c62828" },
+            { "name": "green", "hex": "#2e7d32" },
+            { "name": "grey", "hex": "#b0b0b0" }
+          ]
+        },
+        "marketingLayer": {
+          "present": true,
+          "coveragePercent": 10,
+          "backgroundMasks": [],
+          "texts": [
+            {
+              "role": "headline",
+              "text": "Offline Play",
+              "language": "en",
+              "colour": "golden yellow gradient #f2b632",
+              "strokeColour": "dark brown shadow #4a2a00",
+              "fontStyle": "bold serif with gold bevel",
+              "size": "huge",
+              "position": "bottom",
+              "region": { "x": 29, "y": 84, "w": 44, "h": 13 }
+            }
+          ],
+          "elements": [],
+          "mainColours": [
+            { "name": "golden yellow", "hex": "#f2b632" },
+            { "name": "dark brown", "hex": "#4a2a00" }
+          ],
+          "relationToScreen": "describes"
+        },
+        "headline": "Offline Play",
+        "confidence": 0.92,
+        "notes": "The dark ink-brush ground stroke at the bottom appears to be part of the game's own background rather than an added mask."
+      }
+    },
+    {
+      "appId": "com.nebula.mahjongtile",
+      "name": "Mahjong Blast",
+      "position": 1,
+      "gl": "us",
+      "hl": "en",
+      "imageId": "c028324436e912f17a70f0d8eab329ac8df106c14683fd247869016010fa9764",
+      "canvas": "landscape",
+      "ratio": "16:9",
+      "size": "1920x1080",
+      "focus": "story / art",
+      "attrs": {
+        "boardDensity": null,
+        "hudVisible": null,
+        "people": null,
+        "deviceInScene": null,
+        "from": ["layout"],
+        "focusMatch": "match"
+      },
+      "imageColours": ["green", "orange", "green"],
+      "final": {
+        "imageRef": "img1",
+        "screenshot": {
+          "composition": "pure_art",
+          "screenType": "promo_banner",
+          "subtype": "logo_with_art",
+          "captures": [],
+          "captureAreaPercent": 0,
+          "description": "Full-screen art on a dark green background: a large 3D temple-like building (dome, pedimen…",
+          "action": "No gameplay; the tile temple is presented as a showcase of the game's 3D mahjong tile styl…",
+          "atmosphere": "serene, playful, polished and oriental",
+          "mainColours": [
+            { "name": "dark green", "hex": "#1a6b3a" },
+            { "name": "cream", "hex": "#f2e9d8" },
+            { "name": "orange", "hex": "#f0862a" },
+            { "name": "pink", "hex": "#f08aa0" },
+            { "name": "leaf green", "hex": "#4caf50" }
+          ]
+        },
+        "marketingLayer": {
+          "present": true,
+          "coveragePercent": 12,
+          "backgroundMasks": [],
+          "texts": [
+            {
+              "role": "headline",
+              "text": "MAHJONG",
+              "language": "en",
+              "colour": "yellow to orange gradient #f7c23a",
+              "strokeColour": "white outline with dark shadow",
+              "fontStyle": "heavy rounded sans, bold, 3D extruded",
+              "size": "large",
+              "position": "upper_middle",
+              "region": { "x": 4, "y": 29, "w": 27, "h": 11 }
+            },
+            {
+              "role": "headline",
+              "text": "Match 3D",
+              "language": "en",
+              "colour": "yellow to orange gradient #f7c23a",
+              "strokeColour": "white outline with dark shadow",
+              "fontStyle": "heavy rounded sans, bold, 3D extruded",
+              "size": "large",
+              "position": "upper_middle",
+              "region": { "x": 4, "y": 39, "w": 27, "h": 11 }
+            }
+          ],
+          "elements": [
+            {
+              "kind": "logo",
+              "what": "game logo 'MAHJONG BLAST' with a red '中' mahjong tile on top",
+              "position": "upper-left",
+              "pose": "n/a",
+              "colours": "yellow, green, white, red",
+              "scale": "medium",
+              "breaksFrame": false,
+              "region": { "x": 10, "y": 10, "w": 15, "h": 17 }
+            }
+          ],
+          "mainColours": [
+            { "name": "yellow", "hex": "#f7c23a" },
+            { "name": "green", "hex": "#2e8b3a" },
+            { "name": "white", "hex": "#ffffff" },
+            { "name": "red", "hex": "#d32f2f" }
+          ],
+          "relationToScreen": "describes"
+        },
+        "headline": "MAHJONG Match 3D",
+        "confidence": 0.9,
+        "notes": "Landscape feature-style art with the game's logo; no in-game UI capture. The two headline lines share style but are listed as separate blocks for safety."
+      }
+    },
+    {
+      "appId": "com.nebula.mahjongtile",
+      "name": "Mahjong Blast",
+      "position": 2,
+      "gl": "us",
+      "hl": "en",
+      "imageId": "e83f478d2d32e32009d402c5ac1320dbf8b4651d92577f699cf12b9e781f7c26",
+      "canvas": "portrait",
+      "ratio": "9:16",
+      "size": "1080x1920",
+      "focus": "battle",
+      "attrs": {
+        "boardDensity": null,
+        "hudVisible": null,
+        "people": null,
+        "deviceInScene": null,
+        "from": ["layout"],
+        "focusMatch": "match"
+      },
+      "imageColours": ["green", "yellow", "brown"],
+      "final": {
+        "imageRef": "img1",
+        "screenshot": {
+          "composition": "single_full_capture",
+          "screenType": "gameplay",
+          "subtype": "board",
+          "captures": [
+            {
+              "orientation": "portrait",
+              "screenType": "gameplay",
+              "subtype": "board",
+              "region": { "x": 0, "y": 0, "w": 100, "h": 84 },
+              "areaPercent": 84,
+              "framing": "full_bleed",
+              "description": "A mahjong solitaire layout of stacked white tiles with Chinese characters, bamboo, circles…"
+            }
+          ],
+          "captureAreaPercent": 84,
+          "description": "Mahjong solitaire tile board: layered white tiles with green, red and blue symbols (發, 西, …",
+          "action": "The player is looking at the tile layout to find and match pairs of identical free tiles.",
+          "atmosphere": "calm, relaxing, classic",
+          "mainColours": [
+            { "name": "dark green", "hex": "#0f5a35" },
+            { "name": "off-white", "hex": "#f2f0e8" },
+            { "name": "jade green", "hex": "#2d8a4e" },
+            { "name": "red", "hex": "#c8302a" },
+            { "name": "navy blue", "hex": "#1f4d8c" }
+          ]
+        },
+        "marketingLayer": {
+          "present": true,
+          "coveragePercent": 17,
+          "backgroundMasks": [
+            {
+              "shape": "band",
+              "colourName": "brown wood",
+              "colourHex": "#7a3f1c",
+              "location": "bottom",
+              "region": { "x": 0, "y": 84, "w": 100, "h": 16 }
+            }
+          ],
+          "texts": [
+            {
+              "role": "headline",
+              "text": "Match",
+              "language": "en",
+              "colour": "yellow gradient #f7d13a",
+              "strokeColour": "white outline with dark shadow",
+              "fontStyle": "heavy rounded sans, bold, 3D bevel",
+              "size": "huge",
+              "position": "bottom",
+              "region": { "x": 26, "y": 87, "w": 48, "h": 11 }
+            }
+          ],
+          "elements": [
+            {
+              "kind": "other",
+              "what": "golden ornamental scroll crest on the band's top edge with green leaves and small flowers at both ends",
+              "position": "top edge of bottom band, centre and corners",
+              "pose": "n/a",
+              "colours": "gold, green, pink",
+              "scale": "small",
+              "breaksFrame": false,
+              "region": { "x": 0, "y": 82, "w": 100, "h": 5 }
+            }
+          ],
+          "mainColours": [
+            { "name": "brown", "hex": "#7a3f1c" },
+            { "name": "yellow", "hex": "#f7d13a" },
+            { "name": "gold", "hex": "#e0a020" },
+            { "name": "green", "hex": "#3a9a3a" }
+          ],
+          "relationToScreen": "describes"
+        },
+        "headline": "Match",
+        "confidence": 0.92,
+        "notes": "Mahjong solitaire game; the bottom wooden band with the 'Match' headline is the store addition."
+      }
+    },
+    {
+      "appId": "com.nebula.mahjongtile",
+      "name": "Mahjong Blast",
+      "position": 3,
+      "gl": "us",
+      "hl": "en",
+      "imageId": "0657871534718d86229e80ae5dddcf7494ed719c79fe3a204d7cd09720271fe2",
+      "canvas": "portrait",
+      "ratio": "9:16",
+      "size": "1080x1920",
+      "focus": "battle",
+      "attrs": {
+        "boardDensity": null,
+        "hudVisible": null,
+        "people": null,
+        "deviceInScene": null,
+        "from": ["layout"],
+        "focusMatch": "match"
+      },
+      "imageColours": ["green", "yellow", "brown"],
+      "final": {
+        "imageRef": "img1",
+        "screenshot": {
+          "composition": "single_full_capture",
+          "screenType": "gameplay",
+          "subtype": "board",
+          "captures": [
+            {
+              "orientation": "portrait",
+              "screenType": "gameplay",
+              "subtype": "board",
+              "region": { "x": 0, "y": 0, "w": 100, "h": 100 },
+              "areaPercent": 100,
+              "framing": "full_bleed",
+              "description": "A mahjong tile-matching board on a green garden background with layered tiles showing numb…"
+            }
+          ],
+          "captureAreaPercent": 100,
+          "description": "Mahjong solitaire tile board on a dark green leafy background with a wooden/orange ground …",
+          "action": "The player matches two identical 發 tiles; a glowing golden light trail links the two selec…",
+          "atmosphere": "calm, cosy, relaxing",
+          "mainColours": [
+            { "name": "dark green", "hex": "#1f6b3a" },
+            { "name": "ivory white", "hex": "#f4f1e6" },
+            { "name": "golden orange", "hex": "#f0a020" },
+            { "name": "navy blue", "hex": "#1f3f7a" },
+            { "name": "brown wood", "hex": "#8a4a1e" }
+          ]
+        },
+        "marketingLayer": {
+          "present": true,
+          "coveragePercent": 10,
+          "backgroundMasks": [
+            {
+              "shape": "band",
+              "colourName": "brown wood with golden trim",
+              "colourHex": "#8a4a1e",
+              "location": "bottom",
+              "region": { "x": 0, "y": 85, "w": 100, "h": 15 }
+            }
+          ],
+          "texts": [
+            {
+              "role": "headline",
+              "text": "Clear",
+              "language": "en",
+              "colour": "yellow #f7d84a",
+              "strokeColour": "white outline with orange shadow",
+              "fontStyle": "heavy rounded sans, bold, 3D",
+              "size": "huge",
+              "position": "bottom",
+              "region": { "x": 28, "y": 88, "w": 44, "h": 10 }
+            }
+          ],
+          "elements": [],
+          "mainColours": [
+            { "name": "yellow", "hex": "#f7d84a" },
+            { "name": "brown wood", "hex": "#8a4a1e" },
+            { "name": "gold", "hex": "#e8a520" }
+          ],
+          "relationToScreen": "describes"
+        },
+        "headline": "Clear",
+        "confidence": 0.9,
+        "notes": "The bottom wooden strip with golden ornament may be part of the game's own board frame; the headline 'Clear' sits over it."
+      }
+    },
+    {
+      "appId": "com.nebula.mahjongtile",
+      "name": "Mahjong Blast",
+      "position": 4,
+      "gl": "us",
+      "hl": "en",
+      "imageId": "2b4ee52546dff75de29caa4c13d1d5e1cebfb12a914dc46b880bff12a2a8eaee",
+      "canvas": "portrait",
+      "ratio": "9:16",
+      "size": "1080x1920",
+      "focus": "battle",
+      "attrs": {
+        "boardDensity": null,
+        "hudVisible": null,
+        "people": null,
+        "deviceInScene": null,
+        "from": ["layout"],
+        "focusMatch": "partial"
+      },
+      "imageColours": ["yellow", "green", "brown"],
+      "final": {
+        "imageRef": "img1",
+        "screenshot": {
+          "composition": "single_full_capture",
+          "screenType": "gameplay",
+          "subtype": "board",
+          "captures": [
+            {
+              "orientation": "portrait",
+              "screenType": "gameplay",
+              "subtype": "board",
+              "region": { "x": 0, "y": 0, "w": 100, "h": 84 },
+              "areaPercent": 84,
+              "framing": "full_bleed",
+              "description": "A tall pyramid-shaped stack of mahjong solitaire tiles with numbers, bamboo, dots, flowers…"
+            }
+          ],
+          "captureAreaPercent": 84,
+          "description": "A mahjong solitaire layout: a large multi-layered pyramid of cream tiles (numbers 1, 3, 6,…",
+          "action": "The player is about to match pairs of identical tiles from the stacked mahjong pyramid.",
+          "atmosphere": "calm, cosy, garden-like puzzle mood",
+          "mainColours": [
+            { "name": "dark green", "hex": "#1f6a3a" },
+            { "name": "cream white", "hex": "#f4efe2" },
+            { "name": "navy blue", "hex": "#1d3a7a" },
+            { "name": "dark red", "hex": "#a8261f" },
+            { "name": "brown", "hex": "#7a3d1c" }
+          ]
+        },
+        "marketingLayer": {
+          "present": true,
+          "coveragePercent": 16,
+          "backgroundMasks": [
+            {
+              "shape": "band",
+              "colourName": "brown wood",
+              "colourHex": "#8a4a22",
+              "location": "bottom",
+              "region": { "x": 0, "y": 85, "w": 100, "h": 15 }
+            }
+          ],
+          "texts": [
+            {
+              "role": "headline",
+              "text": "Offline",
+              "language": "en",
+              "colour": "golden yellow #f7c22a",
+              "strokeColour": "white / dark brown shadow",
+              "fontStyle": "heavy rounded sans, 3D bevel",
+              "size": "huge",
+              "position": "bottom",
+              "region": { "x": 26, "y": 88, "w": 48, "h": 10 }
+            }
+          ],
+          "elements": [
+            {
+              "kind": "other",
+              "what": "golden ornamental scroll crest on the band's top edge",
+              "position": "bottom-centre, top of the wooden band",
+              "pose": "n/a",
+              "colours": "gold",
+              "scale": "small",
+              "breaksFrame": false,
+              "region": { "x": 42, "y": 83, "w": 16, "h": 5 }
+            },
+            {
+              "kind": "other",
+              "what": "leaves and small flowers decorating the band corners",
+              "position": "bottom-left and bottom-right corners",
+              "pose": "n/a",
+              "colours": "green, pink, yellow",
+              "scale": "small",
+              "breaksFrame": false,
+              "region": { "x": 0, "y": 82, "w": 100, "h": 8 }
+            }
+          ],
+          "mainColours": [
+            { "name": "brown wood", "hex": "#8a4a22" },
+            { "name": "golden yellow", "hex": "#f7c22a" },
+            { "name": "green", "hex": "#3d9a3a" }
+          ],
+          "relationToScreen": "describes"
+        },
+        "headline": "Offline",
+        "confidence": 0.93,
+        "notes": "Mahjong solitaire tile-matching board; the bottom wooden band with the 'Offline' headline is a store addition highlighting that the game can be played without internet."
+      }
+    },
+    {
+      "appId": "com.nebula.mahjongtile",
+      "name": "Mahjong Blast",
+      "position": 5,
+      "gl": "us",
+      "hl": "en",
+      "imageId": "ddd5f1b84451d96d6e37e6964d72ef39dfbff21e35c2779c44c5fd6ed180ae06",
+      "canvas": "portrait",
+      "ratio": "9:16",
+      "size": "1080x1920",
+      "focus": "battle",
+      "attrs": {
+        "boardDensity": null,
+        "hudVisible": null,
+        "people": null,
+        "deviceInScene": null,
+        "from": ["layout"],
+        "focusMatch": "partial"
+      },
+      "imageColours": ["green", "yellow", "brown"],
+      "final": {
+        "imageRef": "img1",
+        "screenshot": {
+          "composition": "single_full_capture",
+          "screenType": "gameplay",
+          "subtype": "board",
+          "captures": [
+            {
+              "orientation": "portrait",
+              "screenType": "gameplay",
+              "subtype": "board",
+              "region": { "x": 0, "y": 0, "w": 100, "h": 100 },
+              "areaPercent": 100,
+              "framing": "full_bleed",
+              "description": "A mahjong solitaire board with a stacked pyramid of white tiles (bamboos, dots, characters…"
+            }
+          ],
+          "captureAreaPercent": 100,
+          "description": "Mahjong solitaire tile layout stacked in layers on a green background framed by leaves and…",
+          "action": "The player is selecting and matching pairs of mahjong tiles to clear the pyramid layout.",
+          "atmosphere": "calm, relaxing, lush",
+          "mainColours": [
+            { "name": "dark green", "hex": "#1e6b3c" },
+            { "name": "white", "hex": "#f5f3ee" },
+            { "name": "brown wood", "hex": "#8a4a28" },
+            { "name": "gold", "hex": "#e8b43a" },
+            { "name": "red", "hex": "#c0312c" }
+          ]
+        },
+        "marketingLayer": {
+          "present": true,
+          "coveragePercent": 12,
+          "backgroundMasks": [
+            {
+              "shape": "band",
+              "colourName": "brown wood",
+              "colourHex": "#8a4a28",
+              "location": "bottom",
+              "region": { "x": 0, "y": 85, "w": 100, "h": 15 }
+            }
+          ],
+          "texts": [
+            {
+              "role": "headline",
+              "text": "Relaxing",
+              "language": "en",
+              "colour": "yellow #f9d73a",
+              "strokeColour": "dark brown #6a3a14",
+              "fontStyle": "heavy rounded sans, bold, with drop shadow",
+              "size": "huge",
+              "position": "bottom",
+              "region": { "x": 18, "y": 89, "w": 64, "h": 10 }
+            }
+          ],
+          "elements": [],
+          "mainColours": [
+            { "name": "yellow", "hex": "#f9d73a" },
+            { "name": "brown wood", "hex": "#8a4a28" },
+            { "name": "gold", "hex": "#e8b43a" }
+          ],
+          "relationToScreen": "describes"
+        },
+        "headline": "Relaxing",
+        "confidence": 0.9,
+        "notes": "The wooden bottom band with the golden ornament and leaf decorations may be part of the in-game frame; the yellow 'Relaxing' headline is the store addition."
+      }
+    },
+    {
+      "appId": "com.nebula.mahjongtile",
+      "name": "Mahjong Blast",
+      "position": 6,
+      "gl": "us",
+      "hl": "en",
+      "imageId": "5cc00c7605e95e960e2506d2c208bda084a2ee6c50812cae28f8b7297185c85d",
+      "canvas": "landscape",
+      "ratio": "16:9",
+      "size": "1920x1080",
+      "focus": "collection",
+      "attrs": {
+        "boardDensity": null,
+        "hudVisible": null,
+        "people": null,
+        "deviceInScene": null,
+        "from": ["layout"],
+        "focusMatch": "match"
+      },
+      "imageColours": ["green", "green", "red"],
+      "final": {
+        "imageRef": "img1",
+        "screenshot": {
+          "composition": "pure_art",
+          "screenType": "promo_banner",
+          "subtype": "feature_callout",
+          "captures": [],
+          "captureAreaPercent": 0,
+          "description": "A full-screen collage of mahjong-style tiles on a dark green background with faint bamboo …",
+          "action": "No active play; the tile themes are showcased side by side in a staggered grid.",
+          "atmosphere": "cheerful, cosy, playful",
+          "mainColours": [
+            { "name": "dark green", "hex": "#0f5a35" },
+            { "name": "beige/tan wood", "hex": "#e0c39b" },
+            { "name": "white", "hex": "#f4f4f4" },
+            { "name": "pale pink", "hex": "#f6d8ea" },
+            { "name": "red", "hex": "#d9342f" }
+          ]
+        },
+        "marketingLayer": {
+          "present": true,
+          "coveragePercent": 12,
+          "backgroundMasks": [],
+          "texts": [
+            {
+              "role": "headline",
+              "text": "NEW THEMES AWAIT",
+              "language": "en",
+              "colour": "white #ffffff",
+              "strokeColour": "green #2e8b57 outline with dark green shadow",
+              "fontStyle": "heavy rounded sans, bold, outlined",
+              "size": "huge",
+              "position": "bottom",
+              "region": { "x": 16, "y": 79, "w": 70, "h": 15 }
+            }
+          ],
+          "elements": [],
+          "mainColours": [
+            { "name": "white", "hex": "#ffffff" },
+            { "name": "green", "hex": "#2e8b57" }
+          ],
+          "relationToScreen": "describes"
+        },
+        "headline": "NEW THEMES AWAIT",
+        "confidence": 0.8,
+        "notes": "The tiles are the game's own art assets arranged as a themed showcase rather than a real playable board; dark green background with bamboo silhouettes may be the game's own backdrop."
+      }
+    },
+    {
+      "appId": "com.nebula.mahjongtile",
+      "name": "Mahjong Blast",
+      "position": 7,
+      "gl": "us",
+      "hl": "en",
+      "imageId": "d87653c4cf74cd94930a44f290e3bcd0d47ac039f683e766f83b98e4c1048b33",
+      "canvas": "landscape",
+      "ratio": "16:9",
+      "size": "1920x1080",
+      "focus": "battle",
+      "attrs": {
+        "boardDensity": null,
+        "hudVisible": true,
+        "people": null,
+        "deviceInScene": null,
+        "from": ["layout"],
+        "focusMatch": "partial"
+      },
+      "imageColours": ["yellow", "orange", "black"],
+      "final": {
+        "imageRef": "img1",
+        "screenshot": {
+          "composition": "capture_in_marketing_art",
+          "screenType": "gameplay",
+          "subtype": "board",
+          "captures": [
+            {
+              "orientation": "landscape",
+              "screenType": "gameplay",
+              "subtype": "board",
+              "region": { "x": 29, "y": 24, "w": 60, "h": 72 },
+              "areaPercent": 38,
+              "framing": "device_frame",
+              "description": "A tilted tablet shows a green felt mahjong-solitaire board with stacked tiles (bamboo, dot…"
+            }
+          ],
+          "captureAreaPercent": 38,
+          "description": "A mahjong tile-matching gameplay screen on a tablet lying on a wooden desk, surrounded by …",
+          "action": "The player taps a glowing '發' tile to match it with its twin, with a golden burst and ring…",
+          "atmosphere": "cosy, relaxing, warm",
+          "mainColours": [
+            { "name": "green", "hex": "#2e8b4a" },
+            { "name": "cream white", "hex": "#f3eedd" },
+            { "name": "warm brown", "hex": "#8b5a2b" },
+            { "name": "gold", "hex": "#f0c040" }
+          ]
+        },
+        "marketingLayer": {
+          "present": true,
+          "coveragePercent": 62,
+          "backgroundMasks": [
+            {
+              "shape": "full_background",
+              "colourName": "green and wood-brown desk scene",
+              "colourHex": "#4a7a4a",
+              "location": "full",
+              "region": { "x": 0, "y": 0, "w": 100, "h": 100 }
+            }
+          ],
+          "texts": [
+            {
+              "role": "headline",
+              "text": "Your Daily Escape",
+              "language": "en",
+              "colour": "yellow-gold gradient #f7c531",
+              "strokeColour": "dark green #1f5a2a",
+              "fontStyle": "heavy rounded sans, bold with 3D outline",
+              "size": "huge",
+              "position": "top",
+              "region": { "x": 32, "y": 4, "w": 64, "h": 18 }
+            }
+          ],
+          "elements": [
+            {
+              "kind": "logo",
+              "what": "Mahjong Blast game logo with a red dragon tile icon",
+              "position": "bottom-right corner",
+              "pose": "n/a",
+              "colours": "green, white, red, yellow",
+              "scale": "small",
+              "breaksFrame": false,
+              "region": { "x": 84, "y": 82, "w": 14, "h": 16 }
+            },
+            {
+              "kind": "item",
+              "what": "white coffee mug held by a hand",
+              "position": "left-centre, in front of the tablet",
+              "pose": "n/a",
+              "colours": "white, dark brown, skin tone",
+              "scale": "large",
+              "breaksFrame": true,
+              "region": { "x": 0, "y": 48, "w": 33, "h": 50 }
+            },
+            {
+              "kind": "item",
+              "what": "vase of white flowers",
+              "position": "top-left",
+              "pose": "n/a",
+              "colours": "white, green, glass",
+              "scale": "large",
+              "breaksFrame": true,
+              "region": { "x": 0, "y": 0, "w": 32, "h": 52 }
+            },
+            {
+              "kind": "creature",
+              "what": "sleeping ginger cat",
+              "position": "right, behind the tablet",
+              "pose": "curled up asleep",
+              "colours": "orange, white",
+              "scale": "medium",
+              "breaksFrame": true,
+              "region": { "x": 76, "y": 20, "w": 24, "h": 28 }
+            },
+            {
+              "kind": "item",
+              "what": "strawberry cream cake on a plate",
+              "position": "bottom-right, beside the tablet",
+              "pose": "n/a",
+              "colours": "white, red, pink",
+              "scale": "medium",
+              "breaksFrame": true,
+              "region": { "x": 86, "y": 45, "w": 14, "h": 42 }
+            },
+            {
+              "kind": "character",
+              "what": "hand with finger tapping a tile",
+              "position": "bottom-centre over the tablet",
+              "pose": "index finger pointing at the screen",
+              "colours": "skin tone",
+              "scale": "medium",
+              "breaksFrame": true,
+              "region": { "x": 42, "y": 62, "w": 20, "h": 38 }
+            },
+            {
+              "kind": "effect",
+              "what": "golden glow burst and ring around the matched tiles",
+              "position": "centre of the tablet screen",
+              "pose": "n/a",
+              "colours": "gold, white",
+              "scale": "medium",
+              "breaksFrame": false,
+              "region": { "x": 40, "y": 45, "w": 28, "h": 36 }
+            }
+          ],
+          "mainColours": [
+            { "name": "green", "hex": "#3a7d44" },
+            { "name": "gold yellow", "hex": "#f7c531" },
+            { "name": "warm brown", "hex": "#9a6a3a" },
+            { "name": "white", "hex": "#f5f2ea" }
+          ],
+          "relationToScreen": "describes"
+        },
+        "headline": "Your Daily Escape",
+        "confidence": 0.9,
+        "notes": "Landscape store image; the only in-game capture is the mahjong board on the tilted tablet, embedded in a rendered cosy desk scene."
+      }
+    },
+    {
+      "appId": "com.nebula.mahjongtile",
+      "name": "Mahjong Blast",
+      "position": 8,
+      "gl": "us",
+      "hl": "en",
+      "imageId": "5319208714658190cd65d379fed7e30b1fecf80af15e3125aaa9225e50bb3aab",
+      "canvas": "landscape",
+      "ratio": "16:9",
+      "size": "1920x1080",
+      "focus": "story / art",
+      "attrs": {
+        "boardDensity": null,
+        "hudVisible": null,
+        "people": null,
+        "deviceInScene": null,
+        "from": ["layout"],
+        "focusMatch": "match"
+      },
+      "imageColours": ["black", "teal", "green"],
+      "final": {
+        "imageRef": "img1",
+        "screenshot": {
+          "composition": "pure_art",
+          "screenType": "promo_banner",
+          "subtype": "feature_callout",
+          "captures": [],
+          "captureAreaPercent": 0,
+          "description": "Landscape promotional art: on the left a photo of a man sleeping peacefully on a pillow in…",
+          "action": "A man sleeps while a glowing mahjong tile stack hovers beside him, suggesting the game as …",
+          "atmosphere": "calm, relaxing, dreamy, night-time",
+          "mainColours": [
+            { "name": "near black", "hex": "#0b1510" },
+            { "name": "glow green", "hex": "#3ddc5a" },
+            { "name": "off white tile", "hex": "#eef5f0" },
+            { "name": "dark green", "hex": "#1f6b3a" },
+            { "name": "skin / grey blue", "hex": "#7a8a99" }
+          ]
+        },
+        "marketingLayer": {
+          "present": true,
+          "coveragePercent": 50,
+          "backgroundMasks": [],
+          "texts": [
+            {
+              "role": "headline",
+              "text": "Mahjong for Better Sleep",
+              "language": "en",
+              "colour": "golden yellow #f2c35a",
+              "strokeColour": "dark brown shadow",
+              "fontStyle": "bold rounded sans, slight 3D bevel",
+              "size": "huge",
+              "position": "top",
+              "region": { "x": 4, "y": 5, "w": 42, "h": 27 }
+            }
+          ],
+          "elements": [
+            {
+              "kind": "other",
+              "what": "photo of a sleeping man lying on a pillow",
+              "position": "left half, lower area",
+              "pose": "lying on side, eyes closed, hand under cheek",
+              "colours": "grey-blue shirt, white pillow, dark background",
+              "scale": "dominant",
+              "breaksFrame": true,
+              "region": { "x": 0, "y": 30, "w": 58, "h": 70 }
+            },
+            {
+              "kind": "item",
+              "what": "stacked cluster of mahjong tiles with green glowing rings",
+              "position": "right half, centre",
+              "pose": "n/a",
+              "colours": "white tiles, green and teal symbols, bright green glow",
+              "scale": "dominant",
+              "breaksFrame": false,
+              "region": { "x": 48, "y": 2, "w": 46, "h": 96 }
+            },
+            {
+              "kind": "item",
+              "what": "five large floating green '發' mahjong tiles",
+              "position": "over the tile cluster: top-left, top-right, centre, bottom-left, bottom-right",
+              "pose": "n/a",
+              "colours": "white tile, dark green character",
+              "scale": "large",
+              "breaksFrame": false,
+              "region": { "x": 50, "y": 5, "w": 42, "h": 92 }
+            },
+            {
+              "kind": "effect",
+              "what": "green light rings, sparkles and leaf particles",
+              "position": "around the tile cluster",
+              "pose": "n/a",
+              "colours": "bright green, white",
+              "scale": "large",
+              "breaksFrame": false,
+              "region": { "x": 46, "y": 0, "w": 50, "h": 100 }
+            }
+          ],
+          "mainColours": [
+            { "name": "golden yellow", "hex": "#f2c35a" },
+            { "name": "glow green", "hex": "#3ddc5a" },
+            { "name": "near black", "hex": "#0b1510" },
+            { "name": "white", "hex": "#eef5f0" }
+          ],
+          "relationToScreen": "describes"
+        },
+        "headline": "Mahjong for Better Sleep",
+        "confidence": 0.8,
+        "notes": "Whole image is composed marketing art; the mahjong tile stack reads as stylised game art rather than a framed in-game capture, so classified as feature_image with no logo visible."
+      }
+    }
+  ],
+  "decks": [
+    { "appId": "com.vitastudio.mahjong", "name": "Vita Mahjong", "deckLength": 8 },
+    { "appId": "com.nebula.mahjongtile", "name": "Mahjong Blast", "deckLength": 8 }
+  ],
+  "ourDeckLength": 4,
+  "market": [
+    {
+      "appId": "com.deepmist.comfymahjong",
+      "name": "Comfy Mahjong Solitaire",
+      "installs": "500+",
+      "realInstalls": null,
+      "grossingRank": null
+    },
+    {
+      "appId": "com.vitastudio.mahjong",
+      "name": "Vita Mahjong",
+      "installs": "100,000,000+",
+      "realInstalls": null,
+      "grossingRank": null
+    },
+    {
+      "appId": "com.nebula.mahjongtile",
+      "name": "Mahjong Blast",
+      "installs": "50,000,000+",
+      "realInstalls": null,
+      "grossingRank": null
+    }
+  ],
+  "meta": {
+    "markets": [
+      { "gl": "us", "hl": "en", "label": "United States (English)" },
+      { "gl": "de", "hl": "de", "label": "Germany (German)" },
+      { "gl": "fr", "hl": "fr", "label": "France (French)" }
+    ],
+    "ours": { "appId": "com.deepmist.comfymahjong", "name": "Comfy Mahjong Solitaire" },
+    "competitors": [
+      { "appId": "com.vitastudio.mahjong", "name": "Vita Mahjong" },
+      { "appId": "com.nebula.mahjongtile", "name": "Mahjong Blast" },
+      {
+        "appId": "com.mahjong.master.solitaire.match.puzzle",
+        "name": "Mahjong Master: Daily Match"
+      },
+      { "appId": "com.gamovation.mahjongclub", "name": "Mahjong Club - Solitaire Game" }
+    ],
+    "market": [
+      {
+        "appId": "com.vitastudio.mahjong",
+        "name": "Vita Mahjong",
+        "installs": "100,000,000+",
+        "realInstalls": null,
+        "grossingRank": null
+      },
+      {
+        "appId": "com.nebula.mahjongtile",
+        "name": "Mahjong Blast",
+        "installs": "50,000,000+",
+        "realInstalls": null,
+        "grossingRank": null
+      },
+      {
+        "appId": "com.mahjong.master.solitaire.match.puzzle",
+        "name": "Mahjong Master: Daily Match",
+        "installs": "10,000,000+",
+        "realInstalls": null,
+        "grossingRank": null
+      },
+      {
+        "appId": "com.gamovation.mahjongclub",
+        "name": "Mahjong Club - Solitaire Game",
+        "installs": "10,000,000+",
+        "realInstalls": null,
+        "grossingRank": null
+      }
+    ],
+    "text": {
+      "com.deepmist.comfymahjong|us|en": {
+        "title": "Comfy Mahjong Solitaire",
+        "shortDescription": "Relaxing Mahjong Solitaire: classic tile match & offline puzzle, big tiles",
+        "description": "Comfy Mahjong Solitaire is a relaxing puzzle game of classic mahjong tile matching. Match identical pairs of mahjong tiles, clear the board, and unwind. No time limits on any level — play at your own pace. Built with large, easy-to-read tiles and simple one-thumb controls, it is comfortable and accessible for adults and seniors who want a calm, low-pressure mahjong puzzle.\n\nHOW TO PLAY \nYour goal is simple: clear every tile from the board by matching pairs. Tap or slide two matching tiles, and they will be removed from the board. Keep matching pairs until the whole board is empty. \n\nGAME FEATURES\n- Large, Easy-to-Read Tiles: crisp, high-contrast mahjong tiles on soft green felt, made to be read at a glance and to stay comfortable at arm's length.\n- Relaxing, No-Timer Play: no time limits on any level — take as long as you like, with no fail-spiral.\n- Full Offline Support: every board works offline, with no wifi or signal needed. Play on a plane, on the sofa, or anywhere you go.\n- Helpful Hints, Undo & Shuffle: free tools are there for a tricky board — use them, or don't. Every board can be finished.\n- Gentle Difficulty Ramp: starts easy and eases up gradually, so it stays simple to learn and satisfying to play.\n- A Fair, Quiet Game: nothing is metered — no energy to refill, no lives to wait for, no in-game currency, and no daily streak to keep. No banner ads on your board, not one. Rewarded video is entirely optional, and one simple purchase removes every ad, for good.\n\nIf you love mahjong solitaire, tile matching, and relaxing board games, Comfy Mahjong is built for you. \n\nPlay now — a relaxing mahjong tile match puzzle you can enjoy offline, at your own pace.",
+        "recentChanges": null,
+        "genre": { "id": "GAME_PUZZLE", "name": "Puzzle" },
+        "chips": [{ "id": "GAME_PUZZLE", "name": "Puzzle" }],
+        "contentRating": "Everyone"
+      },
+      "com.vitastudio.mahjong|us|en": {
+        "title": "Vita Mahjong",
+        "shortDescription": "Relaxing Vita Mahjong: Classic Tile Matching and Offline Puzzle Games!",
+        "description": "Vita Mahjong is an Exclusive Puzzle Game of Tile Matching. We are thrilled to present the mahjong game that combines innovation with classic gameplay. It offers large tiles and a user-friendly interface compatible with pads and phones. Our goal is to provide a relaxing yet mentally engaging gaming experience, particularly focused on older adults.\n\nAt Vita Studio, we have always been dedicated to crafting mobile games designed for seniors that bring back relaxation, fun, and joy. Our repertoire includes popular titles like Vita Color, Vita Jigsaw, Vita Word Search, Vita Block, Vita Sudoku, and more.\n\nHow to Play Vita Mahjong:\nPlaying free Vita Mahjong game is simple. Just aim to clear all the tiles on the board by matching tiles with identical images. Tap or slide two matching tiles, and they will vanish from the board. Your objective is to match tiles that are not concealed or blocked. Once all tiles are eliminated, it signifies successful completion of a majong game!\n\nExclusive Vita Mahjong Game Features:\n• Classic Mahjong : Staying true to the original gameplay, it presents traditional card tile sets and hundreds of boards.\n• Special Innovations: Besides the classic, our game introduces special tiles that add a fresh twist to the classic mahjong.\n• Large-Scale Design: Our mahjong games feature large, easily readable text sizes to alleviate the strain caused by small fonts.\n• Active Mind Levels: A special mode designed to sharpen your mind and improve memory abilities in the mahjong games. \n• Customizable Scoring: You can enjoy free classic mahjong games without a timer and any score pressure.\n• Super Combo: When you consecutively match mahjong tiles during the game, you will unlock special experiences.\n• Helpful Hints: Our game provides free useful props, such as hints, undo, and shuffle, to help players overcome challenging puzzles.\n• Daily Challenge: Take on daily practice to collect trophies and improve your classic mahjong solitaire game skills.\n• Offline Mode: Full offline support lets you enjoy Vita Mahjong anytime, anywhere, without needing internet.\n• Multi-device: Optimized for pad and phone, ensuring everyone can enjoy the classic mahjong game.\n\nVita Mahjong is a versatile game made for those who love tile matching games. Download Vita Mahjong and start your mahjong dynasty now!\n\nNote: This is a puzzle game in the style of Mahjong Solitaire. It does not contain the rules of traditional Mahjong or other types of solitaire or card games. The term “Mahjong” here refers solely to the visual style of the tiles.\n\nContact us : support@vitastudio.ai\nFor more information, you can:\nJoin our Facebook group: https://www.facebook.com/groups/vitastudio\nVisit our official website: www.vitamahjong.com",
+        "recentChanges": null,
+        "genre": { "id": "GAME_BOARD", "name": "Board" },
+        "chips": [
+          { "id": "GAME_PUZZLE", "name": "Puzzle" },
+          { "id": null, "name": "Pair matching" },
+          { "id": null, "name": "Mahjong solitaire" },
+          { "id": "GAME_CASUAL", "name": "Casual" },
+          { "id": null, "name": "Single player" },
+          { "id": null, "name": "Stylized" },
+          { "id": null, "name": "Light-hearted" },
+          { "id": null, "name": "Offline" }
+        ],
+        "contentRating": "Everyone"
+      },
+      "com.nebula.mahjongtile|us|en": {
+        "title": "Mahjong Blast",
+        "shortDescription": "Relax with mahjong solitaire puzzle games! Match tiles to keep your mind sharp.",
+        "description": "Relax with Mahjong Blast, a top pick for fans of mahjong solitaire, classic tile matching, and relaxing board games. This calm board game blends classic match puzzle mechanics and laid-back gameplay: match identical tiles, clear layouts step by step, and enjoy smooth, timer-free fun with zero pressure.\n\nRooted in traditional mahjong solitaire, every board follows familiar pair-matching rules: find two free tiles, remove the pair, and clear the layout. Clean boards and readable tiles make this mahjong board puzzle easy to learn, naturally evolving into satisfying puzzle games that reward smart strategy over fast reflexes.\n\nEnjoy hundreds of board puzzle levels, from quick 5-minute breaks to longer sessions. Daily mahjong practice and challenges bring fresh layouts inspired by American Mahjong style, helping you recognize patterns and build your strategy at your own pace.\n\nMahjong Blast is a full-featured offline board game with no ads. Every level works fully without Wi-Fi or mobile data, delivering an uninterrupted, calm puzzle experience with simple controls wherever you go.\n\nLarge tiles, clear layouts, and intuitive controls make this board game comfortable and accessible for seniors and adults seeking low-pressure, relaxing puzzle fun.\n\nWhy choose Mahjong Blast?\n✅ Classic mahjong solitaire with intuitive pair-matching rules\n✅ Mahjong match puzzle logic that rewards smart strategy\n✅ Daily challenges with fresh board layouts\n✅ Hundreds of progressive puzzle levels\n✅ Offline play with no Wi-Fi required\n✅ Ad-free calm gameplay with no time pressure\n✅ Large tiles and simple controls for adults & seniors\n\nIf you love mahjong solitaire, tile matching, and relaxing board games, Mahjong Blast is built for you. Download now and enjoy free, polished board puzzle fun for every skill level.",
+        "recentChanges": null,
+        "genre": { "id": "GAME_BOARD", "name": "Board" },
+        "chips": [
+          { "id": "GAME_PUZZLE", "name": "Puzzle" },
+          { "id": null, "name": "Pair matching" },
+          { "id": null, "name": "Mahjong solitaire" },
+          { "id": null, "name": "Single player" },
+          { "id": null, "name": "Realistic" },
+          { "id": null, "name": "Light-hearted" },
+          { "id": null, "name": "Offline" }
+        ],
+        "contentRating": "Everyone"
+      },
+      "com.mahjong.master.solitaire.match.puzzle|us|en": {
+        "title": "Mahjong Master: Daily Match",
+        "shortDescription": "Match mahjong tiles, train your brain & relax. Free offline puzzle game!",
+        "description": "Mahjong Master: Daily Match: Logic, Strategy, and Brain Training 🧠🧩\nMahjong Master: Daily Match is a classic tile-matching game designed for those who love a mental challenge. While the rules are familiar, the experience is strictly about logic and strategy. Unlike casual relaxation games, we treat every level as a unique puzzle to be solved.\nDive into intricate tile structures where every move counts. This game is your daily gym for the mind, designed to improve pattern recognition, boost memory, and refine your problem-solving skills through pure, classic gameplay.\n🎮 How to Play:\nYour goal is to dismantle intricate tile structures by identifying and matching pairs of \"free\" tiles that aren't blocked on the sides or top. This requires more than just tapping; you must use a sharp eye and a strategic mind to plan your moves carefully. By peeling back layers systematically and avoiding dead ends, your objective is to clear every single tile from the board to solve the logic puzzle and master the challenge.\n⭐ Why You’ll Love Mahjong Master:\n- 🧩 Pure Puzzle Satisfaction – Experience the thrill of \"cracking the code.\" Each layout is a logic puzzle that requires you to find the right order of matching to win.\n- 🧠 Serious Brain Training – Designed to keep your mind active and agile. Perfect for seniors looking to prevent memory loss or anyone wanting to test their IQ.\n- 🀄 Classic & Authentic – No distractions. Just you and the traditional Mahjong tiles. We focus on the essence of the classic board game experience.\n- 👀 Sharp & Clear Visuals – We use Extra Large Tiles with high-contrast symbols. The interface is clean and crisp, ensuring you never miss a match due to poor visibility.\n- 🏆 Progressive Difficulty – Starts easy to help you learn the logic, then ramps up to complex, multi-layered structures that will truly test your patience and skill.\n- 💡 Strategic Tools – Stuck on a tough layer? Use Hints to find hidden pairs or Undo to correct a mistake. Use tools to learn, not just to win.\n- 📶 Play Offline – Train your brain anywhere, anytime. No Wi-Fi required.\nMahjong Master: Daily Match isn't just a game; it's a test of your cognitive skills. If you enjoy the satisfaction of solving problems and keeping your brain sharp, this is the game for you.\nReady for the challenge? Download Mahjong Master: Daily Match now! 🚀\nContact us at support@pandasofcaribbean.com for support or feedback. We’d love to hear from you! 💌",
+        "recentChanges": null,
+        "genre": { "id": "GAME_PUZZLE", "name": "Puzzle" },
+        "chips": [
+          { "id": "GAME_PUZZLE", "name": "Puzzle" },
+          { "id": null, "name": "Pair matching" },
+          { "id": null, "name": "Mahjong solitaire" },
+          { "id": null, "name": "Single player" },
+          { "id": null, "name": "Stylized" },
+          { "id": null, "name": "Light-hearted" },
+          { "id": null, "name": "Offline" }
+        ],
+        "contentRating": "Everyone"
+      },
+      "com.gamovation.mahjongclub|us|en": {
+        "title": "Mahjong Club - Solitaire Game",
+        "shortDescription": "Sharpen your mind! Relaxing classic Mahjong Solitaire puzzles. Play offline!",
+        "description": "Mahjong Club is a solitaire game of tile matching puzzle, where the main goal of this game is to match tiles and remove them from the board. When all tiles are removed - you have solved the majong puzzle game! Dive into the world of exciting brain games and get zen, play mahjong free today!\n\nOur Mahjong solitaire offers a challenging puzzle game experience for all skill levels. With over 10,000 levels, this matching game designed for adults and seniors will keep you engaged for hours while enhancing your brain logic and providing stress-free mental exercise. Mahjong Club is available as an online or offline game - allowing you to play whenever you like. Enjoy our Mahjong free game, install, and start your journey now!\n\nKey features of our Mahjong solitaire game : \n\n- Over 10,000 mahjong free board setups, from easy tiles to medium, hard, and advanced tiles, providing endless hours of gameplay,\n- Join clubs and explore different communities from players online, chat and help each other to solve challenging puzzles and collect various rewards,\n- Travel through the world by completing matching levels, and unlocking new locations. Different cities, countries, and their beautiful natural landscapes,\n- Compete in our in-game events, challenge your matching game skills, and get various rewards like in-game coins, completed puzzle images, a club chest full of coins, butterfly gifts, and more,\n- Track your personal statistics and high scores to identify areas for improvement and sharpen your tile matching skills,\n- No timer, no pressure, just a pure mahjong relaxing zen game,\n- Play online or offline game, anywhere, anytime!\n\nThis is how you play Mahjong Club:\n► On the mahjong board, pairs of tiles are dealt at random. The maximum amount of tiles is 144.\n► Your task is to find pairs and match them\n► A matched pair will be removed from the majong board\n► When all tiles are removed from the board you have completed the level\n► When you have completed a level you will unlock the next level\n► Use a booster when you are having a hard time to complete a majong puzzle\n► Make sure you are online for the best experience. Offline is possible as well!\n\nCan you beat all the levels in Mahjong Club? Play for free and relax!\n\nContact & more info:\nMany more cool features will be added to Mahjong Club in the coming months. Feel free to tell us what you like to see in the game!\n\nTerms of Service can be found here: https://www.gamovation.com/legal/tos-qc.pdf\nPrivacy Policy can be found here: https://www.gamovation.com/legal/privacy-policy.pdf",
+        "recentChanges": null,
+        "genre": { "id": "GAME_BOARD", "name": "Board" },
+        "chips": [
+          { "id": "GAME_PUZZLE", "name": "Puzzle" },
+          { "id": null, "name": "Pair matching" },
+          { "id": null, "name": "Mahjong solitaire" },
+          { "id": "GAME_CASUAL", "name": "Casual" },
+          { "id": null, "name": "Single player" },
+          { "id": null, "name": "Stylized" },
+          { "id": null, "name": "Light-hearted" },
+          { "id": null, "name": "Offline" }
+        ],
+        "contentRating": "Everyone"
+      },
+      "com.deepmist.comfymahjong|de|de": {
+        "title": "Comfy Mahjong Solitär",
+        "shortDescription": "Mahjong Solitär mit großen Steinen. Kein Zeitlimit, ruhig und offline.",
+        "description": "Comfy Mahjong ist ein ruhiges Mahjong Solitär mit großen, gut lesbaren Steinen — für alle, die lieber in Ruhe knobeln als gegen die Uhr spielen.\n\nJETZT AUF DEUTSCH\nDas ganze Spiel spricht Deutsch: Menüs, Optionen und Erklärungen. Die Sprache kannst du jederzeit in den Optionen umstellen.\n\nGUT FÜR DIE AUGEN\nGroße, kontrastreiche Mahjong-Steine auf weichem grünem Filz, auf einem aufgeräumten Brett, das du auf einen Blick und mit ausgestrecktem Arm lesen kannst.\n\nEIN TIPP, EIN DAUMEN\nHochformat, von oben nach unten. Ein Tipp ist die ganze Steuerung — nichts zu ziehen, nichts zu zielen, nichts hinter einem Menü versteckt. Bequem mit einer Hand.\n\nSO WIRD GESPIELT\nTippe einen freien Stein an, und er gleitet hinauf auf deine Ablage. Treffen dort zwei gleiche Steine aufeinander, verschwinden sie mit einem weichen Klang. Räume das Brett leer, und die Stufe ist geschafft. Das ist die ganze Regel — in Sekunden gelernt.\n\nKEIN ZEITLIMIT AUF EINER STUFE\nKeine Stufe hat ein Zeitlimit — spiel in deinem eigenen Tempo. Verloren hast du nur, wenn die Ablage mit vier Steinen voll ist, die nicht zusammenpassen — und du kannst jede Stufe in aller Ruhe neu beginnen.\n\nHILFE, WENN DU SIE WILLST\nTipp, Zurücknehmen und Mischen sind da, wenn ein Brett zwickt. Nutze sie, oder lass sie liegen. Jedes Brett hat einen sanften Anstieg — und jedes Brett ist lösbar.\n\nÜBERALL SPIELBAR, AUCH OHNE NETZ\nDie Rätsel brauchen weder Signal noch WLAN. Im Flugzeug, im Wartezimmer oder auf dem Sofa.\n\nMACH ES DIR GEMÜTLICH\nWähle das Steindesign, das dir am besten gefällt. Musik und Ton haben jeweils ihren eigenen Schalter.\n\nEHRLICH UND RUHIG\nComfy Mahjong ist kostenlos, und wir halten es fair. Auf deinem Brett liegt nie ein Werbebanner. Ein kurzes Video für eine Belohnung schaust du nur, wenn du willst — Ablehnen kostet dich nichts. Ein einmaliger Kauf entfernt die Werbung zwischen den Stufen. Es gibt keine Spielwährung, keine Leben zum Warten, keine Energieleiste und nichts zu grinden.\n\nLehn dich zurück, atme durch und leg ein paar Steine.",
+        "recentChanges": null,
+        "genre": { "id": "GAME_PUZZLE", "name": "Geduldsspiele" },
+        "chips": [{ "id": "GAME_PUZZLE", "name": "Geduldsspiele" }],
+        "contentRating": "USK ab 0 Jahren"
+      },
+      "com.vitastudio.mahjong|de|de": {
+        "title": "Vita Mahjong",
+        "shortDescription": "Spiele Mahjong Solitaire mit großen Kacheln: Entspanne mit klassischen Puzzles!",
+        "description": "Vita Mahjong ist ein exklusives Mahjong-Solitaire-Puzzlespiel für Senioren. Wir freuen uns, Ihnen ein Spiel vorstellen zu können, das Innovation mit klassischem Gameplay verbindet. Es bietet große Spielsteine und eine benutzer- sowie augenfreundliche Oberfläche, die mit Tablets und Mobiltelefonen aller Größen kompatibel ist. Unser Ziel ist es, ein Spielerlebnis zu schaffen, das sowohl entspannend als auch geistig anregend ist – speziell für ältere Erwachsene.\n\nWir von Vita Studio haben uns schon immer der Entwicklung von mobilen Spielen für Senioren gewidmet, die Entspannung, Spaß und Freude bringen. Unser Repertoire umfasst beliebte Titel wie Vita Color, Vita Jigsaw, Vita Word Search, Vita Block und viele weitere Spiele.\n\nWarum Vita Mahjong wählen?\n\nStudien haben gezeigt, dass geistig anregende Aktivitäten wie Mahjong Solitaire dazu beitragen, die geistige Fitness zu erhalten. Viele der heutigen Puzzlespiele sind jedoch nicht auf die besonderen Bedürfnisse älterer Menschen zugeschnitten. Wir haben diese Lücke erkannt und ein Spiel entwickelt, das speziell auf die Bedürfnisse und Vorlieben von Senioren abgestimmt ist und geistige Stimulation mit Zugänglichkeit und einfacher Bedienung verbindet.\n\nWie spielt man Vita Mahjong:\n\nVita Mahjong Solitaire zu spielen ist einfach. Räumen Sie alle Steine vom Spielfeld ab, indem Sie Spielsteine mit identischen Bildern paaren. Tippen oder schieben Sie zwei übereinstimmende Steine, damit sie verschwinden. Sie können nur Steine auswählen, die weder verdeckt noch blockiert sind. Die Rätsel werden im Laufe des Spiels immer schwieriger und fordern Ihren Geist. Sobald alle Steine entfernt sind, haben Sie ein Mahjong-Solitaire-Puzzle erfolgreich abgeschlossen!\n\nExklusive Funktionen von Vita Mahjong Solitaire:\n\n• Klassisches Mahjong Solitaire: Traditionelle Spielsteinsätze und Hunderte von Layouts für endlosen Spielspaß.\n\n• Besondere Innovationen: Spezielle Steine, die dem klassischen Spielablauf eine frische Note verleihen.\n\n• Großformatiges Design: Große, gut lesbare Texte und Spielsteine zur Reduzierung der Augenbelastung.\n\n• Active-Mind-Level: Ein spezieller Modus zur Verbesserung von Gedächtnis und Konzentration.\n\n• Hilfreiche Hinweise: Nützliche Funktionen wie Hinweise, Rückgängig und Mischen, um schwierige Rätsel zu meistern.\n\n• Tägliche Herausforderungen: Sammeln Sie Trophäen und trainieren Sie täglich Ihr Gehirn.\n\n• Offline-Modus: Spielen Sie jederzeit und überall, ohne Internetverbindung.\n\n• Mehrgeräte-Unterstützung: Optimiert für Smartphones und Tablets.\n\nVita Mahjong Solitaire bietet Senioren ein kostenloses Spiel, das auf ihre individuellen Bedürfnisse zugeschnitten ist, die Benutzerfreundlichkeit und Zugänglichkeit mit Elementen geistiger Stimulation kombiniert und stundenlange Unterhaltung bietet.\n\nKontakt: support@vitastudio.ai\n\nFacebook: https://www.facebook.com/groups/vitastudio\n\nWebsite: https://www.vitastudio.ai\n\nHinweis: Dies ist ein Puzzlespiel im Stil von Mahjong Solitaire. Es enthält weder die Regeln des traditionellen Mahjong noch andere Arten von Solitär- oder Kartenspielen. Der Begriff „Mahjong“ bezieht sich ausschließlich auf den visuellen Stil der Spielsteine.",
+        "recentChanges": null,
+        "genre": { "id": "GAME_BOARD", "name": "Brettspiele" },
+        "chips": [
+          { "id": "GAME_PUZZLE", "name": "Geduldsspiele" },
+          { "id": null, "name": "Paare zuordnen" },
+          { "id": null, "name": "Mahjong Solitaire" },
+          { "id": "GAME_CASUAL", "name": "Casual" },
+          { "id": null, "name": "Einzelspieler" },
+          { "id": null, "name": "Stilisiert" },
+          { "id": null, "name": "Light-hearted" },
+          { "id": null, "name": "Offline" }
+        ],
+        "contentRating": "USK ab 0 Jahren"
+      },
+      "com.nebula.mahjongtile|de|de": {
+        "title": "Mahjong Blast",
+        "shortDescription": "Mahjong-Brettspiel: Steine kombinieren. Täglich offline spielen & entspannen",
+        "description": "☕️ Genieße klassisches Mahjong in einer ruhigen und entspannten Atmosphäre. Dieses beliebte Puzzle-Spiel gehört zu den besten Offline-Spielen auf Deutsch und eignet sich perfekt für alle, die Spiele ohne Internet, Geduldsspiele und entspannte Spiele suchen. Spiele jederzeit kostenlos – ohne WLAN, ohne Zeitdruck und komplett werbefrei.\n\n🀄 Klassisches Mahjong für entspannte Spielmomente\nVerbinde passende Steine, löse abwechslungsreiche Puzzle-Layouts und räume das Spielfeld Schritt für Schritt frei. Das bekannte Mahjong-Solitaire Gameplay ist leicht verständlich und gleichzeitig ideal für kleine Denkpausen im Alltag. Perfekt für Fans von ruhigen Geduldsspielen und klassischen Denkspielen.\n\n📴 Spiele ohne Internet – jederzeit offline spielen\nDu kannst jederzeit offline spielen – ganz ohne WLAN oder mobile Daten. Ob unterwegs, im Flugzeug, auf Reisen oder gemütlich zu Hause: Dieses Mahjong funktioniert zuverlässig ohne Internetverbindung. Damit gehört es zu der beliebten Kategorie kostenlose Spiele ohne Internet und WLAN deutsch. Wer nach ruhigen Offline-Spielen sucht, findet hier die perfekte Kombination aus Entspannung und klassischem Gameplay.\n\n🎮 Entspannte Spiele ohne Stress und Zeitdruck\nKeine Timer, kein Stress und keine komplizierten Regeln. Dieses entspannte Puzzle-Spiel bietet ruhige Spielrunden für jede Altersgruppe. Viele Spieler suchen coole Spiele, um nach der Arbeit abzuschalten, und nutzen dieses entspannte Puzzle, um zwischendurch einfach zur Ruhe zu kommen.\n\n🚫 Komplett ohne Werbung spielen\nGenieße ein echtes Mahjong ohne Werbung und ohne störende Unterbrechungen. Keine Banner, keine Pop-ups und keine Videoanzeigen – nur angenehmes Gameplay in deinem eigenen Tempo. Ideal für alle, die coole Offline-Spiele und ruhige Puzzle-Abenteuer mögen.\n\n🧩 Viele Level und hilfreiche Funktionen\nEntdecke hunderte abwechslungsreiche Mahjong-Boards mit klaren Symbolen und angenehmem Design. Hinweise, Mischen und Rückgängig machen helfen dir bei schwierigen Situationen und sorgen für ein zugängliches Spielerlebnis – sowohl für Anfänger als auch erfahrene Spieler.\n\n🌟 Warum Spieler dieses Spiel lieben\n\nSpiele ohne Internet und WLAN – funktioniert überall zuverlässig\n\nKlassisches Mahjong kostenlos auf Deutsch\n\nRuhige Offline-Spiele zum Entspannen\n\nKomplett werbefreies Spielerlebnis\n\nIdeal für Fans von Geduldsspielen\n\nEinfach zu lernen und angenehm zu spielen\n\nPerfekt für kurze Pausen oder entspannte Abende\n\n❓ Häufig gestellte Fragen (FAQ)\n\nKann ich dieses Mahjong auch ohne Internet spielen?\nJa. Du kannst jederzeit offline spielen – ohne WLAN oder mobile Daten. Es gehört zu den zuverlässigsten kostenlosen Spielen ohne Internet und WLAN deutsch.\n\nIst dieses Mahjong wirklich kostenlos?\nJa. Das Spiel ist vollständig kostenlos spielbar, passend für alle, die nach kostenlosen Geduldsspielen suchen.\n\nIst dieses Mahjong ohne Werbung?\nJa. Du spielst komplett ohne Werbung und ohne störende Unterbrechungen.\n\nIst das Spiel auch für Senioren geeignet?\nJa. Die einfachen Regeln und das ruhige Gameplay machen es ideal für alle Altersgruppen, besonders für Senioren, die nach ruhigen Geduldsspielen suchen.\n\nWenn du nach Offline-Spielen, entspannte Spiele, coole Spiele oder kostenlosen Spielen ohne Internet suchst, ist dieses Mahjong genau die richtige Wahl. Spiele jederzeit kostenlos und entspanne dich mit ruhigem Mahjong-Gameplay – online oder offline, wann immer du möchtest.",
+        "recentChanges": null,
+        "genre": { "id": "GAME_BOARD", "name": "Brettspiele" },
+        "chips": [
+          { "id": "GAME_PUZZLE", "name": "Geduldsspiele" },
+          { "id": null, "name": "Paare zuordnen" },
+          { "id": null, "name": "Mahjong Solitaire" },
+          { "id": null, "name": "Einzelspieler" },
+          { "id": null, "name": "Realistisch" },
+          { "id": null, "name": "Light-hearted" },
+          { "id": null, "name": "Offline" }
+        ],
+        "contentRating": "USK ab 0 Jahren"
+      },
+      "com.mahjong.master.solitaire.match.puzzle|de|de": {
+        "title": "Mahjong Master: Täglich",
+        "shortDescription": "Finde Mahjong-Paare und schärfe täglich deinen Verstand.",
+        "description": "Mahjong Master: Täglich: Logik, Strategie und Gehirntraining 🧠🧩\n\n Mahjong Master: Täglich ist ein klassisches Kachel-Zuordnungsspiel für alle, die geistige Herausforderungen lieben. Während die Regeln bekannt sind, geht es bei dem Erlebnis streng um Logik und Strategie. Im Gegensatz zu einfachen Entspannungsspielen betrachten wir jedes Level als ein einzigartiges Rätsel, das gelöst werden muss.\n\n Tauche ein in komplexe Kachelstrukturen, bei denen jeder Zug zählt. Dieses Spiel ist dein tägliches Fitnessstudio für den Geist, entwickelt, um die Mustererkennung zu verbessern, das Gedächtnis zu stärken und deine Problemlösungsfähigkeiten durch reines, klassisches Gameplay zu verfeinern.\n\n 🎮 Spielanleitung:\n\n Dein Ziel ist es, komplizierte Kachelstrukturen abzubauen, indem du Paare \"freier\" Kacheln identifizierst und abgleichst, die an den Seiten oder oben nicht blockiert sind. Das erfordert mehr als nur Tippen; du musst ein scharfes Auge und einen strategischen Verstand einsetzen, um deine Züge sorgfältig zu planen. Dein Ziel ist es, jede einzelne Kachel vom Brett zu entfernen, um das Logikrätsel zu lösen und die Herausforderung zu meistern.\n\n ⭐ Warum du Mahjong Master lieben wirst:\n\n 🧩 Pure Rätsel-Zufriedenheit – Erlebe den Nervenkitzel, den \"Code zu knacken\". Jedes Layout ist ein Logikrätsel, bei dem du die richtige Reihenfolge der Übereinstimmungen finden musst, um zu gewinnen.\n\n 🧠 Ernsthaftes Gehirntraining – Entwickelt, um deinen Verstand aktiv und agil zu halten. Perfekt für Senioren, die Gedächtnisverlust vorbeugen möchten, oder für jeden, der seinen IQ testen möchte.\n\n 🀄 Klassisch & Authentisch – Keine Ablenkungen. Nur du und die traditionellen Mahjong-Kacheln. Wir konzentrieren uns auf die Essenz des klassischen Brettspielerlebnisses.\n\n 👀 Scharfe & klare Grafiken – Wir verwenden extra große Kacheln mit kontrastreichen Symbolen. Die Benutzeroberfläche ist sauber und gestochen scharf.\n\n 🏆 Progressive Schwierigkeit – Fängt einfach an, um dir zu helfen, die Logik zu lernen, und steigert sich dann zu komplexen, mehrschichtigen Strukturen, die deine Geduld wirklich auf die Probe stellen werden.\n\n 💡 Strategische Werkzeuge – Stecken geblieben? Verwende Hinweise, um versteckte Paare zu finden, oder Rückgängig, um einen Fehler zu korrigieren. Verwende Werkzeuge zum Lernen, nicht nur zum Gewinnen.\n\n 📶 Offline spielen – Trainiere dein Gehirn überall und jederzeit. Kein WLAN erforderlich.\n\n Mahjong Master: Täglich ist nicht nur ein Spiel; es ist ein Test deiner kognitiven Fähigkeiten. Wenn du die Zufriedenheit genießt, Probleme zu lösen, ist dies das richtige Spiel für dich.\n\n Bereit für die Herausforderung? Lade Mahjong Master: Täglich jetzt herunter! 🚀\n\n Kontaktiere uns unter support@pandasofcaribbean.com für Support oder Feedback. Wir würden uns freuen, von dir zu hören! 💌",
+        "recentChanges": null,
+        "genre": { "id": "GAME_PUZZLE", "name": "Geduldsspiele" },
+        "chips": [
+          { "id": "GAME_PUZZLE", "name": "Geduldsspiele" },
+          { "id": null, "name": "Paare zuordnen" },
+          { "id": null, "name": "Mahjong Solitaire" },
+          { "id": null, "name": "Einzelspieler" },
+          { "id": null, "name": "Stilisiert" },
+          { "id": null, "name": "Light-hearted" },
+          { "id": null, "name": "Offline" }
+        ],
+        "contentRating": "USK ab 0 Jahren"
+      },
+      "com.gamovation.mahjongclub|de|de": {
+        "title": "Mahjong Club - Solitaire Spiel",
+        "shortDescription": "Klassischer Mahjong-Spaß! Kombiniere Paare und entspanne dich offline.",
+        "description": "Mach dich bereit für ein neues, originelles und herausforderndes Mahjong-Solitärspiel. Das Ziel in Mahjong Club ist es, identische Steine zu finden und sie vom Spielbrett zu entfernen. Wenn alle Steine entfernt sind, hast du das Mahjong-Rätsel gelöst! Kannst du alle 10.000+ Level abschließen? Jetzt installieren!\n\nFeatures\n⭐ Über 10.000 kostenlose Board-Setups\n⭐ Schöne Landschaften als Hintergrund\n⭐ Automatische Bildschirm-Anpassung\n⭐ Wähle dein eigenes Punktesystem:\n- kein Timer, kein Druck\n- Mahjong-Kombipunkte\n- Sterne & Zeit\n- keine Punktezählung\n⭐ Highscores & persönliche Statistiken\n⭐ Töne ein- oder ausschalten\n⭐ Kein WLAN? Kein Problem! Spiele offline, wenn du willst.\n⭐ Trete einem Club bei, spiele & chatte gemeinsam\n⭐ Einfache, selbsterklärende Bedienung\n\nSo spielst du Mahjong Club:\n► Auf dem Mahjong-Brett werden zufällig Paare von Steinen verteilt. Die maximale Anzahl an Steinen beträgt 144.\n► Deine Aufgabe ist es, Paare zu finden und sie zuzuordnen\n► Ein übereinstimmendes Paar wird vom Hauptbrett entfernt\n► Wenn alle Steine vom Brett entfernt sind, hast du das Level abgeschlossen\n► Wenn du ein Level abgeschlossen hast, schaltest du das nächste Level frei\n► Verwende einen Booster, wenn du Probleme hast, ein großes Puzzle zu lösen\n► Stelle sicher, dass du online bist, um das beste Spielerlebnis zu haben. Offline ist auch möglich!\n\nSchaffst du alle Level im Mahjong Club? Spiele kostenlos und entspanne!\n\nKontakt & mehr Infos:\nIn den kommenden Monaten werden im Mahjong Club viele weitere coole Funktionen hinzugefügt. Sagt uns gerne, was ihr im Spiel sehen wollt! \n\nDie Nutzungsbedingungen findet ihr hier: https://www.gamovation.com/legal/tos-qc.pdf\nDie Datenschutzerklärung findet ihr hier: https://www.gamovation.com/legal/privacy-policy.pdf",
+        "recentChanges": null,
+        "genre": { "id": "GAME_BOARD", "name": "Brettspiele" },
+        "chips": [
+          { "id": "GAME_PUZZLE", "name": "Geduldsspiele" },
+          { "id": null, "name": "Paare zuordnen" },
+          { "id": null, "name": "Mahjong Solitaire" },
+          { "id": "GAME_CASUAL", "name": "Casual" },
+          { "id": null, "name": "Einzelspieler" },
+          { "id": null, "name": "Stilisiert" },
+          { "id": null, "name": "Light-hearted" },
+          { "id": null, "name": "Offline" }
+        ],
+        "contentRating": "USK ab 0 Jahren"
+      },
+      "com.deepmist.comfymahjong|fr|fr": {
+        "title": "Comfy Mahjong Solitaire",
+        "shortDescription": "Mahjong solitaire aux grandes tuiles. Sans limite de temps, calme et hors ligne.",
+        "description": "Comfy Mahjong est un mahjong solitaire tout en douceur, avec de grandes tuiles bien lisibles — pour ceux qui préfèrent réfléchir tranquillement plutôt que courir après la montre.\n\nMAINTENANT EN FRANÇAIS\nTout le jeu parle français : menus, options et explications. Vous pouvez changer de langue à tout moment dans les Options.\n\nDOUX POUR LES YEUX\nDe grandes tuiles de mahjong bien contrastées sur un feutre vert tout doux, sur un plateau net et dégagé qui se lit d'un coup d'œil, même à bout de bras.\n\nUNE TOUCHE, UN POUCE\nFormat portrait, de haut en bas. Une simple touche suffit : rien à faire glisser, rien à viser, rien de caché dans un menu. Confortable à une main.\n\nCOMMENT ON JOUE\nTouchez une tuile libre : elle glisse jusqu'à votre réserve. Quand deux tuiles identiques s'y retrouvent, elles disparaissent dans un petit bruit tout doux. Videz le plateau et le niveau est gagné. C'est toute la règle, apprise en quelques secondes.\n\nAUCUNE LIMITE DE TEMPS SUR UN NIVEAU\nAucun niveau n'a de limite de temps — jouez à votre rythme. Vous ne perdez que si la réserve se remplit de quatre tuiles qui ne vont pas ensemble — et vous pouvez toujours recommencer le niveau, calmement.\n\nDE L'AIDE QUAND VOUS EN VOULEZ\nIndice, Annulation et Mélange sont là quand un plateau résiste. Servez-vous-en, ou pas. Chaque plateau a une montée en difficulté toute en douceur — et chaque plateau est solvable.\n\nPARTOUT, MÊME HORS LIGNE\nLes casse-tête n'ont besoin ni de réseau ni de Wi-Fi. Dans l'avion, dans une salle d'attente ou sur le canapé.\n\nÀ VOTRE GOÛT\nChoisissez le style de tuiles qui vous plaît le plus. Musique et Sons ont chacun leur réglage.\n\nUN ACCORD HONNÊTE ET TRANQUILLE\nComfy Mahjong est gratuit, et nous restons honnêtes. Jamais de bannière publicitaire sur votre plateau. Vous ne regardez une courte vidéo pour une récompense que si vous le choisissez — refuser ne coûte rien. Un achat unique supprime la publicité entre les niveaux. Il n'y a pas de monnaie de jeu, pas de vies à attendre, pas de jauge d'énergie et rien à farmer.\n\nInstallez-vous, respirez un bon coup et associez quelques tuiles.",
+        "recentChanges": null,
+        "genre": { "id": "GAME_PUZZLE", "name": "Réflexion" },
+        "chips": [{ "id": "GAME_PUZZLE", "name": "Réflexion" }],
+        "contentRating": "PEGI 3"
+      },
+      "com.vitastudio.mahjong|fr|fr": {
+        "title": "Vita Mahjong",
+        "shortDescription": "Mahjong Solitaire Grandes Tuiles: Détendez-vous avec Jeux Classiques!",
+        "description": "Vita Mahjong : Un jeu de puzzle Mahjong Solitaire exclusif pour les seniors\n\nNous sommes ravis de vous présenter Vita Mahjong, un jeu de correspondance qui allie innovation et gameplay classique de type Mahjong Solitaire. Il propose de grandes tuiles et une interface conviviale, compatible avec les tablettes et les téléphones de toutes tailles. Notre objectif est d’offrir une expérience relaxante et mentalement stimulante, spécialement conçue pour les personnes âgées.\n\nChez Vita Studio, nous créons des jeux mobiles pensés pour les seniors, afin d’apporter détente, plaisir et joie. Notre catalogue comprend des titres populaires comme Vita Color, Vita Jigsaw, Vita Word Search, Vita Block, et bien d’autres jeux.\n\nPourquoi choisir Vita Mahjong ?\n\nDes études ont montré que les activités stimulantes comme le Mahjong Solitaire contribuent à préserver l’acuité mentale.\nDe nombreux jeux de puzzle ne sont pas adaptés aux besoins spécifiques des seniors.\nNous avons conçu Vita Mahjong pour combiner stimulation cognitive, accessibilité et simplicité d’utilisation.\nComment jouer à Vita Mahjong :\n\nLe but est simple : associer des tuiles portant les mêmes images pour les retirer du plateau. Touchez ou faites glisser deux tuiles identiques qui ne sont pas recouvertes ni bloquées. Lorsque toutes les tuiles sont retirées, vous avez réussi la partie !\n\nCaractéristiques exclusives de Vita Mahjong Solitaire :\n\n• Mahjong Solitaire classique : Fidèle à l’esprit original avec des tuiles traditionnelles et des centaines de plateaux.\n\n• Innovations spéciales : Tuiles spéciales qui ajoutent de nouvelles mécaniques.\n\n• Grand format : Tuiles et textes larges pour un meilleur confort visuel.\n\n• Mode “Esprit actif” : Conçu pour améliorer la mémoire et l’attention.\n\n• Outils d’aide : Indices, annuler et mélanger pour surmonter les niveaux difficiles.\n\n• Défis quotidiens : Collectez des trophées et améliorez vos compétences.\n\n• Mode hors ligne : Jouez partout, même sans Internet.\n\n• Multi‑appareils : Optimisé pour smartphones et tablettes.\n\nVita Mahjong Solitaire offre aux seniors un jeu gratuit, accessible et agréable, tout en stimulant leur esprit, en ligne ou hors ligne.\n\nContact : support@vitastudio.ai\n\nFacebook : https://www.facebook.com/groups/vitastudio\n\nSite officiel : https://www.vitastudio.ai\n\nRemarque : Ce jeu est un puzzle utilisant la mécanique du Mahjong Solitaire. Il ne reproduit pas les règles du mahjong traditionnel et n’inclut pas d’autres types de solitaire ou de jeux de cartes. Le terme “mahjong” se réfère uniquement au style visuel des tuiles.",
+        "recentChanges": null,
+        "genre": { "id": "GAME_BOARD", "name": "Jeux de société" },
+        "chips": [
+          { "id": "GAME_PUZZLE", "name": "Réflexion" },
+          { "id": null, "name": "Jeux d'association de paires" },
+          { "id": null, "name": "Mah-jong solitaire" },
+          { "id": "GAME_CASUAL", "name": "Grand public" },
+          { "id": null, "name": "Solo" },
+          { "id": null, "name": "Stylisé" },
+          { "id": null, "name": "Light-hearted" },
+          { "id": null, "name": "Hors connexion" }
+        ],
+        "contentRating": "PEGI 3"
+      },
+      "com.nebula.mahjongtile|fr|fr": {
+        "title": "Mahjong Blast",
+        "shortDescription": "Jeu de plateau Mahjong et association de tuiles. Jouez hors ligne chaque jour",
+        "description": "Profitez d’un jeu de réflexion mahjong relaxant, construit autour de tuiles classiques et d’un gameplay d’association de tuiles calme et fluide. Ce jeu gratuit associe des tuiles bien lisibles, des contrôles simples et un rythme stable, idéal pour la détente quotidienne. Que ce soit avec un café le matin, pendant une pause ou avant de dormir, ce puzzle offre une expérience douce, sans pression, dans l’esprit des meilleurs jeux de société traditionnels et des jeux hors ligne modernes.\n🀄 Mahjong Solitaire Gratuit Français et Gameplay Intuitif\n\nAu cœur du jeu, vous retrouvez des tuiles de mahjong familières combinées à des mécaniques simples d’association. Associez deux tuiles libres, formez des paires et nettoyez progressivement le plateau grâce à un match satisfaisant. Inspiré du mahjong classique, chaque plateau est pensé pour la clarté visuelle et la concentration, parfait pour les amateurs de jeux de réflexion, de puzzles et de jeux de société accessibles à tous les âges. Ce mahjong solitaire gratuit français offre une expérience relaxante et fluide, idéale pour jouer chaque jour.\n🎮 Jeux Gratuit Relaxants Sans Pression ni Publicité\n\nChaque niveau est un puzzle soigneusement conçu, récompensant l’observation et la réflexion calme. Trouvez les paires, ouvrez de nouveaux chemins et progressez sans limite de temps ni stress. Ce jeu adopte un flux zen, idéal pour les joueurs qui aiment les jeux gratuit relaxants, les jeux sans pub et les défis accessibles mais satisfaisants. Grâce à son gameplay stable, il convient aussi parfaitement aux amateurs de jeux sans connexion et de jeux hors connexion gratuit.\n🧩 Centaines de Plateaux et Aides Simples\n\nExplorez des centaines de plateaux variés, avec des outils utiles comme l’indice, le mélange et l’annulation. Chaque partie propose un défi équilibré, adapté au jeu quotidien. Certains niveaux offrent également un style 3D léger pour plus de profondeur visuelle, renouvelant l’expérience du mahjong solitaire gratuit français tout en conservant la simplicité des meilleurs jeux de réflexion modernes.\n📴 Jeux Hors Connexion Gratuit et Jeux Sans Connexion\n\nJouez à ce jeu hors connexion gratuit à tout moment, sans réseau. À la maison ou en déplacement, profitez d’un jeu de société basé sur le mahjong qui fonctionne entièrement hors ligne et sans connexion. Ce mode combine parfaitement le mahjong solitaire gratuit français, les jeux sans connexion et un gameplay moderne et fluide. Idéal pour les joueurs recherchant des jeux gratuit accessibles partout, même sans Internet.\nSi vous cherchez un jeu gratuit de mahjong, un mahjong senior gratuit ou un mahjong solitaire gratuit français mêlant traditions chinoises, puzzles et jeux de réflexion, ce jeu est fait pour vous. Du mahjong classique aux nouveautés 2026, découvrez une façon simple, calme et accessible de jouer chaque jour, sans stress, dans l’esprit des meilleurs jeux hors connexion gratuit, jeux sans connexion et jeux de réflexion du moment.",
+        "recentChanges": null,
+        "genre": { "id": "GAME_BOARD", "name": "Jeux de société" },
+        "chips": [
+          { "id": "GAME_PUZZLE", "name": "Réflexion" },
+          { "id": null, "name": "Jeux d'association de paires" },
+          { "id": null, "name": "Mah-jong solitaire" },
+          { "id": null, "name": "Solo" },
+          { "id": null, "name": "Réaliste" },
+          { "id": null, "name": "Light-hearted" },
+          { "id": null, "name": "Hors connexion" }
+        ],
+        "contentRating": "PEGI 3"
+      },
+      "com.mahjong.master.solitaire.match.puzzle|fr|fr": {
+        "title": "Maître Mahjong : Quotidien",
+        "shortDescription": "Éliminez les paires de mahjong et aiguisez votre esprit au quotidien.",
+        "description": "Maître Mahjong : Quotidien : Logique, Stratégie et Entraînement Cérébral 🧠🧩\n\n Maître Mahjong : Quotidien est un jeu classique d'association de tuiles conçu pour ceux qui aiment les défis mentaux. Bien que les règles soient familières, l'expérience est strictement axée sur la logique et la stratégie. Contrairement aux jeux de détente occasionnels, nous traitons chaque niveau comme un casse-tête unique à résoudre.\n\n Plongez dans des structures de tuiles complexes où chaque mouvement compte. Ce jeu est la salle de sport quotidienne de votre esprit, conçu pour améliorer la reconnaissance des formes, stimuler la mémoire et affiner vos compétences en résolution de problèmes grâce à un gameplay pur et classique.\n\n 🎮 Comment Jouer :\n\n Votre but est de démanteler des structures de tuiles complexes en identifiant et en associant des paires de tuiles « libres » qui ne sont pas bloquées sur les côtés ou sur le dessus. Cela exige plus que de simples tapotements ; vous devez utiliser un œil vif et un esprit stratégique pour planifier vos mouvements avec soin. En épluchant les couches systématiquement et en évitant les impasses, votre objectif est d'éliminer chaque tuile du plateau pour résoudre le casse-tête logique.\n\n ⭐ Pourquoi Vous Aimerez Maître Mahjong :\n\n 🧩 Pure Satisfaction du Casse-Tête – Vivez le frisson de « craquer le code ». Chaque disposition est un casse-tête logique qui nécessite de trouver le bon ordre d'association pour gagner.\n\n 🧠 Entraînement Cérébral Sérieux – Conçu pour garder votre esprit actif et agile. Parfait pour les seniors cherchant à prévenir la perte de mémoire ou quiconque voulant tester son QI.\n\n 🀄 Classique et Authentique – Aucune distraction. Juste vous et les tuiles de Mahjong traditionnelles.\n\n 👀 Visuels Nets et Clairs – Nous utilisons des Tuiles Extra Larges avec des symboles à contraste élevé. L'interface est propre, vous assurant de ne jamais manquer une association à cause d'une mauvaise visibilité.\n\n 🏆 Difficulté Progressive – Commence facilement pour vous aider à apprendre la logique, puis augmente vers des structures complexes à plusieurs couches qui testeront votre patience.\n\n 💡 Outils Stratégiques – Bloqué sur une couche difficile ? Utilisez les Indices pour trouver des paires cachées ou Annuler pour corriger une erreur. Utilisez les outils pour apprendre, pas seulement pour gagner.\n\n 📶 Jouez Hors Ligne – Entraînez votre cerveau n'importe où, n'importe quand. Pas de Wi-Fi requis.\n\n Maître Mahjong : Quotidien n'est pas qu'un simple jeu ; c'est un test de vos compétences cognitives. Si vous aimez la satisfaction de résoudre des problèmes, ce jeu est pour vous.\n\n Prêt pour le défi ? Téléchargez Maître Mahjong : Quotidien maintenant ! 🚀\n\n Contactez-nous à support@pandasofcaribbean.com pour de l'assistance ou des retours. Nous serions ravis d'avoir de vos nouvelles ! 💌",
+        "recentChanges": null,
+        "genre": { "id": "GAME_PUZZLE", "name": "Réflexion" },
+        "chips": [
+          { "id": "GAME_PUZZLE", "name": "Réflexion" },
+          { "id": null, "name": "Jeux d'association de paires" },
+          { "id": null, "name": "Mah-jong solitaire" },
+          { "id": null, "name": "Solo" },
+          { "id": null, "name": "Stylisé" },
+          { "id": null, "name": "Light-hearted" },
+          { "id": null, "name": "Hors connexion" }
+        ],
+        "contentRating": "PEGI 3"
+      },
+      "com.gamovation.mahjongclub|fr|fr": {
+        "title": "Mahjong Club - Jeu Solitaire",
+        "shortDescription": "Mahjong relaxant pour le cerveau. Installez-le pour un plaisir total !",
+        "description": "Prépare toi pour un nouveau jeu original et stimulant de Mahjong solitaire. L'objectif dans Club Mahjong est d'associer des tuiles identiques pour les retirer du plateau. Quand toutes les tuiles sont retirées, tu as résolu le puzzle majong ! Penses-tu pouvoir compléter l'ensemble des 10000+ niveaux ? Installe-le Maintenant !\n\nFonctionnalités\n⭐ Plus de 10000 configurations de plateau gratuites\n⭐ De magnifiques paysages en arrière-plan \n⭐ Ajustement Automatique\n⭐ Choisi ton propre système de score :\n- pas de chronomètre pas de pression\n- points mahjong combi\n- étoiles & temps\n- pas de système de score\n⭐ Meilleurs scores & statistiques personnelles\n⭐ Allume ou éteins les sons\n⭐ Pas de Wifi, pas de problème ! Joue hors ligne si tu le souhaites.\n⭐ Rejoins un club, joue & discutez ensemble\n⭐ Des commandes simples à adopter pour jouer \n\nVoici comment jouer à Club Mahjong :\n ► Sur le plateau de mahjong, des paires de tuiles sont disposées de façon aléatoire. Le nombre maximal de tuiles est de 144.\n► Ton but est de trouver des paires et de les associer\n► Une paire associée sera retirée du plateau de mahjong\n► Quand toutes les tuiles sont retirées du plateau, tu as complété le niveau\n► Quand tu auras complété un niveau, tu débloqueras le niveau suivant\n►Utilise un booster quand tu as du mal à t'en sortir pour compléter un puzzle mahjong\n► Assure-toi d'être en ligne pour une meilleure expérience. Le mode hors ligne est aussi possible !\n\nPenses-tu pouvoir venir à bout de tous les niveaux dans Club Mahjong ? Joues-y gratuitement et relaxe-toi !\n\nContact & plus d'infos :\nDe nombreuses fonctionnalités cools seront ajoutées à Club Mahjong dans les mois à venir. N'hésite pas à nous dire ce que tu souhaiterais voir en jeu !\n\nLes Conditions d'Utilisation se trouvent ici :\nhttps://www.gamovation.com/legal/tos-qc.pdf\nLa Politique de Confidentialité se trouve ici : \nhttps://www.gamovation.com/legal/privacy-policy.pdf",
+        "recentChanges": null,
+        "genre": { "id": "GAME_BOARD", "name": "Jeux de société" },
+        "chips": [
+          { "id": "GAME_PUZZLE", "name": "Réflexion" },
+          { "id": null, "name": "Jeux d'association de paires" },
+          { "id": null, "name": "Mah-jong solitaire" },
+          { "id": "GAME_CASUAL", "name": "Grand public" },
+          { "id": null, "name": "Solo" },
+          { "id": null, "name": "Stylisé" },
+          { "id": null, "name": "Light-hearted" },
+          { "id": null, "name": "Hors connexion" }
+        ],
+        "contentRating": "PEGI 3"
+      }
+    }
+  }
+}

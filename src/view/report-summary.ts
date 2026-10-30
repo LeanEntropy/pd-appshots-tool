@@ -6,6 +6,7 @@
  */
 export const REPORT_SUMMARY_CSS = `
 .short { font-size: 16px; line-height: 1.5; max-width: 70em; }
+.engine ol.directives, .engine ul.directives { padding-left: 1.4em; } .engine li { margin: 6px 0; } .engine li .meta { margin: 2px 0; }
 .bl { margin: 6px 0 14px; max-width: 70em; }
 .blv { font-size: 16px; margin: 4px 0 10px; } .blv .pill { font-size: 14px; } .blsep { color: var(--muted); }
 .blcols { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr)); gap: 6px 28px; }
@@ -83,7 +84,7 @@ function datesHtml(d) {
 }
 function fmtWhen(iso) { const t = new Date(iso); return isNaN(t.getTime()) ? String(iso) : t.toLocaleString(undefined, { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" }); }
 
-function summaryHtml(d) { return overviewHtml(d) + keyRecsHtml(d) + abCardsHtml(d) + detailsFold([overviewDetails(d), abNoteHtml(d.abTests), datesHtml(d)]); }
+function summaryHtml(d) { return overviewHtml(d) + (typeof engineHtml === "function" ? engineHtml(d) : "") + keyRecsHtml(d) + abCardsHtml(d) + detailsFold([overviewDetails(d), abNoteHtml(d.abTests), datesHtml(d)]); }
 
 function variantHtml(v) {
   return "<p><em>" + esc(v.summary) + '</em></p><div class="tablewrap"><table class="rt"><tr><th>#</th><th>Changed</th><th>From our position</th><th>Orientation</th><th>Composition</th><th>Screen</th><th>Band</th><th>Headline</th><th>Extras</th></tr>'

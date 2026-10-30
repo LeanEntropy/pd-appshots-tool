@@ -10,6 +10,7 @@ import {
   type Recommendations,
   recommendationProblems,
 } from "../src/analysis/synthesis-schema.ts";
+import { engineOf, withEngine } from "../src/engine/report.ts";
 import { NAV_SCRIPT } from "../src/view/gallery-nav.ts";
 import { REPORT_SCRIPT } from "../src/view/gallery-report.ts";
 import { REPORT_PARTS_SCRIPT } from "../src/view/gallery-report-parts.ts";
@@ -54,11 +55,9 @@ test("pattern check: order, sequence and content patterns, each with our fit and
   assert.equal(byId.get("uses-metagame")?.fits, false);
   assert.notEqual(f.verdict, "optimised");
   assert.ok(f.keyPoints.length >= 2);
-  // A dominant pattern at a position is a firm "Copy the pattern" directive, first (2026-10-30).
-  assert.match(
-    f.keyPoints[0] ?? "",
-    /^Copy the pattern: .*title screen \/ full-screen art.* image 1/,
-  );
+  // The engine's COPY at a position leads the key points (plan-recommendation-engine 5.3).
+  const fe = withEngine(f, engineOf({ ours, competitors: theirs, decks, ourDeckLength: 3 }, []));
+  assert.match(fe.keyPoints[0] ?? "", /^Image 1: .*title screen \/ full-screen art/);
   const same = patternFit(
     theirs,
     [entry("o", 1, "title_image"), entry("o", 2, "gameplay"), entry("o", 3, "gameplay")],

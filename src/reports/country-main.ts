@@ -7,6 +7,7 @@ import { PROMPT_VERSIONS } from "../analysis/prompts.ts";
 import { buildReportData, type ReportData } from "../analysis/report-data.ts";
 import { synthesise } from "../analysis/synthesis.ts";
 import { type LoadedConfig, loadTaxonomy } from "../config/load.ts";
+import { engineOf, withEngine } from "../engine/report.ts";
 import { ctxForCountry } from "../kb/run.ts";
 import type { PlayContext } from "./ab-section.ts";
 import type { CountrySlice } from "./build.ts";
@@ -34,8 +35,12 @@ export async function mainSynthesis(
   const { taxonomy } = loadTaxonomy(loaded);
   const label = labeler(taxonomy);
   const patterns = findPatterns(e.competitors, e.decks);
-  const oursVs = compareOurs(e.ours, patterns, e.ourDeckLength, label, e.competitors);
-  const fit = patternFit(e.competitors, e.ours, patterns, e.ourDeckLength, label);
+  const engine = engineOf(e, s.inputs.market ?? [], s.inputs.meta);
+  const oursVs = compareOurs(e.ours, patterns, e.ourDeckLength, label, engine);
+  const fit = withEngine(
+    patternFit(e.competitors, e.ours, patterns, e.ourDeckLength, label),
+    engine,
+  );
   ai.report("recommend", `Writing the recommendations for ${s.market.label}…`);
   const r = await synthesise(
     {
@@ -58,6 +63,7 @@ export async function mainSynthesis(
       competitors: e.competitors,
       ourDeckLength: e.ourDeckLength,
       store: play.platform,
+      engine,
     },
     ctxForCountry(ai.ctx, s.market.gl),
     (phase, message) => {

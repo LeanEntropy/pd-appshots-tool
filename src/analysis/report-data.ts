@@ -1,3 +1,7 @@
+import type { ImageAttributes } from "../engine/attributes.ts";
+import type { EngineInput, EngineResult } from "../engine/engine.ts";
+import type { GameMarket } from "../engine/leaders.ts";
+import { engineOf, engineRecProblems, withEngine } from "../engine/report.ts";
 import type { AbTestsPart, PlayContext } from "../reports/ab-section.ts";
 import { bottomLine, OLDER_STYLE, olderStyle } from "../reports/bottom-line.ts";
 import type { SummaryPart } from "../reports/summary.ts";
@@ -5,25 +9,20 @@ import type { ImageDb } from "../store/imagedb.ts";
 import type { DeckManifest } from "../store/manifest.ts";
 import type { AbTestsOutput } from "./ab-tests-schema.ts";
 import { artWordingDeep } from "./art-wording.ts";
-import { asCounted } from "./categories.ts";
 import { batchEntries } from "./entries.ts";
-import { orientationOf, ratioLabel } from "./image-facts.ts";
-import type { ArtMessage } from "./image-tags.ts";
-import { COMPOSITION, captureLines } from "./info-text.ts";
 import type { Labeler } from "./labels.ts";
-import { layerStructure } from "./layer-structure.ts";
 import { compareOurs, type OursVsPatterns } from "./ours-vs.ts";
 import { type FitSummary, patternFit } from "./pattern-fit.ts";
 import { findPatterns, type Patterns } from "./patterns.ts";
 import type { AnalysisPlan } from "./plan.ts";
 import { PROMPT_VERSIONS } from "./prompts.ts";
-import { type AnalysisRecord, isUsable } from "./records.ts";
+import type { AnalysisRecord } from "./records.ts";
 import { type DeckRepeats, type RepeatFinding, withRepeatFindings } from "./repeat-findings.ts";
+import { type OrderRow, row } from "./report-row.ts";
 import {
   type Example,
   labelsFor,
   recExamples,
-  rowTags,
   type SortingPart,
   sortingPart,
 } from "./report-sorting.ts";
@@ -35,32 +34,7 @@ import {
   type Review,
 } from "./synthesis-schema.ts";
 
-/** One store position of one game, exactly as Google Play shows it. */
-export interface OrderRow {
-  position: number;
-  imageId: string | null;
-  thumb: string | null;
-  file: string | null;
-  screen: string;
-  screenType: string | null;
-  /** Report category (categories.ts) and tags; absent in reports saved before 2026-09-29. */
-  category?: string | null;
-  logo?: boolean | null;
-  message?: ArtMessage | null;
-  headline: string;
-  orientation: string;
-  /** Pixel ratio and layer structure (absent in reports saved before 2026-10-30). */
-  ratio?: string;
-  size?: string;
-  layerStructure?: string | null;
-  composition: string;
-  captures: string[];
-  layer: boolean | null;
-  /** analysed | not double-checked | not analysed | excluded */
-  state: string;
-  note: string;
-  repeatOf?: number;
-}
+export type { OrderRow } from "./report-row.ts";
 
 export interface GameOrder {
   appId: string;
@@ -114,6 +88,8 @@ export interface ReportData {
   /** "How we sort images": every category and tag used, defined, with an example. */
   sorting?: SortingPart;
   repeats?: RepeatFinding[];
+  /** The recommendation engine's directives, skeleton and verdict (absent before 2026-10-31). */
+  engine?: EngineResult | null;
 }
 
 export interface ReportInputs {
@@ -140,52 +116,10 @@ export interface ReportInputs {
   repeats?: ReadonlyMap<string, DeckRepeats>;
   /** What each image highlights (its saved layout's focus kind), when known. */
   focus?: (imageId: string) => string | null;
-}
-
-function row(
-  x: ReportInputs,
-  slot: DeckManifest["slots"][number],
-  excluded: string | null,
-  game: string,
-) {
-  const id = slot.imageId;
-  const img = id ? x.db.get(id) : undefined;
-  const r = id ? x.records.get(id) : undefined;
-  const f = isUsable(r) ? r.final : null;
-  const c = f ? asCounted(f) : null;
-  const state = excluded
-    ? "excluded"
-    : f
-      ? r?.status === "unreviewed"
-        ? "not double-checked"
-        : "analysed"
-      : "not analysed";
-  const t = rowTags(f, game, x.label);
-  const out: OrderRow = {
-    position: slot.position,
-    imageId: id,
-    thumb: img?.thumb ?? null,
-    file: img?.file ?? null,
-    screen: t.screen,
-    // The taxonomy type (a banner keeps the model's); `category` says it is a banner.
-    screenType: r?.banner?.from.screenType ?? f?.screenshot.screenType ?? null,
-    category: t.category,
-    logo: t.logo,
-    message: t.message,
-    headline: f?.headline ?? "",
-    orientation: orientationOf(slot.width, slot.height),
-    ratio: ratioLabel(slot.width, slot.height),
-    ...(slot.width && slot.height ? { size: `${slot.width}x${slot.height}` } : {}),
-    layerStructure: f ? layerStructure(f) : null,
-    composition: c
-      ? (COMPOSITION[c.screenshot.composition] ?? x.label(c.screenshot.composition))
-      : "",
-    captures: c ? captureLines(c, r?.identity?.image, x.label) : [],
-    layer: f ? f.marketingLayer.present : null,
-    state,
-    note: excluded ?? (f ? "" : r ? `${r.status}: ${r.problems.join("; ")}` : "not analysed yet"),
-  };
-  return out;
+  /** Engine inputs (engine/inputs.ts): image attributes, installs and chart rank, store text. */
+  attrs?: (imageId: string) => ImageAttributes | null;
+  market?: GameMarket[];
+  meta?: EngineInput["meta"];
 }
 
 /** Everything the report shows, from the saved analyses only (no AI). Pure. */
@@ -208,22 +142,21 @@ export function buildReportData(x: ReportInputs): ReportData {
       rows,
     };
   });
-  const entries = batchEntries(plan, x.records, x.db, x.ourAppId, x.repeats, x.focus);
+  const entries = batchEntries(plan, x.records, x.db, x.ourAppId, x.repeats, x.focus, x.attrs);
   const total = entries.decks.reduce((n, g) => n + g.deckLength, entries.ourDeckLength);
   const coverage = { used: total - entries.missing.length, total, missing: entries.missing };
   let patterns: Patterns | null = null;
   let oursVs: OursVsPatterns | null = null;
   let fit: FitSummary | null = null;
+  let engine: EngineResult | null = null;
   if (entries.competitors.length >= 2) {
     patterns = findPatterns(entries.competitors, entries.decks);
-    oursVs = compareOurs(
-      entries.ours,
-      patterns,
-      entries.ourDeckLength,
-      x.label,
-      entries.competitors,
+    engine = engineOf(entries, x.market ?? [], x.meta);
+    oursVs = compareOurs(entries.ours, patterns, entries.ourDeckLength, x.label, engine);
+    fit = withEngine(
+      patternFit(entries.competitors, entries.ours, patterns, entries.ourDeckLength, x.label),
+      engine,
     );
-    fit = patternFit(entries.competitors, entries.ours, patterns, entries.ourDeckLength, x.label);
   }
   const l = x.latestAi;
   // AI parts written with older text prompts are out of date even when the analyses are not.
@@ -280,17 +213,23 @@ export function buildReportData(x: ReportInputs): ReportData {
     examples: recExamples(ai?.recommendations ?? null, games),
     sorting: sortingPart(games, ai?.recommendations ?? null),
     recProblems: ai?.recommendations
-      ? labelProblems(
-          ai.recommendations,
-          new Map(
-            (games.find((g) => g.ours)?.rows ?? []).map((r) => [r.position, r.screenType ?? ""]),
+      ? [
+          ...(engine && ai.current
+            ? engineRecProblems(ai.recommendations, engine, entries.ours)
+            : []),
+          ...labelProblems(
+            ai.recommendations,
+            new Map(
+              (games.find((g) => g.ours)?.rows ?? []).map((r) => [r.position, r.screenType ?? ""]),
+            ),
           ),
-        )
+        ]
       : [],
     labels: labelsFor(x.label, patterns, oursVs, ai?.recommendations ?? null, games),
     leftOut: x.leftOut ?? [],
     storeText: x.storeText ?? [],
-    ...bottomLine(x, entries, fit, patterns, ai),
+    engine,
+    ...bottomLine(x, entries, fit, patterns, ai, engine),
   });
   return withRepeatFindings(data, x.repeats ?? new Map(), true);
 }

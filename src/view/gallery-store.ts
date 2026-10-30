@@ -42,8 +42,8 @@ function storeHtml(appId) {
 function storeTextHtml(d) {
   const cs = d.storeText;
   if (!cs || !cs.length)
-    return "<p>No store text is saved for these games yet. It is read (free, no AI) by the next preview, or for the pages already downloaded with <code>npm run store-text</code>.</p>";
-  let h = '<p class="meta">' + esc(DERIVED_NOTE) + " Matching is by exact words: other word forms and translations are not matched. Korean words keep their endings, so Korean counts are rougher.</p>";
+    return (typeof storeListingHtml === "function" ? storeListingHtml(d) : "") + "<p>No store text is saved for these games yet. It is read (free, no AI) by the next preview, or for the pages already downloaded with <code>npm run store-text</code>.</p>";
+  let h = (typeof storeListingHtml === "function" ? storeListingHtml(d) : "") + '<p class="meta">' + esc(DERIVED_NOTE) + " Matching is by exact words: other word forms and translations are not matched. Korean words keep their endings, so Korean counts are rougher.</p>";
   for (const c of cs) {
     const rows = c.rows.map((r) => "<tr" + (r.ours ? ' class="ours"' : "") + "><th>" + esc(r.name) + (r.ours ? " (ours)" : "") + "</th>"
       + (r.store ? "<td>" + esc([r.store.title, r.store.shortDescription].filter(Boolean).join(": ")) + "</td><td>" + esc(r.store.titleKeywords || "none") + "</td><td>" + categoryText(r.store) + "</td><td>" + chipList(r.store.tags) + "</td><td>" + chipList(r.store.keywords) + '</td><td class="meta">' + esc(r.store.date) + "</td>"

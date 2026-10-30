@@ -20,7 +20,7 @@ export function playContextOf(
 export function abFactsFor(
   config: Config,
   market: MarketRef,
-  x: Pick<AbSectionInput, "fit" | "ours" | "ourDeckLength" | "deckLength">,
+  x: Pick<AbSectionInput, "fit" | "ours" | "ourDeckLength" | "deckLength" | "engine">,
 ) {
   const play = playContextOf(config, [market]);
   return {

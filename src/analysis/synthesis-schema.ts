@@ -72,7 +72,9 @@ export function recommendationSchema(taxonomy: Taxonomy) {
         subtype: z.string(),
         source: z
           .string()
-          .describe('"keep our current position N", "recapture our position N", or "new capture"'),
+          .describe(
+            '"keep our current position N", "recapture our position N", "new capture", or "new marketing art"',
+          ),
         screenshot: z.strictObject({
           orientation: z.enum(["portrait", "landscape"]),
           whatToCapture: z.string().describe("the exact in-game screen and moment to capture"),
@@ -119,9 +121,24 @@ export function recommendationSchema(taxonomy: Taxonomy) {
         why: z.string().describe("which pattern this follows or deliberately breaks, and why"),
       }),
     ),
+    objections: z
+      .preprocess(
+        (v) => v ?? [],
+        z.array(
+          z.strictObject({
+            directiveId: z.string().describe("the directive id, e.g. D3"),
+            reason: z.string(),
+            evidence: z.string().describe("the facts behind the objection"),
+          }),
+        ),
+      )
+      .describe("directives you think are wrong for this game (followed anyway); empty when none"),
   });
 }
-export type Recommendations = z.infer<ReturnType<typeof recommendationSchema>>;
+type RecommendationsOut = z.infer<ReturnType<typeof recommendationSchema>>;
+/** Recommendations saved before 2026-10-31 have no objections (D8: shown only, never applied). */
+export type Recommendations = Omit<RecommendationsOut, "objections"> &
+  Partial<Pick<RecommendationsOut, "objections">>;
 type RecPosition = Recommendations["positions"][number];
 
 /** A slot's logo decision; null in recommendations saved before it existed (2026-09-29). */

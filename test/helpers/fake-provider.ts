@@ -89,16 +89,44 @@ export interface FakeOptions {
   reviewSeverity?: "major" | "minor";
 }
 
-function recommendations(n: number) {
+/** The engine's target deck in the prompt (the skeleton contract), when there is one. */
+type SkeletonSlot = { kind: string; orientation: string; logo: string };
+function skeletonIn(prompt: string): SkeletonSlot[] {
+  const i = prompt.indexOf("TARGET DECK (skeleton)");
+  const line =
+    i < 0
+      ? ""
+      : (prompt
+          .slice(i)
+          .split("\n")
+          .find((l) => l.startsWith("[")) ?? "");
+  try {
+    return JSON.parse(line) as SkeletonSlot[];
+  } catch {
+    return [];
+  }
+}
+
+/** A taxonomy type that reads as the slot's kind (the fake follows the skeleton). */
+const TYPE_OF: Record<string, [string, string]> = {
+  "Title screen / full-screen art": ["title_image", "title_screen"],
+  "Promotional banner": ["feature_image", "feature_callout"],
+  "Content showcase": ["feature_image", "feature_callout"],
+  "Progression or upgrade menu": ["metagame", "gear"],
+  "Collection or roster": ["metagame", "pets"],
+  "Map or world": ["map_world", "world_map"],
+};
+
+function recommendations(n: number, skeleton: SkeletonSlot[] = []) {
   return {
     rationale: "test",
-    positions: Array.from({ length: n }, (_, i) => ({
+    positions: Array.from({ length: Math.max(n, skeleton.length) }, (_, i) => ({
       position: i + 1,
-      screenType: "gameplay",
-      subtype: "battle",
+      screenType: TYPE_OF[skeleton[i]?.kind ?? ""]?.[0] ?? "gameplay",
+      subtype: TYPE_OF[skeleton[i]?.kind ?? ""]?.[1] ?? "battle",
       source: "new capture",
       screenshot: {
-        orientation: "portrait",
+        orientation: skeleton[i]?.orientation ?? "portrait",
         whatToCapture: "a boss fight",
         action: "fighting",
         atmosphere: "epic",
@@ -121,7 +149,7 @@ function recommendations(n: number) {
         ],
         elements: [],
       },
-      logo: { show: i === 0, why: "test" },
+      logo: { show: skeleton[i] ? skeleton[i]?.logo === "yes" : i === 0, why: "test" },
       why: "test",
     })),
   };
@@ -214,7 +242,7 @@ export function fakeProvider(o: FakeOptions): Provider & { calls: VisionCall[] }
         });
       if (asks("Write the recommendations") || asks("Revise")) {
         const m = /between (\d+) and/.exec(c.prompt);
-        return ok(recommendations(Number(m?.[1] ?? 3)));
+        return ok(recommendations(Number(m?.[1] ?? 3), skeletonIn(c.prompt)));
       }
       if (c.prompt.startsWith("Write the A/B tests")) return ok(abAnswer(c.prompt));
       if (asks("Review these")) {

@@ -1,4 +1,6 @@
 import { z } from "zod";
+import type { EngineResult } from "../engine/engine.ts";
+import { abDirectionProblems } from "../engine/validate.ts";
 import type { Evidence } from "../reports/ab-candidates.ts";
 import { isEventLine } from "./image-tags.ts";
 import {
@@ -77,6 +79,8 @@ export interface TestRules {
   lowTraffic: (gl: string) => boolean;
   /** Our current image's orientation per position (from the pixels). */
   ourOrientation: ReadonlyMap<number, string>;
+  /** The engine: a test may never move away from one of its directives (plan 5.5). */
+  engine?: EngineResult | null;
 }
 
 /** A slot differs from the control: moved, or something in it changed. */
@@ -161,6 +165,13 @@ export function testProblems(t: AiTest, r: TestRules): string[] {
       `the target metric must be ${r.metrics.map((m) => PLAY_METRICS[m].name).join(" or ")}`,
     );
   out.push(...variantProblems(t.variant, t.variable, r));
+  if (r.engine) {
+    out.push(...abDirectionProblems(t.variant.slots, r.engine));
+    if (t.secondVariant)
+      out.push(
+        ...abDirectionProblems(t.secondVariant.slots, r.engine).map((p) => `second variant: ${p}`),
+      );
+  }
   if (t.secondVariant)
     out.push(...variantProblems(t.secondVariant, t.variable, r).map((p) => `second variant: ${p}`));
   const targets = [

@@ -1,6 +1,7 @@
 import { join } from "node:path";
 import { type LoadedConfig, loadTaxonomy, projectPaths } from "../config/load.ts";
 import { coreDeck } from "../core/selection.ts";
+import { engineForPlan, runEntries, withEngine } from "../engine/inputs.ts";
 import { abFactsFor } from "../reports/play-context.ts";
 import { openImageDb } from "../store/imagedb.ts";
 import { newRunId } from "../store/manifest.ts";
@@ -8,7 +9,7 @@ import { writeJsonOnce } from "../util/fsx.ts";
 import { endAttempt, SYNTHESIS, startAttempt } from "./attempts.ts";
 import { crashEstimate, STEP_CEILING_USD } from "./budget.ts";
 import { measuredRecords } from "./colour-store.ts";
-import { batchDataHash, batchEntries, planRepeats } from "./entries.ts";
+import { batchDataHash } from "./entries.ts";
 import { writeFinalReport } from "./final-report.ts";
 import { labeler } from "./labels.ts";
 import { enrichOrder, type OrderSnapshot, snapshotOrder } from "./orders.ts";
@@ -172,7 +173,7 @@ export async function runAnalysis(
 
   const all = await measuredRecords(paths, db, config, withCurrentMapping(readRecords(paths)));
   for (const s of snaps) enrichOrder(paths, s, all);
-  const entries = batchEntries(plan, all, db, config.ourApp.id, planRepeats(paths, db, plan, all));
+  const entries = runEntries(loaded, plan, all, db);
   let patterns: Patterns | null = null;
   let oursVs: OursVsPatterns | null = null;
   let synthesis: SynthesisResult | null = null;
@@ -188,7 +189,9 @@ export async function runAnalysis(
     report("patterns", "Finding patternsâ€¦");
     patterns = findPatterns(entries.competitors, entries.decks);
     const { ours, competitors, ourDeckLength } = entries;
-    oursVs = compareOurs(ours, patterns, ourDeckLength, labeler(taxonomy), competitors);
+    const engine = engineForPlan(loaded, plan.market.gl, entries);
+    const lab = labeler(taxonomy);
+    oursVs = compareOurs(ours, patterns, ourDeckLength, lab, engine);
     if (deps.writer) {
       const before = bc.spent();
       const attempt = startAttempt(paths, SYNTHESIS, {
@@ -196,7 +199,7 @@ export async function runAnalysis(
         batchId,
         estimateUsd: config.estimates.synthesisUsd[1],
       });
-      const fit = patternFit(competitors, ours, patterns, ourDeckLength, labeler(taxonomy));
+      const fit = withEngine(patternFit(competitors, ours, patterns, ourDeckLength, lab), engine);
       const prompt = (name: PromptName) => renderPrompt(loaded.root, paths.objects, name, taxonomy);
       synthesis = await synthesise(
         {
@@ -216,6 +219,7 @@ export async function runAnalysis(
           fit,
           ab: abFactsFor(config, plan.market, {
             fit,
+            engine,
             ours: entries.ours,
             ourDeckLength: entries.ourDeckLength,
             deckLength: patterns.deckLength,
@@ -223,6 +227,7 @@ export async function runAnalysis(
           ours: entries.ours,
           competitors: entries.competitors,
           ourDeckLength: entries.ourDeckLength,
+          engine,
         },
         withKb(bc.ctx, loaded, plan.market.gl),
         report,

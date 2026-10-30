@@ -1,6 +1,5 @@
 import { hasDefinition } from "./categories.ts";
 import { colourFamily } from "./colours.ts";
-import { directivesOf } from "./directives.ts";
 import type { Labeler } from "./labels.ts";
 import { basisOf, firstPositions, strengthOf, summarise } from "./pattern-fit-parts.ts";
 import { tagFits } from "./pattern-fit-tags.ts";
@@ -292,5 +291,5 @@ export function patternFit(
     });
   }
   tagFits(theirs, ours, p, g, label, add);
-  return summarise(out, g, directivesOf(theirs, ours, p, label));
+  return summarise(out, g);
 }

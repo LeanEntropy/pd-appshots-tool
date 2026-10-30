@@ -1,30 +1,22 @@
 import type { z } from "zod";
 import { type Store, storeFacts } from "../appstore/store-prompts.ts";
 import type { Taxonomy } from "../config/load.ts";
+import type { EngineResult } from "../engine/engine.ts";
+import { engineFacts } from "../engine/facts.ts";
+import { claimProblems, recTexts, skeletonProblems } from "../engine/validate.ts";
 import type { KbRecord } from "../kb/step.ts";
 import { patternsKb, recommendKb, reviewKb, type SynthesisKb, withKbMarks } from "../kb/step-io.ts";
 import { type KbOpts, kbPart } from "../kb/synthesis-kb.ts";
 import { type AbTestsInput, writeAbTests } from "./ab-tests.ts";
 import type { AbTestsOutput } from "./ab-tests-schema.ts";
 import { type CallContext, cachedAnswer, validatedCall } from "./call.ts";
-import {
-  CATEGORIES,
-  categoryOf,
-  categoryOfType,
-  HOW_WE_SORT,
-  isArtCategory,
-  LAYER_TAGS,
-  reportLabeler,
-  TAGS,
-} from "./categories.ts";
-import { artMessage, showsLogo } from "./image-tags.ts";
-import { plainLabel } from "./labels.ts";
-import { layerStructure } from "./layer-structure.ts";
-import { directiveFacts, type OursVsPatterns } from "./ours-vs.ts";
+import { CATEGORIES, HOW_WE_SORT, LAYER_TAGS, TAGS } from "./categories.ts";
+import type { OursVsPatterns } from "./ours-vs.ts";
 import type { FitSummary } from "./pattern-fit.ts";
-import { type DeckEntry, type Patterns, proportion } from "./patterns.ts";
+import type { DeckEntry, Patterns } from "./patterns.ts";
 import type { RenderedPrompt } from "./prompts.ts";
 import type { Provider } from "./providers.ts";
+import { brief } from "./synthesis-brief.ts";
 import {
   type Interpretation,
   interpretationSchema,
@@ -43,6 +35,8 @@ export interface SynthesisDeps {
   ab?: { writer: Provider; prompt: RenderedPrompt } | null;
 }
 
+export { brief } from "./synthesis-brief.ts";
+
 type AbFacts = Omit<AbTestsInput, "ours" | "brief" | "recommendations">;
 
 export interface SynthesisResult {
@@ -57,49 +51,6 @@ export interface SynthesisResult {
   /** What each step cited from the knowledge base (all null when its Settings switch is off). */
   kb: SynthesisKb;
 }
-const L = reportLabeler(plainLabel);
-
-/**
- * One line per screenshot, both layers, for text-only prompts. Screen types are the report's
- * plain category names (never taxonomy codes), with the logo and art-message tags.
- */
-export function brief(e: DeckEntry): string {
-  const s = e.final.screenshot;
-  const m = e.final.marketingLayer;
-  const colours = (cs: { name: string; hex: string }[]) =>
-    cs.map((c) => `${c.name} ${c.hex}`).join(", ");
-  const layer = m.present
-    ? [
-        `layer ${m.coveragePercent}% (${proportion(e.final)})`,
-        ...m.backgroundMasks.map(
-          (b) => `mask ${b.shape} ${b.colourName} ${b.colourHex} at ${b.location}`,
-        ),
-        ...m.texts.map(
-          (t) =>
-            `text "${t.text}" (${t.role}, ${t.colour}, outline ${t.strokeColour}, ${t.fontStyle}, ${t.size}, ${t.position})`,
-        ),
-        ...m.elements.map(
-          (x) => `element ${x.what} (${x.kind}) at ${x.position}, pose ${x.pose}, ${x.colours}`,
-        ),
-      ].join("; ")
-    : "no marketing layer";
-  const cat = categoryOf(e.final);
-  const sub = s.subtype && !isArtCategory(cat) ? ` / ${L(s.subtype)}` : "";
-  const tags = [
-    `game logo: ${showsLogo(e.final, e.name) ? "yes" : "no"}, ${L(layerStructure(e.final))}`,
-    ...(isArtCategory(cat) ? [`line: ${L(artMessage(e.final, e.name))}`] : []),
-  ].join(", ");
-  const caps = isArtCategory(cat)
-    ? "one full picture"
-    : s.captures
-        .map(
-          (c) =>
-            `${c.orientation} ${L(categoryOfType(c.screenType))}${c.subtype ? ` / ${L(c.subtype)}` : ""} ${c.framing} ${c.areaPercent}%`,
-        )
-        .join(" + ") || "none";
-  return `${e.name} #${e.position}: ${L(cat)}${sub} (${tags}), ${e.canvas}${e.ratio ? ` ${e.ratio}` : ""} image, captures: ${caps}, ${s.description} Action: ${s.action} Mood: ${s.atmosphere}. Colours: ${colours(s.mainColours)}. ${layer}`;
-}
-
 /**
  * Pattern interpretation, recommendations, cross-family review and (on major findings) one
  * revision, then the A/B tests to run next. Each call is cached by its full input, so the same
@@ -138,6 +89,8 @@ async function writeAndReview(
     competitors: readonly DeckEntry[];
     ourDeckLength: number;
     store?: Store;
+    /** The engine's skeleton and directives (hard input; checked after the AI). */
+    engine?: EngineResult | null;
   },
   ctx: CallContext,
   report: (phase: string, message: string) => void,
@@ -154,7 +107,7 @@ async function writeAndReview(
   const facts = [
     `How we sort images, and the plain name and definition of every screen category and tag code below (write the plain names, never the codes):\n${HOW_WE_SORT.join(" ")}\n${JSON.stringify(Object.values({ ...CATEGORIES, ...TAGS, ...LAYER_TAGS }))}`,
     `Computed patterns (JSON):\n${JSON.stringify(input.patterns)}`,
-    `${directiveFacts(input.oursVs.directives)}Our deck vs the patterns, computed (JSON):\n${JSON.stringify(input.oursVs)}`,
+    `${engineFacts(input.engine)}Our deck vs the patterns, computed (JSON):\n${JSON.stringify(input.oursVs)}`,
     `Pattern check, computed (JSON): verdict, key points in priority order, and every pattern with whether we fit:\n${JSON.stringify(input.fit, (k, v) => (k === "basis" ? undefined : v))}`,
     ...storeFacts(input.store),
   ].join("\n\n");
@@ -181,8 +134,18 @@ async function writeAndReview(
   out.kb.interpretation = interp.record ?? null;
   if (!interp.value) out.problems.push(`pattern summary: ${interp.problems.join("; ")}`);
 
-  const minLen = Math.max(1, Math.min(input.ourDeckLength, input.patterns.deckLength.min || 1));
-  const maxLen = Math.max(input.ourDeckLength, input.patterns.deckLength.max, minLen);
+  // The engine's skeleton sets the length: never shorter than its target (plan 5.6-6).
+  const minLen = Math.max(
+    1,
+    Math.min(input.ourDeckLength, input.patterns.deckLength.min || 1),
+    input.engine?.skeleton.length ?? 0,
+  );
+  const maxLen = Math.max(
+    input.ourDeckLength,
+    input.patterns.deckLength.max,
+    minLen,
+    input.engine?.skeleton.length ?? 0,
+  );
   const interpretation = `Interpretation:\n${JSON.stringify(out.interpretation)}`;
   const lines = [
     `Our current screenshots, in store order:\n${input.ours.map(brief).join("\n")}`,
@@ -195,8 +158,13 @@ async function writeAndReview(
   const contextBefore = [facts, interpretation, ...lines, range].join("\n\n");
   const schema = recommendationSchema(taxonomy);
   const oursTypes = new Map(input.ours.map((e) => [e.position, e.final.screenshot.screenType]));
+  const ourCanvas = input.ours[0]?.canvas ?? "portrait";
   const check = (v: Recommendations) =>
     recommendationProblems(v, minLen, maxLen, oursTypes, input.store);
+  // The skeleton and the counts: one revision when they fail, then shown as problems (5.6).
+  const e = input.engine;
+  const soft = (v: Recommendations) =>
+    e ? [...skeletonProblems(v, e, ourCanvas), ...claimProblems(recTexts(v), e.claims)] : [];
   report("recommend", "Writing recommendations…");
   const rec = await textStep(
     "recommend",
@@ -217,7 +185,7 @@ async function writeAndReview(
     out.problems.push(`recommendations: ${rec.problems.join("; ")}`);
     return out;
   }
-  if (!deps.reviewer) return out;
+  if (!deps.reviewer) return revise(soft(rec.value).map((p) => `- ${p}`));
   report("recommend-review", "Checking recommendations…");
   const facts2 = `${facts}\n\nOur current screenshots:\n${input.ours.map(brief).join("\n")}`;
   const recJson = `Recommendations (JSON):\n${JSON.stringify(rec.value)}`;
@@ -235,37 +203,45 @@ async function writeAndReview(
     reviewKb(input.fit),
   );
   out.review = rev.value;
-  if (!rev.value) {
-    out.problems.push(`recommendation review: ${rev.problems.join("; ")}`);
+  if (!rev.value) out.problems.push(`recommendation review: ${rev.problems.join("; ")}`);
+  const major = (rev.value?.findings ?? []).filter((f) => f.severity === "major");
+  return revise([
+    ...soft(rec.value).map((p) => `- ${p}`),
+    ...major.map(
+      (f) => `- position ${f.position || "all"}: ${f.issue} Suggestion: ${f.suggestion}`,
+    ),
+  ]);
+
+  /** One revision for the review's major findings and the engine's checks; what remains is shown. */
+  async function revise(items: string[]): Promise<SynthesisResult> {
+    const first = rec.value as Recommendations;
+    if (items.length) {
+      report("recommend-revise", "Revising recommendations after the checks…");
+      const ask = `Revise your recommendations. The review and the code checks found these major problems; fix them where they are right, keep the rest. The target deck and the directives are hard input.\n${items.join("\n")}`;
+      const was = `Your first version (JSON):\n${JSON.stringify(first)}`;
+      const revised = await textStep(
+        "recommend-revise",
+        deps.writer,
+        deps.prompts.recommend,
+        {
+          now: `${context}\n\n${was}\n\n${ask}`,
+          before: `${ask}\n\n${was}\n\n${contextBefore}`,
+        },
+        schema,
+        check,
+        ctx,
+        recommendKb(input.fit),
+      );
+      if (revised.value) {
+        out.draft = first;
+        out.recommendations = revised.value;
+        out.kb.recommendations = revised.record ?? null;
+      } else out.problems.push(`revision: ${revised.problems.join("; ")}`);
+    }
+    const left = out.recommendations ? soft(out.recommendations) : [];
+    if (left.length) out.problems.push(`recommendations vs the directives: ${left.join("; ")}`);
     return out;
   }
-  const major = rev.value.findings.filter((f) => f.severity === "major");
-  if (!major.length) return out;
-  report("recommend-revise", "Revising recommendations after the review…");
-  const findings = major
-    .map((f) => `- position ${f.position || "all"}: ${f.issue} Suggestion: ${f.suggestion}`)
-    .join("\n");
-  const revise = `Revise your recommendations. A reviewer found these major problems; fix them where they are right, keep the rest.\n${findings}`;
-  const first = `Your first version (JSON):\n${JSON.stringify(rec.value)}`;
-  const revised = await textStep(
-    "recommend-revise",
-    deps.writer,
-    deps.prompts.recommend,
-    {
-      now: `${context}\n\n${first}\n\n${revise}`,
-      before: `${revise}\n\n${first}\n\n${contextBefore}`,
-    },
-    schema,
-    check,
-    ctx,
-    recommendKb(input.fit),
-  );
-  if (revised.value) {
-    out.draft = rec.value;
-    out.recommendations = revised.value;
-    out.kb.recommendations = revised.record ?? null;
-  } else out.problems.push(`revision: ${revised.problems.join("; ")}`);
-  return out;
 }
 
 /**

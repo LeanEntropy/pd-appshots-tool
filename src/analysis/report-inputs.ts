@@ -1,5 +1,6 @@
 import { type LoadedConfig, loadTaxonomy, projectPaths } from "../config/load.ts";
 import { coreDeck, notInCoreMarket } from "../core/selection.ts";
+import { attributesOf, marketData, metaInput } from "../engine/inputs.ts";
 import { legacyAnalysisJob, readJournal } from "../jobs/journal.ts";
 import { readLayoutFile } from "../layout/store.ts";
 import { playContextOf } from "../reports/play-context.ts";
@@ -131,6 +132,18 @@ export function reportInputs(
       const r = records.get(id);
       return (r && readLayoutFile(paths, r)?.layout.composition?.focus?.kind) || null;
     },
+    attrs: attributesOf(paths, records),
+    market: marketData(storage, paths, plan.games, m.gl),
+    meta: metaInput(
+      loaded,
+      storage,
+      marketData(
+        storage,
+        paths,
+        loaded.config.competitors.map((c) => ({ appId: c.id, name: c.name })),
+        m.gl,
+      ),
+    ),
     storeText: compareStoreText(
       storage,
       loaded.config.markets,

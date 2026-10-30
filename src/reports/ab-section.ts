@@ -20,9 +20,11 @@ import {
 } from "../analysis/play-experiments.ts";
 import type { PpoSetup } from "../appstore/ppo.ts";
 import { storeVariantProblems } from "../appstore/store-prompts.ts";
+import type { EngineResult } from "../engine/engine.ts";
 import type { TrafficLevel } from "../settings/schema.ts";
 import { abCandidates, codeTestPositions, type Evidence } from "./ab-candidates.ts";
 import { card, cleanVariant, codeCard, noIds, plainReason } from "./ab-cards.ts";
+import { directiveEvidence } from "./ab-directives.ts";
 
 export { noIds } from "./ab-cards.ts";
 
@@ -75,6 +77,8 @@ export interface AbTestsPart {
 
 export interface AbSectionInput {
   fit: FitSummary | null;
+  /** The engine: its directives are the gaps, and no test may move away from one. */
+  engine?: EngineResult | null;
   ours: readonly DeckEntry[];
   ourDeckLength: number;
   deckLength: { min: number; max: number } | null;
@@ -91,11 +95,18 @@ export function abEvidence(x: Omit<AbSectionInput, "ai" | "aiCurrent" | "label">
   rules: TestRules;
 } {
   const range = x.deckLength ?? { min: x.ourDeckLength, max: x.ourDeckLength };
-  const evidence = abCandidates(x.fit, {
+  const fromFit = abCandidates(x.fit, {
     gl: x.market.gl,
     ourDeckLength: x.ourDeckLength,
     deckLength: range,
   });
+  // The engine's directives first; a pattern gap at a position a directive covers is left out.
+  const fromEngine = x.engine ? directiveEvidence(x.engine, x.market.gl, x.ourDeckLength) : [];
+  const covered = new Set(fromEngine.flatMap((e) => e.positions));
+  const evidence = [
+    ...fromEngine,
+    ...fromFit.filter((e) => !e.positions.length || !e.positions.some((p) => covered.has(p))),
+  ].map((e, i) => ({ ...e, id: `E${i + 1}` }));
   const rules: TestRules = {
     evidence: new Map(evidence.map((e) => [e.id, e])),
     countries: x.play.reportMarkets.map((m) => m.gl),
@@ -107,6 +118,7 @@ export function abEvidence(x: Omit<AbSectionInput, "ai" | "aiCurrent" | "label">
     metrics: allowedMetrics(x.play.preRegistration),
     lowTraffic: (gl) => isLowTraffic(x.play.traffic[gl] ?? "unknown"),
     ourOrientation: new Map(x.ours.map((e) => [e.position, e.canvas])),
+    engine: x.engine ?? null,
   };
   return { evidence, rules };
 }

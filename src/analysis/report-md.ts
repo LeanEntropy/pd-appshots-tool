@@ -1,3 +1,4 @@
+import { engineMarkdown, storeListingMarkdown } from "../engine/markdown.ts";
 import { dataPoints, pointsMarkdown } from "../reports/bottom-points-of.ts";
 import { definitionOf } from "./categories.ts";
 import type { Labeler } from "./labels.ts";
@@ -125,6 +126,7 @@ export function reportMarkdown(d: ReportData, label: Labeler, research?: string[
     const p = dataPoints(d);
     out.push(...(p ? pointsMarkdown(p) : [d.summary.shortAnswer, ""]));
   } else if (o.verdict) out.push(o.verdict, "");
+  out.push(...engineMarkdown(d.engine));
   out.push("### Key points to optimise, most important first", "");
   if (o.points.length) out.push(...o.points.map((p, i) => `${i + 1}. ${p}`));
   else out.push("None: our deck fits every competitor pattern found.");
@@ -248,7 +250,7 @@ export function reportMarkdown(d: ReportData, label: Labeler, research?: string[
 
   out.push(head(4), "", ...abDetailsMarkdown(d.abTests));
 
-  out.push(head(5), "", ...storeTextMarkdown(d.storeText));
+  out.push(head(5), "", ...storeListingMarkdown(d.engine), ...storeTextMarkdown(d.storeText));
 
   if (research) out.push(head(6), "", ...research);
   out.push(head(titles.length - 1), "");

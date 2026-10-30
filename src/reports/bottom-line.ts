@@ -2,6 +2,7 @@ import type { batchEntries } from "../analysis/entries.ts";
 import type { FitSummary } from "../analysis/pattern-fit.ts";
 import type { Patterns } from "../analysis/patterns.ts";
 import type { AiPart, ReportInputs } from "../analysis/report-data.ts";
+import type { EngineResult } from "../engine/engine.ts";
 import { type AbTestsPart, abTestsPart } from "./ab-section.ts";
 import { type SummaryPart, summaryPart } from "./summary.ts";
 export const OLDER_STYLE =
@@ -28,6 +29,7 @@ export function bottomLine(
   fit: FitSummary | null,
   patterns: Patterns | null,
   ai: AiPart | null,
+  engine: EngineResult | null = null,
 ): { summary: SummaryPart; abTests: AbTestsPart } {
   const m = x.plan.market;
   const play = x.play ?? {
@@ -55,6 +57,7 @@ export function bottomLine(
     }),
     abTests: abTestsPart({
       fit,
+      engine,
       ours: entries.ours,
       ourDeckLength: entries.ourDeckLength,
       deckLength: patterns?.deckLength ?? null,
