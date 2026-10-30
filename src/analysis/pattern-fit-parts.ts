@@ -1,3 +1,4 @@
+import type { Directive } from "./directives.ts";
 import type { FitBasis, FitGroup, FitSummary, OverallVerdict, PatternFit } from "./pattern-fit.ts";
 import { type DeckEntry, typeKey } from "./patterns.ts";
 
@@ -31,7 +32,12 @@ export function basisOf(
   return { n, of, unit, positions, games, imageIds: hits.map((e) => e.imageId), ours: [] };
 }
 
-export function summarise(patterns: PatternFit[], games: number): FitSummary {
+/** `firm`: the copy and drop directives (directives.ts), always first among the key points. */
+export function summarise(
+  patterns: PatternFit[],
+  games: number,
+  firm: readonly Directive[] = [],
+): FitSummary {
   const judged = patterns.filter((x) => x.fits !== null);
   const w = (x: PatternFit) => (x.strength === "pattern" ? 2 : 1);
   const total = judged.reduce((n, x) => n + w(x), 0);
@@ -53,11 +59,14 @@ export function summarise(patterns: PatternFit[], games: number): FitSummary {
   const atPosition = new Set(
     misses.filter((x) => /^position-\d+$/.test(x.id)).flatMap((x) => x.categories ?? []),
   );
+  const directed = new Set(firm.map((d) => `position-${d.position}`));
   const keyPoints = misses
     .filter((x) => !(x.id.startsWith("uses-") && atPosition.has(x.id.slice(5))))
+    .filter((x) => !directed.has(x.id))
     .sort((a, b) => w(b) - w(a) || GROUP_RANK[a.group] - GROUP_RANK[b.group])
     .slice(0, 6)
     .map((x) => `${x.text}: ${x.evidence}; ${x.reason}.`);
+  keyPoints.unshift(...firm.map((d) => d.text));
   const fit = judged.filter((x) => x.fits).reduce((n, x) => n + w(x), 0);
   return { patterns, verdict, score, keyPoints, points: { fit, total } };
 }

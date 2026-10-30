@@ -44,6 +44,7 @@ export function dataPoints(d: ReportData): BottomPoints | null {
     structured: s.worded ? structuredOf(i) : null,
     shownBelow: [...kp, ...aiKp, ...s.keyRecommendations.map((r) => r.text)],
     multi: false,
+    firm: (d.oursVs?.directives ?? []).map((x) => x.text),
   });
 }
 
@@ -94,6 +95,11 @@ export function countryPoints(r: CountryReport): BottomPoints {
     structured: structuredOf(advice),
     shownBelow: below,
     multi,
+    firm: r.countries.flatMap((c) =>
+      (c.data.oursVs?.directives ?? []).map((x) =>
+        multi ? `${countryName(c.label)}: ${x.text}` : x.text,
+      ),
+    ),
   });
 }
 

@@ -1,19 +1,24 @@
 import { asCounted } from "./categories.ts";
 import { colourFamily } from "./colours.ts";
+import { coreKept, type Directive, directivesOf } from "./directives.ts";
 import { type Labeler, plainLabel } from "./labels.ts";
 import { layerStructure } from "./layer-structure.ts";
 import { type PositionVerdict, positionVerdict, type Verdict } from "./ours-vs-position.ts";
 import { counts, type DeckEntry, type Patterns, proportion, typeKey } from "./patterns.ts";
 
+export { directiveFacts } from "./directive-facts.ts";
 export {
   MIN_AT_POSITION,
   type PositionVerdict,
+  positionWord,
   type Verdict,
 } from "./ours-vs-position.ts";
 
 export interface OursVsPatterns {
   positions: PositionVerdict[];
   overall: { verdict: Verdict; reasons: string[] };
+  /** Copy and drop directives (absent in reports saved before 2026-10-30). */
+  directives?: Directive[];
 }
 /** Our analysed deck against the competitors' patterns, per position and overall (by code). */
 export function compareOurs(
@@ -21,10 +26,31 @@ export function compareOurs(
   p: Patterns,
   ourDeckLength: number,
   label: Labeler = plainLabel,
+  theirs?: readonly DeckEntry[],
 ): OursVsPatterns {
+  const directives = theirs ? directivesOf(theirs, ours, p, label) : [];
+  const core = theirs ? coreKept(theirs, ours, label) : new Map<number, string>();
+  // A directive leads "How ours compares"; an image to drop is never "following".
   const positions = [...ours]
     .sort((a, b) => a.position - b.position)
-    .map((e) => positionVerdict(e, p, label));
+    .map((e) => positionVerdict(e, p, label))
+    .map((v): PositionVerdict => {
+      const d = directives.find((x) => x.position === v.position);
+      const kept = core.get(v.position);
+      if (!d) return kept ? { ...v, reasons: [...v.reasons, kept] } : v;
+      return {
+        ...v,
+        verdict: d.kind === "drop" ? "very different" : v.verdict,
+        reasons: [d.text, `What should be there: ${d.spec.details.join("; ")}`, ...v.reasons],
+        directive: {
+          kind: d.kind,
+          text: d.text,
+          details: d.spec.details,
+          orientation: d.spec.orientation,
+          screenshotLayer: d.spec.screenshotLayer,
+        },
+      };
+    });
   const reasons: string[] = [];
   let very = positions.filter((x) => x.verdict === "very different").length;
   let slight = positions.filter((x) => x.verdict === "slightly different").length;
@@ -111,5 +137,5 @@ export function compareOurs(
   const verdict: Verdict =
     very >= 2 ? "very different" : very || slight >= 2 ? "slightly different" : "following";
   if (!reasons.length) reasons.push("our deck matches the competitors' main patterns");
-  return { positions, overall: { verdict, reasons } };
+  return { positions, overall: { verdict, reasons }, ...(theirs ? { directives } : {}) };
 }

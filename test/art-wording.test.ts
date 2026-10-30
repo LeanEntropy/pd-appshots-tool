@@ -80,8 +80,9 @@ test("the reworded prompts keep their contract versions: saved analyses stay val
   assert.equal(PROMPT_VERSIONS.adjudicate, "adjudicate.v3");
   // The text steps (2026-09-29: one full-screen art category, the logo decision per image):
   // text only, no image, so every analysis key stays the same.
-  assert.equal(PROMPT_VERSIONS.patterns, "patterns.v4");
-  assert.equal(PROMPT_VERSIONS.recommend, "recommend.v4");
+  // 2026-10-30: the copy and drop directives (text steps only, same reasoning).
+  assert.equal(PROMPT_VERSIONS.patterns, "patterns.v5");
+  assert.equal(PROMPT_VERSIONS.recommend, "recommend.v5");
   for (const f of Object.values(PROMPT_FILES))
     assert.ok(existsSync(join(REPO, "prompts", "analysis", `${f}.md`)), f);
 });

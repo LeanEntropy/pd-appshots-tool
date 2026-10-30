@@ -54,7 +54,11 @@ test("pattern check: order, sequence and content patterns, each with our fit and
   assert.equal(byId.get("uses-metagame")?.fits, false);
   assert.notEqual(f.verdict, "optimised");
   assert.ok(f.keyPoints.length >= 2);
-  assert.match(f.keyPoints[0] ?? "", /Opens with Title screen \/ full-screen art|comes before/);
+  // A dominant pattern at a position is a firm "Copy the pattern" directive, first (2026-10-30).
+  assert.match(
+    f.keyPoints[0] ?? "",
+    /^Copy the pattern: .*title screen \/ full-screen art.* image 1/,
+  );
   const same = patternFit(
     theirs,
     [entry("o", 1, "title_image"), entry("o", 2, "gameplay"), entry("o", 3, "gameplay")],

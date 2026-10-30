@@ -34,7 +34,7 @@ export async function mainSynthesis(
   const { taxonomy } = loadTaxonomy(loaded);
   const label = labeler(taxonomy);
   const patterns = findPatterns(e.competitors, e.decks);
-  const oursVs = compareOurs(e.ours, patterns, e.ourDeckLength, label);
+  const oursVs = compareOurs(e.ours, patterns, e.ourDeckLength, label, e.competitors);
   const fit = patternFit(e.competitors, e.ours, patterns, e.ourDeckLength, label);
   ai.report("recommend", `Writing the recommendations for ${s.market.label}…`);
   const r = await synthesise(

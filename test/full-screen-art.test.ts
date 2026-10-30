@@ -218,7 +218,7 @@ test("each finding once: no 'Uses X' key point when a position already says X is
   const decks = ["a", "b", "c"].map((n) => ({ appId: n, name: n, deckLength: 2 }));
   const fit = patternFit(theirs, ours, findPatterns(theirs, decks), 2, plainLabel);
   assert.ok(fit.patterns.some((x) => x.id === "uses-metagame" && x.fits === false));
-  assert.equal(fit.keyPoints.filter((k) => /Menus and progression/.test(k)).length, 1);
+  assert.equal(fit.keyPoints.filter((k) => /menus and progression/i.test(k)).length, 1);
   const gaps = abCandidates(fit, { gl: "us", ourDeckLength: 2, deckLength: { min: 2, max: 2 } });
   assert.ok(!gaps.some((g) => g.kind === "uses-metagame"));
 });

@@ -123,7 +123,8 @@ function oursFacts(paths: ProjectPaths, d: ReportData, row: OrderRow, name: stri
   const base = imageFacts(paths, row, name);
   const v = d.oursVs?.positions.find((x) => x.position === row.position);
   const issues = [
-    ...(v && v.verdict !== "following" ? v.reasons : []),
+    // A directive (its text and spec) has its own part of the prompt.
+    ...(v && v.verdict !== "following" ? v.reasons.slice(v.directive ? 2 : 0) : []),
     ...(/^mismatch/.test(base.focusMatch)
       ? [`The marketing message does not match what the screen shows (${base.focusMatch}).`]
       : []),
@@ -249,7 +250,8 @@ export function promptSlots(paths: ProjectPaths, d: ReportData, x: SlotInputs = 
       const our = ours?.rows.find((r) => r.position === position);
       const o = our ? oursFacts(paths, d, our, ours?.name ?? "ours") : null;
       if (o) o.issues.push(...formatGaps(o, competitors));
-      return { position, competitors, ours: o, spec };
+      const directive = d.oursVs?.positions.find((v) => v.position === position)?.directive;
+      return { position, competitors, ours: o, spec, directive: directive ?? null };
     });
 }
 

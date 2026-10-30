@@ -61,6 +61,8 @@ export interface BottomInput {
   shownBelow: readonly string[];
   /** Keep a country prefix ("Japan: ...") on a finding (reports about several countries). */
   multi: boolean;
+  /** Copy and drop directives by code (directives.ts): always the first actions, never cut. */
+  firm?: readonly string[];
 }
 
 const ABBREV = /\b(?:e\.g|i\.e|vs|etc|approx|no)\.$/i;
@@ -210,6 +212,7 @@ export function bottomPoints(x: BottomInput): BottomPoints {
   const took = takeFindings(x.shortAnswer, x);
   const rest = took.rest;
   const found = took.items.filter((i) => !dup(plain(i)));
+  const firm = (x.firm ?? []).map((t) => act(t, true));
   const s = x.structured;
   if (s && (s.differences.length || s.actions.length)) {
     const verdict = aiVerdict(s.verdict, x.verdict);
@@ -217,11 +220,15 @@ export function bottomPoints(x: BottomInput): BottomPoints {
       verdict,
       differs: s.differences.filter((d) => d.trim() && !dup(d)).map(fact),
       // The AI's most important change first, then the code-made findings, then the rest.
-      actions: (([head, ...tail]) => (head ? [head, ...found, ...tail] : found))(
-        s.actions
-          .filter((a) => a.trim() && !dup(a) && !found.some((f) => sameIdea(a, plain(f))))
-          .map((a) => act(a)),
-      ),
+      actions: [
+        ...firm,
+        ...(([head, ...tail]) => (head ? [head, ...found, ...tail] : found))(
+          s.actions
+            .filter((a) => a.trim() && !dup(a) && !found.some((f) => sameIdea(a, plain(f))))
+            .filter((a) => !firm.some((f) => sameIdea(a, plain(f))))
+            .map((a) => act(a)),
+        ),
+      ],
       from: "ai",
     };
   }
@@ -265,7 +272,10 @@ export function bottomPoints(x: BottomInput): BottomPoints {
     last = item;
   }
   if (pendingNote && !dup(pendingNote)) differs.push(fact(pendingNote));
-  return { verdict: x.verdict, differs, actions: [...first, ...found, ...later], from: "split" };
+  const actions = [...first, ...found, ...later].filter(
+    (a) => !firm.some((f) => sameIdea(plain(a), plain(f))),
+  );
+  return { verdict: x.verdict, differs, actions: [...firm, ...actions], from: "split" };
 }
 
 /** The AI's verdict line when it opens with the computed verdict word, else the code's. */

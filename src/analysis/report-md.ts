@@ -1,6 +1,7 @@
 import { dataPoints, pointsMarkdown } from "../reports/bottom-points-of.ts";
 import { definitionOf } from "./categories.ts";
 import type { Labeler } from "./labels.ts";
+import { positionWord } from "./ours-vs-position.ts";
 import type { PatternFit } from "./pattern-fit.ts";
 import type { OrderRow, ReportData } from "./report-data.ts";
 import {
@@ -209,7 +210,9 @@ export function reportMarkdown(d: ReportData, label: Labeler, research?: string[
             g.name,
           ),
         )
-        .join(" | ")} | ${v ? `**${v.verdict}**: ${cell(v.reasons.join("; "))}` : ""} |`,
+        .join(
+          " | ",
+        )} | ${v ? `**${positionWord(v)}**${v.directive ? ` (${v.verdict})` : ""}: ${cell(v.reasons.join("; "))}` : ""} |`,
     );
   }
   out.push("");

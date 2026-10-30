@@ -1,3 +1,4 @@
+import { directivePart } from "./image-prompt-directive.ts";
 import type { StoreRules } from "./image-prompt-rules.ts";
 import type {
   ImageFacts,
@@ -223,7 +224,8 @@ function specPart(s: SlotSpec | null, place: PromptPlace, position: number): str
 /** The full prompt for one position. */
 export function imagePrompt(place: PromptPlace, slot: PromptSlot, rules: StoreRules): string {
   const s = slot.spec;
-  const orientation = s?.orientation || slot.ours?.orientation || "portrait";
+  const orientation =
+    slot.directive?.orientation || s?.orientation || slot.ours?.orientation || "portrait";
   const notes = rules.slotNotes(s?.screenType ?? "", slot.position);
   const lines = [
     `# Store image ${slot.position} of ${place.deckLength} for ${place.game}`,
@@ -243,6 +245,7 @@ export function imagePrompt(place: PromptPlace, slot: PromptSlot, rules: StoreRu
     ...rules.risks.map(bullet),
     ...notes.map(bullet),
     "",
+    ...directivePart(slot),
     ...competitorPart(slot),
     "",
     ...oursPart(slot.ours, slot.position),

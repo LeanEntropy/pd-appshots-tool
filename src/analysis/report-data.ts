@@ -216,7 +216,13 @@ export function buildReportData(x: ReportInputs): ReportData {
   let fit: FitSummary | null = null;
   if (entries.competitors.length >= 2) {
     patterns = findPatterns(entries.competitors, entries.decks);
-    oursVs = compareOurs(entries.ours, patterns, entries.ourDeckLength, x.label);
+    oursVs = compareOurs(
+      entries.ours,
+      patterns,
+      entries.ourDeckLength,
+      x.label,
+      entries.competitors,
+    );
     fit = patternFit(entries.competitors, entries.ours, patterns, entries.ourDeckLength, x.label);
   }
   const l = x.latestAi;

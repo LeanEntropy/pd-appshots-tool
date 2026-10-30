@@ -20,7 +20,7 @@ import {
 import { artMessage, showsLogo } from "./image-tags.ts";
 import { plainLabel } from "./labels.ts";
 import { layerStructure } from "./layer-structure.ts";
-import type { OursVsPatterns } from "./ours-vs.ts";
+import { directiveFacts, type OursVsPatterns } from "./ours-vs.ts";
 import type { FitSummary } from "./pattern-fit.ts";
 import { type DeckEntry, type Patterns, proportion } from "./patterns.ts";
 import type { RenderedPrompt } from "./prompts.ts";
@@ -154,7 +154,7 @@ async function writeAndReview(
   const facts = [
     `How we sort images, and the plain name and definition of every screen category and tag code below (write the plain names, never the codes):\n${HOW_WE_SORT.join(" ")}\n${JSON.stringify(Object.values({ ...CATEGORIES, ...TAGS, ...LAYER_TAGS }))}`,
     `Computed patterns (JSON):\n${JSON.stringify(input.patterns)}`,
-    `Our deck vs the patterns, computed (JSON):\n${JSON.stringify(input.oursVs)}`,
+    `${directiveFacts(input.oursVs.directives)}Our deck vs the patterns, computed (JSON):\n${JSON.stringify(input.oursVs)}`,
     `Pattern check, computed (JSON): verdict, key points in priority order, and every pattern with whether we fit:\n${JSON.stringify(input.fit, (k, v) => (k === "basis" ? undefined : v))}`,
     ...storeFacts(input.store),
   ].join("\n\n");

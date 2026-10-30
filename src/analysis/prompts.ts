@@ -15,10 +15,12 @@ export const PROMPT_VERSIONS = {
   // tags, counts not percentages, event lines never copied, and a logo decision per recommended
   // image (a new recommendation field). Text steps only: the per-image prompts (and so every
   // analysis key) are unchanged.
-  patterns: "patterns.v4",
-  recommend: "recommend.v4",
-  recommendReview: "recommend-review.v3",
-  abTests: "ab-tests.v2",
+  // 2026-10-30: copy and drop directives by code are hard input (the recommended order must copy
+  // a dominant competitor pattern and drop a screen kind no competitor uses). Text steps only.
+  patterns: "patterns.v5",
+  recommend: "recommend.v5",
+  recommendReview: "recommend-review.v4",
+  abTests: "ab-tests.v3",
 } as const;
 export type PromptName = keyof typeof PROMPT_VERSIONS;
 
@@ -39,10 +41,10 @@ export type PromptName = keyof typeof PROMPT_VERSIONS;
 export const PROMPT_FILES: Record<PromptName, string> = {
   fullAnalysis: "full-analysis.v10",
   adjudicate: "adjudicate.v4",
-  patterns: "patterns.v5",
-  recommend: "recommend.v5",
-  recommendReview: "recommend-review.v4",
-  abTests: "ab-tests.v2",
+  patterns: "patterns.v6",
+  recommend: "recommend.v6",
+  recommendReview: "recommend-review.v5",
+  abTests: "ab-tests.v3",
 };
 
 /** The one voice block of every synthesis prompt (plan-reports 3B.1), as {{VOICE}}. */

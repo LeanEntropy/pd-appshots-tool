@@ -1,3 +1,5 @@
+import type { PositionVerdict } from "../analysis/ours-vs-position.ts";
+
 /** The facts an image prompt is built from (image-prompt.ts), all gathered by code. */
 export interface PromptPlace {
   game: string;
@@ -70,4 +72,6 @@ export interface PromptSlot {
   competitors: ImageFacts[];
   ours: OursFacts | null;
   spec: SlotSpec | null;
+  /** A copy or drop directive by code (directives.ts): the top priority of this position. */
+  directive?: PositionVerdict["directive"] | null;
 }

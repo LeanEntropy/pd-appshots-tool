@@ -97,7 +97,7 @@ function positionsHtml(d) {
   let h = repeatsHtml(d) + '<div class="tablewrap"><table class="rt pos"><tr><th>#</th>' + cols.map((g) => "<th>" + esc(g.name) + (g.ours ? " (ours)" : "") + "</th>").join("") + "<th>How ours compares</th></tr>";
   for (let p = 1; p <= max; p++) {
     const v = d.oursVs && d.oursVs.positions.find((x) => x.position === p);
-    h += "<tr><th>" + p + "</th>" + cols.map((g) => cellOf(g, p)).join("") + "<td>" + (v ? pill(VERDICT[v.verdict] || "", v.verdict) + '<div class="meta">' + esc(v.reasons.join("; ")) + "</div>" : "") + "</td></tr>";
+    h += "<tr><th>" + p + "</th>" + cols.map((g) => cellOf(g, p)).join("") + "<td>" + (v ? pill(VERDICT[v.verdict] || "", v.directive ? (v.directive.kind === "drop" ? "Drop" : "Copy the pattern") : v.verdict) + (v.directive ? "<div><strong>" + esc(v.reasons[0]) + "</strong></div>" : "") + '<div class="meta">' + esc(v.reasons.slice(v.directive ? 1 : 0).join("; ")) + "</div>" : "") + "</td></tr>";
   }
   return h + "</table></div>" + detailsFold(["<p>Row N shows every game\\u2019s Nth Google Play screenshot: ours first, then each competitor. The (i) button shows the full analysis.</p>"]);
 }

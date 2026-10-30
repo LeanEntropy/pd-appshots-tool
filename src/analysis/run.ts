@@ -187,7 +187,8 @@ export async function runAnalysis(
   if (!synthesisSkipped) {
     report("patterns", "Finding patternsâ€¦");
     patterns = findPatterns(entries.competitors, entries.decks);
-    oursVs = compareOurs(entries.ours, patterns, entries.ourDeckLength, labeler(taxonomy));
+    const { ours, competitors, ourDeckLength } = entries;
+    oursVs = compareOurs(ours, patterns, ourDeckLength, labeler(taxonomy), competitors);
     if (deps.writer) {
       const before = bc.spent();
       const attempt = startAttempt(paths, SYNTHESIS, {
@@ -195,13 +196,7 @@ export async function runAnalysis(
         batchId,
         estimateUsd: config.estimates.synthesisUsd[1],
       });
-      const fit = patternFit(
-        entries.competitors,
-        entries.ours,
-        patterns,
-        entries.ourDeckLength,
-        labeler(taxonomy),
-      );
+      const fit = patternFit(competitors, ours, patterns, ourDeckLength, labeler(taxonomy));
       const prompt = (name: PromptName) => renderPrompt(loaded.root, paths.objects, name, taxonomy);
       synthesis = await synthesise(
         {

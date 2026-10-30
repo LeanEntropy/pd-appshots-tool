@@ -21,7 +21,20 @@ export interface PositionVerdict {
   };
   verdict: Verdict;
   reasons: string[];
+  /** A firm copy or drop directive (directives.ts), first in the reasons too. */
+  directive?: {
+    kind: "copy" | "drop";
+    text: string;
+    details: string[];
+    orientation: string;
+    /** False: no screenshot layer, the whole image is the marketing layer. */
+    screenshotLayer: boolean;
+  };
 }
+
+/** The word shown for a position: the directive when there is one, else the verdict. */
+export const positionWord = (v: Pick<PositionVerdict, "verdict" | "directive">) =>
+  v.directive ? (v.directive.kind === "drop" ? "Drop" : "Copy the pattern") : v.verdict;
 
 /** At least this many competitor screenshots at a position before judging it. */
 export const MIN_AT_POSITION = 2;
@@ -66,7 +79,10 @@ export function positionVerdict(e: DeckEntry, p: Patterns, label: Labeler): Posi
   const lower = (k: string) => label(k).toLowerCase();
   const reasons: string[] = [];
   const mine = at.types.find((t) => t.key === type);
-  const sameType = at.top.key === type || (!!mine && mine.share >= 0.25);
+  // A minority type (25% or more) counts as the same, unless a dominant pattern differs.
+  const ruling = most(at.types, n);
+  const sameType =
+    at.top.key === type || (!!mine && mine.share >= 0.25 && !(ruling && ruling.n >= 2));
   let major = 0;
   let minor = 0;
   if (sameType) {
