@@ -17,4 +17,11 @@ declare module "stopword" {
   export const tur: string[];
   export const ara: string[];
   export const hin: string[];
+  export const fin: string[];
+  export const nld: string[];
+  export const swe: string[];
+  export const dan: string[];
+  export const nob: string[];
+  export const pol: string[];
+  export const ces: string[];
 }

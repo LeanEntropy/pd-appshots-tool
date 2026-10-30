@@ -92,7 +92,7 @@ const Keywords = z.array(
     key: z.string(),
     term: z.string(),
     score: z.number(),
-    fields: z.array(z.enum(["title", "tags", "short", "description"])),
+    fields: z.array(z.enum(["title", "short", "description"])),
   }),
 );
 const Snapshot = z.object({

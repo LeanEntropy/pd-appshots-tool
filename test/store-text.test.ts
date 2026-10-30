@@ -82,10 +82,11 @@ test("keywords: weighted by field, stopwords removed, no phrase bridges a remove
   });
   const k = deriveKeywords(o, "en");
   const byKey = new Map(k.map((x) => [x.key, x]));
-  // title 3 + tags 3 (once, though listed twice) + short 2 = 8
-  assert.equal(byKey.get("roguelike")?.score, 8);
-  assert.deepEqual(byKey.get("roguelike")?.fields, ["title", "tags", "short"]);
-  assert.equal(k[0]?.key, "roguelike");
+  // title 3 + short 2 = 5; tag names are compared as tags, never split into keywords (v2)
+  assert.equal(byKey.get("roguelike rpg")?.score, 5);
+  assert.deepEqual(byKey.get("roguelike rpg")?.fields, ["title", "short"]);
+  assert.equal(k[0]?.key, "roguelike rpg");
+  assert.ok(!byKey.has("role playing") && !allKeys(o, "en").has("role playing"), "no tag names");
   // "Rogue Legend" only ever appears together: the single words are dropped for the phrase.
   assert.ok(byKey.has("rogue legend") && !byKey.has("rogue") && !byKey.has("legend"));
   assert.ok(!byKey.has("the") && !byKey.has("and"), "stopwords");
@@ -93,6 +94,10 @@ test("keywords: weighted by field, stopwords removed, no phrase bridges a remove
   // "beat the boss" never becomes one phrase: "the" ends the run.
   assert.ok(!allKeys(o, "en").has("beat boss"));
   assert.ok(k.every((x) => x.score >= 2));
+  // A hyphenated word stays whole: "Light-hearted" is never "light" and "hearted".
+  const h = wordRuns("A light-hearted game. Play Mah-jong!", "en").flat();
+  assert.ok(h.includes("light-hearted") && h.includes("mah-jong"), h.join("|"));
+  assert.ok(!h.includes("hearted"));
 });
 
 test("keywords: Japanese, Chinese and Thai are split into words (ICU), shown without spaces", () => {

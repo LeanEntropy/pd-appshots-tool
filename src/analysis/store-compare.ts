@@ -1,7 +1,7 @@
 import { latestStoreText, type StoreSnapshot } from "../library/store-text.ts";
 import type { Storage } from "../storage/index.ts";
 import { splitStoreTitle } from "./brand.ts";
-import { allKeys } from "./keywords.ts";
+import { allKeys, deriveKeywords, phrases } from "./keywords.ts";
 
 /**
  * Store text per country, for the grid's "Store" (i) and the report's "Store text and keywords"
@@ -105,10 +105,16 @@ function missingTerms(
   hl: string,
 ) {
   const have = allKeys(ours.official, hl);
+  // Tag names are compared as tags (engine/rules-meta.ts), never as keyword gaps.
+  const tags = new Set(
+    [ours, ...theirs.map((t) => t.snap)].flatMap((s) =>
+      s.official.chips.flatMap((c) => [...phrases(c.name, hl).keys()]),
+    ),
+  );
   const by = new Map<string, { term: string; games: string[]; score: number }>();
   for (const t of theirs)
-    for (const k of t.snap.derived.keywords) {
-      if (have.has(k.key)) continue;
+    for (const k of deriveKeywords(t.snap.official, hl)) {
+      if (have.has(k.key) || tags.has(k.key)) continue;
       const e = by.get(k.key) ?? { term: k.term, games: [], score: 0 };
       if (!e.games.includes(t.name)) e.games.push(t.name);
       e.score += k.score;

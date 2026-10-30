@@ -8,11 +8,15 @@ import type { StoreOfficial } from "../play/store-text.ts";
  *
  * Words come from Intl.Segmenter (ICU dictionaries split Japanese, Chinese and Thai, which have no
  * spaces). Known limit: Korean words keep their particles (보스를 vs 보스).
+ *
+ * v2 (2026-10-31): tag names are no longer split into keywords (they gave junk such as "hearted"
+ * and "light" from "Light-hearted"; tags are compared as tags, engine/rules-meta.ts), hyphenated
+ * words stay whole, and more languages have stopwords.
  */
-export const KEYWORDS_VERSION = 1;
+export const KEYWORDS_VERSION = 2;
 
-export type Field = "title" | "tags" | "short" | "description";
-const WEIGHT: Record<Field, number> = { title: 3, tags: 3, short: 2, description: 1 };
+export type Field = "title" | "short" | "description";
+const WEIGHT: Record<Field, number> = { title: 3, short: 2, description: 1 };
 
 export interface Keyword {
   /** Canonical form: lower-case words joined by one space (used for counting and matching). */
@@ -41,11 +45,50 @@ const STOP: Record<string, string[]> = {
   tr: sw.tur,
   ar: sw.ara,
   hi: sw.hin,
+  fi: sw.fin,
+  nl: sw.nld,
+  sv: sw.swe,
+  da: sw.dan,
+  nb: sw.nob,
+  no: sw.nob,
+  pl: sw.pol,
+  cs: sw.ces,
 };
 // Additions seen in real store text. The Chinese list is in Simplified characters, so the
 // Traditional forms of common ones are added.
 const EXTRA: Record<string, string[]> = {
-  en: ["every", "get", "let", "lets", "let's", "can't", "don't", "you'll", "you're", "we're"],
+  en: [
+    "every",
+    "get",
+    "let",
+    "lets",
+    "let's",
+    "can't",
+    "don't",
+    "you'll",
+    "you're",
+    "we're",
+    // Store-page boilerplate (contact lines, policies): never a term to copy.
+    "contact",
+    "support",
+    "email",
+    "e-mail",
+    "privacy",
+    "policy",
+    "terms",
+    "feedback",
+    "questions",
+    "back",
+    "please",
+    "app",
+    "gameplay",
+    "experience",
+  ],
+  fi: ["tämä", "tässä", "joissa", "jossa", "milloin", "myös", "sekä", "voit", "kun", "jos", "joka"],
+  fr: ["comme", "votre", "vos"],
+  it: ["ama", "tuo", "tua", "tuoi"],
+  es: ["objetivo", "tu", "tus"],
+  de: ["deine", "dein", "einfach"],
   zh: "與 這 們 個 為 對 於 從 讓 會 還 將 並 裡 嗎 麼 你的 我們 我的 你們 一個 每一 每個".split(
     " ",
   ),
@@ -101,12 +144,31 @@ export function wordRuns(text: string, hl: string): string[][] {
     if (run.length) runs.push(run);
     run = [];
   };
+  // A hyphenated word ("light-hearted", "Mah-jong") stays one word.
+  let hyphen = false;
+  let last = "";
   for (const s of seg.segment(text.replace(URLS, "\n"))) {
     if (!s.isWordLike) {
+      if (/^[-\u2010\u2011]$/.test(s.segment) && last) {
+        hyphen = true;
+        continue;
+      }
+      hyphen = false;
+      last = "";
       if (/\S/.test(s.segment) || s.segment.includes("\n")) end();
       continue;
     }
     const w = s.segment.toLocaleLowerCase(hl);
+    if (hyphen && last) {
+      const joined = `${last}-${w}`;
+      hyphen = false;
+      if (run.at(-1) === last) run[run.length - 1] = joined;
+      else if (!dropWord(joined, stop)) run.push(joined);
+      last = joined;
+      continue;
+    }
+    hyphen = false;
+    last = w;
     if (dropWord(w, stop)) end();
     else run.push(w);
   }
@@ -129,12 +191,10 @@ export function phrases(text: string, hl: string): Map<string, { term: string; c
   return out;
 }
 
-/** The store text by field; tag names are counted once each. */
+/** The store text by field (tag names are compared as tags, never split into keywords). */
 export function fieldTexts(o: StoreOfficial): [Field, string][] {
-  const tags = [...new Set(o.chips.map((c) => c.name.trim()).filter(Boolean))];
   const out: [Field, string][] = [];
   if (o.title) out.push(["title", o.title]);
-  if (tags.length) out.push(["tags", tags.join("\n")]);
   if (o.shortDescription) out.push(["short", o.shortDescription]);
   if (o.description) out.push(["description", o.description]);
   return out;
@@ -151,8 +211,8 @@ export function allKeys(o: StoreOfficial, hl: string): Set<string> {
 const within = (short: string, long: string) => ` ${long} `.includes(` ${short} `);
 
 /**
- * The top keywords derived from the store text: weighted counts (title 3, tags 3, short
- * description 2, description 1), at least 2. A shorter term is dropped only when a longer term
+ * The top keywords derived from the store text: weighted counts (title 3, short description 2,
+ * description 1), at least 2. A shorter term is dropped only when a longer term
  * containing it has the same score (every use of it is inside the longer one).
  */
 export function deriveKeywords(o: StoreOfficial, hl: string, limit = 30): Keyword[] {
