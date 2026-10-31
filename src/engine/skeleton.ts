@@ -1,4 +1,4 @@
-import { lines } from "../analysis/image-tags.ts";
+import { lines, showsLogo } from "../analysis/image-tags.ts";
 import type { DeckEntry } from "../analysis/patterns.ts";
 import { dominantBy, type EngineCtx, kindKey, MIN_GAMES, perGame } from "./context.ts";
 import { byRank, type Directive, isFirm, type SlotSpec } from "./directives.ts";
@@ -52,10 +52,8 @@ function fillAt(ctx: EngineCtx, p: number, taken: Set<string>, opener: Set<Kind>
   const canvas = dominantBy(kind.doers, (e) => e.canvas, ctx.leaders);
   const doers = canvas ? canvas.doers : kind.doers;
   const spec = specFrom(doers, { kind: kind.key });
-  // A second identical replacement takes the next pattern instead (unique replacements).
-  const key = `${spec.kind}|${spec.canvas}|${p}`;
-  if (taken.has(key)) return null;
-  taken.add(key);
+  // Replacements stay unique through their themes (assignThemes); a slot is never skipped.
+  taken.add(`${spec.kind}|${spec.canvas}|${p}`);
   return spec;
 }
 
@@ -92,7 +90,7 @@ function ourSlot(o: DeckEntry, ids: string[]): Slot {
     canvas: o.canvas,
     size: o.size ?? "",
     source: SOURCE_LABEL[src],
-    logo: false,
+    logo: showsLogo(o.final, o.name),
     themes: [],
     action: "keep",
     from: o.position,

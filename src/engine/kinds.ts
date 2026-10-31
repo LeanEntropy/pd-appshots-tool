@@ -122,8 +122,13 @@ export type Source = "capture" | "capture_layer" | "marketing_art";
 
 /** How the image is produced: an in-game capture, a capture with a layer on top, or art. */
 export function sourceOf(e: Pick<DeckEntry, "final">, kind: Kind): Source {
-  if (kind === "promo_banner" || kind === "title_art" || kind === "content_showcase")
-    return "marketing_art";
+  if (kind === "promo_banner" || kind === "content_showcase") return "marketing_art";
+  // A title screen read as an in-game capture is captured from the game, not built as art.
+  if (kind === "title_art") {
+    const s = e.final.screenshot;
+    const captured = s.composition !== "pure_art" && s.captures.length > 0;
+    if (!captured) return "marketing_art";
+  }
   if (kind === "lifestyle") return "marketing_art";
   return e.final.marketingLayer.present ? "capture_layer" : "capture";
 }

@@ -88,7 +88,10 @@ export function localised(
         const b = x.text(g.appId, base.gl, base.hl);
         const here = x.text(g.appId, m.gl, m.hl);
         if (!b || !here) continue;
-        if (d.field === "category") return `${here.genre.name ?? v} (${v})`;
+        if (d.field === "category") {
+          if (b.genre.name !== v) continue;
+          return `${here.genre.name ?? v} (${v})`;
+        }
         const i = tagsOf(b).indexOf(v);
         const local = i >= 0 ? tagsOf(here)[i] : undefined;
         if (local) return local === v ? v : `${local} (${v})`;

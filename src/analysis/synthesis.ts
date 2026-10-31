@@ -140,12 +140,10 @@ async function writeAndReview(
     Math.min(input.ourDeckLength, input.patterns.deckLength.min || 1),
     input.engine?.skeleton.length ?? 0,
   );
-  const maxLen = Math.max(
-    input.ourDeckLength,
-    input.patterns.deckLength.max,
-    minLen,
-    input.engine?.skeleton.length ?? 0,
-  );
+  // With the engine, the length is exactly the skeleton's.
+  const maxLen = input.engine?.skeleton.length
+    ? Math.max(minLen, input.engine.skeleton.length)
+    : Math.max(input.ourDeckLength, input.patterns.deckLength.max, minLen);
   const interpretation = `Interpretation:\n${JSON.stringify(out.interpretation)}`;
   const lines = [
     `Our current screenshots, in store order:\n${input.ours.map(brief).join("\n")}`,

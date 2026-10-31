@@ -90,7 +90,13 @@ export interface FakeOptions {
 }
 
 /** The engine's target deck in the prompt (the skeleton contract), when there is one. */
-type SkeletonSlot = { kind: string; orientation: string; logo: string };
+type SkeletonSlot = {
+  kind: string;
+  orientation: string;
+  logo: string;
+  action?: string;
+  fromOurPosition?: number;
+};
 function skeletonIn(prompt: string): SkeletonSlot[] {
   const i = prompt.indexOf("TARGET DECK (skeleton)");
   const line =
@@ -124,7 +130,12 @@ function recommendations(n: number, skeleton: SkeletonSlot[] = []) {
       position: i + 1,
       screenType: TYPE_OF[skeleton[i]?.kind ?? ""]?.[0] ?? "gameplay",
       subtype: TYPE_OF[skeleton[i]?.kind ?? ""]?.[1] ?? "battle",
-      source: "new capture",
+      source:
+        skeleton[i]?.action === "keep"
+          ? `keep our current position ${skeleton[i]?.fromOurPosition}`
+          : skeleton[i]?.action === "recapture"
+            ? `recapture our position ${skeleton[i]?.fromOurPosition}`
+            : "new capture",
       screenshot: {
         orientation: skeleton[i]?.orientation ?? "portrait",
         whatToCapture: "a boss fight",

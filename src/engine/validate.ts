@@ -48,9 +48,10 @@ const RECAP = /recapture our position (\d+)/i;
 export function skeletonProblems(r: Recommendations, e: EngineResult, ourCanvas: string): string[] {
   const out: string[] = [];
   const sk = e.skeleton;
-  if (r.positions.length < sk.length)
+  const pos = r.positions.map((p) => p.position).sort((a, b) => a - b);
+  if (pos.join(",") !== sk.map((s) => s.position).join(","))
     out.push(
-      `the target deck has ${sk.length} images (got ${r.positions.length}); a screen not captured yet is a capture to make, never a reason to drop a slot`,
+      `the target deck has ${sk.length} images, positions ${sk.map((s) => s.position).join(", ")} (got ${pos.join(", ") || "none"}); a screen not captured yet is a capture to make, never a reason to drop a slot`,
     );
   const dropped = new Set(
     e.directives.filter((d) => isFirm(d) && d.kind === "DROP").flatMap((d) => d.positions),
@@ -71,13 +72,22 @@ export function skeletonProblems(r: Recommendations, e: EngineResult, ourCanvas:
       out.push(
         `position ${p.position}: the skeleton asks for a ${s.canvas} image (got ${p.screenshot.orientation})`,
       );
-    if (s.action === "new marketing art" && (KEEP.test(p.source) || RECAP.test(p.source)))
+    const reuses = KEEP.test(p.source) || RECAP.test(p.source);
+    if (s.action === "new marketing art" && reuses)
       out.push(
         `position ${p.position}: new marketing art built from our assets, never a recapture or a kept screen`,
       );
+    if (s.action === "new capture" && reuses)
+      out.push(
+        `position ${p.position}: the skeleton asks for a new capture, not our current image`,
+      );
+    if ((s.action === "keep" || s.action === "recapture") && kept !== s.from)
+      out.push(
+        `position ${p.position}: the skeleton ${s.action === "keep" ? "keeps" : "recaptures"} our image ${s.from} ("${s.action === "keep" ? "keep our current" : "recapture our"} position ${s.from}")`,
+      );
     const logo = (p as Partial<typeof p>).logo;
-    if (s.spec && s.action !== "keep" && logo && logo.show !== s.logo)
-      out.push(`position ${p.position}: the spec says logo ${s.logo ? "yes" : "no"}`);
+    if (logo && logo.show !== s.logo)
+      out.push(`position ${p.position}: the skeleton says logo ${s.logo ? "yes" : "no"}`);
   }
   return out;
 }
@@ -138,9 +148,19 @@ export function abDirectionProblems(slots: readonly AbSlot[], e: EngineResult): 
       out.push(
         `image ${s.position}: ${d?.id} asks for a ${want} image here; this variant moves away from it`,
       );
-    if (s.fromOurPosition !== s.position && dropped.has(s.fromOurPosition))
+    // A changed or moved slot built on an image the directives drop goes the wrong way.
+    if (dropped.has(s.fromOurPosition) && !s.changes.includes("screen"))
       out.push(
-        `image ${s.position}: it moves our image ${s.fromOurPosition}, which the directives drop`,
+        `image ${s.position}: it builds on our image ${s.fromOurPosition}, which the directives drop`,
+      );
+    // Marketing art is a new image: a variant that only re-dresses our current one is not it.
+    if (
+      d?.spec?.source === "marketing_art" &&
+      s.fromOurPosition > 0 &&
+      !s.changes.includes("screen")
+    )
+      out.push(
+        `image ${s.position}: ${d.id} asks for new marketing art here, not a re-dressed current image`,
       );
   }
   return out;

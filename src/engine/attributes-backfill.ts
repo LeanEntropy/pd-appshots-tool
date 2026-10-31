@@ -46,7 +46,13 @@ export function attributesScope(loaded: LoadedConfig): AttributesScope {
       const r = records.get(it.imageId);
       if (seen.has(it.imageId) || !isUsable(r)) continue;
       seen.add(it.imageId);
-      if (attributesFromNotes(r.final.notes) || readSavedAttributes(paths, it.imageId)) continue;
+      const noted = attributesFromNotes(r.final.notes);
+      const complete =
+        !!noted &&
+        noted.hudVisible !== null &&
+        noted.people !== null &&
+        noted.deviceInScene !== null;
+      if (complete || readSavedAttributes(paths, it.imageId)) continue;
       const game = loaded.config.competitors.find((c) => c.id === it.appId)?.name;
       items.push({
         imageId: it.imageId,
@@ -102,7 +108,7 @@ export async function runAttributesBackfill(
     answerKey: (step, key) => answerKey(paths, step, key),
     taxonomy,
     taxonomyHash: hash,
-    maxBudgetUsd: ATTRIBUTES_USD_PER_IMAGE[1] * 2,
+    maxBudgetUsd: ATTRIBUTES_USD_PER_IMAGE[1],
     remainingUsd: book.remaining,
     timeoutMs: 300_000,
     onCost: (u) => {
