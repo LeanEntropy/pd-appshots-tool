@@ -59,6 +59,7 @@ Output per locale:
   - The cap is enforced in config as a hard stop.
 
 ## Our game
+- **Rogue Legends is DONE (closed 2026-10-31).** Do not update, re-run, analyse or recommend for it. Leave its data and reports as they are. Active project: Comfy Mahjong Solitaire.
 - Rogue Legends: `com.pockethaven.roguelegend` (Google Play).
 - Own assets: `rogue-legends_current/` contains screenshots and a layered PSD. Read-only source material.
   - The same PSD and screenshots are used on both Google Play and the App Store. The PSD's `_APPLE STORE` name is irrelevant.
