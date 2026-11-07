@@ -1,5 +1,4 @@
-import { cpSync, mkdirSync, mkdtempSync, readFileSync, writeFileSync } from "node:fs";
-import { tmpdir } from "node:os";
+import { cpSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import sharp from "sharp";
 import { type LoadedConfig, loadConfig, projectPaths } from "../../src/config/load.ts";
@@ -14,6 +13,7 @@ import {
   writeDeck,
   writeRunManifest,
 } from "../../src/store/manifest.ts";
+import { tempDir } from "./temp.ts";
 
 const REPO = join(import.meta.dirname, "..", "..");
 
@@ -34,7 +34,7 @@ export function picture(seed: number, tablet = false): Promise<Buffer> {
 export async function tempProject(
   decks: Record<string, { phone: number; tablet: number }>,
 ): Promise<LoadedConfig> {
-  const root = mkdtempSync(join(tmpdir(), "ssr-proj-"));
+  const root = tempDir("ssr-proj-");
   mkdirSync(join(root, "configs"));
   cpSync(join(REPO, "prompts"), join(root, "prompts"), { recursive: true });
   cpSync(join(REPO, "taxonomies"), join(root, "taxonomies"), { recursive: true });

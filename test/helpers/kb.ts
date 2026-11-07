@@ -1,11 +1,9 @@
-import { mkdtempSync } from "node:fs";
-import { tmpdir } from "node:os";
-import { join } from "node:path";
 import { citeNumberer } from "../../src/kb/cite.ts";
 import { assemble, type Kb, type KbContent } from "../../src/kb/release.ts";
 import type { KbRun } from "../../src/kb/run.ts";
 import { EntrySchema, SourceSchema } from "../../src/kb/schema.ts";
 import { kbFiles } from "../../src/storage/kb-files.ts";
+import { tempDir } from "./temp.ts";
 
 export const TODAY = "2026-09-29";
 export const TAGS = [
@@ -231,7 +229,7 @@ export function run(kb: Kb, over: Partial<KbRun> = {}): KbRun {
 
 /** A temporary kb/ folder with the tag list, dimension map and checks (no entries). */
 export function tempKbDir() {
-  const root = mkdtempSync(join(tmpdir(), "kb-"));
+  const root = tempDir("kb-");
   const files = kbFiles(root);
   const c = content();
   files.putJson("tags.json", { version: 1, tags: c.tags });

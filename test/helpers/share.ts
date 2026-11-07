@@ -1,5 +1,4 @@
-import { cpSync, mkdirSync, mkdtempSync } from "node:fs";
-import { tmpdir } from "node:os";
+import { cpSync, mkdirSync } from "node:fs";
 import { join } from "node:path";
 import type { Readable } from "node:stream";
 import yazl from "yazl";
@@ -10,6 +9,7 @@ import { uploadKey } from "../../src/share/inspect.ts";
 import { type LocalFsStorage, workspaceStorage } from "../../src/storage/index.ts";
 import { sha256 } from "../../src/util/hash.ts";
 import { legacyProject } from "./imported.ts";
+import { tempDir } from "./temp.ts";
 
 const REPO = join(import.meta.dirname, "..", "..");
 
@@ -23,7 +23,7 @@ export async function sender() {
 
 /** Another computer: an empty tool folder with its own workspace. */
 export function receiver() {
-  const root = mkdtempSync(join(tmpdir(), "ssr-recv-"));
+  const root = tempDir("ssr-recv-");
   mkdirSync(join(root, "configs"));
   cpSync(join(REPO, "configs", "defaults.json"), join(root, "configs", "defaults.json"));
   cpSync(join(REPO, "prompts"), join(root, "prompts"), { recursive: true });

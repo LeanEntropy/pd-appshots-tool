@@ -1,7 +1,4 @@
 import assert from "node:assert/strict";
-import { mkdtempSync } from "node:fs";
-import { tmpdir } from "node:os";
-import { join } from "node:path";
 import { test } from "node:test";
 import { writeAbTests } from "../src/analysis/ab-tests.ts";
 import type { AbTestsOutput } from "../src/analysis/ab-tests-schema.ts";
@@ -12,6 +9,7 @@ import type { Evidence } from "../src/reports/ab-candidates.ts";
 import { workspaceStorage } from "../src/storage/index.ts";
 import { KB_CITE_SCRIPT } from "../src/view/kb-cite.ts";
 import { fixtureKb, run } from "./helpers/kb.ts";
+import { tempDir } from "./helpers/temp.ts";
 
 const esc = (s: unknown) =>
   String(s).replace(
@@ -146,7 +144,7 @@ test("A/B tests: a variant that breaks an enforced rule is dropped by code; the 
     leverage: 3,
   };
   const ctx: CallContext = {
-    storage: workspaceStorage(mkdtempSync(join(tmpdir(), "kbab-"))),
+    storage: workspaceStorage(tempDir("kbab-")),
     answerKey: (step, key) => `shared/test/${step}/${key}.json`,
     taxonomy: { id: "t", version: "1", screenTypes: [], definitions: {}, subtypeLabels: {} },
     taxonomyHash: "t",

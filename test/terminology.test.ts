@@ -1,7 +1,4 @@
 import assert from "node:assert/strict";
-import { mkdtempSync } from "node:fs";
-import { tmpdir } from "node:os";
-import { join } from "node:path";
 import { test } from "node:test";
 import type { CallContext } from "../src/analysis/call.ts";
 import { cachedConceptMap, writeConceptMap } from "../src/analysis/concept-map.ts";
@@ -20,8 +17,9 @@ import {
 import { matchTerms } from "../src/reports/terminology-count.ts";
 import { workspaceStorage } from "../src/storage/index.ts";
 import { reading } from "./helpers/fake-provider.ts";
+import { tempDir } from "./helpers/temp.ts";
 
-const storage = () => workspaceStorage(mkdtempSync(join(tmpdir(), "ssr-term-")));
+const storage = () => workspaceStorage(tempDir("ssr-term-"));
 const prompt: RenderedPrompt = { text: "p", hash: "h1", file: "x.md" };
 
 function ctxFor(s: ReturnType<typeof storage>): CallContext {

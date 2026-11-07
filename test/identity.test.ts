@@ -1,11 +1,10 @@
 import assert from "node:assert/strict";
-import { mkdtempSync } from "node:fs";
-import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { test } from "node:test";
 import sharp from "sharp";
 import { classifyPair, describeImage } from "../src/store/identity.ts";
 import { LegacyImageDb } from "../src/store/imagedb-legacy.ts";
+import { tempDir } from "./helpers/temp.ts";
 
 /** A test picture: gradient with a block whose position depends on `seed`. */
 async function picture(seed: number, width = 180, height = 320, format: "png" | "jpeg" = "png") {
@@ -24,7 +23,7 @@ async function picture(seed: number, width = 180, height = 320, format: "png" | 
 }
 
 function tempDb() {
-  const dir = mkdtempSync(join(tmpdir(), "ssr-db-"));
+  const dir = tempDir("ssr-db-");
   return {
     dir,
     db: LegacyImageDb.open(join(dir, "db.json"), join(dir, "orig"), join(dir, "thumb")),

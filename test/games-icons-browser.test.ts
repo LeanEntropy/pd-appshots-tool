@@ -2,10 +2,11 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 import type { Browser } from "playwright-core";
 import sharp from "sharp";
-import { NoBrowserError, startBrowser } from "../src/export/pdf.ts";
+import { NoBrowserError } from "../src/export/pdf.ts";
 import type { GamePage } from "../src/server/game-view.ts";
 import { gameHtml } from "../src/view/game-html.ts";
 import { gamesHtml } from "../src/view/games-html.ts";
+import { testBrowser } from "./helpers/browser.ts";
 
 // The games directory and a game page in a real browser with the tool's answers scripted: the
 // cards show their letters at once, missing icons arrive in the background (at most three asked
@@ -33,7 +34,7 @@ const game = (n: number, extra: object) => ({
 
 async function browserOr(t: { skip: (m: string) => void }): Promise<Browser | null> {
   try {
-    return (await startBrowser(null)) as unknown as Browser;
+    return (await testBrowser()) as unknown as Browser;
   } catch (e) {
     if (e instanceof NoBrowserError) {
       t.skip("no Chrome or Edge on this machine");

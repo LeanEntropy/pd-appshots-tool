@@ -1,11 +1,11 @@
 import assert from "node:assert/strict";
-import { mkdirSync, mkdtempSync, writeFileSync } from "node:fs";
-import { tmpdir } from "node:os";
+import { mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { test } from "node:test";
 import { z } from "zod";
 import { toJsonSchema } from "../src/analysis/schema.ts";
 import { assertShellSafe, resolveCommand, run } from "../src/util/proc.ts";
+import { tempDir } from "./helpers/temp.ts";
 
 const ECHO = "process.stdout.write(JSON.stringify(process.argv.slice(1)))";
 const winOnly = { skip: process.platform !== "win32" };
@@ -24,7 +24,7 @@ test("a JSON argument with quotes and # reaches an .exe byte for byte", async ()
 });
 
 test("an npm .cmd shim is run as node <script>, without cmd.exe", winOnly, async () => {
-  const dir = mkdtempSync(join(tmpdir(), "ssr-shim-"));
+  const dir = tempDir("ssr-shim-");
   const bin = join(dir, "node_modules", "fake", "bin");
   mkdirSync(bin, { recursive: true });
   writeFileSync(join(bin, "fake.js"), ECHO);
@@ -55,7 +55,7 @@ test("an unknown .cmd refuses JSON or long arguments instead of mangling them", 
 });
 
 test("the older npm shim template (%~dp0) is recognised too", winOnly, () => {
-  const dir = mkdtempSync(join(tmpdir(), "ssr-shim2-"));
+  const dir = tempDir("ssr-shim2-");
   const bin = join(dir, "node_modules", "old", "bin");
   mkdirSync(bin, { recursive: true });
   writeFileSync(join(bin, "old.js"), ECHO);

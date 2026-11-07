@@ -1,7 +1,4 @@
 import assert from "node:assert/strict";
-import { mkdtempSync } from "node:fs";
-import { tmpdir } from "node:os";
-import { join } from "node:path";
 import { test } from "node:test";
 import type { CallContext } from "../src/analysis/call.ts";
 import type { ModelImage, Provider, VisionCall } from "../src/analysis/providers.ts";
@@ -11,6 +8,7 @@ import { readLayout } from "../src/layout/checks.ts";
 import { workspaceStorage } from "../src/storage/index.ts";
 import { reading } from "./helpers/fake-provider.ts";
 import { fakeLayout } from "./helpers/layout.ts";
+import { tempDir } from "./helpers/temp.ts";
 
 const image: ModelImage = {
   mimeType: "image/jpeg",
@@ -27,7 +25,7 @@ const taxonomy = {
 
 function context(): CallContext {
   return {
-    storage: workspaceStorage(mkdtempSync(join(tmpdir(), "ssr-layout-"))),
+    storage: workspaceStorage(tempDir("ssr-layout-")),
     answerKey: (step, key) => `projects/p/objects/${step}/${key}.json`,
     taxonomy,
     taxonomyHash: "t",

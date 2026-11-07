@@ -2,8 +2,9 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 import type { Browser } from "playwright-core";
 import sharp from "sharp";
-import { NoBrowserError, startBrowser } from "../src/export/pdf.ts";
+import { NoBrowserError } from "../src/export/pdf.ts";
 import { homeHtml } from "../src/view/home-html.ts";
+import { testBrowser } from "./helpers/browser.ts";
 
 // The home page in a real browser with the tool's answers scripted: a card shows its letter
 // first, the game's icon once the background fetch has it, and the letter again if it fails.
@@ -24,7 +25,7 @@ const card = (id: string, name: string, extra: object) => ({
 test("home: the letter tile until the game's icon arrives, and again when it fails", async (t) => {
   let browser: Browser;
   try {
-    browser = (await startBrowser(null)) as unknown as Browser;
+    browser = (await testBrowser()) as unknown as Browser;
   } catch (e) {
     if (e instanceof NoBrowserError) return t.skip("no Chrome or Edge on this machine");
     throw e;

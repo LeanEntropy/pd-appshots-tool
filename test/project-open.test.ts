@@ -1,8 +1,6 @@
 import assert from "node:assert/strict";
-import { mkdtempSync, utimesSync } from "node:fs";
+import { utimesSync } from "node:fs";
 import { get } from "node:http";
-import { tmpdir } from "node:os";
-import { join } from "node:path";
 import { test } from "node:test";
 import { type AnalysisRecord, readRecords, writeRecord } from "../src/analysis/records.ts";
 import { projectPaths } from "../src/config/load.ts";
@@ -12,6 +10,7 @@ import { viewModel } from "../src/steps/deck-view.ts";
 import { dataStamp, flushDataChanges, markerPath } from "../src/storage/changes.ts";
 import { workspaceStorage } from "../src/storage/index.ts";
 import { tempProject } from "./helpers/project.ts";
+import { tempDir } from "./helpers/temp.ts";
 
 // Opening a project: the page goes out at once, the heavy parts are computed once per data
 // change and shared by every request that needs them.
@@ -79,7 +78,7 @@ test("computed: a data change, the time limit and a failure each mean a fresh co
 });
 
 test("data stamp: data writes change it, the project registry does not", () => {
-  const ws = mkdtempSync(join(tmpdir(), "ssr-stamp-"));
+  const ws = tempDir("ssr-stamp-");
   const s = workspaceStorage(ws);
   const a = dataStamp(ws);
   s.putJson("projects/p1/project.json", { x: 1 });

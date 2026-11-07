@@ -1,6 +1,4 @@
 import assert from "node:assert/strict";
-import { mkdtempSync } from "node:fs";
-import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { test } from "node:test";
 import { Script } from "node:vm";
@@ -19,6 +17,7 @@ import { REFRESH_FILE } from "../src/kb/source-date.ts";
 import { writeJsonFile } from "../src/storage/kb-files.ts";
 import { KB_REVIEW_SCRIPT } from "../src/view/kb-review.ts";
 import { entries, entry, SOURCES, TODAY, tempKbDir } from "./helpers/kb.ts";
+import { tempDir } from "./helpers/temp.ts";
 
 const LATER = "2026-11-15"; // more than 30 days after TODAY, the sources' accessed date
 const GP_META = "https://support.google.com/googleplay/android-developer/answer/9898842";
@@ -26,7 +25,7 @@ const GP_ASSETS = "https://support.google.com/googleplay/android-developer/answe
 
 function setup(extraEntries: unknown[] = [], extraSources: unknown[] = []) {
   const { files } = tempKbDir();
-  const dir = mkdtempSync(join(tmpdir(), "seed-"));
+  const dir = tempDir("seed-");
   writeJsonFile(join(dir, "entries-t.json"), {
     file: "entries-t",
     entries: [...entries(), ...extraEntries],

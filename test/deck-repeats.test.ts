@@ -1,6 +1,5 @@
 import assert from "node:assert/strict";
-import { mkdtempSync, writeFileSync } from "node:fs";
-import { tmpdir } from "node:os";
+import { writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { test } from "node:test";
 import sharp from "sharp";
@@ -33,6 +32,7 @@ import {
   usBytes,
 } from "./helpers/builder.ts";
 import { screen, tallScreen } from "./helpers/screens.ts";
+import { tempDir } from "./helpers/temp.ts";
 
 const slot = (position: number, imageId: string, tall = false): RepeatSlot => ({
   position,
@@ -116,7 +116,7 @@ test("the planner reuses the earlier copy's analysis for a repeated screen", () 
 });
 
 test("pixels: the same screen at another size matches; another screen on the same background does not", async () => {
-  const dir = mkdtempSync(join(tmpdir(), "ssr-same-"));
+  const dir = tempDir("ssr-same-");
   const file = async (name: string, b: Promise<Buffer>) => {
     const buf = await b;
     const meta = await sharp(buf).metadata();

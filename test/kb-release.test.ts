@@ -1,6 +1,4 @@
 import assert from "node:assert/strict";
-import { mkdtempSync } from "node:fs";
-import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { test } from "node:test";
 import { importSeeds } from "../src/kb/import-seed.ts";
@@ -11,6 +9,7 @@ import { EntrySchema } from "../src/kb/schema.ts";
 import { workspaceStorage } from "../src/storage/index.ts";
 import { writeJsonFile } from "../src/storage/kb-files.ts";
 import { entries, SOURCES, TODAY, tempKbDir } from "./helpers/kb.ts";
+import { tempDir } from "./helpers/temp.ts";
 
 const base = entries()[4];
 
@@ -36,7 +35,7 @@ test("schema: one atomic entry, enforced rules carry their policy, official clas
 });
 
 function seedDir() {
-  const dir = mkdtempSync(join(tmpdir(), "seed-"));
+  const dir = tempDir("seed-");
   const good = entries().map((e) => ({ ...e, researcherConfidence: "high" }));
   writeJsonFile(join(dir, "entries-t.json"), {
     file: "entries-t",
@@ -119,7 +118,7 @@ test("promotion: only approved content becomes a release; version, counts, chang
   assert.deepEqual(promote(files, TODAY).added.sort(), ["h-corr", "h-counter"]);
   const kb2 = loadKb(files, "release", TODAY);
   assert.equal(kb2.computed.get("h-corr")?.contested, true);
-  const storage = workspaceStorage(mkdtempSync(join(tmpdir(), "ws-")));
+  const storage = workspaceStorage(tempDir("ws-"));
   const hash = pinRelease(storage, kb);
   assert.equal(loadPinned(storage, hash, TODAY)?.entries.length, 5);
   assert.equal(pinRelease(storage, kb), hash, "write-once snapshot");

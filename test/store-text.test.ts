@@ -1,7 +1,4 @@
 import assert from "node:assert/strict";
-import { mkdtempSync } from "node:fs";
-import { tmpdir } from "node:os";
-import { join } from "node:path";
 import { test } from "node:test";
 import { allKeys, deriveKeywords, display, wordRuns } from "../src/analysis/keywords.ts";
 import { storeTextMarkdown } from "../src/analysis/report-store-md.ts";
@@ -15,8 +12,9 @@ import {
 import { officialFromApp, type StoreOfficial } from "../src/play/store-text.ts";
 import { workspaceStorage } from "../src/storage/index.ts";
 import { STORE_SCRIPT } from "../src/view/gallery-store.ts";
+import { tempDir } from "./helpers/temp.ts";
 
-const storage = () => workspaceStorage(mkdtempSync(join(tmpdir(), "ssr-store-")));
+const storage = () => workspaceStorage(tempDir("ssr-store-"));
 
 function official(o: Partial<StoreOfficial> = {}): StoreOfficial {
   return {

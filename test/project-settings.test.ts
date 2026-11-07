@@ -1,6 +1,5 @@
 import assert from "node:assert/strict";
-import { cpSync, mkdirSync, mkdtempSync, readdirSync, writeFileSync } from "node:fs";
-import { tmpdir } from "node:os";
+import { cpSync, mkdirSync, readdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { test } from "node:test";
 import { loadConfig, loadTaxonomy } from "../src/config/load.ts";
@@ -22,11 +21,12 @@ import {
 } from "../src/config/registry.ts";
 import { workspaceStorage } from "../src/storage/index.ts";
 import { stableHash } from "../src/util/hash.ts";
+import { tempDir } from "./helpers/temp.ts";
 
 const REPO = join(import.meta.dirname, "..");
 
 function tempRoot() {
-  const root = mkdtempSync(join(tmpdir(), "ssr-settings-"));
+  const root = tempDir("ssr-settings-");
   mkdirSync(join(root, "configs"));
   cpSync(join(REPO, "configs"), join(root, "configs"), { recursive: true });
   cpSync(join(REPO, "taxonomies"), join(root, "taxonomies"), { recursive: true });

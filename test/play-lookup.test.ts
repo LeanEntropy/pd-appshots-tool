@@ -1,7 +1,4 @@
 import assert from "node:assert/strict";
-import { mkdtempSync } from "node:fs";
-import { tmpdir } from "node:os";
-import { join } from "node:path";
 import { test } from "node:test";
 import sharp from "sharp";
 import { fetchIcon, iconUrlAllowed } from "../src/play/icon.ts";
@@ -10,8 +7,9 @@ import { PlayProblem } from "../src/play/lookup.ts";
 import { PlayQueue } from "../src/play/queue.ts";
 import { workspaceStorage } from "../src/storage/index.ts";
 import { app, fakeFetcher, fakeScraper, ICON, lookup } from "./helpers/play.ts";
+import { tempDir } from "./helpers/temp.ts";
 
-const storage = () => workspaceStorage(mkdtempSync(join(tmpdir(), "ssr-play-")));
+const storage = () => workspaceStorage(tempDir("ssr-play-"));
 
 test("input: Play links, market links and package IDs give an ID; other Play pages are refused", () => {
   const id = (s: string) => {

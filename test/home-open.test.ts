@@ -1,8 +1,9 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 import type { Browser, Page, Route } from "playwright-core";
-import { NoBrowserError, startBrowser } from "../src/export/pdf.ts";
+import { NoBrowserError } from "../src/export/pdf.ts";
 import { homeHtml } from "../src/view/home-html.ts";
+import { testBrowser } from "./helpers/browser.ts";
 
 // The home page in a real browser, with the tool's answers scripted: each card has one button,
 // Open, and no request of its own; opening a project takes one press, even when the cards are
@@ -20,7 +21,7 @@ const PROJECT = {
 
 async function browserOrSkip(t: { skip: (m: string) => void }): Promise<Browser | null> {
   try {
-    return (await startBrowser(null)) as unknown as Browser;
+    return (await testBrowser()) as unknown as Browser;
   } catch (e) {
     if (e instanceof NoBrowserError) t.skip("no Chrome or Edge on this machine");
     else throw e;

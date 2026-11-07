@@ -1,14 +1,14 @@
 import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
-import { existsSync, mkdtempSync, readFileSync, utimesSync, writeFileSync } from "node:fs";
-import { tmpdir } from "node:os";
+import { existsSync, readFileSync, utimesSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { test } from "node:test";
 import { key, LocalFsStorage, projectKey } from "../src/storage/index.ts";
 import { acquireAll, LOCKS, STALE_MS, tryAcquire } from "../src/storage/leases.ts";
+import { tempDir } from "./helpers/temp.ts";
 
 const sha = (b: Buffer) => createHash("sha256").update(b).digest("hex");
-const temp = () => new LocalFsStorage(mkdtempSync(join(tmpdir(), "ssr-store-")));
+const temp = () => new LocalFsStorage(tempDir("ssr-store-"));
 
 test("keys are logical and cannot escape their namespace", () => {
   const s = temp();

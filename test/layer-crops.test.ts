@@ -1,6 +1,5 @@
 import assert from "node:assert/strict";
-import { mkdtempSync, writeFileSync } from "node:fs";
-import { tmpdir } from "node:os";
+import { writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { test } from "node:test";
 import sharp from "sharp";
@@ -23,6 +22,7 @@ import { type ImageRecord, openImageDb } from "../src/store/imagedb.ts";
 import type { PixelResult } from "../src/store/pixel-diff.ts";
 import { builderProject } from "./helpers/builder.ts";
 import { reading } from "./helpers/fake-provider.ts";
+import { tempDir } from "./helpers/temp.ts";
 
 const box = (x: number, y: number, w: number, h: number) => ({ x, y, w, h });
 
@@ -82,7 +82,7 @@ test("text comparison crops: texts and changed areas, near boxes share a crop, a
 test("text comparison crops: native resolution up to 1024 px, nothing over 1568, small copy only when needed", async () => {
   const loaded = await builderProject();
   const paths = projectPaths(loaded);
-  const file = join(mkdtempSync(join(tmpdir(), "crop-")), "big.png");
+  const file = join(tempDir("crop-"), "big.png");
   writeFileSync(
     file,
     await sharp({ create: { width: 2400, height: 4200, channels: 3, background: "#3070c0" } })

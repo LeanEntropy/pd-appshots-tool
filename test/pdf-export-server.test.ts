@@ -1,8 +1,9 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { NoBrowserError, startBrowser } from "../src/export/pdf.ts";
+import { NoBrowserError } from "../src/export/pdf.ts";
 import { startAppServer } from "../src/server/app-server.ts";
 import { exportHooks } from "../src/server/export-api.ts";
+import { tempLaunch, testBrowser } from "./helpers/browser.ts";
 import { tempProject } from "./helpers/project.ts";
 
 const JSON_HEADERS = { "Content-Type": "application/json", "X-SSR-Token": "pdf-token" };
@@ -79,12 +80,12 @@ test("export routes: token required, job with progress, download, open and show 
 
 test("real PDF with the installed Chrome or Edge (skipped when there is none)", async (t) => {
   try {
-    await (await startBrowser(null)).close();
+    await (await testBrowser()).close();
   } catch (e) {
     if (e instanceof NoBrowserError) return t.skip("no Chrome or Edge on this computer");
     throw e;
   }
-  exportHooks.deps = {};
+  exportHooks.deps = { launch: tempLaunch };
   const s = await server();
   try {
     const r = (await (

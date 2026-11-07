@@ -1,7 +1,4 @@
 import assert from "node:assert/strict";
-import { mkdtempSync } from "node:fs";
-import { tmpdir } from "node:os";
-import { join } from "node:path";
 import { test } from "node:test";
 import sharp from "sharp";
 import {
@@ -15,9 +12,10 @@ import {
 import type { Fetcher } from "../src/play/icon.ts";
 import { workspaceStorage } from "../src/storage/index.ts";
 import { fakeFetcher, ICON } from "./helpers/play.ts";
+import { tempDir } from "./helpers/temp.ts";
 import { OURS, wizardServer } from "./helpers/wizard.ts";
 
-const scratch = () => workspaceStorage(mkdtempSync(join(tmpdir(), "ssr-icon-")));
+const scratch = () => workspaceStorage(tempDir("ssr-icon-"));
 const details = (icon: string) => {
   const calls: string[] = [];
   const get = async (id: string) => {

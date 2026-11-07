@@ -1,11 +1,11 @@
-import { cpSync, mkdirSync, mkdtempSync } from "node:fs";
-import { tmpdir } from "node:os";
+import { cpSync, mkdirSync } from "node:fs";
 import { join } from "node:path";
 import type { Fetcher } from "../../src/play/icon.ts";
 import { startAppServer } from "../../src/server/app-server.ts";
 import type { StoreDeps } from "../../src/steps/add-competitor.ts";
 import { workspaceStorage } from "../../src/storage/index.ts";
 import { app, fakeFetcher, fakeScraper, lookup } from "./play.ts";
+import { tempDir } from "./temp.ts";
 
 const REPO = join(import.meta.dirname, "..", "..");
 export const TOKEN = "wiz-token";
@@ -14,7 +14,7 @@ export const OURS = "com.pockethaven.roguelegend";
 
 /** The tool's server on a temp workspace, with a scripted Google Play and local icons. */
 export async function wizardServer(slowIcon?: Fetcher, storeDeps?: StoreDeps) {
-  const root = mkdtempSync(join(tmpdir(), "ssr-wiz-"));
+  const root = tempDir("ssr-wiz-");
   mkdirSync(join(root, "configs"));
   cpSync(join(REPO, "configs", "defaults.json"), join(root, "configs", "defaults.json"));
   cpSync(join(REPO, "taxonomies"), join(root, "taxonomies"), { recursive: true });

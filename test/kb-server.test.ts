@@ -1,6 +1,4 @@
 import assert from "node:assert/strict";
-import { mkdtempSync } from "node:fs";
-import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { test } from "node:test";
 import { importSeeds } from "../src/kb/import-seed.ts";
@@ -9,6 +7,7 @@ import { startAppServer } from "../src/server/app-server.ts";
 import { kbFiles, writeJsonFile } from "../src/storage/kb-files.ts";
 import { content, entries, SOURCES, TODAY } from "./helpers/kb.ts";
 import { tempProject } from "./helpers/project.ts";
+import { tempDir } from "./helpers/temp.ts";
 
 const TOKEN = "t".repeat(32);
 
@@ -18,7 +17,7 @@ test("review list page: approve one entry and the unverified ones in bulk, saved
   const files = kbFiles(root);
   const c = content();
   files.putJson("tags.json", { version: 1, tags: c.tags });
-  const seed = mkdtempSync(join(tmpdir(), "seed-"));
+  const seed = tempDir("seed-");
   writeJsonFile(join(seed, "entries-t.json"), { file: "entries-t", entries: entries() });
   // The server reviews against the real date: official pages count as verified today, so the
   // auto-approved ones stay within their freshness window whenever the test runs.

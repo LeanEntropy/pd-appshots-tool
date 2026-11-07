@@ -1,7 +1,4 @@
 import assert from "node:assert/strict";
-import { mkdtempSync } from "node:fs";
-import { tmpdir } from "node:os";
-import { join } from "node:path";
 import { test } from "node:test";
 import sharp from "sharp";
 import { LocalFsStorage } from "../src/storage/index.ts";
@@ -15,6 +12,7 @@ import {
   pixelKey,
   pixelVerdict,
 } from "../src/store/pixel-diff.ts";
+import { tempDir } from "./helpers/temp.ts";
 
 const W = 180;
 const H = 320;
@@ -175,7 +173,7 @@ test("pixel check: thresholds and who is asked", () => {
 });
 
 test("pixel check: cached per pair and per anchor boxes, versioned", async () => {
-  const storage = new LocalFsStorage(mkdtempSync(join(tmpdir(), "pixel-")));
+  const storage = new LocalFsStorage(tempDir("pixel-"));
   const paths = { projectId: "p", library: null };
   const key = pixelKey(paths, "i", "a", REGIONS);
   assert.notEqual(key, pixelKey(paths, "i", "a", { ...REGIONS, texts: [] }));

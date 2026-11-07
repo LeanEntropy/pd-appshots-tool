@@ -1,6 +1,5 @@
 import assert from "node:assert/strict";
-import { mkdirSync, mkdtempSync, writeFileSync } from "node:fs";
-import { tmpdir } from "node:os";
+import { mkdirSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { test } from "node:test";
 import { z } from "zod";
@@ -14,6 +13,7 @@ import { workspaceStorage } from "../src/storage/index.ts";
 import { kbFiles } from "../src/storage/kb-files.ts";
 import { content, fixtureKb, run } from "./helpers/kb.ts";
 import { baseConfig } from "./helpers/kb-config.ts";
+import { tempDir } from "./helpers/temp.ts";
 
 const BASE = { text: "BASE PROMPT", hash: "h0", file: "" };
 const writeTextFile = (p: string, t: string) => {
@@ -93,7 +93,7 @@ function recorder(outputs: (c: VisionCall) => unknown): Provider & { calls: Visi
 }
 
 function ctx(kb?: ReturnType<typeof run>): CallContext {
-  const storage = workspaceStorage(mkdtempSync(join(tmpdir(), "kbp-")));
+  const storage = workspaceStorage(tempDir("kbp-"));
   return {
     storage,
     answerKey: (step, key) => `shared/test/${step}/${key}.json`,
@@ -125,7 +125,7 @@ test("switch off: the model gets exactly today's system prompt, task and answer 
 });
 
 test("openKbRun: nothing when the switch is off; on, the release is pinned in the shared library", () => {
-  const root = mkdtempSync(join(tmpdir(), "kbroot-"));
+  const root = tempDir("kbroot-");
   const files = kbFiles(root);
   const c = content();
   files.putJson("tags.json", { version: 1, tags: c.tags });
@@ -134,7 +134,7 @@ test("openKbRun: nothing when the switch is off; on, the release is pinned in th
   files.putJson("sources.json", { sources: c.sources });
   files.putJson("entries/t.json", { file: "t", entries: c.entries });
   writeTextFile(join(root, "prompts", "analysis", "kb-rules.v1.md"), "RULES");
-  const storage = workspaceStorage(mkdtempSync(join(tmpdir(), "ws-")));
+  const storage = workspaceStorage(tempDir("ws-"));
   assert.equal(openKbRun(baseConfig(false), root, storage, "us"), undefined);
   const r = openKbRun(baseConfig(true), root, storage, "us");
   assert.ok(r);

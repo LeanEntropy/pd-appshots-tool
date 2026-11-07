@@ -1,7 +1,4 @@
 import assert from "node:assert/strict";
-import { mkdtempSync } from "node:fs";
-import { tmpdir } from "node:os";
-import { join } from "node:path";
 import { test } from "node:test";
 import {
   appleDeckKey,
@@ -19,6 +16,7 @@ import type { AppContext } from "../src/server/app-context.ts";
 import { postAppStore } from "../src/server/routes-appstore.ts";
 import { workspaceStorage } from "../src/storage/index.ts";
 import { tryAcquire } from "../src/storage/leases.ts";
+import { tempDir } from "./helpers/temp.ts";
 
 const NOW = "2026-09-29T00:00:00.000Z";
 const clock = { now: () => 0, sleep: async () => {} };
@@ -45,7 +43,7 @@ function confirmedStore() {
 }
 
 test("a bundle id that changed after the user's confirmation blocks the deck and asks again", async () => {
-  const storage = workspaceStorage(mkdtempSync(join(tmpdir(), "ssr-asf-")));
+  const storage = workspaceStorage(tempDir("ssr-asf-"));
   const ctx = { projectId: "p" };
   const row = {
     kind: "software",
@@ -81,7 +79,7 @@ test("a bundle id that changed after the user's confirmation blocks the deck and
 });
 
 test("the page's saves wait while the App Store job holds the project's App Store lock", () => {
-  const storage = workspaceStorage(mkdtempSync(join(tmpdir(), "ssr-asl-")));
+  const storage = workspaceStorage(tempDir("ssr-asl-"));
   const ctx = { projectId: "p" };
   writeAppStore(storage, ctx, emptyAppStore(NOW));
   const app = { storage } as unknown as AppContext;

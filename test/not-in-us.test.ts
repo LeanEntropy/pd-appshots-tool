@@ -1,6 +1,5 @@
 import assert from "node:assert/strict";
-import { mkdtempSync, readFileSync, writeFileSync } from "node:fs";
-import { tmpdir } from "node:os";
+import { readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { test } from "node:test";
 import { buildAnalysisPlan } from "../src/analysis/plan.ts";
@@ -21,12 +20,13 @@ import { latestRun } from "../src/view/model.ts";
 import { DECKS, PICK } from "./helpers/imported.ts";
 import { app, fakeScraper, lookup } from "./helpers/play.ts";
 import { picture, tempProject } from "./helpers/project.ts";
+import { tempDir } from "./helpers/temp.ts";
 
 const JP = { gl: "jp", hl: "ja", label: "Japan (Japanese)" };
 const KR = { gl: "kr", hl: "ko", label: "South Korea (Korean)" };
 
 test("lookup: a game missing in the US is read in the first project country where it exists", async () => {
-  const s = workspaceStorage(mkdtempSync(join(tmpdir(), "ssr-nus-")));
+  const s = workspaceStorage(tempDir("ssr-nus-"));
   const f = fakeScraper([app("com.kr.only", "Korea Only", "GAME_ROLE_PLAYING", ["kr"])]);
   const play = lookup(s, f.scraper);
   const us = { gl: "us", hl: "en", label: "United States (English)" };

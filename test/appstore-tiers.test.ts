@@ -1,6 +1,5 @@
 import assert from "node:assert/strict";
-import { mkdtempSync, rmSync } from "node:fs";
-import { tmpdir } from "node:os";
+import { rmSync } from "node:fs";
 import { join } from "node:path";
 import { test } from "node:test";
 import { reshapedPair } from "../src/analysis/layer-crops.ts";
@@ -18,6 +17,7 @@ import { RESHAPED_BITS } from "../src/reports/cross-store.ts";
 import type { ImageDb, ImageRecord } from "../src/store/imagedb.ts";
 import { readDeck } from "../src/store/manifest.ts";
 import { writeJsonAtomic } from "../src/util/fsx.ts";
+import { tempDir } from "./helpers/temp.ts";
 
 const bits = (n: number) => "1".repeat(n) + "0".repeat(64 - n);
 const PLAY = { width: 1080, height: 1920 };
@@ -179,7 +179,7 @@ test("an App Store deck reads like a Play deck through the App Store view of the
   assert.equal(m.slots[0]?.deviceClass, "phone");
   assert.equal(appleManifest(deck({ status: "not_sold" })).status, "unavailable");
   assert.equal(appleManifest(deck({ status: "identity_changed" })).status, "error");
-  const dir = mkdtempSync(join(tmpdir(), "apple-decks-"));
+  const dir = tempDir("apple-decks-");
   try {
     const decks = join(dir, APPLE_DECKS_DIR);
     // Thai is asked as th_th: the file name carries Apple's locale.

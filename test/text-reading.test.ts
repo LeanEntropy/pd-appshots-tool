@@ -1,6 +1,5 @@
 import assert from "node:assert/strict";
 import { existsSync, readFileSync } from "node:fs";
-import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { test } from "node:test";
 import { analysisKey, currentPipeline } from "../src/analysis/pipeline.ts";
@@ -20,6 +19,7 @@ import { savePick } from "../src/core/selection.ts";
 import { fakeProvider } from "./helpers/fake-provider.ts";
 import { DECKS, PICK, providers } from "./helpers/imported.ts";
 import { tempProject } from "./helpers/project.ts";
+import { tempDir } from "./helpers/temp.ts";
 
 const REPO = join(import.meta.dirname, "..");
 const TAXONOMY = {
@@ -45,7 +45,7 @@ const RULES = [
 
 test("both answer shapes carry the text-reading rules", () => {
   for (const lean of [false, true]) {
-    const { text } = renderAnalysisPrompt(REPO, join(tmpdir(), "ssr-text-reading"), TAXONOMY, lean);
+    const { text } = renderAnalysisPrompt(REPO, tempDir("ssr-text-"), TAXONOMY, lean);
     for (const re of RULES) assert.match(text, re, `${lean ? "lean" : "full"}: ${re}`);
     assert.doesNotMatch(text, /line breaks become a single space\)/, "the joining rule is gone");
   }

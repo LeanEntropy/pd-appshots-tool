@@ -1,7 +1,4 @@
 import assert from "node:assert/strict";
-import { mkdtempSync } from "node:fs";
-import { tmpdir } from "node:os";
-import { join } from "node:path";
 import { test } from "node:test";
 import sharp from "sharp";
 import { appleRefsKey, platformOf, readAppStore, samePictureKey } from "../src/appstore/data.ts";
@@ -12,6 +9,7 @@ import { LibraryImageDb } from "../src/library/imagedb.ts";
 import { refsKey } from "../src/library/layout.ts";
 import { readRefs } from "../src/library/refs.ts";
 import { projectKey, workspaceStorage } from "../src/storage/index.ts";
+import { tempDir } from "./helpers/temp.ts";
 
 const W = 60;
 const H = 130;
@@ -78,14 +76,14 @@ test("data model: a missing platform is Google Play; an old project has App Stor
     useOf("p", { appId: "a", gl: "us", hl: "en_us", position: 1, platform: "appstore" })?.platform,
     "apple",
   );
-  const storage = workspaceStorage(mkdtempSync(join(tmpdir(), "ssr-as-")));
+  const storage = workspaceStorage(tempDir("ssr-as-"));
   const a = readAppStore(storage, { projectId: "p" });
   assert.equal(a.enabled, false);
   assert.deepEqual(a.pairs, []);
 });
 
 async function workspace() {
-  const dir = mkdtempSync(join(tmpdir(), "ssr-asi-"));
+  const dir = tempDir("ssr-asi-");
   const storage = workspaceStorage(dir);
   const ctx = { projectId: "p" };
   // A Google Play deck of the same game holding the JPEG of picture 1.
@@ -172,7 +170,7 @@ test("App Store ingest: a known asset path is not downloaded again; Play twins a
 });
 
 test("the same position on both stores is two sources, never one", async () => {
-  const dir = mkdtempSync(join(tmpdir(), "ssr-asp-"));
+  const dir = tempDir("ssr-asp-");
   const db = LibraryImageDb.open(dir, refsKey({ projectId: "p" }), "p");
   const { record } = await db.ingest(await png(raw(3)), {
     appId: "g",

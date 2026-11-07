@@ -1,8 +1,5 @@
 import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
-import { mkdtempSync } from "node:fs";
-import { tmpdir } from "node:os";
-import { join } from "node:path";
 import { test } from "node:test";
 import { syncPresetReports } from "../src/reports/migrate.ts";
 import {
@@ -18,12 +15,13 @@ import {
 } from "../src/reports/store.ts";
 import { dateFromRunId, type VersionInputs } from "../src/reports/types.ts";
 import { LocalFsStorage, projectKey } from "../src/storage/index.ts";
+import { tempDir } from "./helpers/temp.ts";
 
 const US = { gl: "us", hl: "en", label: "United States (English)" };
 const c = { projectId: "p1" };
 
 function fresh() {
-  return new LocalFsStorage(mkdtempSync(join(tmpdir(), "ssr-rep-")));
+  return new LocalFsStorage(tempDir("ssr-rep-"));
 }
 
 function hashes(s: LocalFsStorage, prefix: string): Map<string, string> {
